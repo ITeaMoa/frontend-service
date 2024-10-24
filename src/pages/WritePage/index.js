@@ -1,0 +1,488 @@
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import Nav from '../../components/Nav';
+import Dropdown from '../../components/DropDown';
+import Modal from '../../components/Modal';
+import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+
+
+
+
+const WritePage = () => {
+  const navigate = useNavigate();
+  const [title, setTitle] = useState('');
+  const [participants, setParticipants] = useState(0);
+  const [deadline, setDeadline] = useState('');
+  const [progress, setProgress] = useState('');
+  const [projectRole, setProjectRole] = useState('');
+  const [description, setDescription] = useState('');
+  const isLoggedIn = true; 
+  const showSearch = false;
+
+
+  const handleSave = () => {
+  
+    console.log({
+      title,
+      participants,
+      deadline,
+      progress,
+      projectRole,
+      description,
+    });
+    navigate('/'); 
+  };
+
+  const option1 = [
+    { value: '기간 미정', label: '기간 미정' },
+    { value: '1개월', label: '1개월' },
+    { value: '2개월', label: '2개월' },
+    { value: '3개월', label: '3개월' },
+    { value: '4개월', label: '4개월' },
+    { value: '5개월', label: '5개월' },
+    { value: '6개월이상', label: '6개월이상' },
+    { value: '장기', label: '장기' },
+];
+
+const option2 = [
+  { value: '백엔드', label: '백엔드' },
+  { value: '프론트엔드', label: '프론트엔드' },
+  { value: '디자이너', label: '디자이너' },
+  { value: 'PM', label: 'PM' },
+  { value: 'AI 엔지니어', label: 'AI 엔지니어' },
+  { value: '아키텍트', label: '아키텍트' },
+  { value: '시스템 엔지니어', label: '시스템 엔지니어' },
+  { value: '정보보안', label: '정보보안' },
+  { value: 'DBA', label: 'DBA' },
+  { value: '블록체인 엔지니어', label: '블록체인 엔지니어' },
+  { value: '데이터 엔지니어', label: '데이터 엔지니어' },
+  { value: '빅데이터', label: '빅데이터' },
+  { value: 'DevOps', label: 'DevOps' },
+  { value: '모바일', label: '모바일' },
+  { value: 'QA', label: 'QA' },
+  { value: 'SRE', label: 'SRE' },
+  { value: 'iOS', label: 'iOS' },
+  { value: '안드로이드', label: '안드로이드' },
+  { value: '기획자', label: '기획자' },
+  { value: '마케팅', label: '마케팅' },
+];
+
+const option3 = [
+  { value: '웹', label: '웹' },
+  { value: '모바일', label: '모바일' },
+  { value: '정보보안', label: '정보보안' },
+  { value: 'AWS', label: 'AWS' },
+  { value: 'Git', label: 'Git' },
+  { value: 'Github', label: 'Github' },
+  { value: '클라우드', label: '클라우드' },
+  { value: '블록체인', label: '블록체인' },
+  { value: '인공지능', label: '인공지능' },
+  { value: '빅데이터', label: '빅데이터' },
+  { value: 'Spring Boot', label: 'Spring Boot' },
+  { value: 'React', label: 'React' },
+  { value: 'Vue', label: 'Vue' },
+  { value: 'Python', label: 'Python' },
+  { value: 'Node.js', label: 'Node.js' },
+  { value: 'TypeScript', label: 'TypeScript' },
+  { value: '게임', label: '게임' },
+  { value: 'UI/UX', label: 'UI/UX' },
+  { value: '알고리즘', label: '알고리즘' },
+  { value: '자료구조', label: '자료구조' },
+  { value: 'C/C++', label: 'C/C++' },
+  { value: 'C#', label: 'C#' },
+  { value: 'SQL', label: 'SQL' },
+  { value: 'NoSQL', label: 'NoSQL' },
+  { value: 'Django', label: 'Django' },
+  { value: 'Figma', label: 'Figma' },
+  { value: 'Swift', label: 'Swift' },
+  { value: 'Kotlin', label: 'Kotlin' },
+  { value: 'React Native', label: 'React Native' },
+  { value: 'Android', label: 'Android' },
+  { value: 'iOS', label: 'iOS' },
+  { value: 'GCP', label: 'GCP' },
+  { value: 'Kubernetes', label: 'Kubernetes' },
+  { value: 'Docker', label: 'Docker' },
+  { value: 'Ruby', label: 'Ruby' },
+  { value: 'R', label: 'R' },
+  { value: 'Go', label: 'Go' },
+  { value: 'Next.js', label: 'Next.js' },
+  { value: 'Express', label: 'Express' },
+  { value: 'Firebase', label: 'Firebase' },
+  { value: 'Linux/Unix', label: 'Linux/Unix' },
+  { value: '데이터마이닝', label: '데이터마이닝' },
+  { value: 'Solidity', label: 'Solidity' },
+];
+
+
+
+const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열기 상태
+const [selectedTags, setSelectedTags] = useState([]); // 선택된 태그 상태
+
+const handleAddTagClick = () => {
+    setIsModalOpen(true); 
+};
+
+const closeModal = () => {
+    setIsModalOpen(false); 
+};
+
+const handleTagSelect = (option) => {
+  if (!selectedTags.includes(option.label)) {
+      setSelectedTags([...selectedTags, option.label]); // 선택된 태그 추가
+  }
+};
+
+
+
+  return (
+    <>
+      <Nav isLoggedIn={isLoggedIn} showSearch={showSearch} />
+      <WriteWrapper>
+      <BackButton onClick={() => navigate(-1)} style={{ display: 'flex', alignItems: 'center' }}>
+      <FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: '5px' }} />
+      이전
+    </BackButton>
+  
+
+        <Form>
+     
+          
+          <TitleInput>
+          <InputField
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="제목을 적어주세요"
+          />
+          
+          </TitleInput>
+          </Form>
+        
+
+        <Container>
+        <Form> 
+        <Title>
+          <Label>모집 구분 | 프로젝트</Label>
+          </Title> 
+    
+        <InputBox>
+      
+
+
+          <InputWrapper>
+
+          <Label>마감일</Label>
+          <Input
+            type="date"
+            value={deadline}
+            onChange={(e) => setDeadline(e.target.value)}
+          />
+          </InputWrapper>
+
+          <InputWrapper>
+
+          <Label>진행장소</Label>
+          <Input
+            value={progress}
+            onChange={(e) => setProgress(e.target.value)}
+            placeholder="진행장소"
+          />
+          </InputWrapper>
+
+
+          <InputWrapper>   
+          <Label>모집 역할</Label>
+  
+          <Dropdown options={option2} placeholder={"프론트엔드,백엔드..."} showCountButtons={true}/>
+          </InputWrapper>
+
+
+          <InputWrapper>   
+          <Label> 진행기간 </Label>
+          <Dropdown options={option1} placeholder={"기간미정~6개월이상"}/>
+
+          </InputWrapper>
+          </InputBox>
+       
+        </Form>
+
+        <TagsSection>
+           {/* 선택된 태그 버튼 표시 */}
+           {selectedTags.map(tag => (
+                <TagButton key={tag}>{tag}</TagButton>
+            ))}
+            <TagAdd onClick={handleAddTagClick}> + 태그 추가하기</TagAdd>
+           
+            <Modal isOpen={isModalOpen} onClose={closeModal}>
+                <Dropdown 
+                    options={option3} 
+                    placeholder={"태그를 선택하시오"}
+                    onTagSelect={handleTagSelect} 
+                />
+            </Modal>
+          </TagsSection>
+
+        </Container>
+
+        <Body>
+        <Form>
+    
+          <TextArea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="본문을 작성해주세요"
+          />
+
+        </Form>
+        </Body>
+
+        <Submit>
+        <SaveButton onClick={handleSave}>임시저장</SaveButton>
+        <SaveButton onClick={handleSave}>저장하기</SaveButton>
+        </Submit>
+      </WriteWrapper>
+    </>
+  );
+};
+
+export default WritePage;
+
+const WriteWrapper = styled.div`
+  position:relative;
+  padding: 20px;
+  margin-top: calc(100vh - 45%);
+  min-height: calc(100vh - 250px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const BackButton = styled.button`
+  position: absolute;
+  left: 10%;
+  top:5%;
+  transform: translateY(30%);
+  background: transparent; 
+  border: none; 
+  color: #62b9ec; 
+  font-size:20px;
+  font-weight: bold;
+  cursor: pointer; 
+  
+  &:hover {
+    opacity: 0.5;
+  }
+`;
+
+
+const Form = styled.div`
+  gap: 10px;
+`;
+
+const Label = styled.label`
+  font-weight: bold;
+  min-width: 60px; /* 라벨의 최소 너비 설정 */
+  text-align: left;
+`;
+
+
+
+const TitleInput = styled.div`
+  position: absolute;
+  left: 20%;
+  top: 5%;
+  align-items: center;
+  border-bottom: 3px solid #ccc;
+  cursor: text;
+  width: 60%;
+
+  &:focus-within {
+    border-bottom: 3px solid #62b9ec;
+  }
+`;
+
+const InputField = styled.input`
+  border: none;
+  outline: none;
+  padding: 5px 0;
+  font-size: 25px;
+  width: 100%;
+  
+  &::placeholder {
+    color: #aaa;
+  }
+`;
+
+const Container = styled.div`
+  // display: flex;
+  // flex-wrap: wrap;
+  justify-content: space-between;
+  width: calc(100% / 2 + 80px); 
+  transform: translateX(16px);
+  margin-top:100px;
+  padding: 20px;
+  border: 2px solid #ddd;
+  border-radius: 30px 30px 1px 30px; 
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  border-color: #A0DAFB;
+`;
+
+
+const Title = styled.label`
+  position: absolute;
+  font-weight: bold;
+  left: 8.2%;
+  top: 10%;
+`;
+
+
+
+const InputBox = styled.div`
+  display: flex;
+  flex-wrap: wrap; /* 여러 행을 가능하게 설정 */
+  justify-content: center; /* 균등 배치 */
+  width: calc(100% - 40px); 
+  margin-bottom: 10px;
+  margin-top: 35px;
+  margin-left: 40px;
+`;
+
+const InputWrapper = styled.div`
+  flex: 1 1 calc(50% - 20px); /* 2열로 배치하고 여백 고려 */
+  min-width: 200px; 
+  max-width 400px;
+  display: flex;
+  align-items: center;
+  // flex-direction: column;
+   margin-bottom: 20px;
+   margin-top:10px;
+   margin-left: 20px;
+
+
+
+`;
+
+const Input = styled.input`
+  padding: 12px;
+  border: 2px solid ;
+  border-radius: 15px;
+  border-color: #A0DAFB;
+  width: 250px;
+  margin-left: 20px;
+  margin-top:10px;
+  
+  &::placeholder {
+    color: grey; /* 플레이스홀더 색상 */
+}
+
+&:focus {
+    border-color: #007BFF; /* 포커스 시 테두리 색상 변경 */
+    outline: none; /* 포커스 시 외곽선 제거 */
+}
+
+
+`;
+const Body = styled.div`
+    width: calc(100% / 2 + 90px); /* 여백을 고려하여 조정 */
+
+`;
+
+const TagsSection = styled.div`
+
+  margin-top: 20px;
+  margin-left: 50px;
+  display: flex;
+`;
+
+const TagButton = styled.button`
+
+  border-radius: 5px;
+  padding: 5px 20px;
+  margin-right:20px;
+  border: 1px solid ;
+  border-radius: 15px 15px 1px 15px; //반시계 ㅔ방향
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-color: rgba(160, 218, 251);
+  background-color: white;
+  color: #0A8ED9 ;
+
+`;
+
+const TagAdd = styled.button`
+
+  border-radius: 5px;
+  padding: 5px 20px;
+  margin-right:20px;
+  border-radius: 15px 15px 1px 15px; //반시계 ㅔ방향
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-color: rgba(160, 218, 251);
+  background-color: white;
+  border: 1px solid #ddd;
+  color : grey;
+  cursor: pointer;
+
+  &:hover{
+    background-color:#D9D9D9 ;
+  }
+
+`;
+
+
+const TextArea = styled.textarea`
+  border: none;
+  border-radius: 15px 15px 1px 15px; //반시계 ㅔ방향
+  outline: none;
+  margin-top: 30px;
+  font-size: 20px;
+  background-color: #ddd;
+  resize: none; /* 크기 조정 비활성화 */
+  padding: 20px; 
+  height: 500px; 
+  width: 100%; 
+  
+  &::placeholder {
+    color: #aaa;
+    opacity: 1; 
+  }
+
+  &:focus {
+  }
+`;
+
+
+
+
+const Submit = styled.button`
+  display: flex;
+  gap:20px;
+  border: none;
+  outline: none;
+  background: transparent;
+  cursor: none;
+  margin-left:780px;
+  margin-top:80px;
+  margin-bottom: 20px;
+
+  }
+`;
+
+const SaveButton = styled.button`
+  margin-top: 20px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #62b9ec;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 10px 30px;
+  border-radius: 15px 15px 1px 15px; //반시계 ㅔ방향
+
+  &:hover {
+    background-color: #a0dafb;
+  }
+`;
+
+

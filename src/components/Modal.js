@@ -53,7 +53,7 @@ const ModalOverlay = styled.div`
     border: none;
     width: 100vw;
     height: 100vh;
-    margin-top: -85px;
+    margin-top: -4.5%;
 
 
     

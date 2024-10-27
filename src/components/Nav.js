@@ -358,7 +358,7 @@ const FilterIcon = styled.div`
 
 const TagContainer = styled.div`
   position: absolute;
-  top: 75%;
+  top: 76%;
   margin-top:10px;
   border: 2px solid #62B9EC;
   border-radius: 30px 5px 30px 30px;

@@ -33,17 +33,18 @@ const SignUpPage = () => {
     <Con1>
       <Form onSubmit={handleSubmit}>
        
-    
         <Label>이 메 일</Label>
-        <Input 
-          type="email" 
-          value={email} 
-          onChange={(e) => setEmail(e.target.value)} 
-          placeholder="이메일 입력" 
-          required 
-        />
-     
-         
+        <InputContainer>
+          <Input 
+            type="email" 
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)} 
+            placeholder="이메일 입력" 
+            required 
+          />
+          <AuthButton type="button">인증번호 발송</AuthButton>
+        </InputContainer>
+          
         <Label>인 증 번 호</Label>
         <Input 
           type="text" 
@@ -93,7 +94,14 @@ const SignUpPage = () => {
       
 
         <Form>
+
+       
         <SocialLoginContainer>
+        <SocialLogin>
+        <DividerLine />
+        <SocialLoginTitle>소셜 로그인</SocialLoginTitle>
+        <DividerLine />
+        </SocialLogin>  
         <SocialButton1 yellow>
             <Icon src="/images/pngwing.com.png" alt="카카오톡 아이콘" /> 카카오로 시작하기
           </SocialButton1>
@@ -169,18 +177,17 @@ const Title = styled.label`
 const Label = styled.label`
   margin: 10px 0 5px;
   font-size: 14px;
-  // font-weight: bold;
-//   display: block; //안해줘도 됨
   align-self: flex-start;
 
 `;
 
 const Input = styled.input`
-padding: 16px;
-border: 2px solid #0080ff; //진한 파랑
-border-radius: 15px;
-margin-bottom: 10px;
-border-color: #A0DAFB;
+  padding: 16px;
+  border: 2px solid #0080ff; //진한 파랑
+  border-radius: 15px;
+  margin-bottom: 10px;
+  border-color: #A0DAFB;
+  flex-grow: 1; /* 버튼을 제외한 나머지 공간을 모두 차지 */
 `;
 
 const Button = styled.button`
@@ -203,11 +210,54 @@ const Button = styled.button`
   
 `;
 
+const InputContainer = styled.div`
+  display: flex;
+  align-items: center;
+  // justify-content: center;
+  width: 100%;
+  
+`;
+
+const AuthButton = styled(Button)`
+  background-color: #62B9EC;
+  color: white;
+  margin-left: 20px; 
+  margin-top: -3px;
+  
+  &:hover {
+    background-color: #A0DAFB;
+  }
+  
+`;
+
+const SocialLogin = styled.h2`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 600px;
+
+`;
+
+const DividerLine = styled.hr`
+    border: 0; 
+    height: 1px;
+    background: #ccc;
+    flex: 1; /* 남은 공간을 차지, 기본 너비가 0이기 때문에 설정 필수 */
+    margin: 0px 10px; 
+
+`;
+
+const SocialLoginTitle = styled.h2`
+  font-size: 20px;
+`;
+
+
 const SocialLoginContainer = styled.div`
    display: flex;
   flex-direction: column;
  // justify-content:center; //여기서는 수직 정렬
   align-items: center; // 여기서는 수평정렬
+  margin-top: 30px;
 `;
 
 const SocialButton1 = styled.button`
@@ -217,7 +267,6 @@ const SocialButton1 = styled.button`
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  margin-top: 60px;
   font-size:14px;
   color: black;
   font-weight: bold;

@@ -65,6 +65,11 @@ const LoginPage = () => {
         </Con1>
 
         <SocialLoginContainer>
+        <SocialLogin>
+        <DividerLine />
+        <SocialLoginTitle>소셜 로그인</SocialLoginTitle>
+        <DividerLine />
+        </SocialLogin> 
         <SocialButton1>
             <Icon src="/images/pngwing.com.png" alt="카카오톡 아이콘" /> 카카오계정으로 로그인하기
           </SocialButton1>
@@ -184,8 +189,33 @@ const Button = styled.button`
 const SocialLoginContainer = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center; // 여기서는 수평정렬
   margin-top:40px;
 `;
+
+
+
+const SocialLogin = styled.h2`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 600px;
+
+`;
+
+const DividerLine = styled.hr`
+    border: 0; 
+    height: 1px;
+    background: #ccc;
+    flex: 1; /* 남은 공간을 차지, 기본 너비가 0이기 때문에 설정 필수 */
+    margin: 0px 10px; 
+
+`;
+
+const SocialLoginTitle = styled.h2`
+  font-size: 20px;
+`;
+
 
 const SocialButton1 = styled.button`
   padding: 10px;
@@ -201,6 +231,7 @@ const SocialButton1 = styled.button`
   font-weight: bold;
   padding:10px;
   border-radius: 30px 30px 1px 30px;
+  width: 100%;
 
 
   &:hover {
@@ -221,6 +252,7 @@ const SocialButton2 = styled.button`
   font-weight: bold;
   padding:10px;
   border-radius: 30px 30px 1px 30px;
+  width: 100%;
 
 
   &:hover {

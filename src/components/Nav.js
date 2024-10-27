@@ -365,7 +365,7 @@ const TagContainer = styled.div`
   display: flex;
   flex-wrap: wrap; 
   background-color: white;
-  padding: 20px;
+  padding: 10px;
 `;
 
 

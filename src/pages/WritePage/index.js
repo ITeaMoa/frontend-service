@@ -251,11 +251,12 @@ export default WritePage;
 const WriteWrapper = styled.div`
   position:relative;
   padding: 20px;
-  margin-top: calc(100vh - 45%);
+  margin-top: 20vh;
   min-height: calc(100vh - 250px);
   display: flex;
   flex-direction: column;
   align-items: center;
+  
 `;
 
 const BackButton = styled.button`

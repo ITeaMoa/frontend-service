@@ -5,11 +5,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons'; 
 import axios from 'axios';
 import LikeButton from './LikeButton';
+import Pagination from './Pagination';
 
 const Section2 = ({  }) => {
   const [allProjects, setAllProjects] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0);
-  const itemsPerPage = 6; // 페이지당 아이템 수
+  const [currentPage, setCurrentPage] = useState(1);
+  // const [currentPage, setCurrentPage] = useState(0);
+  // const itemsPerPage = 6; // 페이지당 아이템 수
+  const [projectsPerPage] = useState(6); 
   const navigate = useNavigate();
 
   // const fetchAllProjects = async () => {
@@ -49,19 +52,29 @@ const Section2 = ({  }) => {
     });
   };
 
- //페이지수 계산
-  const totalPages = Math.ceil(allProjects.length / itemsPerPage);
-  const displayedProjects = allProjects.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
+
+//  //페이지수 계산
+//   const totalPages = Math.ceil(allProjects.length / itemsPerPage);
+//   const displayedProjects = allProjects.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
+
+//   const handlePageChange = (page) => {
+//     setCurrentPage(page);
+//   };
+
+// 페이지네이션 관련
+const indexOfLastProject = currentPage * projectsPerPage;
+const indexOfFirstProject = indexOfLastProject - projectsPerPage;
+const currentProjects = allProjects.slice(indexOfFirstProject, indexOfLastProject); // allProjects에서 가져오기
+
+const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
 
   return (
     <SectionWrapper>
       <SectionTitle>프로젝트 목록</SectionTitle>
       <ProjectList>
-        {displayedProjects.map((project, index) => (
+      {currentProjects.map((project, index) => (
           <ProjectCard key={index}>
             <ProjectOwner>
               <FontAwesomeIcon icon={regularUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
@@ -93,7 +106,7 @@ const Section2 = ({  }) => {
           </ProjectCard>
         ))}
       </ProjectList>
-      <Pagination>
+      {/* <Pagination>
         {Array.from({ length: totalPages }).map((_, pageIndex) => (
           <PageNumber
             key={pageIndex}
@@ -102,8 +115,16 @@ const Section2 = ({  }) => {
           >
             {pageIndex + 1}
           </PageNumber>
-        ))}
-      </Pagination>
+        ))} */}
+      {/* </Pagination> */}
+      <Pagination 
+        currentPage={currentPage} 
+        projectsPerPage={projectsPerPage} 
+        totalProjects={allProjects.length} 
+        onPageChange={paginate} 
+      
+      />
+      
     </SectionWrapper>
   );
 };
@@ -115,6 +136,7 @@ const SectionWrapper = styled.div`
   width: calc(100vw / 2 + 100px);
   margin-top: 50px;
   margin-bottom: 40px;
+  align-items:center; //수평정렬
 
 
   @media (max-width: 1200px  {
@@ -285,22 +307,22 @@ const ApplyButton = styled.button`
   }
 `;
 
-const Pagination = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-`;
+// const Pagination = styled.div`
+//   display: flex;
+//   justify-content: center;
+//   margin-top: 20px;
+// `;
 
-const PageNumber = styled.button`
-  color: ${({ active }) => (active ? '#6AB2E1' : 'black')};
-  margin-top: 40px;
-  margin-left: 5px;
-  cursor: pointer;
-  border: none;
-  background: none;
-  font-weight: bold;
-  font-size: 16px;
-`;
+// const PageNumber = styled.button`
+//   color: ${({ active }) => (active ? '#6AB2E1' : 'black')};
+//   margin-top: 40px;
+//   margin-left: 5px;
+//   cursor: pointer;
+//   border: none;
+//   background: none;
+//   font-weight: bold;
+//   font-size: 16px;
+// `;
 
 export default Section2;
 

@@ -83,10 +83,10 @@ const option3 = [
     }
   }, []);
 
-  // useEffect(() => {
-  //   // 토글 상태가 변경될 때마다 로컬 스토리지에 저장
-  //   localStorage.setItem('toggleActive', JSON.stringify(toggleActive));
-  // }, [toggleActive]);
+  useEffect(() => {
+    // 토글 상태가 변경될 때마다 로컬 스토리지에 저장
+    localStorage.setItem('toggleActive', JSON.stringify(toggleActive));
+  }, [toggleActive]);
 
   const handleToggleChange = () => {
     setToggleActive(!toggleActive); // 토글 상태 변경
@@ -135,7 +135,7 @@ const option3 = [
  
 
   return (
-    <NavWrapper>
+    <NavWrapper showSearch={showSearch}>
       <Logo>
       <img
           alt="Logo"
@@ -148,6 +148,7 @@ const option3 = [
         <ToggleSwitch type="checkbox" checked={toggleActive} onChange={handleToggleChange} />
         <ToggleLabel active={!toggleActive}>PROJECT</ToggleLabel>
       </ToggleContainer>
+      
      
       {showSearch && ( // showSearch가 true일 때만 검색 부분 표시
         <SearchContainer>
@@ -165,10 +166,7 @@ const option3 = [
         </SearchContainer>
       )}
 
-            {/* <UserActions>
-                <SignUp onClick={() => navigate('/SignupPage')}>SignUp</SignUp>
-                <Login onClick={() => navigate('/LoginPage')}>Login</Login>
-            </UserActions> */}
+          
             <UserActions>
         {isLoggedIn ? (
           <>
@@ -178,8 +176,8 @@ const option3 = [
             <UserIcon className="comment">
               <FontAwesomeIcon icon={regularComment} size="15px" />
             </UserIcon>
-            <UserIcon className="user">
-              <FontAwesomeIcon icon={regularUser} size="15px" />
+            <UserIcon onClick={() => navigate('/MyPage')} className="user">
+              <FontAwesomeIcon  icon={regularUser} size="15px" />
             </UserIcon>
             <LogoutButton>로그아웃</LogoutButton>
           </>
@@ -190,6 +188,7 @@ const option3 = [
           </>
         )}
       </UserActions>
+    
 
             {/* 태그 컨테이너: 선택된 태그가 있을 때만 표시 */}
             {selectedTags.length > 0 && (
@@ -213,34 +212,48 @@ const option3 = [
                     selectedTags={selectedTags} 
                 />
             </Modal>
-    </NavWrapper>
+
+      </NavWrapper>
+
+         
+   
   );
 }
 
 export default Nav;
 
 
+// const NavWrapper = styled.nav`
+//   position: fixed;
+//   top: 0;
+//   left: 0;
+//   right: 0;
+//   height: 30%;
+//   background-color: #ffffff;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   z-index: 3;
+// `;
+
 const NavWrapper = styled.nav`
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 30%;
+  height: ${({ showSearch }) => (showSearch ? '30%' : '20%')}; 
   background-color: #ffffff;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 36px;
   z-index: 3;
-  // transition: transform 0.5s ease;
-  // transform: translateY(${props => (props.visible ? '0' : '-100%')});
+  transition: height 0.3s ease; /* 부드러운 전환 효과 추가 */
 `;
-
 
 
 const Logo = styled.div`
   position: absolute;
-  top:5%;
+  top:1vh;
 
   img {
     width: 90%; 
@@ -256,7 +269,7 @@ const ToggleContainer = styled.div`
   display: flex;
   align-items: center;
   position: absolute;
-  top: 40%;
+  top: 12vh;
   cursor: pointer;
   font-size: 24px;
 `;

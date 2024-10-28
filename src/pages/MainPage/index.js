@@ -7,6 +7,7 @@ import {useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 
+
 const MainPage = () => {
   const navigate = useNavigate();
   const showSearch = true;
@@ -32,11 +33,9 @@ const MainPage = () => {
 export default MainPage;
 
 const MainWrapper = styled.div`
- margin-top: calc(100vh - 38%);
+ margin-top: 35vh;
  min-height: calc(100vh - 250px);
  display: flex;
-//  margin-top:30px;
-padding-top: 30px;
  flex-direction: column;
  align-items: center;
  

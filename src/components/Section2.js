@@ -10,8 +10,6 @@ import Pagination from './Pagination';
 const Section2 = ({  }) => {
   const [allProjects, setAllProjects] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  // const [currentPage, setCurrentPage] = useState(0);
-  // const itemsPerPage = 6; // 페이지당 아이템 수
   const [projectsPerPage] = useState(6); 
   const navigate = useNavigate();
 
@@ -51,16 +49,6 @@ const Section2 = ({  }) => {
       return newProjects;
     });
   };
-
-
-
-//  //페이지수 계산
-//   const totalPages = Math.ceil(allProjects.length / itemsPerPage);
-//   const displayedProjects = allProjects.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
-
-//   const handlePageChange = (page) => {
-//     setCurrentPage(page);
-//   };
 
 // 페이지네이션 관련
 const indexOfLastProject = currentPage * projectsPerPage;
@@ -106,17 +94,7 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
           </ProjectCard>
         ))}
       </ProjectList>
-      {/* <Pagination>
-        {Array.from({ length: totalPages }).map((_, pageIndex) => (
-          <PageNumber
-            key={pageIndex}
-            onClick={() => handlePageChange(pageIndex)}
-            active={pageIndex === currentPage}
-          >
-            {pageIndex + 1}
-          </PageNumber>
-        ))} */}
-      {/* </Pagination> */}
+  
       <Pagination 
         currentPage={currentPage} 
         projectsPerPage={projectsPerPage} 

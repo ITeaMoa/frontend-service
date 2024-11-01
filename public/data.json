@@ -16,6 +16,11 @@
     "comments": [
       {"userID": "USER#2345", "comment": "Great post!", "timestamp": "2024-09-02T09:00:00Z"}
     ],
+    "applicants": [
+      { "name": "신청자1", "status": "승인", "skills": ["AI", "Python"] },
+      { "name": "신청자2", "status": "반려", "skills": ["Machine Learning", "JavaScript"] },
+      { "name": "신청자3", "status": "승인", "skills": ["Deep Learning", "TensorFlow"] }
+    ],
     "postStatus": true,
     "timestamp": "2024-09-02T10:00:00Z",
     "savedFeed": false
@@ -33,9 +38,14 @@
     "period": 2,
     "tags": ["mobile", "health"],
     "likesCount": 15,
-    "content": "Join us to develop an innovative health tracking app. This project requires skilled mobile developers who can create user-friendly interfaces and implement robust backend systems. We aim to provide users with insights into their health metrics and connect them with healthcare professionals. If you have a passion for mobile technology and want to make a real difference in people's lives, this project is for you! Together, we can build a platform that enhances health monitoring and promotes a healthier lifestyle.",
+    "content": "Join us to develop an innovative health tracking app.",
     "comments": [
       {"userID": "USER#3456", "comment": "Sounds exciting!", "timestamp": "2024-09-05T10:00:00Z"}
+    ],
+    "applicants": [
+      { "name": "신청자4", "status": "승인", "skills": ["React Native", "Java"] },
+      { "name": "신청자5", "status": "반려", "skills": ["Flutter", "Dart"] },
+      { "name": "신청자6", "status": "승인", "skills": ["Swift", "iOS Development"] }
     ],
     "postStatus": true,
     "timestamp": "2024-09-03T10:00:00Z",
@@ -54,8 +64,14 @@
     "period": 6,
     "tags": ["commerce", "webdevelopment"],
     "likesCount": 30,
-    "content": "Looking for full-stack developers to build a new e-commerce platform that will revolutionize online shopping. This project involves creating a seamless user experience, integrating payment gateways, and ensuring the security of transactions. If you are passionate about e-commerce solutions and have experience in both front-end and back-end development, we want you on our team. Together, we can create a platform that connects buyers and sellers effectively and efficiently, making online shopping enjoyable for everyone.",
+    "content": "Looking for full-stack developers to build a new e-commerce platform.",
     "comments": [],
+    "applicants": [
+      { "name": "신청자7", "status": "승인", "skills": ["Node.js", "MongoDB"] },
+      { "name": "신청자8", "status": "반려", "skills": ["React", "Redux"] },
+      { "name": "신청자9", "status": "승인", "skills": ["Ruby on Rails", "PostgreSQL"] },
+      { "name": "신청자10", "status": "반려", "skills": ["PHP", "Laravel"] }
+    ],
     "postStatus": true,
     "timestamp": "2024-09-10T10:00:00Z",
     "savedFeed": false
@@ -73,9 +89,14 @@
     "period": 4,
     "tags": ["ai", "chatbot"],
     "likesCount": 12,
-    "content": "Seeking AI developers to create a customer service chatbot that will enhance user experience. The project involves natural language processing, machine learning, and real-time data analytics to provide accurate responses to customer inquiries. If you are interested in AI and want to work on a project that has the potential to significantly improve customer interactions, we would love to hear from you. Join us in transforming customer service through innovative technology and contribute to a solution that will benefit both businesses and customers.",
+    "content": "Seeking AI developers to create a customer service chatbot.",
     "comments": [
       {"userID": "USER#3344", "comment": "I would love to join!", "timestamp": "2024-09-12T10:00:00Z"}
+    ],
+    "applicants": [
+      { "name": "신청자11", "status": "반려", "skills": ["Natural Language Processing", "Python"] },
+      { "name": "신청자12", "status": "승인", "skills": ["Machine Learning", "JavaScript"] },
+      { "name": "신청자13", "status": "반려", "skills": ["Chatbot Framework", "Node.js"] }
     ],
     "postStatus": true,
     "timestamp": "2024-09-08T10:00:00Z",
@@ -94,8 +115,13 @@
     "period": 5,
     "tags": ["blockchain", "security"],
     "likesCount": 18,
-    "content": "Developing a secure voting system using blockchain technology. This project aims to enhance the integrity and transparency of elections by utilizing decentralized technology. We are looking for developers who have expertise in blockchain and security protocols. If you are passionate about creating systems that can transform democratic processes, we invite you to join our team and contribute to a groundbreaking project that could change the future of voting.",
+    "content": "Developing a secure voting system using blockchain technology.",
     "comments": [],
+    "applicants": [
+      { "name": "신청자14", "status": "승인", "skills": ["Blockchain", "Smart Contracts"] },
+      { "name": "신청자15", "status": "반려", "skills": ["Ethereum", "Solidity"] },
+      { "name": "신청자16", "status": "승인", "skills": ["Hyperledger", "Security"] }
+    ],
     "postStatus": true,
     "timestamp": "2024-09-15T10:00:00Z",
     "savedFeed": false
@@ -113,9 +139,15 @@
     "period": 8,
     "tags": ["gaming", "augmentedreality"],
     "likesCount": 25,
-    "content": "We are looking for creative developers who are passionate about gaming and have experience in augmented reality technologies. If you want to be part of a project that pushes the boundaries of gaming, we want to hear from you!",
+    "content": "We are looking for creative developers passionate about gaming.",
     "comments": [
       {"userID": "USER#7788", "comment": "I love AR games!", "timestamp": "2024-09-20T10:00:00Z"}
+    ],
+    "applicants": [
+      { "name": "신청자17", "status": "승인", "skills": ["Unity", "C#"] },
+      { "name": "신청자18", "status": "반려", "skills": ["Unreal Engine", "C++"] },
+      { "name": "신청자19", "status": "승인", "skills": ["ARKit", "ARCore"] },
+      { "name": "신청자20", "status": "반려", "skills": ["Game Design", "3D Modeling"] }
     ],
     "postStatus": true,
     "timestamp": "2024-09-18T10:00:00Z",
@@ -128,19 +160,29 @@
     "creatorID": "USER#7890",
     "title": "Next-Gen Cloud Solutions",
     "recruitmentNum": 5,
-    "applyNum": 3,
-    "deadline": "2024-11-30T10:00:00Z",
-    "place": "서울",
-    "period": 4,
-    "tags": ["cloud", "devops"],
+    "applyNum": 0,
+    "deadline": "2024-12-31T10:00:00Z",
+    "place": "서초동",
+    "period": 6,
+    "tags": ["cloud", "infrastructure"],
     "likesCount": 20,
-    "content": "Looking for cloud engineers to develop next-gen cloud solutions that will revolutionize the way businesses operate. This project involves designing and implementing cloud infrastructure that is scalable, secure, and cost-effective. If you are passionate about cloud technology and want to work on a project that has the potential to impact numerous organizations, we want you on our team!",
-    "comments": [],
+    "content": "Join us in building next-generation cloud solutions.",
+    "comments": [
+      {"userID": "USER#5566", "comment": "Looking forward to this!", "timestamp": "2024-09-25T10:00:00Z"}
+    ],
+    "applicants": [
+      { "name": "신청자21", "status": "승인", "skills": ["AWS", "DevOps"] },
+      { "name": "신청자22", "status": "반려", "skills": ["Azure", "Kubernetes"] },
+      { "name": "신청자23", "status": "승인", "skills": ["Google Cloud", "Terraform"] }
+    ],
     "postStatus": true,
-    "timestamp": "2024-09-25T10:00:00Z",
+    "timestamp": "2024-09-22T10:00:00Z",
     "savedFeed": false
   }
 ]
+
+
+
 
 
 

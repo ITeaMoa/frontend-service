@@ -125,7 +125,7 @@ const ApplyPage = ({}) => {
             </Detail>
           
             <Detail>
-                <Label>마감일  &nbsp; &nbsp;  |</Label> {new Date(project.deadline).toLocaleDateString()}
+                <Label>마감일자  &nbsp; |</Label> {new Date(project.deadline).toLocaleDateString()}
             </Detail>
             <Detail>
                 <Label>진행 기간 |</Label> {project.period}개월
@@ -262,20 +262,6 @@ const Title = styled.div`
   }
 `;
 
-// const LikeButton = styled.button`
-//   position: absolute;
-//   left: 75%;
-//   padding: 4px 8px;
-//   top:5%;
-//   background:#C4C4C4;
-//   border: none;
-//   border-radius: 24px;
-//   cursor: pointer;
-//   color: white;
-//   font-size: 20px;
-//   font-weight: bold;
-  
-// `;
 
 const Post = styled.div`
 
@@ -314,8 +300,8 @@ const Detail = styled.div`
 `;
 
 const Label = styled.span`
-    color: gray; /* 텍스트 색상 회색으로 변경 */
-    width: 100px; /* 고정 너비 설정 (필요에 따라 조정) */
+    color: gray; 
+    width: 100px; 
 
 `;
 

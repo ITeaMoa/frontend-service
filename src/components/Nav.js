@@ -89,7 +89,9 @@ const option3 = [
   }, [toggleActive]);
 
   const handleToggleChange = () => {
-    setToggleActive(!toggleActive); // 토글 상태 변경
+    const newToggleState = !toggleActive;
+    setToggleActive(newToggleState);
+    localStorage.setItem('toggleActive', JSON.stringify(newToggleState)); // 상태 변경 시 로컬 스토리지에 저장
   };
 
 

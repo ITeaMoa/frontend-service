@@ -5,6 +5,9 @@ import styled from 'styled-components';
 const Pagination = ({ currentPage, totalProjects, projectsPerPage, onPageChange}) => {
   const pageCount = Math.ceil(totalProjects / projectsPerPage);
 
+
+
+
   return (
     <StyledPagination
       count={pageCount}
@@ -16,7 +19,6 @@ const Pagination = ({ currentPage, totalProjects, projectsPerPage, onPageChange}
 };
 
 export default Pagination;
-
 
 const StyledPagination = styled(MuiPagination)`
   & .MuiPaginationItem-root {
@@ -35,3 +37,4 @@ const StyledPagination = styled(MuiPagination)`
     color: #3563E9;
   }
 `;
+

@@ -2,12 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Nav from "../../components/Nav";
 import axios from 'axios';
-// import LikeButton from '../../components/LikeButton';
-import Pagination from '../../components/Pagination';
 import ProjectDetail from '../../components/ProjectDetail';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faUser as regularUser} from '@fortawesome/free-regular-svg-icons';
-import { faHeart } from '@fortawesome/free-solid-svg-icons'; 
 import ProjectListComponent from '../../components/ProjectListComponent';
 
 
@@ -15,7 +10,7 @@ const MyPage = () => {
   const [projects, setProjects] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [projectsPerPage] = useState(5); 
-  const [selectedList, setSelectedList] = useState('');
+  const [selectedList, setSelectedList] = useState('applied');
   const [selectedProject, setSelectedProject] = useState(null);
   const isLoggedIn = true; 
   const showSearch = false;

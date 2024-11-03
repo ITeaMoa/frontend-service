@@ -144,7 +144,7 @@ const ProjectList = styled.div`
   flex-direction: column;
   flex-wrap: wrap;
   // justify-content: center;
-  max-height: 170vh;
+  max-height: 150vh;
   // max-width: 1200px;
 
   @media (max-width: 1200px) {

@@ -12,14 +12,14 @@
     "period": 3,
     "tags": ["ai", "machinelearning"],
     "likesCount": 23,
-    "content": "Looking for AI specialists to join our team in developing a cutting-edge web application.",
+    "content": "Looking for AI specialists to join our team in developing a cutting-edge web application.]",
     "comments": [
       {"userID": "USER#2345", "comment": "Great post!", "timestamp": "2024-09-02T09:00:00Z"}
     ],
     "applicants": [
-      { "name": "신청자1", "status": "승인", "skills": ["AI", "Python"] },
-      { "name": "신청자2", "status": "반려", "skills": ["Machine Learning", "JavaScript"] },
-      { "name": "신청자3", "status": "승인", "skills": ["Deep Learning", "TensorFlow"] }
+      { "name": "신청자1", "status": "승인", "skills": ["AI", "Python"], "field": "백엔드" },
+      { "name": "신청자2", "status": "반려", "skills": ["Machine Learning", "JavaScript"], "field": "프론트" },
+      { "name": "신청자3", "status": "승인", "skills": ["Deep Learning", "TensorFlow"], "field": "백엔드" }
     ],
     "postStatus": true,
     "timestamp": "2024-09-02T10:00:00Z",
@@ -38,14 +38,14 @@
     "period": 2,
     "tags": ["mobile", "health"],
     "likesCount": 15,
-    "content": "Join us to develop an innovative health tracking app.",
+    "content": "Join us to develop an innovative health tracking app. This project requires skilled mobile developers who can create user-friendly interfaces and implement robust backend systems. We aim to provide users with insights into their health metrics and connect them with healthcare professionals. If you have a passion for mobile technology and want to make a real difference in people's lives, this project is for you! Together, we can build a platform that enhances health monitoring and promotes a healthier lifestyle.",
     "comments": [
       {"userID": "USER#3456", "comment": "Sounds exciting!", "timestamp": "2024-09-05T10:00:00Z"}
     ],
     "applicants": [
-      { "name": "신청자4", "status": "승인", "skills": ["React Native", "Java"] },
-      { "name": "신청자5", "status": "반려", "skills": ["Flutter", "Dart"] },
-      { "name": "신청자6", "status": "승인", "skills": ["Swift", "iOS Development"] }
+      { "name": "신청자4", "status": "승인", "skills": ["React Native", "Java"], "field": "프론트" },
+      { "name": "신청자5", "status": "반려", "skills": ["Flutter", "Dart"], "field": "디자이너" },
+      { "name": "신청자6", "status": "승인", "skills": ["Swift", "iOS Development"], "field": "프론트" }
     ],
     "postStatus": true,
     "timestamp": "2024-09-03T10:00:00Z",
@@ -64,13 +64,13 @@
     "period": 6,
     "tags": ["commerce", "webdevelopment"],
     "likesCount": 30,
-    "content": "Looking for full-stack developers to build a new e-commerce platform.",
+    "content": "Looking for full-stack developers to build a new e-commerce platform that will revolutionize online shopping. This project involves creating a seamless user experience, integrating payment gateways, and ensuring the security of transactions. If you are passionate about e-commerce solutions and have experience in both front-end and back-end development, we want you on our team. Together, we can create a platform that connects buyers and sellers effectively and efficiently, making online shopping enjoyable for everyone.",
     "comments": [],
     "applicants": [
-      { "name": "신청자7", "status": "승인", "skills": ["Node.js", "MongoDB"] },
-      { "name": "신청자8", "status": "반려", "skills": ["React", "Redux"] },
-      { "name": "신청자9", "status": "승인", "skills": ["Ruby on Rails", "PostgreSQL"] },
-      { "name": "신청자10", "status": "반려", "skills": ["PHP", "Laravel"] }
+      { "name": "신청자7", "status": "승인", "skills": ["Node.js", "MongoDB"], "field": "백엔드" },
+      { "name": "신청자8", "status": "반려", "skills": ["React", "Redux"], "field": "프론트" },
+      { "name": "신청자9", "status": "승인", "skills": ["Ruby on Rails", "PostgreSQL"], "field": "백엔드" },
+      { "name": "신청자10", "status": "반려", "skills": ["PHP", "Laravel"], "field": "백엔드" }
     ],
     "postStatus": true,
     "timestamp": "2024-09-10T10:00:00Z",
@@ -89,14 +89,14 @@
     "period": 4,
     "tags": ["ai", "chatbot"],
     "likesCount": 12,
-    "content": "Seeking AI developers to create a customer service chatbot.",
+    "content": "Seeking AI developers to create a customer service chatbot that will enhance user experience.eeking AI developers to create a cuseeking AI developers to create a cuseeking AI developers to create a cuseeking AI developers to create a cuseeking AI developers to create a cuseeking AI developers to create a cus ",
     "comments": [
       {"userID": "USER#3344", "comment": "I would love to join!", "timestamp": "2024-09-12T10:00:00Z"}
     ],
     "applicants": [
-      { "name": "신청자11", "status": "반려", "skills": ["Natural Language Processing", "Python"] },
-      { "name": "신청자12", "status": "승인", "skills": ["Machine Learning", "JavaScript"] },
-      { "name": "신청자13", "status": "반려", "skills": ["Chatbot Framework", "Node.js"] }
+      { "name": "신청자11", "status": "반려", "skills": ["Natural Language Processing", "Python"], "field": "프론트" },
+      { "name": "신청자12", "status": "승인", "skills": ["Machine Learning", "JavaScript"], "field": "백엔드" },
+      { "name": "신청자13", "status": "반려", "skills": ["Chatbot Framework", "Node.js"], "field": "디자이너" }
     ],
     "postStatus": true,
     "timestamp": "2024-09-08T10:00:00Z",
@@ -115,12 +115,12 @@
     "period": 5,
     "tags": ["blockchain", "security"],
     "likesCount": 18,
-    "content": "Developing a secure voting system using blockchain technology.",
+    "content": "Developing a secure voting system using blockchain technology. This project involves creating a decentralized voting system that ensures the integrity and transparency of the voting process. If you are interested in blockchain technology and want to work on a project that has the potential to revolutionize the way we vote, we would love to have you on our team. Together, we can create a system that is secure, transparent, and easy to use.",
     "comments": [],
     "applicants": [
-      { "name": "신청자14", "status": "승인", "skills": ["Blockchain", "Smart Contracts"] },
-      { "name": "신청자15", "status": "반려", "skills": ["Ethereum", "Solidity"] },
-      { "name": "신청자16", "status": "승인", "skills": ["Hyperledger", "Security"] }
+      { "name": "신청자14", "status": "승인", "skills": ["Blockchain", "Smart Contracts"], "field": "백엔드" },
+      { "name": "신청자15", "status": "반려", "skills": ["Ethereum", "Solidity"], "field": "프론트" },
+      { "name": "신청자16", "status": "승인", "skills": ["Hyperledger", "Security"], "field": "디자이너" }
     ],
     "postStatus": true,
     "timestamp": "2024-09-15T10:00:00Z",
@@ -139,49 +139,19 @@
     "period": 8,
     "tags": ["gaming", "augmentedreality"],
     "likesCount": 25,
-    "content": "We are looking for creative developers passionate about gaming.",
+    "content": "We are looking for creative developers passionate about gaming. ",
     "comments": [
       {"userID": "USER#7788", "comment": "I love AR games!", "timestamp": "2024-09-20T10:00:00Z"}
     ],
     "applicants": [
-      { "name": "신청자17", "status": "승인", "skills": ["Unity", "C#"] },
-      { "name": "신청자18", "status": "반려", "skills": ["Unreal Engine", "C++"] },
-      { "name": "신청자19", "status": "승인", "skills": ["ARKit", "ARCore"] },
-      { "name": "신청자20", "status": "반려", "skills": ["Game Design", "3D Modeling"] }
+      { "name": "신청자17", "status": "승인", "skills": ["Unity", "C#"], "field": "백엔드" },
+      { "name": "신청자18", "status": "반려", "skills": ["Augmented Reality", "3D Modeling"], "field": "디자이너" }
     ],
     "postStatus": true,
-    "timestamp": "2024-09-18T10:00:00Z",
-    "savedFeed": false
-  },
-  {
-    "pk": "FEED#5684",
-    "sk": "FEEDTYPE#PROJECT",
-    "entityType": "Feed",
-    "creatorID": "USER#7890",
-    "title": "Next-Gen Cloud Solutions",
-    "recruitmentNum": 5,
-    "applyNum": 0,
-    "deadline": "2024-12-31T10:00:00Z",
-    "place": "서초동",
-    "period": 6,
-    "tags": ["cloud", "infrastructure"],
-    "likesCount": 20,
-    "content": "Join us in building next-generation cloud solutions.",
-    "comments": [
-      {"userID": "USER#5566", "comment": "Looking forward to this!", "timestamp": "2024-09-25T10:00:00Z"}
-    ],
-    "applicants": [
-      { "name": "신청자21", "status": "승인", "skills": ["AWS", "DevOps"] },
-      { "name": "신청자22", "status": "반려", "skills": ["Azure", "Kubernetes"] },
-      { "name": "신청자23", "status": "승인", "skills": ["Google Cloud", "Terraform"] }
-    ],
-    "postStatus": true,
-    "timestamp": "2024-09-22T10:00:00Z",
+    "timestamp": "2024-09-20T10:00:00Z",
     "savedFeed": false
   }
 ]
-
-
 
 
 

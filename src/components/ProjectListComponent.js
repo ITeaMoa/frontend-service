@@ -1,12 +1,12 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
-import {  faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
+import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 import styled from 'styled-components';
 import Pagination from './Pagination';
 
+const ProjectListComponent = ({ selectedList, currentProjects, handleProjectClick, projectsPerPage, totalProjects, paginate, currentPage }) => {
 
-const ProjectListComponent = ({ selectedList, currentProjects, handleProjectClick, projectsPerPage, totalProjects, paginate }) => {
   return (
     <Container>
       <ProjectList>
@@ -29,22 +29,52 @@ const ProjectListComponent = ({ selectedList, currentProjects, handleProjectClic
               ))}
             </Tags>
             <Button onClick={() => handleProjectClick(project)}>
-              {project.isCompleted ? '모집완료' : '모집 현황'}
+            {project.isCompleted ? '모집완료' : '모집 현황'}
             </Button>
+          </ProjectItem>
+        ))}
+
+        {selectedList === 'applied' && currentProjects.map((project, index) => (
+          <ProjectItem key={project.pk} isLast={index === currentProjects.length - 1}>
+            <ProjectHeader>
+              <HeaderItem>
+                <FontAwesomeIcon icon={regularUser} size="15px" />
+                <span>{project.creatorID}</span>
+                <StyledFontAwesomeIcon2 icon={faHeart} />
+                <span>{project.likesCount}</span>
+              </HeaderItem>
+            </ProjectHeader>
+            <p>{project.title}</p>
+            <Tags>
+              {project.tags.map((tag, index) => (
+                <Tag key={index}>{tag}</Tag>
+              ))}
+            </Tags>
+            <Button2>
+              {project.isCompleted ? '모집완료' : '신청 취소'}
+              {/* <Button2>
+              {project.status === 'accepted' ? '합격 취소' : project.status === 'applied' ? '신청 취소' : '반려'}
+            </Button2> */}
+            </Button2>
+            <AdditionalInfo>
+              <span>지원 분야 | 백엔드</span>
+              <span>모집 현황 | {project.applyNum} / {project.recruitmentNum}</span>
+              <span>마감 일자 | {new Date(project.deadline).toLocaleDateString()}</span>
+              <span>진행 기간 | {project.period}개월</span>
+            </AdditionalInfo>
           </ProjectItem>
         ))}
       </ProjectList>
 
       <Pagination 
+        currentPage={currentPage}
         projectsPerPage={projectsPerPage} 
         totalProjects={totalProjects} 
         paginate={paginate} 
-        onPageChange={paginate}
       />
     </Container>
   );
 };
-
 export default ProjectListComponent;
 
 const Container = styled.div`
@@ -59,8 +89,11 @@ const ProjectList = styled.div`
   padding-bottom: 0px;
   border: 2px solid #A0DAFB;
   border-radius: 20px;
-  width: 140%;
+  width:50vw;
+  max-width: 800px; 
+  overflow-x: auto;
 `;
+
 
 const ProjectItem = styled.div`
   border-bottom: ${(props) => (props.isLast ? 'none' : '2px solid #A0DAFB')};
@@ -75,6 +108,8 @@ const ProjectItem = styled.div`
     font-weight: bold;
     font-size: 18px;
   }
+
+
 `;
 
 const ProjectHeader = styled.div`
@@ -101,6 +136,15 @@ const StyledFontAwesomeIcon = styled(FontAwesomeIcon)`
   background-color: #BDBDBD;
   border-radius: 50%;
   padding:  4px;
+`;
+
+const StyledFontAwesomeIcon2 = styled(FontAwesomeIcon)`
+  color: red;
+  size: 15px;
+  background-color: #BDBDBD;
+  border-radius: 50%;
+  padding: 4px;
+  margin-left: 10px;
 `;
 
 
@@ -138,3 +182,45 @@ const Button = styled.button`
 `;
 
 
+const Button2 = styled.button`
+  position: absolute;
+  background-color: #3563E9;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  right: 15px;
+  top:20px;
+
+  &:hover {
+    background-color: #a0dafb;
+  }
+`;
+
+
+// const Button2 = styled.button`
+//   background-color: ${({ status }) => {
+//     if (status === 'accepted') return 'green';
+//     if (status === 'applied') return 'blue';
+//     return 'grey';
+//   }};
+//   color: white;
+//   border: none;
+//   padding: 10px;
+//   border-radius: 5px;
+// `;
+
+
+const AdditionalInfo = styled.div`
+  position: absolute;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  font-size: 12px;
+  color: #666;
+  right: 15px;
+  bottom: 30px;
+  
+`;

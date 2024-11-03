@@ -2,10 +2,14 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment } from '@fortawesome/free-solid-svg-icons';
+import Pagination from './Pagination'; 
 
 const ProjectDetail = ({ project, onBack }) => {
     const [visibleButtons, setVisibleButtons] = useState({});
     const [clickedButtons, setClickedButtons] = useState({});
+    const [selectedField, setSelectedField] = useState('전체');
+    const [currentPage, setCurrentPage] = useState(1);
+    const applicantsPerPage = 5; // Number of applicants per page
 
     const applicants = project.applicants || [];
 
@@ -19,6 +23,30 @@ const ProjectDetail = ({ project, onBack }) => {
             ...prevState,
             [applicant.name]: newStatus
         }));
+    };
+
+    const handleTagClick = (tag) => {
+        console.log(`Filtering applicants by tag: ${tag}`);
+        
+    };
+
+    const handleFieldClick = (field) => {
+        setSelectedField(field);
+    };
+
+    const filteredApplicants = selectedField === '전체'
+        ? project.applicants
+        : project.applicants.filter(applicant => applicant.field === selectedField);
+
+    // Calculate the current applicants to display
+    const indexOfLastApplicant = currentPage * applicantsPerPage;
+    const indexOfFirstApplicant = indexOfLastApplicant - applicantsPerPage;
+    const currentApplicants = filteredApplicants.slice(indexOfFirstApplicant, indexOfLastApplicant);
+
+    const totalPages = Math.ceil(filteredApplicants.length / applicantsPerPage);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
     };
 
     return (
@@ -45,22 +73,37 @@ const ProjectDetail = ({ project, onBack }) => {
                             <Tag key={index}>{tag}</Tag>
                         ))}
                     </Tags>
-                <BackButton onClick={onBack}>목록</BackButton>
-                <Button>모집완료</Button>
+                <ButtonContainerHorizontal>
+                    <BackButton onClick={onBack}>목록</BackButton>
+                    <Button>모집완료</Button>
+                </ButtonContainerHorizontal>
             </LeftSection>
             <RightSection>
                 <ApplicationStatus>
-                    <h3>신청현황</h3>
-                    {applicants.length > 0 ? (
-                        applicants.map((applicant, index) => (
+                    <HeaderContainer>
+                        <h3>신청현황</h3>
+                        <FieldButtons>
+                            {['전체', '백엔드', '프론트', '디자이너'].map(field => (
+                                <FieldButton 
+                                    key={field} 
+                                    onClick={() => handleFieldClick(field)}
+                                    $isSelected={selectedField === field}
+                                >
+                                    {field}
+                                </FieldButton>
+                            ))}
+                        </FieldButtons>
+                    </HeaderContainer>
+                    {currentApplicants.length > 0 ? (
+                       currentApplicants.map((applicant, index) => (
                             <Applicant key={index}>
                                 <FontAwesomeIcon icon={faComment} style={{ color: '#62b9ec', fontSize: '24px' }} />
                                 <ApplicantName>{applicant.name}</ApplicantName>
-                                <Tags>
+                                <Tags2>
                                     {applicant.skills.map((skill, idx) => (
                                         <Tag key={idx}>{skill}</Tag>
                                     ))}
-                                </Tags>
+                                </Tags2>
                                 <ButtonContainer>
                                     {visibleButtons[applicant.name] === "승인" ? (
                                         <StatusButton 
@@ -98,7 +141,16 @@ const ProjectDetail = ({ project, onBack }) => {
                     ) : (
                         <p>신청자가 없습니다.</p>
                     )}
+                    
                 </ApplicationStatus>
+                <StyledPaginationContainer>
+                <Pagination 
+                    totalProjects={filteredApplicants.length}
+                    currentPage={currentPage} 
+                    projectsPerPage={applicantsPerPage} 
+                    onPageChange={handlePageChange} 
+                />
+                </StyledPaginationContainer>
             </RightSection>
         </DetailContainer>
     );
@@ -112,25 +164,33 @@ const DetailContainer = styled.div`
 `;
 
 const LeftSection = styled.div`
-    flex: 1; /* 왼쪽 섹션이 가능한 모든 공간을 차지 */
+    flex: 1;
     margin-right: 20px; 
     max-height: 400px;
     border: 2px solid #A0DAFB;
     border-radius: 20px;
     padding: 40px;
     background: white;
-    padding-bottom:20px;
-    padding-top:20px;
+    padding-bottom: 20px;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+
 `;
 
 const RightSection = styled.div`
+    position: relative;
     flex: 0 0 300px; /* 오른쪽 섹션의 고정 너비 설정 */
     min-width: 600px;
-    min-height:600px;
+    min-height: 600px;
     border: 2px solid #A0DAFB;
     border-radius: 20px;
     padding: 20px;
+    padding-bottom: 5px;
     background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
 `;
 
@@ -157,6 +217,15 @@ const Tags = styled.div`
     margin-top:1px;
     display: flex;
     flex-wrap: wrap;
+    
+`;
+
+
+const Tags2 = styled.div`
+    margin-top:1px;
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 36px;
     
 `;
 
@@ -239,10 +308,9 @@ const Button = styled.button`
     color: white;
     border: none;
     padding: 10px 20px;
-    margin-top: 20px; 
     border-radius: 5px;
     cursor: pointer;
-    float: right;
+
 `;
 
 const BackButton = styled.button`
@@ -252,10 +320,50 @@ const BackButton = styled.button`
     padding: 10px 30px;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 20px; 
-    float:left;
 `;
 
+const ButtonContainerHorizontal = styled.div`
+    display: flex;
+    justify-content: space-between; 
+    margin-top: 30px; 
+`;
+
+const HeaderContainer = styled.div`
+    display: flex;
+    align-items: center;
+    margin-top: -20px;
+    margin-bottom: 15px;
+`;
+
+const FieldButtons= styled.div`
+    display: flex;
+    gap: 20px;
+    margin-left: 65px;
+    margin-top: -5px;
+    
+`;
+
+const FieldButton = styled.span`
+    cursor: pointer;
+    border: 2px solid ;
+    background-color: ${(props) => (props.$isSelected ?  '#a0dafb' : ' white')};
+    border-radius: 30px 30px 1px 30px; //반시계 ㅔ방향
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-color: rgba(160, 218, 251);
+    color: ${(props) => (props.$isSelected ?  'white' : '  #0A8ED9')};
+    font-weight: ${(props) => (props.$isSelected ?  'bold' : 'normal')};
+    font-size: 16px;
+    padding: 5px 20px; 
+
+`;
+
+const StyledPaginationContainer = styled.div`
+    position: absolute;
+    margin-top: 500px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: -20px;
+`;
 
 export default ProjectDetail;
 

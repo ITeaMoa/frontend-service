@@ -68,11 +68,13 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
               <FontAwesomeIcon icon={regularUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
               {project.creatorID}
             </ProjectOwner>
-            <LikeButton 
-              initialLiked={project.liked} 
-              initialLikesCount={project.likesCount} 
-              onLikeChange={(newLiked, newLikesCount) => handleLikeClick(index, newLiked, newLikesCount)} // 내부 상태 업데이트
-            />
+            <LikeButtonWrapper>
+              <LikeButton 
+                initialLiked={project.liked} 
+                initialLikesCount={project.likesCount} 
+                onLikeChange={(newLiked, newLikesCount) => handleLikeClick(index, newLiked, newLikesCount)} // 내부 상태 업데이트
+              />
+            </LikeButtonWrapper>
             <ProjectTitle>{project.title}</ProjectTitle>
               <Content>
                 {project.content.length > 400 ? `${project.content.slice(0, 350)}...` : project.content}
@@ -87,7 +89,7 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
                 모집인원 | {project.recruitmentNum}명
               </Details>
               <Details>
-                마감일 | {new Date(project.deadline).toLocaleDateString()}
+                마감일자 | {new Date(project.deadline).toLocaleDateString()}
               </Details>
             </ProjectInfo>
             <ApplyButton onClick={() => handleProjectClick(project)}>신청하기</ApplyButton>
@@ -110,14 +112,24 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
 const SectionWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
-  width: calc(100vw / 2 + 100px);
+  align-items: center; //가운데ㅐ 정렬
+  width: calc(100% / 2 + 100px);
+  justify-content: center;
+  max-width: 1200px;
+  // width: 100%; 
+  margin: 0 auto;
   margin-top: 50px;
   margin-bottom: 40px;
-  align-items:center; //수평정렬
 
 
-  @media (max-width: 1200px  {
+ 
+  // max-width: 1200px; // Set a maximum width for the section
+  // width: 100%; // Allow the section to take full width up to the max-width
+  // margin: 0 auto; // Center the section horizontally
+  // margin-top: 50px;
+  // margin-bottom: 40px;
+
+  @media (max-width: 1200px) {
     margin-top: 40px;
     margin-bottom: 30px;
   }
@@ -143,32 +155,39 @@ const ProjectList = styled.div`
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
-  // justify-content: center;
   max-height: 150vh;
-  // max-width: 1200px;
+  
+  @media (max-width: 1600px) {
+
+    max-height: 200vh;
+  
+  }
 
   @media (max-width: 1200px) {
-    width: 80%;
+    max-height: 200vh;
+  
   }
 
   @media (max-width: 768px) {
-    width: 90%;
+    max-height: 200vh;
   }
 
   @media (max-width: 480px) {
-    width: 100%;
+    max-height: 200vh;
   }
 `;
 
 const ProjectCard = styled.div`
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   border: 2px solid #A0DAFB;
   border-radius: 30px 30px 1px 30px;
   padding: 15px;
-  margin-top:20px;
-  margin-bottom:20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
   margin-right: 30px;
-  // width: 430px;
   width: calc(100%/2 - 50px);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   background-color: white;
@@ -178,23 +197,29 @@ const ProjectCard = styled.div`
 
 
   @media (max-width: 1200px) {
-    width: 350px; 
+    
     max-height: 500px;
   }
 
   @media (max-width: 768px) {
-    width: 300px; 
+   
     margin: 15px 5px;
     max-height: 400px; 
   }
 
   @media (max-width: 480px) {
-    width: 100%;
+
     margin: 10px 0; 
     max-height: 300px; 
   }
 
 
+`;
+
+const LikeButtonWrapper = styled.div`
+  position: absolute;
+  top: 35px;
+  right: 30px;
 `;
 
 const ProjectOwner = styled.div`
@@ -204,19 +229,7 @@ const ProjectOwner = styled.div`
   margin-left: 10px;
 `;
 
-// const ProjectLikes = styled.div`
-//   position: absolute;
-//   border: 1px solid #ddd;
-//   border-radius: 15px;
-//   padding: 2px 2px;
-//   color: white;
-//   font-weight: bold;
-//   background-color: #C4C4C4;
-//   right: 10%;
-//   top:4%;
-//   // transform: translate(300px,-25px);
-//   width: 50px;
-// `;
+
 
 const ProjectTitle = styled.h3`
   font-size: 20px;
@@ -266,10 +279,11 @@ const Details = styled.div`
 `;
 
 const ApplyButton = styled.button`
-  margin-top: 5px;
-  margin-left: 5px;
+  align-self: flex-end; // Aligns the button to the right
+  margin-top: auto; // Pushes the button to the bottom
+  margin-right: 5px;
   border: 1px solid #ddd;
-  border-radius: 15px;
+  border-radius: 14px 14px 1px 14px; 
   padding: 8px;
   width: calc(100% / 4);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -277,30 +291,12 @@ const ApplyButton = styled.button`
   color: white;
   font-weight: bold;
   cursor: pointer;
-  transform: translateX(130px);
-  border-radius: 14px 14px 1px 14px; 
-
   &:hover {
     background-color: #A0DAFB;
   }
 `;
 
-// const Pagination = styled.div`
-//   display: flex;
-//   justify-content: center;
-//   margin-top: 20px;
-// `;
 
-// const PageNumber = styled.button`
-//   color: ${({ active }) => (active ? '#6AB2E1' : 'black')};
-//   margin-top: 40px;
-//   margin-left: 5px;
-//   cursor: pointer;
-//   border: none;
-//   background: none;
-//   font-weight: bold;
-//   font-size: 16px;
-// `;
 
 export default Section2;
 

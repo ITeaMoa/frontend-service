@@ -95,7 +95,7 @@ function Section1( ) {
                 모집인원 | {project.recruitmentNum}명 
                 </Details>
                 <Details>
-                 마감일 | {new Date(project.deadline).toLocaleDateString()}
+                 마감일자 | {new Date(project.deadline).toLocaleDateString()}
               </Details>
             </ProjectInfo>
           </ProjectCard>

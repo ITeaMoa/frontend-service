@@ -172,7 +172,7 @@ const handleTagSelect = (option) => {
 
           <InputWrapper>
 
-          <Label>마감일</Label>
+          <Label>마감일자</Label>
           <Input
             type="date"
             value={deadline}

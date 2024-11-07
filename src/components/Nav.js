@@ -225,19 +225,6 @@ const option3 = [
 export default Nav;
 
 
-// const NavWrapper = styled.nav`
-//   position: fixed;
-//   top: 0;
-//   left: 0;
-//   right: 0;
-//   height: 30%;
-//   background-color: #ffffff;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   z-index: 3;
-// `;
-
 const NavWrapper = styled.nav`
   position: fixed;
   top: 0;
@@ -249,13 +236,12 @@ const NavWrapper = styled.nav`
   justify-content: center;
   align-items: center;
   z-index: 3;
-  transition: height 0.3s ease; /* 부드러운 전환 효과 추가 */
 `;
 
 
 const Logo = styled.div`
   position: absolute;
-  top:1vh;
+  top:1%;
 
   img {
     width: 90%; 

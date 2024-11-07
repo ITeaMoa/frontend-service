@@ -3,14 +3,11 @@ import styled from 'styled-components';
 import Nav from '../../components/Nav';
 import { useNavigate , useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faHeart, faComment } from '@fortawesome/free-solid-svg-icons';
-import {faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons'; 
+import { faArrowLeft,faComment } from '@fortawesome/free-solid-svg-icons';
 import { faUser } from '@fortawesome/free-regular-svg-icons';
 import axios from 'axios';
 import LikeButton from '../../components/LikeButton';
-
-
-
+import Modal from '../../components/Modal'; // 모달 컴포넌트 import
 
 const ApplyPage = ({}) => {
   const navigate = useNavigate(); 
@@ -22,8 +19,10 @@ const ApplyPage = ({}) => {
   const [liked, setLiked] = useState(false);
   const isLoggedIn = true; // 또는 false로 설정하여 로그인 상태를 나타냄
   const showSearch = true;
-
-
+  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
+  const [selectedRole, setSelectedRole] = useState(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [popupMessage, setPopupMessage] = useState(''); // 팝업 메시지 상태
 
   const fetchProjectDetails = async () => {
     try {
@@ -42,8 +41,7 @@ const ApplyPage = ({}) => {
     }
   };
 
- 
- //selectedProject 변수에 items 배열에서 pk와 projectId가 일치하는 첫번째 프로젝트가 저장됨
+  //selectedProject 변수에 items 배열에서 pk와 projectId가 일치하는 첫번째 프로젝트가 저장됨
   //find() 메서드는 배열에서 조건을 만족하는 첫번쨰 요소(items의 [0]) 반환 
   //item : items 배열의 각 요소를 나타냄( 화살표 함수의 매개변수)
 
@@ -51,13 +49,10 @@ const ApplyPage = ({}) => {
     fetchProjectDetails();
   }, [projectId])
   //useEffect : 컴포넌트가 렌더링 된 후에 사이드 이펙트 수행을 위함 . 데이터 fecthing등에 사용됨 
-  //projecId가 변경될 때 마다 실행
+  //projecId가 변경될 때 마 실행
   //첫번째 인자: 실행할 함수 , 두번째 인재 의존성 배열
 
-
-
   const handleLike = () => {
-
     setLiked(prevLiked => {
       const newLikedState = !prevLiked;
       if (project) {
@@ -70,7 +65,6 @@ const ApplyPage = ({}) => {
       return newLikedState; // 새로운 좋아요 상태 반환
     });
   };
-
 
   const handleCommentSubmit = () => {
     if (commentInput.trim() && project) {
@@ -90,12 +84,61 @@ const ApplyPage = ({}) => {
     }
   };
 
-    // 프로젝트가 로딩 중일 때
-    if (!project) {
-      return <Container>Project ID:{projectId}</Container>;
+  // 프로젝트가 로딩 중일 때
+  if (!project) {
+    return <Container>Project ID:{projectId}</Container>;
+  }
+
+  const handleApplyClick = () => {
+    setIsRoleModalOpen(true); // 역할 선택 모달 열기
+  };
+
+  const handleRoleSelect = (role) => {
+    setSelectedRole(role);
+  };
+
+  const handleApplySubmit = async () => {
+    if (!selectedRole) {
+      alert("역할을 선택하세요.");
+      return;
     }
 
+    // 역할 선택 모달 닫기
+    setIsRoleModalOpen(false);
 
+    try {
+      // 선택한 역할을 서버에 전송
+      await postSelectedRole(selectedRole);
+
+      setPopupMessage("제출되었습니다.");
+
+      // 제출 확인 팝업 표시
+      setIsSubmitted(true);
+    } catch (error) {
+      console.error("Submission failed:", error);
+
+      setPopupMessage("제출에 실패했습니다. 다시 시도하세요.");
+      
+      // 제출 확인 팝업 표시
+      setIsSubmitted(true);
+    }
+  };
+
+  // 제출 확인 팝업 닫기 함수
+  const handleCloseSubmissionPopup = () => {
+    setIsSubmitted(false);
+    setPopupMessage(''); // 메시지 초기화
+  };
+
+  // 선택한 역할을 서버에 전송하는 모의 함수
+  const postSelectedRole = async (role) => {
+    try {
+      const response = await axios.post('/api/submitRole', { role });
+      return response.data; // 서버로부터의 응답 데이터 반환
+    } catch (error) {
+      throw new Error('서버 요청 실패');
+    }
+  };
 
   return (
     <>
@@ -121,23 +164,30 @@ const ApplyPage = ({}) => {
                 <Label>모집 구분 |</Label> 프로젝트
             </Detail>
             <Detail>
-                <Label>게시 일자 |</Label> {new Date(project.timestamp).toLocaleDateString()}
+                <Label>게시 일자 |</Label> {project.timestamp ? new Date(project.timestamp).toLocaleDateString() : '정보 없음'}
             </Detail>
           
             <Detail>
-                <Label>마감일자  &nbsp; |</Label> {new Date(project.deadline).toLocaleDateString()}
+                <Label>마감일자   |</Label> {project.deadline ? new Date(project.deadline).toLocaleDateString() : '정보 없음'}
             </Detail>
             <Detail>
-                <Label>진행 기간 |</Label> {project.period}개월
+                <Label>진행 기간 |</Label> {project.period ? `${project.period}개월` : '정보 없음'}
             </Detail>
             <Detail>
-                <Label>진행 장소 |</Label> {project.place}
+                <Label>진행 장소 |</Label> {project.place || '정보 없음'}
             </Detail>
             <Detail>
-                <Label>모집 역할 |</Label> 백엔드(2), 디자이너(1)
+                <Label>모집 역할 |</Label>
+                {project.role && Array.isArray(project.role) ? (
+                  project.role.map((role, index) => (
+                    <span key={index}>{role.name}({role.count})</span>
+                  ))
+                ) : (
+                  <span>역할 정보를 불러오는 중입니다...</span>
+                )}
             </Detail>
             <Detail>
-                <Label>모집 현황 |</Label> {project.applyNum}명 / {project.recruitmentNum}명
+                <Label>모집 현황 |</Label> {project.applyNum ? `${project.applyNum}명 / ${project.recruitmentNum}명` : '정보 없음'}
             </Detail>
             <Detail>
                 <Label>신청자 수 |</Label> 백엔드(3), 디자이너(1)
@@ -151,7 +201,7 @@ const ApplyPage = ({}) => {
             ))}
           </TagsSection>
 
-          <ApplyButton>신청하기</ApplyButton>
+          <ApplyButton onClick={handleApplyClick}>신청하기</ApplyButton>
         
         </Post>
 
@@ -210,6 +260,34 @@ const ApplyPage = ({}) => {
           
         </CommentsSection>
       </Container>
+
+      <Modal isOpen={isRoleModalOpen} onClose={() => setIsRoleModalOpen(false)}>
+        <h3>지원할 역할을 선택하세요</h3>
+        <RoleButtonContainer>
+          {project && project.role ? (
+            project.role.map((role, index) => (
+              <RoleButton
+                key={index}
+                onClick={() => handleRoleSelect(role)}
+                isSelected={selectedRole === role}
+              >
+                {role.name}
+              </RoleButton>
+            ))
+          ) : (
+            <p>역할 정보를 불러오는 중입니다...</p>
+          )}
+        </RoleButtonContainer>
+        <SubmitButton onClick={handleApplySubmit}>제출</SubmitButton>
+      </Modal>
+
+      {/* 제출 결과 팝업 */}
+      {isSubmitted && (
+        <Modal isOpen={isSubmitted} onClose={handleCloseSubmissionPopup}>
+          <h3>{popupMessage}</h3>
+          <CloseButton onClick={handleCloseSubmissionPopup}>Close</CloseButton>
+        </Modal>
+      )}
     </>
   );
 };
@@ -264,9 +342,10 @@ const Title = styled.div`
 
 
 const Post = styled.div`
-
+  display: flex;
+  flex-direction: column;
   justify-content: center;
-  align-items:center;
+  align-items: center;
   width: calc(100% / 2 + 80px);
   transform: translateX(16px);
   margin-top: 100px;
@@ -277,6 +356,7 @@ const Post = styled.div`
   border-radius: 15px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   background-color: white;
+  white-space: nowrap;
 `;
 
 const PostDetails = styled.div`
@@ -284,19 +364,26 @@ const PostDetails = styled.div`
   flex-wrap: wrap;
   width: calc(100% - 120px);
   margin-bottom: 60px;
-  margin-left:100px;
+  justify-content: center;
+  align-items: center;
+  // margin-left:100px;
   gap: 10px;
 `;
 
 const Detail = styled.div`
   flex: 1 1 calc(100%/2 - 100px);
-  min-width: 80px;
+  min-width: 250px;
+  max-width: 400px;
   padding: 10px;
   display: flex;
-  // align-items: center;
-  font-size:17px;
+  align-items: center;
+  font-size: 17px;
   font-weight: bold;
 
+  & > span:first-child {
+    width: 100px;
+    display: inline-block;
+  }
 `;
 
 const Label = styled.span`
@@ -316,23 +403,23 @@ const PostDescription = styled.p`
 `;
 
 const TagsSection = styled.div`
-  margin-top: -20px;
-  margin-left: 100px;
-  display: flex;
+ position: absolute;
+ 
+  bottom: 10%;
+  left: 10%;
+  flex-wrap: wrap;
 `;
 
 const TagButton = styled.button`
-
-  border-radius: 5px;
-  padding: 8px 25px;
-  margin-right:20px;
-  border: 1px solid ;
-  border-radius: 14px 14px 1px 14px; //반시계 ㅔ방향
+  padding: 4px 25px;
+  margin-right: 20px;
+  border: 1px solid;
+  border-radius: 14px 14px 1px 14px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   border-color: rgba(160, 218, 251);
   background-color: white;
-  color: #0A8ED9 ;
-
+  color: #0A8ED9;
+  font-size: 16px;
 `;
 
 
@@ -475,6 +562,53 @@ const CommentButton = styled.button`
   &:hover {
     background-color: #a0dafb;
   }
+`;
+
+const RoleButton = styled.button`
+  padding: 4px 25px;
+  margin-bottom: 10px;
+  border: 1px solid;
+  border-radius: 14px 14px 1px 14px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-color: rgba(160, 218, 251);
+  background-color: ${({ isSelected }) => (isSelected ? 'rgba(160, 218, 251)' : 'white')};
+  color: #0A8ED9;
+  font-size: 16px;
+  width: 50%;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: rgba(160, 218, 251);
+  }
+`;
+
+const RoleButtonContainer = styled.div`
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+`;
+
+const SubmitButton = styled.button`
+  border: none;
+  border-radius: 15px;
+  background-color: #62b9ec;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 10px 20px;
+  margin-top: 30px;
+  margin-bottom: -10px;
+
+  &:hover {
+    background-color: #a0dafb;
+  }
+`;
+
+
+const CloseButton = styled(SubmitButton)`
+  margin-top: 20px; 
 `;
 
 

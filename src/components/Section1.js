@@ -78,12 +78,14 @@ function Section1( ) {
         {popularProjects.slice(0, 3).map((project, index) => (
           <ProjectCard key={index} onClick={() => handleProjectClick(project)}>
             <ProjectOwner> <FontAwesomeIcon icon={regularUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />{project.creatorID}</ProjectOwner>
-            <LikeButton 
-                initialLiked={project.liked} 
-                initialLikesCount={project.likesCount} 
-                onLikeChange={(newLiked, newLikesCount) => handleLikeClick(index, newLiked, newLikesCount)} 
-                buttonStyle="s1"
-              />
+            <LikeButtonWrapper>
+              <LikeButton 
+                  initialLiked={project.liked} 
+                  initialLikesCount={project.likesCount} 
+                  onLikeChange={(newLiked, newLikesCount) => handleLikeClick(index, newLiked, newLikesCount)} 
+                  buttonStyle="s1"
+                />
+            </LikeButtonWrapper>
             <ProjectTitle>{project.title}</ProjectTitle>
             <ProjectInfo>
               <Tags>
@@ -160,22 +162,6 @@ const ProjectOwner = styled.div`
   color: #858585;
 `;
 
-const ProjectLikes = styled.div`
-  border: 1px solid #ddd;
-  padding: 2px 8px;
-  border-radius: 15px;
-  color: white;
-  font-weight: bold;
-  right: 10%;
-  position: absolute;
-  background-color: #C4C4C4;
-  cursor: pointer; 
-  z-index; 10;
-
-  &:hover {
-    background-color: #A0DAFB; 
-  }
-`;
 
 
 const ProjectTitle = styled.div`
@@ -229,5 +215,27 @@ const Details = styled.div`
 
 `;
 
+
+
+const LikeButtonWrapper = styled.div`
+  position: absolute;
+  top: 13px;
+  right: 25px;
+
+  @media (max-width: 1200px) {
+   
+    transform: scale(0.9); // Adjust the scale as needed
+  }
+
+  @media (max-width: 768px) {
+    
+    transform: scale(0.8); // Adjust the scale as needed
+  }
+
+  @media (max-width: 480px) {
+   
+    transform: scale(0.7); // Adjust the scale as needed
+  }
+`;
 
 export default Section1;

@@ -7,7 +7,7 @@ import axios from 'axios';
 import LikeButton from './LikeButton';
 import Pagination from './Pagination';
 
-const Section2 = ({  }) => {
+const Section2 = () => {
   const [allProjects, setAllProjects] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [projectsPerPage] = useState(6); 
@@ -122,13 +122,6 @@ const SectionWrapper = styled.div`
   margin-bottom: 40px;
 
 
- 
-  // max-width: 1200px; // Set a maximum width for the section
-  // width: 100%; // Allow the section to take full width up to the max-width
-  // margin: 0 auto; // Center the section horizontally
-  // margin-top: 50px;
-  // margin-bottom: 40px;
-
   @media (max-width: 1200px) {
     margin-top: 40px;
     margin-bottom: 30px;
@@ -218,8 +211,22 @@ const ProjectCard = styled.div`
 
 const LikeButtonWrapper = styled.div`
   position: absolute;
-  top: 35px;
+  top: 36px;
   right: 30px;
+
+  @media (max-width: 1200px) {
+  
+    transform: scale(0.9);
+
+  @media (max-width: 768px) {
+  
+    transform: scale(0.8); 
+  }
+
+  @media (max-width: 480px) {
+  
+    transform: scale(0.7);
+  }
 `;
 
 const ProjectOwner = styled.div`
@@ -258,6 +265,7 @@ const Tags = styled.div`
   padding-top: 10px;
   margin-bottom: 5px;
   align-items: space-between;
+  
 `;
 
 const Tag = styled.div`
@@ -284,13 +292,14 @@ const ApplyButton = styled.button`
   margin-right: 5px;
   border: 1px solid #ddd;
   border-radius: 14px 14px 1px 14px; 
-  padding: 8px;
-  width: calc(100% / 4);
+  padding: 8px 25px;
+  // width: calc(100% / 4);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   background-color: #62B9EC;
   color: white;
   font-weight: bold;
   cursor: pointer;
+  white-space: nowrap;
   &:hover {
     background-color: #A0DAFB;
   }

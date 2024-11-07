@@ -35,12 +35,10 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
 
     const handleOptionClick = (option) => {
         if (!selectedOptions.includes(option.label)) {
-            if (selectedOptions.length < 8) {
-                setSelectedOptions([...selectedOptions, option.label]);
-                onTagSelect(option); // 선택된 태그 전달
-            }
+            setSelectedOptions([...selectedOptions, option.label]);
+            onTagSelect(option); // Call onTagSelect when an option is selected
         } else {
-            // 이미 선택된 경우에는 선택 해제하지 않음
+            setSelectedOptions(selectedOptions.filter(selected => selected !== option.label));
         }
     };
 
@@ -121,7 +119,11 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
                         filteredOptions.map(option => (
                             <DropdownItem 
                                 key={option.value} 
-                                onClick={() => handleOptionClick(option)} 
+                                onClick={() => {
+                                    if (!showCountButtons) {
+                                        handleOptionClick(option);
+                                    }
+                                }} 
                                 isSelected={selectedOptions.includes(option.label)}
                             >
                                 {option.label}
@@ -129,7 +131,12 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
                                     <CountContainer>
                                         <Button onClick={() => decrementCount(option)}>-</Button>
                                         <Count>{peopleCounts[option.label] || 0}</Count>
-                                        <Button onClick={() => incrementCount(option)}>+</Button>
+                                        <Button onClick={() => {
+                                            incrementCount(option);
+                                            if (!selectedOptions.includes(option.label)) {
+                                                setSelectedOptions([...selectedOptions, option.label]);
+                                            }
+                                        }}>+</Button>
                                     </CountContainer>
                                 )}
                             </DropdownItem>

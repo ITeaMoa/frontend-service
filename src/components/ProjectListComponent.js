@@ -1,15 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 import styled from 'styled-components';
 import Pagination from './Pagination';
 
+
 const ProjectListComponent = ({ selectedList, currentProjects, handleProjectClick, projectsPerPage, totalProjects, paginate, currentPage }) => {
+  const [isFading, setIsFading] = useState(false);
+
+
+  const handleButtonClick = (project) => {
+    setIsFading(true);
+    setTimeout(() => {
+      handleProjectClick(project);
+      setIsFading(false);
+      
+    }, 100);
+  };
 
   return (
     <Container>
-      <ProjectList>
+      <ProjectList isFading={isFading}>
         {selectedList === 'written' && currentProjects.map((project, index) => (
           <ProjectItem key={project.pk} isLast={index === currentProjects.length - 1}>
             <ProjectHeader>
@@ -28,7 +40,7 @@ const ProjectListComponent = ({ selectedList, currentProjects, handleProjectClic
                 <Tag key={index}>{tag}</Tag> 
               ))}
             </Tags>
-            <Button onClick={() => handleProjectClick(project)}>
+            <Button onClick={() => handleButtonClick(project)}>
             {project.isCompleted ? '모집완료' : '모집 현황'}
             </Button>
           </ProjectItem>
@@ -66,6 +78,7 @@ const ProjectListComponent = ({ selectedList, currentProjects, handleProjectClic
         ))}
       </ProjectList>
 
+
       <Pagination 
         currentPage={currentPage}
         projectsPerPage={projectsPerPage} 
@@ -92,7 +105,10 @@ const ProjectList = styled.div`
   width:50vw;
   max-width: 800px; 
   overflow-x: auto;
+  transition: transform 0.5s ease;
+  transform: ${(props) => (props.isFading ? 'translateX(100%)' : 'translateX(0)')};
 `;
+
 
 
 const ProjectItem = styled.div`
@@ -102,14 +118,12 @@ const ProjectItem = styled.div`
   padding-bottom: 30px;
   margin-bottom: 15px;
   position: relative;
+  text-align: left; 
 
-  p {
-    text-align: left;
+  p{
     font-weight: bold;
     font-size: 18px;
   }
-
-
 `;
 
 const ProjectHeader = styled.div`
@@ -129,7 +143,6 @@ const HeaderItem = styled.div`
   }
 `;
 
-
 const StyledFontAwesomeIcon = styled(FontAwesomeIcon)`
   color: red;
   size: 15px;
@@ -146,7 +159,6 @@ const StyledFontAwesomeIcon2 = styled(FontAwesomeIcon)`
   padding: 4px;
   margin-left: 10px;
 `;
-
 
 const Tags = styled.div`
   display: flex;  
@@ -181,7 +193,6 @@ const Button = styled.button`
   }
 `;
 
-
 const Button2 = styled.button`
   position: absolute;
   background-color: #3563E9;
@@ -197,20 +208,6 @@ const Button2 = styled.button`
     background-color: #a0dafb;
   }
 `;
-
-
-// const Button2 = styled.button`
-//   background-color: ${({ status }) => {
-//     if (status === 'accepted') return 'green';
-//     if (status === 'applied') return 'blue';
-//     return 'grey';
-//   }};
-//   color: white;
-//   border: none;
-//   padding: 10px;
-//   border-radius: 5px;
-// `;
-
 
 const AdditionalInfo = styled.div`
   position: absolute;

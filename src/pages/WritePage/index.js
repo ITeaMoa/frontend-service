@@ -16,23 +16,49 @@ const WritePage = () => {
   const [participants, setParticipants] = useState(0);
   const [deadline, setDeadline] = useState('');
   const [progress, setProgress] = useState('');
-  const [projectRole, setProjectRole] = useState('');
   const [description, setDescription] = useState('');
   const isLoggedIn = true; 
   const showSearch = false;
 
+  const [selectedRoles, setSelectedRoles] = useState([]); // State to store selected roles with counts
+
+  const handleRoleSelect = (role, count) => {
+    const updatedRoles = selectedRoles.filter(r => r.role !== role);
+    setSelectedRoles([...updatedRoles, { role, count }]);
+  };
 
   const handleSave = () => {
-  
-    console.log({
+    const dataToSend = {
       title,
-      participants,
+      recruitmentNum: participants,
       deadline,
-      progress,
-      projectRole,
-      description,
+      place: progress,
+      role: selectedRoles,
+      tags: selectedTags,
+      content: description,
+      // ... 다른 필드들 ...
+    };
+
+    fetch('YOUR_BACKEND_API_URL', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(dataToSend),
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Success:', data);
+      navigate('/MainPage'); // 성공적으로 저장된 후 메인 페이지로 리다이렉트
+    })
+    .catch((error) => {
+      console.error('Error:', error);
     });
-    navigate('/'); 
   };
 
   const option1 = [
@@ -194,7 +220,12 @@ const handleTagSelect = (option) => {
           <InputWrapper>   
           <Label>모집 역할</Label>
   
-          <Dropdown options={option2} placeholder={"프론트엔드,백엔드..."} showCountButtons={true}/>
+          <Dropdown 
+            options={option2} 
+            placeholder={"프론트엔드,백엔드..."} 
+            showCountButtons={true}
+            onRoleSelect={handleRoleSelect} // Pass the handler to Dropdown
+          />
           </InputWrapper>
 
 
@@ -209,8 +240,8 @@ const handleTagSelect = (option) => {
 
         <TagsSection>
            {/* 선택된 태그 버튼 표시 */}
-           {selectedTags.map(tag => (
-                <TagButton key={tag}>{tag}</TagButton>
+           {selectedTags.map((tag, index) => (
+                <TagButton key={`${tag}-${index}`}>{tag}</TagButton>
             ))}
             <TagAdd onClick={handleAddTagClick}> + 태그 추가하기</TagAdd>
            
@@ -218,7 +249,7 @@ const handleTagSelect = (option) => {
                 <Dropdown 
                     options={option3} 
                     placeholder={"태그를 선택하시오"}
-                    onTagSelect={handleTagSelect} 
+                    onTagSelect={handleTagSelect} // 태그 선택을 처리하기 위해 이 prop을 전달
                 />
             </Modal>
           </TagsSection>
@@ -256,6 +287,8 @@ const WriteWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  // margin-bottom: 100px;
+  padding-bottom: 100px;
   
 `;
 
@@ -283,7 +316,7 @@ const Form = styled.div`
 
 const Label = styled.label`
   font-weight: bold;
-  min-width: 60px; /* 라벨의 최소 너비 설정 */
+  min-width: 60px;
   text-align: left;
 `;
 
@@ -317,7 +350,6 @@ const InputField = styled.input`
 
 const Container = styled.div`
   // display: flex;
-  // flex-wrap: wrap;
   justify-content: space-between;
   width: calc(100% / 2 + 80px); 
   transform: translateX(16px);
@@ -343,7 +375,7 @@ const Title = styled.label`
 const InputBox = styled.div`
   display: flex;
   flex-wrap: wrap; /* 여러 행을 가능하게 설정 */
-  justify-content: center; /* 균등 배치 */
+  justify-content: center;
   width: calc(100% - 40px); 
   margin-bottom: 10px;
   margin-top: 35px;
@@ -351,12 +383,11 @@ const InputBox = styled.div`
 `;
 
 const InputWrapper = styled.div`
-  flex: 1 1 calc(50% - 20px); /* 2열로 배치하고 여백 고려 */
-  min-width: 200px; 
-  max-width 400px;
+  flex: 1 1 300px; /* 2열로 배치하고 여백 고려 */
+  min-width: 200px; //기본적으로는 300px가자면서 min이 300px가 됨
+  max-width: 400px;
   display: flex;
   align-items: center;
-  // flex-direction: column;
    margin-bottom: 20px;
    margin-top:10px;
    margin-left: 20px;
@@ -375,18 +406,18 @@ const Input = styled.input`
   margin-top:10px;
   
   &::placeholder {
-    color: grey; /* 플레이스홀더 색상 */
+    color: grey;
 }
 
 &:focus {
-    border-color: #007BFF; /* 포커스 시 테두리 색상 변경 */
-    outline: none; /* 포커스 시 외곽선 제거 */
+    border-color: #007BFF;/
+    outline: none; 
 }
 
 
 `;
 const Body = styled.div`
-    width: calc(100% / 2 + 90px); /* 여백을 고려하여 조정 */
+    width: calc(100% / 2 + 90px); 
 
 `;
 
@@ -456,6 +487,7 @@ const TextArea = styled.textarea`
 
 
 const Submit = styled.button`
+  position: absolute;
   display: flex;
   gap:20px;
   border: none;
@@ -463,8 +495,9 @@ const Submit = styled.button`
   background: transparent;
   cursor: none;
   margin-left:780px;
-  margin-top:80px;
+  margin-top:100px;
   margin-bottom: 20px;
+  bottom: 0px;
 
   }
 `;
@@ -480,6 +513,7 @@ const SaveButton = styled.button`
   cursor: pointer;
   padding: 10px 30px;
   border-radius: 15px 15px 1px 15px; //반시계 ㅔ방향
+  white-space: nowrap;
 
   &:hover {
     background-color: #a0dafb;

@@ -165,6 +165,15 @@ const option3 = [
           <FilterIcon onClick={() => setIsModalOpen(true)}>
             <FontAwesomeIcon icon={faSlidersH} />
           </FilterIcon>
+
+          <Modal isOpen={isModalOpen} onClose={closeModal} modalType="nav">
+            <TagSelector
+              options={option3}
+              placeholder={"태그를 선택하시오"}
+              onTagSelect={handleTagSelect}
+              selectedTags={selectedTags}
+            />
+          </Modal>
         </SearchContainer>
       )}
 
@@ -205,16 +214,6 @@ const option3 = [
                 </TagContainer>
             )}
 
-    
-            <Modal isOpen={isModalOpen} onClose={closeModal} modalType="nav" >
-                <TagSelector
-                    options={option3}
-                    placeholder={"태그를 선택하시오"}
-                    onTagSelect={handleTagSelect} // 선택된 태그 전달
-                    selectedTags={selectedTags} 
-                />
-            </Modal>
-
       </NavWrapper>
 
          
@@ -233,31 +232,29 @@ const NavWrapper = styled.nav`
   height: ${({ showSearch }) => (showSearch ? '30%' : '20%')}; 
   background-color: #ffffff;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 3;
+  padding: 10px;
 `;
 
 
 const Logo = styled.div`
-  position: absolute;
-  top:1%;
-
+ margin-top: -50px;
   img {
     width: 90%; 
     max-width: 300px;
-    height: auto; 
+    // height: auto; 
     cursor: pointer;
   }
 `;
 
-
-
 const ToggleContainer = styled.div`
   display: flex;
   align-items: center;
-  position: absolute;
-  top: 12vh;
+  margin-top: -50px;
+  margin-bottom: 10px;
   cursor: pointer;
   font-size: 24px;
 `;
@@ -300,12 +297,12 @@ const ToggleSwitch = styled.input`
 `;
 
 const SearchContainer = styled.div`
-  position: absolute;
-  display: flex;
+  position: relative;
+  display: flex;  
   align-items: center;
-  margin-right: 20px; 
-  margin-top: 100px;
+  margin-top: 10px;
   width: 400px; 
+
 `;
 
 const SearchInput = styled.input`
@@ -405,29 +402,29 @@ const ResetButton = styled.button`
 `;
 
 
-const TagAdd = styled.div`
-  margin: 20px;
-  padding: 10px 15px;
-  border-radius: 15px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  border-color: rgba(160, 218, 251);
-  background-color: white;
-  border: 1px solid #ddd;
-  color: grey;
-  font-size: 14px;
-  cursor: pointer;
-  z-index: 15;
+// const TagAdd = styled.div`
+//   margin: 20px;
+//   padding: 10px 15px;
+//   border-radius: 15px;
+//   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+//   border-color: rgba(160, 218, 251);
+//   background-color: white;
+//   border: 1px solid #ddd;
+//   color: grey;
+//   font-size: 14px;
+//   cursor: pointer;
+//   z-index: 15;
 
-  @media (max-width: 768px) {
-    font-size: 12px;
-    padding: 4px 8px;
-  }
+//   @media (max-width: 768px) {
+//     font-size: 12px;
+//     padding: 4px 8px;
+//   }
 
-  &:hover {
-    color: #62B9EC; // hover 상태에서 텍스트 색상 변경
-    background-color: #F3F0F0; // 필요에 따라 배경색도 변경할 수 있음
-  }
-`;
+//   &:hover {
+//     color: #62B9EC; // hover 상태에서 텍스트 색상 변경
+//     background-color: #F3F0F0; // 필요에 따라 배경색도 변경할 수 있음
+//   }
+// `;
 
 
 const UserActions = styled.div`
@@ -501,3 +498,4 @@ const UserIcon = styled.div`
   }
 
 `;
+

@@ -33,7 +33,7 @@ return (
 };
 
 const ModalOverlay = styled.div`
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     right: 0;
@@ -42,22 +42,18 @@ const ModalOverlay = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; // 모달을 최상위로 표시
+    z-index: 1000;
     border: 2px solid #ddd;
-    border-radius: 30px 30px 1px 30px; 
-
+    border-radius: 30px 30px 1px 30px;
 
     ${({ modalType }) => modalType === 'nav' && `
-
-    background: none;
-    border: none;
-    width: 100vw;
-    height: 100vh;
-    margin-top: -4.5%;
-
-
-    
-`}
+        // top: 100%;
+        background: none;
+        border: none;
+        width: 100%;
+        height: auto;
+        margin-top: 232px;
+    `}
 `;
 
 const ModalContent = styled.div`
@@ -68,16 +64,21 @@ const ModalContent = styled.div`
     width: 310px;
     border: 2px solid #62B9EC;
 
-
     ${({ modalType }) => modalType === 'nav' && `
-        width:  600px;
-        height: 300px;
+        width: 600px;
+        height: auto;
         margin-right: 20px;
         padding: 20px;
+    `}
 
+     ${({ modalType }) => modalType === 'apply' && `
+        width: 500px;
+        height: 400px;
+        margin-right: 20px;
+        padding: 20px;
+    `}
 
     
-    `}
 `;
 
 const CloseButton = styled.button`

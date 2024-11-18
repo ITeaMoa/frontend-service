@@ -453,19 +453,25 @@ const Popup = styled.div`
     padding: 20px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     text-align: center;
+    width: 500px;
+    height: 300px;
 `;
 
 const PopupHeader = styled.h3`
-    margin: 0 0 10px;
+    margin: 80px 0 10px;
+    font-size: 24px;
 `;
 
 const PopupMessage = styled.p`
-    margin: 10px 0;
+    margin: 30px 0;
 `;
 
 const PopupButtonContainer = styled.div`
     display: flex;
-    justify-content: space-around;
+    // justify-content: space-around;
+    // margin-top: 50px;
+    margin-top: -20px;
+    justify-content: center;
 `;
 
 const PopupButton = styled.button`
@@ -475,6 +481,8 @@ const PopupButton = styled.button`
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
+    margin-left: 15px;
+    margin-right: 15px;
 
     &:hover {
         background-color: #2851E3;

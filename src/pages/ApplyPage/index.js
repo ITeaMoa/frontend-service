@@ -261,9 +261,10 @@ const ApplyPage = ({}) => {
         </CommentsSection>
       </Container>
 
-      <Modal isOpen={isRoleModalOpen} onClose={() => setIsRoleModalOpen(false)}>
-        <h3>지원할 역할을 선택하세요</h3>
+      <Modal isOpen={isRoleModalOpen} onClose={() => setIsRoleModalOpen(false)} modalType="apply">
+       
         <RoleButtonContainer>
+        <h3>지원할 역할을 선택하세요</h3>
           {project && project.role ? (
             project.role.map((role, index) => (
               <RoleButton
@@ -297,11 +298,13 @@ export default ApplyPage;
 const Container = styled.div`
   position: relative;
   padding: 20px;
-  margin-top: calc(100vh - 42%);
+  // margin-top: calc(100vh - 640px);
+  margin-top: 250px;
   min-height: calc(100vh - 250px);
   display: flex;
   flex-direction: column;
   align-items: center;
+  // justify-content: flex-start;
 `;
 
 const BackButton = styled.button`
@@ -565,8 +568,8 @@ const CommentButton = styled.button`
 `;
 
 const RoleButton = styled.button`
-  padding: 4px 25px;
-  margin-bottom: 10px;
+  padding: 24px 25px;
+  margin-bottom: 20px;
   border: 1px solid;
   border-radius: 14px 14px 1px 14px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -574,8 +577,10 @@ const RoleButton = styled.button`
   background-color: ${({ isSelected }) => (isSelected ? 'rgba(160, 218, 251)' : 'white')};
   color: #0A8ED9;
   font-size: 16px;
-  width: 50%;
   white-space: nowrap;
+  font-size: 18px;
+  min-width: 60%;
+  padding: 10px 20px;
 
   &:hover {
     background-color: rgba(160, 218, 251);
@@ -583,11 +588,17 @@ const RoleButton = styled.button`
 `;
 
 const RoleButtonContainer = styled.div`
-  margin-top: 50px;
+  // margin-top: -20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
+  justify-content: space-between;
+
+  h3{
+    font-size: 24px;
+    margin-bottom: 40px;
+  }
 `;
 
 const SubmitButton = styled.button`
@@ -598,8 +609,8 @@ const SubmitButton = styled.button`
   font-weight: bold;
   cursor: pointer;
   padding: 10px 20px;
-  margin-top: 30px;
-  margin-bottom: -10px;
+  margin-top: 70px;
+
 
   &:hover {
     background-color: #a0dafb;

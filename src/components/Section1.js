@@ -94,7 +94,7 @@ function Section1( ) {
                 ))}
               </Tags>
               <Details>
-                모집인원 | {project.recruitmentNum}명 
+                모집현황 | {project.recruitmentNum}명 
                 </Details>
                 <Details>
                  마감일자 | {new Date(project.deadline).toLocaleDateString()}

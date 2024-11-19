@@ -10,8 +10,7 @@ const SearchFeed = ({ itemList, setSearchResults }) => {
   const navigate = useNavigate();
 
   const handleProjectClick = (project) => {
-    const modifiedPk = project.pk.replace('#', '');
-    navigate(`/ApplyPage/${modifiedPk}`);
+    navigate(`/ApplyPage/${project.pk}`);
   };
 
   const handleLikeClick = (index, newLiked, newLikesCount) => {

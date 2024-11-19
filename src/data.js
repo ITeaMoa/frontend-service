@@ -1,7 +1,7 @@
 const items = [
     {
-      "pk": "FEED#5678",
-      "sk": "FEEDTYPE#PROJECT",
+      "pk": "FEED5678",
+      "sk": "FEEDTYPEPROJECT",
       "entitytype": "Feed",
       "creatorid": "USER#1234",
       "title": "ITeaMoa Web Application Project",
@@ -20,8 +20,8 @@ const items = [
       "savedfeed": false
     },
     {
-      "pk": "FEED#5679",
-      "sk": "FEEDTYPE#PROJECT",
+      "pk": "FEED5679",
+      "sk": "FEEDTYPEPROJECT",
       "entitytype": "Feed",
       "creatorid": "USER#5678",
       "title": "Mobile App Development",
@@ -40,8 +40,8 @@ const items = [
       "savedfeed": false
     },
     {
-      "pk": "FEED#5680",
-      "sk": "FEEDTYPE#PROJECT",
+      "pk": "FEED5680",
+      "sk": "FEEDTYPEPROJECT",
       "entitytype": "Feed",
       "creatorid": "USER#9101",
       "title": "E-commerce Platform Development",
@@ -58,8 +58,8 @@ const items = [
       "savedfeed": false
     },
     {
-      "pk": "FEED#5681",
-      "sk": "FEEDTYPE#PROJECT",
+      "pk": "FEED5681",
+      "sk": "FEEDTYPEPROJECT",
       "entitytype": "Feed",
       "creatorid": "USER#1122",
       "title": "AI Chatbot for Customer Service",
@@ -78,8 +78,8 @@ const items = [
       "savedfeed": false
     },
     {
-      "pk": "FEED#5682",
-      "sk": "FEEDTYPE#PROJECT",
+      "pk": "FEED5682",
+      "sk": "FEEDTYPEPROJECT",
       "entitytype": "Feed",
       "creatorid": "USER#3344",
       "title": "Blockchain-Based Voting System",
@@ -96,8 +96,8 @@ const items = [
       "savedfeed": false
     },
     {
-      "pk": "FEED#5683",
-      "sk": "FEEDTYPE#PROJECT",
+      "pk": "FEED5683",
+      "sk": "FEEDTYPEPROJECT",
       "entitytype": "Feed",
       "creatorid": "USER#5566",
       "title": "Augmented Reality Game Development",
@@ -117,8 +117,8 @@ const items = [
     },
     // 추가된 항목들
     {
-      "pk": "FEED#5684",
-      "sk": "FEEDTYPE#PROJECT",
+      "pk": "FEED5684",
+      "sk": "FEEDTYPEPROJECT",
       "entitytype": "Feed",
       "creatorid": "USER#7890",
       "title": "Next-Gen Cloud Solutions",

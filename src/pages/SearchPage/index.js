@@ -7,6 +7,7 @@ import axios from 'axios';
 
 const SearchPage = () => {
     const [searchResults, setSearchResults] = useState([]);
+    const [selectedTags, setSelectedTags] = useState([]); // 선택된 태그 상태
     const showSearch = true;
 
     const useQuery = () => {
@@ -22,6 +23,13 @@ const SearchPage = () => {
             fetchSearchItems(searchTerm);
         }
       }, [searchTerm]);
+
+      // useEffect(() => {
+      //   if (searchTerm) {
+      //     fetchSearchItems(searchTerm);
+      //   }
+      // }, [searchTerm, selectedTags]); // selectedTags 추가
+    
 
 
       const fetchSearchItems = async (searchTerm) => {
@@ -43,11 +51,87 @@ const SearchPage = () => {
         }
       };
       
+      //(태그만)
+      // const fetchSearchItems = async (searchTerm) => {
+      //   try {
+      //     const tags = selectedTags.join(','); // 선택된 태그를 문자열로 변환
+    
+      //     // 태그와 검색어를 기반으로 API 호출
+      //     const response = await axios.get(`http://localhost:8080/main/search-tags?feedType=PROJECT&tags=${encodeURIComponent(tags)}&keyword=${encodeURIComponent(searchTerm)}`);
+    
+      //     // API 호출 결과 설정
+      //     setSearchResults(response.data);
+      //   } catch (error) {
+      //     console.error("Error fetching search items:", error);
+      //   }
+      // };
+    
+      // const handleTagAdd = (tag) => {
+      //   if (!selectedTags.includes(tag)) {
+      //     setSelectedTags((prevTags) => [...prevTags, tag]);
+      //   }
+      // };
+    
+      // const handleTagRemove = (tag) => {
+      //   setSelectedTags((prevTags) => prevTags.filter((t) => t !== tag));
+      // };
+    
+      // const handleResetTags = () => {
+      //   setSelectedTags([]);
+      // };
+
+
+      //합친거 ( 태그 + 키워드)
+      // const fetchSearchItems = async (searchTerm) => {
+      //   try {
+      //     const tags = selectedTags.join(','); // 선택된 태그를 문자열로 변환
+    
+      //     // 태그와 키워드를 기반으로 API 호출
+      //     const tagResponse = await axios.get(`http://localhost:8080/main/search-tags?feedType=PROJECT&tags=${encodeURIComponent(tags)}`);
+      //     const keywordResponse = await axios.get(`http://localhost:8080/main/search-keyword?feedType=PROJECT&keyword=${encodeURIComponent(searchTerm)}`);
+    
+      //     // 두 결과를 결합
+      //     const combinedResults = [...tagResponse.data, ...keywordResponse.data];
+    
+      //     // 결과 상태 업데이트
+      //     setSearchResults(combinedResults);
+      //   } catch (error) {
+      //     console.error("Error fetching search items:", error);
+      //   }
+      // };
+    
+      // const handleTagAdd = (tag) => {
+      //   if (!selectedTags.includes(tag)) {
+      //     setSelectedTags((prevTags) => [...prevTags, tag]);
+      //   }
+      // };
+    
+      // const handleTagRemove = (tag) => {
+      //   setSelectedTags((prevTags) => prevTags.filter((t) => t !== tag));
+      // };
+    
+      // const handleResetTags = () => {
+      //   setSelectedTags([]);
+      // };
+      
 
 
         return (
             <Container>
             <Nav  showSearch={showSearch}/>
+{/* 
+
+            {selectedTags.length > 0 && (
+        <TagContainer>
+          {selectedTags.map((tag) => (
+            <Tag key={tag}>
+              {tag}
+              <CloseButton onClick={() => handleTagRemove(tag)}>X</CloseButton>
+            </Tag>
+          ))}
+          <ResetButton onClick={handleResetTags}>초기화</ResetButton>
+        </TagContainer>
+      )} */}
 
           {searchResults.length > 0 ? (
             <>
@@ -66,7 +150,7 @@ const SearchPage = () => {
   )
 }
 
-export default SearchPage
+export default SearchPage;
 
 
 const Container = styled.div`
@@ -97,3 +181,30 @@ const ResultMessage = styled.p`
 
   color: #777;
 `;
+
+// const TagContainer = styled.div`
+//   display: flex;
+//   flex-wrap: wrap;
+//   margin-bottom: 10px;
+// `;
+
+// const Tag = styled.span`
+//   background-color: #e0e0e0;
+//   border-radius: 4px;
+//   padding: 5px 10px;
+//   margin-right: 5px;
+// `;
+
+// const CloseButton = styled.button`
+//   margin-left: 5px;
+//   background: none;
+//   border: none;
+//   color: red;
+//   cursor: pointer;
+// `;
+
+// const ResetButton = styled.button`
+//   margin-left: 10px;
+//   cursor: pointer;
+// `;
+

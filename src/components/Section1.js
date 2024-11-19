@@ -13,7 +13,7 @@ function Section1( ) {
   const [popularProjects, setPopularProjects] = useState([]);
   //    [ 현재 상태값, 상태 업데이트 함수]
   const navigate = useNavigate(); // useNavigate 훅을 사용하여 navigate 함수 생성
-  const [project, setProject] = useState(null);
+  // const [project, setProject] = useState(null);
 
 
 
@@ -23,6 +23,23 @@ function Section1( ) {
   //   setPopularProjects(response.data);
   // };
 
+
+//실제 연동
+  //  // API에서 인기 프로젝트 데이터를 가져오는 함수
+  //  const fetchPopularProjects = async () => {
+  //   try {
+  //     const response = await axios.get('http://localhost:8080/main/liked?feedType=PROJECT'); // API 호출
+  //     // API 응답에서 받은 데이터 처리 (데이터 구조에 따라 수정 필요)
+  //     const projectsWithLikes = response.data.map(project => ({
+  //       ...project,
+  //       liked: false, // 초기 상태는 좋아요가 눌리지 않은 상태
+  //       likesCount: project.likesCount || 0 // likesCount가 없으면 0으로 초기화
+  //     }));
+  //     setPopularProjects(projectsWithLikes);
+  //   } catch (error) {
+  //     console.error('Error fetching popular projects:', error);
+  //   }
+  // };
 
   const fetchPopularProjects = async () => {
     try {
@@ -39,15 +56,6 @@ function Section1( ) {
     }
   };
 
-  // const fetchPopularProjects = async () => {
-  //   try {
-  //     const response = await axios.get('/api/projects/popular'); // 인기 프로젝트 데이터 요청
-  //     setPopularProjects(response.data);
-  //   } catch (error) {
-  //     console.error('Error fetching popular projects:', error);
-  //   }
-  // };
-
   
   useEffect(() => {
     fetchPopularProjects();
@@ -56,8 +64,7 @@ function Section1( ) {
 
     // 클릭된 프로젝트의 ID를 사용하여 상세 페이지로 이동
   const handleProjectClick = (project) => {
-    const modifiedPk = project.pk.replace('#', ''); // pk에서 # 제거/ React Router의 useParams는 해시를 처리하지 않음
-    navigate(`/ApplyPage/${modifiedPk}`); // 수정된 pk로 상세 페이지로 이동
+    navigate(`/ApplyPage/${project.pk}`); // 수정된 pk로 상세 페이지로 이동
   };
   
   const handleLikeClick = (index, newLiked, newLikesCount) => {

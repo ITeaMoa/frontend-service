@@ -17,7 +17,26 @@ const Section2 = () => {
   //   const response = await axios.get('/data.json');
   //   setAllProjects(response.data);
   // };
-  
+
+
+//실제 연결
+  // const fetchAllProjects = async () => {
+  //   try {
+  //     const response = await axios.get('http://localhost:8080/main?feedType=PROJECT'); // API 호출
+  //     const projectsWithLikes = response.data.map((project, index) => ({
+  //       id: index, // 프로젝트 ID 추가 (또는 실제 ID 사용)
+  //       ...project,
+  //       liked: false, // 초기 상태는 좋아요가 눌리지 않은 상태
+  //       likesCount: project.likesCount || 0 // likesCount가 없으면 0으로 초기화
+  //     }));
+
+  //     setAllProjects(projectsWithLikes);
+  //   } catch (error) {
+  //     console.error('프로젝트 가져오기 실패:', error);
+  //   }
+  // };
+
+
   const fetchAllProjects = async () => {
     const response = await axios.get('/data.json');
     
@@ -36,8 +55,7 @@ const Section2 = () => {
   }, []);
 
   const handleProjectClick = (project) => {
-    const modifiedPk = project.pk.replace('#', '');
-    navigate(`/ApplyPage/${modifiedPk}`);
+    navigate(`/ApplyPage/${project.pk}`);
   };
 
   const handleLikeClick = (index, newLiked, newLikesCount) => {

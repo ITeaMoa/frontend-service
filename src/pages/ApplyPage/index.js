@@ -27,13 +27,13 @@ const ApplyPage = ({}) => {
   const fetchProjectDetails = async () => {
     try {
       // projectId를 'FEED#5678' 형태로 변환
-      const formattedProjectId = projectId.slice(0, 4) + '#' + projectId.slice(4);
+      // const formattedProjectId = projectId;
       
       // 데이터 가져오기
       const response = await axios.get('/data.json');
   
       // 가져온 데이터에서 특정 프로젝트 찾기
-      const selectedProject = response.data.find(item => item.pk === formattedProjectId);
+      const selectedProject = response.data.find(item => item.pk === projectId);
       // 상태 업데이트
       setProject(selectedProject);
     } catch (error) {

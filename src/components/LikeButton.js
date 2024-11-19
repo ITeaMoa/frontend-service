@@ -27,7 +27,11 @@ const handleClick = (e) => {
     if (onLikeChange) {
       onLikeChange(newLiked, newLikesCount); // 이벤트 객체 생략
     }
+
+    
 };
+
+
 
 
 

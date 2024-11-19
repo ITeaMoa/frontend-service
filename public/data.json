@@ -1,7 +1,7 @@
 [
   {
-    "pk": "FEED#5678",
-    "sk": "FEEDTYPE#PROJECT",
+    "pk": "FEED5678",
+    "sk": "FEEDTYPEPROJECT",
     "entityType": "Feed",
     "creatorID": "USER#1234",
     "title": "ITeaMoa Web Application Project",
@@ -31,8 +31,8 @@
     "savedFeed": false
   },
   {
-    "pk": "FEED#5679",
-    "sk": "FEEDTYPE#PROJECT",
+    "pk": "FEED5679",
+    "sk": "FEEDTYPEPROJECT",
     "entityType": "Feed",
     "creatorID": "USER#5678",
     "title": "Mobile App Development",
@@ -62,8 +62,8 @@
     "savedFeed": false
   },
   {
-    "pk": "FEED#5680",
-    "sk": "FEEDTYPE#PROJECT",
+    "pk": "FEED5680",
+    "sk": "FEEDTYPEPROJECT",
     "entityType": "Feed",
     "creatorID": "USER#9101",
     "title": "E-commerce Platform Development",
@@ -92,8 +92,8 @@
     "savedFeed": false
   },
   {
-    "pk": "FEED#5681",
-    "sk": "FEEDTYPE#PROJECT",
+    "pk": "FEED5681",
+    "sk": "FEEDTYPEPROJECT",
     "entityType": "Feed",
     "creatorID": "USER#1122",
     "title": "AI Chatbot for Customer Service",
@@ -123,8 +123,8 @@
     "savedFeed": false
   },
   {
-    "pk": "FEED#5682",
-    "sk": "FEEDTYPE#PROJECT",
+    "pk": "FEED5682",
+    "sk": "FEEDTYPEPROJECT",
     "entityType": "Feed",
     "creatorID": "USER#3344",
     "title": "Blockchain-Based Voting System",
@@ -152,8 +152,8 @@
     "savedFeed": false
   },
   {
-    "pk": "FEED#5683",
-    "sk": "FEEDTYPE#PROJECT",
+    "pk": "FEED5683",
+    "sk": "FEEDTYPEPROJECT",
     "entityType": "Feed",
     "creatorID": "USER#5566",
     "title": "Augmented Reality Game Development",

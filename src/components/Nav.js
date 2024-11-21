@@ -103,9 +103,11 @@ const option3 = [
  //키보드 받기 
   const handleChange = (e) => {
     setSearchValue(e.target.value);
-    // navigate(`/search?q=${e.target.value}`);
-    console.log('e.target.value', e.target.value)
-    
+    // 엔터 키를 눌렀을 때 검색 수행
+    if (e.key === 'Enter') {
+        handleAddButtonClick();
+    }
+    console.log('e.target.value', e.target.value);
   }
 
   const handleAddButtonClick = () => {
@@ -157,6 +159,7 @@ const option3 = [
           <SearchInput
             value={searchValue}
             onChange={handleChange}
+            onKeyDown={handleChange}
             placeholder="Search projects"
           />
           <SearchIcon onClick={handleAddButtonClick}>

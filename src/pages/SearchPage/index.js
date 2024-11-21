@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import { useLocation} from 'react-router-dom';
 import Nav from "../../components/Nav"; 
-import SearchFeed from "../../components/SearchFeed"; 
+import SearchFeed from "./SearchFeed"; 
 import styled from 'styled-components';
 import axios from 'axios';
 
@@ -161,7 +161,7 @@ const Container = styled.div`
   height: 100vh;
   padding: 20px;
   width: 100%;
-  margin-top: 15%;
+  margin-top: 250px;
 
 `;
 

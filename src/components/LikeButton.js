@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons'; 
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
+// import axios from 'axios';
 
 
 const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle }) => {
@@ -28,11 +29,30 @@ const handleClick = (e) => {
       onLikeChange(newLiked, newLikesCount); // 이벤트 객체 생략
     }
 
+    // // API 호출
+    // try {
+    //   const data = {
+    //     pk: pk,
+    //     sk: sk,
+    //     feedType: "PROJECT"
+    //   };
+
+    //   if (newLiked) {
+    //     // 좋아요 추가
+    //     await axios.post('http://localhost:8080/main/like', data);
+    //   } else {
+    //     // 좋아요 제거
+    //     await axios.delete('http://localhost:8080/main/like', { data });
+    //   }
+    // } catch (error) {
+    //   console.error('Error updating like status:', error);
+    //   // 상태를 원래대로 되돌리기
+    //   setLiked(!newLiked);
+    //   setLikesCount(newLikesCount - (newLiked ? 1 : -1));
+    // }
+
     
 };
-
-
-
 
 
   return (

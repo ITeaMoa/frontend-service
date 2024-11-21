@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons'; 
-import LikeButton from './LikeButton';
+import LikeButton from '../../components/LikeButton';
 
 //searchpage에서 itemslist 가져오기
 const SearchFeed = ({ itemList, setSearchResults }) => {
@@ -12,6 +12,17 @@ const SearchFeed = ({ itemList, setSearchResults }) => {
   const handleProjectClick = (project) => {
     navigate(`/ApplyPage/${project.pk}`);
   };
+
+  // // API에서 사용자 좋아요 피드를 가져오는 함수
+  // const fetchUserLikedProjects = async (userId) => {
+  //   try {
+  //     const response = await axios.get(`http://localhost:8080/main/like?userId=${userId}`);
+  //     return response.data; // 사용자가 좋아요를 누른 프로젝트 목록 반환
+  //   } catch (error) {
+  //     console.error('Error fetching liked projects:', error);
+  //     return [];
+  //   }
+  // };
 
   const handleLikeClick = (index, newLiked, newLikesCount) => {
     setSearchResults((prevProjects) => {
@@ -99,7 +110,7 @@ const SectionWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  margin-top: 50px;
+  margin-top: 80px;
   margin-bottom: 40px;
 `;
 

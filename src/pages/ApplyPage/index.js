@@ -110,6 +110,18 @@ const ApplyPage = ({}) => {
       // 선택한 역할을 서버에 전송
       await postSelectedRole(selectedRole);
 
+      // try {
+      //   // 선택한 역할을 서버에 전송
+      //   const applicationData = {
+      //     pk: project.pk, // 프로젝트의 pk를 사용
+      //     sk: "1234", // 사용자 식별자 (예시로 하드코딩, 실제로는 로그인 사용자 ID로 대체)
+      //     part: selectedRole, // 선택한 역할
+      //     feedType: "PROJECT" // 고정된 값
+      //   };
+  
+      //   const response = await axios.post('http://localhost:8080/main/application', applicationData); // API 호출
+  
+
       setPopupMessage("제출되었습니다.");
 
       // 제출 확인 팝업 표시

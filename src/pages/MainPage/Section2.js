@@ -70,6 +70,7 @@ const Section2 = () => {
     navigate(`/ApplyPage/${project.pk}`);
   };
 
+
   const handleLikeClick = (index, newLiked, newLikesCount) => {
     setAllProjects((prevProjects) => {
       const newProjects = [...prevProjects];

@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment } from '@fortawesome/free-solid-svg-icons';
 import Pagination from './Pagination'; 
 
-const ProjectDetail = ({ project, onBack }) => {
+const ProjectDetail = ({ project, onBack}) => {
     const [visibleButtons, setVisibleButtons] = useState({});
     const [clickedButtons, setClickedButtons] = useState({});
     const [selectedField, setSelectedField] = useState('전체');
@@ -28,6 +28,7 @@ const ProjectDetail = ({ project, onBack }) => {
     const indexOfFirstApplicant = indexOfLastApplicant - applicantsPerPage;
     const currentApplicants = filteredApplicants.slice(indexOfFirstApplicant, indexOfLastApplicant);
     const totalPages = Math.ceil(filteredApplicants.length / applicantsPerPage);
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     const handleStatusChange = (applicant, status) => {
         if (disabledButtons[applicant.name]) return; // 비활성화된 버튼이면 함수 종료
@@ -159,10 +160,10 @@ const ProjectDetail = ({ project, onBack }) => {
                 </ApplicationStatus>
                 <StyledPaginationContainer>
                     <Pagination 
+                        currentPage={currentPage}
                         totalProjects={filteredApplicants.length}
-                        currentPage={currentPage} 
                         projectsPerPage={applicantsPerPage} 
-                        onPageChange={handlePageChange} 
+                        onPageChange={paginate} 
                     />
                 </StyledPaginationContainer>
             </RightSection>

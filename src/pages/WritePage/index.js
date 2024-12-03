@@ -30,19 +30,25 @@ const WritePage = () => {
   const handleSave = () => {
     const dataToSend = {
       title,
-      recruitmentNum: participants,
-      deadline,
-      place: progress,
-      role: selectedRoles,
-      tags: selectedTags,
       content: description,
-      // ... 다른 필드들 ...
+      postStatus: true,
+      savedFeed: false,
+      tags: selectedTags,
+      recruitmentNum: participants,
+      deadline: new Date(deadline).toISOString(),
+      place: progress,
+      period: 3,
+      roles: selectedRoles.reduce((acc, role) => {
+        acc[role.role] = role.count;
+        return acc;
+      }, {}),
     };
 
-    fetch('YOUR_BACKEND_API_URL', {
+    fetch('http://localhost:8080/feeds/create?feedType=PROJECT', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'YOUR_API_KEY',
       },
       body: JSON.stringify(dataToSend),
     })
@@ -54,7 +60,7 @@ const WritePage = () => {
     })
     .then(data => {
       console.log('Success:', data);
-      navigate('/MainPage'); // 성공적으로 저장된 후 메인 페이지로 리다이렉트
+      navigate('/MainPage');
     })
     .catch((error) => {
       console.error('Error:', error);

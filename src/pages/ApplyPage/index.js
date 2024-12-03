@@ -26,18 +26,22 @@ const ApplyPage = ({}) => {
 
   const fetchProjectDetails = async () => {
     try {
-      // projectId를 'FEED#5678' 형태로 변환
-      // const formattedProjectId = projectId;
-      
       // 데이터 가져오기
       const response = await axios.get('/data.json');
-  
+
       // 가져온 데이터에서 특정 프로젝트 찾기
       const selectedProject = response.data.find(item => item.pk === projectId);
+      
       // 상태 업데이트
-      setProject(selectedProject);
+      if (selectedProject) {
+        setProject(selectedProject);
+      } else {
+        console.error("Project not found for projectId:", projectId);
+        setProject(null); // 프로젝트가 없을 경우 상태를 null로 설정
+      }
     } catch (error) {
       console.error("Error fetching project details:", error);
+      setProject(null); // 오류 발생 시 상태를 null로 설정
     }
   };
 
@@ -66,21 +70,42 @@ const ApplyPage = ({}) => {
     });
   };
 
-  const handleCommentSubmit = () => {
+  const handleCommentSubmit = async () => {
     if (commentInput.trim() && project) {
+      const timestamp = new Date().toISOString(); // 현재 시간
+
+      // timestamp가 유효한지 확인
+      if (isNaN(Date.parse(timestamp))) {
+        console.error("Invalid timestamp:", timestamp);
+        alert("유효하지 않은 시간입니다.");
+        return;
+      }
+
       const newComment = {
         userid: "USER#1234",  // 현재 사용자 ID
         comment: commentInput,
-        timestamp: new Date().toISOString()  // 현재 시간
+        timestamp: timestamp  // 현재 시간
       };
 
-      // 기존 댓글 배열에 새로운 댓글 추가
-      setProject(prevProject => ({
-        ...prevProject,
-        comments: [...prevProject.comments, newComment]  // 댓글 추가
-      }));
+      try {
+        // API 호출하여 댓글 작성
+        await axios.post(`http://localhost:8080/feeds/${projectId}/PROJECT/comments`, newComment, {
+          headers: {
+            'Authorization': 'API Key' // 여기에 실제 API 키를 입력하세요
+          }
+        });
 
-      setCommentInput('');  // 입력 필드 초기화
+        // 기존 댓글 배열에 새로운 댓글 추가
+        setProject(prevProject => ({
+          ...prevProject,
+          comments: [...prevProject.comments, newComment]  // 댓글 추가
+        }));
+
+        setCommentInput('');  // 입력 필드 초기화
+      } catch (error) {
+        console.error("Error submitting comment:", error);
+        alert("댓글 제출에 실패했습니다."); // 사용자에게 피드백 추가
+      }
     }
   };
 
@@ -235,7 +260,7 @@ const ApplyPage = ({}) => {
         
 
         <CommentsSection>
-          <CommentsTitle>댓글 ({project.comments.length})</CommentsTitle>
+          <CommentsTitle>댓글 ({project ? project.comments.length : 0})</CommentsTitle>
       
            <CommentInputWrapper>
             <CommentInput

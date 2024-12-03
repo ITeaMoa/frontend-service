@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import apiClient from '../../services/api'; 
 
 const SignUpPage = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [authNumber, setAuthNumber] = useState('');
   const [isAuthCodeValid, setIsAuthCodeValid] = useState(false); 
@@ -12,7 +13,6 @@ const SignUpPage = () => {
   const [nickname, setNickname] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const navigate = useNavigate();
 
   // Email Verification Handler
   const handleEmailVerification = async () => {
@@ -103,6 +103,13 @@ const SignUpPage = () => {
         error.response?.data?.message || '회원가입에 실패했습니다. 다시 시도해주세요.'
       );
     }
+
+    console.log('이메일:', email);
+    console.log('인증 번호:', authNumber);
+    console.log('비밀번호:', password);
+    console.log('비밀번호 확인:', confirmPassword);
+    console.log('닉네임:', nickname);
+    navigate('/?showModal=true');
   };
 
   return (
@@ -116,10 +123,8 @@ const SignUpPage = () => {
       </Logo>
       
       <Title>Sign Up</Title>
-
       <Con1>
-        <Form onSubmit={handleSubmit}>
-
+        <Form>
           {/* Email Verification */}
           <Label>이 메 일</Label>
             <InputContainer>
@@ -285,22 +290,26 @@ const Input = styled.input`
 
 const Button = styled.button`
   padding: 10px;
-  background-color: #3563E9 ;
+  background-color: #3563E9;
   color: white;
   border: none;
   cursor: pointer;
   margin-bottom: 10px;
-  margin-top:30px;
-  font-size:14px;
+  margin-top: 30px;
+  font-size: 14px;
   font-weight: bold;
-  padding:14px;
+  padding: 14px;
   border-radius: 30px 30px 1px 30px;
-
+  white-space: nowrap;
+  overflow: hidden; 
+  text-overflow: ellipsis;
 
 
   &:hover {
     color: #aaa;
-  
+  }
+
+
 `;
 
 const InputContainer = styled.div`
@@ -316,10 +325,12 @@ const AuthButton = styled(Button)`
   color: white;
   margin-left: 20px; 
   margin-top: -3px;
+
   
   &:hover {
     background-color: #A0DAFB;
   }
+
   
 `;
 

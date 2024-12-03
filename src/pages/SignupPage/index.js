@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import axios from 'axios'; // Import axios
 
 const SignUpPage = () => {
   const [email, setEmail] = useState('');
@@ -8,15 +9,35 @@ const SignUpPage = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [phone, setPhone] = useState('');
   const [nickname, setNickname] = useState('');
+  const [message, setMessage] = useState('')
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('이메일:', email);
-    console.log('인증 번호:', authNumber);
-    console.log('비밀번호:', password);
-    console.log('비밀번호 확인:', confirmPassword);
-    console.log('휴대폰 번호:', phone);
-    console.log('닉네임:', nickname);
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent the default form submission
+    console.log("Form submitted");  // Check if this message is logged
+    const signupData = {
+      username: email, // Assuming you want to use email as the username
+      password: password,
+      email: email,
+      nickname: nickname,
+      full_name: `${authNumber} ${phone}`,
+    };
+    console.log("Signup data:", signupData);  // Log the signup data
+    try {
+      // Send a POST request to your Django backend
+      const response = await axios.post("http://localhost:8080/auth/signup", signupData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log('Response:', response.data);
+      setMessage('Signup successful!'); // Set success message
+      // Handle success (e.g., show a success message or redirect)
+    } catch (error) {
+      console.error('Signup failed:', error.response.data);
+      setMessage('Signup failed: ' + (error.response ? error.response.data.error : 'Unknown error.')); // Set error message
+      // Handle error (e.g., show an error message)
+    }
   };
 
   return (
@@ -86,15 +107,11 @@ const SignUpPage = () => {
           required 
         />
         <Button type="submit">가입하기</Button>
+        
 
         </Form>
 
         </Con1>
-
-      
-
-        <Form>
-
        
         <SocialLoginContainer>
         <SocialLogin>
@@ -109,7 +126,6 @@ const SignUpPage = () => {
             <Icon src="/images/네이버 로고 아이콘.png" alt="네이버 아이콘" /> 네이버로 시작하기
           </SocialButton2>
         </SocialLoginContainer>
-      </Form>
     </Container>
   );
 };

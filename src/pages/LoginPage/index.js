@@ -1,22 +1,43 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import {useLocation, useNavigate } from 'react-router-dom';
-
-
+import apiClient from '../../services/api'; // 추가
+import { storeTokens } from '../../services/auth'; //추가
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(''); // 추가
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('이메일:', email);
-    console.log('비밀번호:', password);
-    console.log('ID 저장:', rememberMe);
-  };
 
+    if (!email || !password) {
+      setErrorMessage('이메일과 비밀번호를 입력해주세요.');
+      return;
+    }
+
+    try {
+      // Make API request
+      console.log('check here before apiclient')
+      const response = await apiClient.post('/signin', { email, password });;
+
+      const accessToken = response.data.access_token;
+      const idToken = response.data.id_token;
+      const refreshToken = response.data.refresh_token;
+      console.log('Login successful:', response.data);
+
+      storeTokens(accessToken, idToken, refreshToken, rememberMe);
+
+      // Navigate to another page on successful login
+      navigate('/');
+    } catch (error) {
+      console.error('Login failed:', error);
+      setErrorMessage(error.response?.data?.message || '로그인 실패. 이메일과 비밀번호를 확인해주세요.');
+    }
+  };
 
   const handleAddButtonClick = () => {
     navigate('/SignupPage'); 
@@ -117,7 +138,7 @@ const Form = styled.form`
   width: 25%;
 `;
 
-const Con1 = styled.form`
+const Con1 = styled.div`
   display: flex;
   flex-direction: column;
   border: 2px solid;
@@ -212,7 +233,7 @@ const DividerLine = styled.hr`
 
 `;
 
-const SocialLoginTitle = styled.h2`
+const SocialLoginTitle = styled.div`
   font-size: 20px;
 `;
 

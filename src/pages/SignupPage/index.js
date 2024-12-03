@@ -1,111 +1,207 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom'; 
+import apiClient from '../../services/api'; 
 
 const SignUpPage = () => {
   const [email, setEmail] = useState('');
   const [authNumber, setAuthNumber] = useState('');
+  const [isAuthCodeValid, setIsAuthCodeValid] = useState(false); 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [phone, setPhone] = useState('');
   const [nickname, setNickname] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  // Email Verification Handler
+  const handleEmailVerification = async () => {
+    if (!email) {
+      setErrorMessage('이메일을 입력해주세요.');
+      setSuccessMessage('');
+      return;
+    }
+
+    try {
+      const response = await apiClient.post('/verify/verify-email', { email });
+      setSuccessMessage('인증번호가 이메일로 발송되었습니다.');
+      setErrorMessage('');
+    } catch (error) {
+      setErrorMessage(
+        error.response?.data?.message || '이메일 인증에 실패했습니다. 다시 시도해주세요.'
+      );
+    }
+  };
+
+  // Auth Code Confirmation Handler
+  const handleConfirmAuthCode = async () => {
+    if (!authNumber) {
+      setErrorMessage('인증번호를 입력해주세요.');
+      setSuccessMessage('');
+      return;
+    }
+
+    try {
+      const response = await apiClient.post('/verify/confirm-email', {
+        email,                   
+        verification_code: authNumber, 
+      });
+      setIsAuthCodeValid(true);
+      setSuccessMessage('이메일 인증이 완료되었습니다.');
+      setErrorMessage('');
+    } catch (error) {
+      setIsAuthCodeValid(false);
+      setErrorMessage(
+        error.response?.data?.message || '인증번호 확인에 실패했습니다. 다시 시도해주세요.'
+      );
+    }
+  };
+
+  // Signup Submission Handler
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('이메일:', email);
-    console.log('인증 번호:', authNumber);
-    console.log('비밀번호:', password);
-    console.log('비밀번호 확인:', confirmPassword);
-    console.log('휴대폰 번호:', phone);
-    console.log('닉네임:', nickname);
+    console.log('Submit button clicked'); // Debugging
+
+    if (!isAuthCodeValid) {
+      console.log('Auth code not valid'); // Debugging
+      setErrorMessage('이메일 인증을 먼저 완료해주세요.');
+      setSuccessMessage('');
+      return;
+    }
+
+    if (!nickname) {
+      setErrorMessage('닉네임을 입력해주세요.');
+      return;
+    }
+    
+    if (!password || !confirmPassword) {
+      setErrorMessage('비밀번호를 입력해주세요.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      console.log('Passwords do not match'); // Debugging
+      setErrorMessage('비밀번호가 일치하지 않습니다.');
+      setSuccessMessage('');
+      return;
+    }
+
+    try {
+      console.log('Signup Submit Button Clicked');  // Debugging
+      const payload = { email, nickname, password };
+      const response = await apiClient.post('/signup', payload);
+
+      console.log('Signup successful:', response.data); // Debugging
+      setSuccessMessage('회원가입이 완료되었습니다.');
+      setErrorMessage('');
+
+      // Navigate to Login Page
+      navigate('/LoginPage');
+    } catch (error) {
+      console.error('Signup failed:', error);
+      setErrorMessage(
+        error.response?.data?.message || '회원가입에 실패했습니다. 다시 시도해주세요.'
+      );
+    }
   };
 
   return (
     <Container>
-       <Logo>
-      <img
-          alt=" Logo"
+      <Logo>
+        <img
+          alt="Logo"
           src="/images/logo1.png"
-        onClick={() => (window.location.href = "/")}/>
+          onClick={() => (window.location.href = '/')}
+        />
       </Logo>
-
+      
       <Title>Sign Up</Title>
 
-    <Con1>
-      <Form onSubmit={handleSubmit}>
-       
-        <Label>이 메 일</Label>
-        <InputContainer>
-          <Input 
-            type="email" 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            placeholder="이메일 입력" 
-            required 
-          />
-          <AuthButton type="button">인증번호 발송</AuthButton>
-        </InputContainer>
-          
-        <Label>인 증 번 호</Label>
-        <Input 
-          type="text" 
-          value={authNumber} 
-          onChange={(e) => setAuthNumber(e.target.value)} 
-          placeholder="인증번호 입력" 
-          required 
-        />
-        <Label>비밀번호</Label>
-        <Input 
-          type="password" 
-          value={password} 
-          onChange={(e) => setPassword(e.target.value)} 
-          placeholder="비밀번호 입력" 
-          required 
-        />
-        <Label>비밀번호 확인</Label>
-        <Input 
-          type="password" 
-          value={confirmPassword} 
-          onChange={(e) => setConfirmPassword(e.target.value)} 
-          placeholder="비밀번호를 다시 입력해주세요." 
-          required 
-        />
-        <Label>휴 대 폰 번 호</Label>
-        <Input 
-          type="tel" 
-          value={phone} 
-          onChange={(e) => setPhone(e.target.value)} 
-          placeholder="휴대폰 번호 입력" 
-          required 
-        />
-        <Label>닉 네 임</Label>
-        <Input 
-          type="text" 
-          value={nickname} 
-          onChange={(e) => setNickname(e.target.value)} 
-          placeholder="닉네임 입력" 
-          required 
-        />
-        <Button type="submit">가입하기</Button>
+      <Con1>
+        <Form onSubmit={handleSubmit}>
 
+          {/* Email Verification */}
+          <Label>이 메 일</Label>
+            <InputContainer>
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="이메일 입력"
+                required
+              />
+              <AuthButton type="button" onClick={handleEmailVerification}>
+                인증번호 발송
+              </AuthButton>
+            </InputContainer>
+
+          {/* Email Confirmation */}
+          <Label>인 증 번 호</Label>
+            <InputContainer>
+              <Input
+                type="text"
+                value={authNumber}
+                onChange={(e) => setAuthNumber(e.target.value)}
+                placeholder="인증번호 입력"
+                required
+              />
+              <AuthButton 
+                type="button" 
+                onClick={handleConfirmAuthCode}
+                disabled={!email} // Disable if email is empty or API is processing
+                >
+                인증번호 확인
+              </AuthButton>
+            </InputContainer>
+
+          {/* Signup Form */}
+            <Label>비 밀 번 호</Label>
+            <Input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="비밀번호 입력"
+              required
+            />
+            <Label>비밀번호 확인</Label>
+            <Input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="비밀번호를 다시 입력해주세요."
+              required
+              style={{ borderColor: confirmPassword && password !== confirmPassword ? 'red' : '#ccc' }}
+            />
+            <HelperText>영문 대/소문자와 숫자, 특수문자를 조합하여 12~18자내</HelperText>
+            {confirmPassword && password !== confirmPassword && <span style={{ color: 'red' }}>비밀번호가 일치하지 않습니다.</span>}
+            
+            <Label>닉 네 임</Label>
+            <Input
+              type="text"
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+              placeholder="닉네임 입력"
+              required
+            />
+            <Button
+              type="submit"
+              disabled={!isAuthCodeValid || !email || !nickname || password !== confirmPassword}
+            > 가입하기 </Button>
         </Form>
+      </Con1>
 
-        </Con1>
-
-      
-
-        <Form>
-
-       
+      {/* Social Login */}
+      <Form>
         <SocialLoginContainer>
-        <SocialLogin>
-        <DividerLine />
-        <SocialLoginTitle>소셜 로그인</SocialLoginTitle>
-        <DividerLine />
-        </SocialLogin>  
-        <SocialButton1 yellow>
+          <SocialLogin>
+            <DividerLine />
+            <SocialLoginTitle>소셜 로그인</SocialLoginTitle>
+            <DividerLine />
+          </SocialLogin>
+          <SocialButton1 yellow="true">
             <Icon src="/images/pngwing.com.png" alt="카카오톡 아이콘" /> 카카오로 시작하기
           </SocialButton1>
-          <SocialButton2 >
+          <SocialButton2>
             <Icon src="/images/네이버 로고 아이콘.png" alt="네이버 아이콘" /> 네이버로 시작하기
           </SocialButton2>
         </SocialLoginContainer>
@@ -114,8 +210,8 @@ const SignUpPage = () => {
   );
 };
 
-export default SignUpPage;
 
+export default SignUpPage;
 
 const Container = styled.div`
   display: flex;
@@ -125,9 +221,6 @@ const Container = styled.div`
   height: 100vh;
   margin-top:200px;
 `;
-
-
-
 
 const Logo = styled.div`
   position: absolute;
@@ -149,7 +242,7 @@ const Form = styled.form`
 
 
 
-const Con1 = styled.form`
+const Con1 = styled.div`
   display: flex;
   flex-direction: column;
   margin-top:10px;
@@ -247,7 +340,7 @@ const DividerLine = styled.hr`
 
 `;
 
-const SocialLoginTitle = styled.h2`
+const SocialLoginTitle = styled.div`
   font-size: 20px;
 `;
 
@@ -308,4 +401,10 @@ const Icon = styled.img`
   margin-right: 5px;
   vertical-align: middle;
 
+`;
+
+const HelperText = styled.span`
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 10px;
 `;

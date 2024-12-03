@@ -19,9 +19,13 @@ const ProjectListComponent = ({ selectedList, currentProjects, handleProjectClic
     }, 100);
   };
 
+
   return (
     <Container>
       <ProjectList isFading={isFading}>
+        {selectedList === 'written' && currentProjects.length === 0 && (
+          <p>작성한 프로젝트가 없습니다.</p>
+        )}
         {selectedList === 'written' && currentProjects.map((project, index) => (
           <ProjectItem key={project.pk} isLast={index === currentProjects.length - 1}>
             <ProjectHeader>
@@ -46,6 +50,9 @@ const ProjectListComponent = ({ selectedList, currentProjects, handleProjectClic
           </ProjectItem>
         ))}
 
+        {selectedList === 'applied' && currentProjects.length === 0 && (
+          <p>신청한 프로젝트가 없습니다.</p>
+        )}
         {selectedList === 'applied' && currentProjects.map((project, index) => (
           <ProjectItem key={project.pk} isLast={index === currentProjects.length - 1}>
             <ProjectHeader>
@@ -64,9 +71,6 @@ const ProjectListComponent = ({ selectedList, currentProjects, handleProjectClic
             </Tags>
             <Button2>
               {project.isCompleted ? '모집완료' : '신청 취소'}
-              {/* <Button2>
-              {project.status === 'accepted' ? '합격 취소' : project.status === 'applied' ? '신청 취소' : '반려'}
-            </Button2> */}
             </Button2>
             <AdditionalInfo>
               <span>지원 분야 | 백엔드</span>
@@ -83,7 +87,7 @@ const ProjectListComponent = ({ selectedList, currentProjects, handleProjectClic
         currentPage={currentPage}
         projectsPerPage={projectsPerPage} 
         totalProjects={totalProjects} 
-        paginate={paginate} 
+        onPageChange={paginate} 
       />
     </Container>
   );

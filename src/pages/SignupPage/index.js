@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 const SignUpPage = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [authNumber, setAuthNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [phone, setPhone] = useState('');
   const [nickname, setNickname] = useState('');
 
   const handleSubmit = (e) => {
@@ -15,8 +16,8 @@ const SignUpPage = () => {
     console.log('인증 번호:', authNumber);
     console.log('비밀번호:', password);
     console.log('비밀번호 확인:', confirmPassword);
-    console.log('휴대폰 번호:', phone);
     console.log('닉네임:', nickname);
+    navigate('/?showModal=true');
   };
 
   return (
@@ -32,6 +33,15 @@ const SignUpPage = () => {
 
     <Con1>
       <Form onSubmit={handleSubmit}>
+
+      <Label>닉 네 임</Label>
+        <Input 
+          type="text" 
+          value={nickname} 
+          onChange={(e) => setNickname(e.target.value)} 
+          placeholder="닉네임 입력" 
+          required 
+        />
        
         <Label>이 메 일</Label>
         <InputContainer>
@@ -68,24 +78,12 @@ const SignUpPage = () => {
           onChange={(e) => setConfirmPassword(e.target.value)} 
           placeholder="비밀번호를 다시 입력해주세요." 
           required 
+          style={{ borderColor: confirmPassword && password !== confirmPassword ? 'red' : '#ccc' }}
         />
-        <Label>휴 대 폰 번 호</Label>
-        <Input 
-          type="tel" 
-          value={phone} 
-          onChange={(e) => setPhone(e.target.value)} 
-          placeholder="휴대폰 번호 입력" 
-          required 
-        />
-        <Label>닉 네 임</Label>
-        <Input 
-          type="text" 
-          value={nickname} 
-          onChange={(e) => setNickname(e.target.value)} 
-          placeholder="닉네임 입력" 
-          required 
-        />
-        <Button type="submit">가입하기</Button>
+        {confirmPassword && password !== confirmPassword && <span style={{ color: 'red' }}>비밀번호가 일치하지 않습니다.</span>}
+        
+        {/* <Button type="submit">가입하기</Button> */}
+        <Button type="button" onClick={handleSubmit}>가입하기</Button>
 
         </Form>
 
@@ -192,22 +190,26 @@ const Input = styled.input`
 
 const Button = styled.button`
   padding: 10px;
-  background-color: #3563E9 ;
+  background-color: #3563E9;
   color: white;
   border: none;
   cursor: pointer;
   margin-bottom: 10px;
-  margin-top:30px;
-  font-size:14px;
+  margin-top: 30px;
+  font-size: 14px;
   font-weight: bold;
-  padding:14px;
+  padding: 14px;
   border-radius: 30px 30px 1px 30px;
-
+  white-space: nowrap;
+  overflow: hidden; 
+  text-overflow: ellipsis;
 
 
   &:hover {
     color: #aaa;
-  
+  }
+
+
 `;
 
 const InputContainer = styled.div`
@@ -223,10 +225,12 @@ const AuthButton = styled(Button)`
   color: white;
   margin-left: 20px; 
   margin-top: -3px;
+
   
   &:hover {
     background-color: #A0DAFB;
   }
+
   
 `;
 

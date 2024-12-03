@@ -54,6 +54,12 @@ const ModalOverlay = styled.div`
         height: auto;
         margin-top: 232px;
     `}
+
+     ${({ modalType }) => modalType === 'mypage' && `
+
+        position:fixed;
+      
+    `}
 `;
 
 const ModalContent = styled.div`
@@ -76,6 +82,12 @@ const ModalContent = styled.div`
         height: 400px;
         margin-right: 20px;
         padding: 20px;
+    `}
+
+    ${({ modalType }) => modalType === 'mypage' && `
+        width: 400px;
+    
+      
     `}
 
     

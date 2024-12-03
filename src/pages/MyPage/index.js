@@ -28,6 +28,27 @@ const MyPage = () => {
     fetchProjects();
   }, []);
 
+  // 선택된 목록이 변경될 때 신청 프로젝트를 가져오는 새로운 useEffect
+  useEffect(() => {
+    const fetchAppliedProjects = async () => {
+      if (selectedList === 'applied') {
+        try {
+          const response = await axios.get('http://localhost:8080/feeds/applications?userId=1111', {
+            headers: {
+              'Authorization': 'API Key' // 실제 API 키로 교체하세요
+            }
+          });
+          setProjects(response.data); // 응답 데이터가 예상 형식이라고 가정
+        } catch (error) {
+          console.error("신청 프로젝트를 가져오는 중 오류 발생:", error);
+        }
+      }
+    };
+
+    fetchAppliedProjects();
+  }, [selectedList]); // selectedList에 의존
+
+
   const indexOfLastProject = currentPage * projectsPerPage;
   const indexOfFirstProject = indexOfLastProject - projectsPerPage;
   const currentProjects = projects.slice(indexOfFirstProject, indexOfLastProject);
@@ -151,7 +172,7 @@ const StyledLink = styled.a`
     background-color: rgba(160, 218, 251); 
     color: white; 
   }
-`;;
+`;
 
 
 

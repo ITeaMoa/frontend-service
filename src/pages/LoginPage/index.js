@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import {useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 
 
@@ -10,11 +11,23 @@ const LoginPage = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('이메일:', email);
     console.log('비밀번호:', password);
     console.log('ID 저장:', rememberMe);
+
+    try {
+        const response = await axios.post('http://localhost:8000/signin', {
+            email: email,
+            password: password
+        });
+        console.log('로그인 성공:', response.data);
+        // Navigate to another page or handle successful login
+    } catch (error) {
+        console.error('로그인 실패:', error);
+        // Handle error (e.g., show a message to the user)
+    }
   };
 
 
@@ -95,7 +108,7 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   height: 100vh;
-  marin-top: 100px;
+  margin-top: 90px;
 `;
 
 const Logo = styled.div`
@@ -116,6 +129,7 @@ const Form = styled.form`
 //  align-items:center;
 //  justify-content: center;
   width: 25%;
+
 `;
 
 const Con1 = styled.form`
@@ -126,7 +140,7 @@ const Con1 = styled.form`
   border-color: #A0DAFB;
   border-radius: 30px 30px 1px 30px;
   width: 90%;
-  padding: 20px;
+  padding: 25px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 
 `;

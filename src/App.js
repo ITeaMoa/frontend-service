@@ -1,4 +1,3 @@
-import './App.css';
 import MainPage from "./pages/MainPage";
 import WritePage from "./pages/WritePage";
 import ApplyPage from "./pages/ApplyPage";
@@ -7,7 +6,8 @@ import MyPage from "./pages/MyPage";
 import LoginPage from "./pages/LoginPage";
 import { Outlet, Route, Routes } from 'react-router-dom';
 import SignupPage from './pages/SignupPage';
-// import app from './firebase';
+// import { AuthProvider } from './context/AuthContext'; // 경로를 맞춰주세요
+
 
 const Layout = () => {
   return (
@@ -19,6 +19,7 @@ const Layout = () => {
 
 function App() {
   return (
+    // <AuthProvider>
     <div className="App">
       <Routes>
         <Route path="/" element={<Layout />}>
@@ -33,6 +34,7 @@ function App() {
         </Route>
       </Routes>
     </div>
+  // </AuthProvider>
   );
 }
 

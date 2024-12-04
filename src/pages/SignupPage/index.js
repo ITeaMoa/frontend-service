@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const SignUpPage = () => {
   const navigate = useNavigate();
@@ -9,15 +10,88 @@ const SignUpPage = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [nickname, setNickname] = useState('');
+  const [isAuthNumberSent, setIsAuthNumberSent] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('이메일:', email);
     console.log('인증 번호:', authNumber);
     console.log('비밀번호:', password);
     console.log('비밀번호 확인:', confirmPassword);
     console.log('닉네임:', nickname);
+
     navigate('/?showModal=true');
+  };
+
+  const handleAuthNumberSend = async () => {
+    try {
+        // const token = 'your_token_here'; // Replace with your actual token
+        const response = await axios.post('http://localhost:8000/verify/verify-email', 
+            { email: email }, 
+            { 
+                headers: { 
+                    'Content-Type': 'application/json',
+                    // 'Authorization': `Bearer ${token}` // Add Bearer Token
+                }
+            }
+        );
+        console.log('인증 번호 발송 응답:', response.data);
+        alert('인증번호가 발송되었습니다. 이메일을 확인하세요.');
+        setIsAuthNumberSent(true);
+    } catch (error) {
+        console.error('인증 번호 발송 오류:', error);
+        alert('인증 번호 발송에 실패했습니다. 다시 시도하세요.');
+    }
+  };
+
+  const handleResendCode = async () => {
+    try {
+        const token = 'your_token_here'; // Replace with your actual token
+        const response = await axios.post('http://localhost:8000/verify/resend-code', 
+            { email: email }, 
+            { 
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` // Add Bearer Token
+                }
+            }
+        );
+        console.log('인증 번호 재발송 응답:', response.data);
+        alert('인증번호가 재발송되었습니다. 이메일을 확인하세요.');
+    } catch (error) {
+        console.error('인증 번호 재발송 오류:', error);
+        alert('인증 번호 재발송에 실패했습니다. 다시 시도하세요.');
+    }
+  };
+
+  const handleConfirmEmail = async () => {
+    try {
+        const response = await axios.post('http://localhost:8000/verify/confirm-email', 
+            { email: email, verification_code: authNumber }, 
+            { headers: { 'Content-Type': 'application/json' } }
+        );
+        console.log('인증 응답:', response.data);
+        alert('이메일 인증이 완료되었습니다.');
+    } catch (error) {
+        console.error('이메일 인증 오류:', error);
+        alert('이메일 인증에 실패했습니다. 인증번호를 확인하세요.');
+    }
+  };
+
+  const handleSignup = async () => {
+    try {
+        const response = await axios.post('http://localhost:8000/signup', {
+            email: email,
+            nickname: nickname,
+            password: password,
+        });
+        console.log('회원가입 응답:', response.data);
+        alert('회원가입이 완료되었습니다.');
+        navigate('/?showModal=true'); // Redirect after successful signup
+    } catch (error) {
+        console.error('회원가입 오류:', error);
+        alert('회원가입에 실패했습니다. 다시 시도하세요.');
+    }
   };
 
   return (
@@ -52,10 +126,14 @@ const SignUpPage = () => {
             placeholder="이메일 입력" 
             required 
           />
-          <AuthButton type="button">인증번호 발송</AuthButton>
+          <AuthButton type="button" onClick={isAuthNumberSent ? handleResendCode : handleAuthNumberSend}>
+            {isAuthNumberSent ? '인증번호 재발송' : '인증번호 발송'}
+          </AuthButton>
+  
         </InputContainer>
           
         <Label>인 증 번 호</Label>
+        <InputContainer>
         <Input 
           type="text" 
           value={authNumber} 
@@ -63,6 +141,8 @@ const SignUpPage = () => {
           placeholder="인증번호 입력" 
           required 
         />
+         <AuthButton type="button" onClick={handleConfirmEmail}>인증번호 확인</AuthButton>
+         </InputContainer>
         <Label>비밀번호</Label>
         <Input 
           type="password" 
@@ -83,7 +163,7 @@ const SignUpPage = () => {
         {confirmPassword && password !== confirmPassword && <span style={{ color: 'red' }}>비밀번호가 일치하지 않습니다.</span>}
         
         {/* <Button type="submit">가입하기</Button> */}
-        <Button type="button" onClick={handleSubmit}>가입하기</Button>
+        <Button type="button" onClick={handleSignup}>가입하기</Button>
 
         </Form>
 
@@ -121,7 +201,8 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   height: 100vh;
-  margin-top:200px;
+  margin-top:180px;
+ 
 `;
 
 
@@ -140,9 +221,11 @@ const Logo = styled.div`
 `;
 
 const Form = styled.form`
+
   display: flex;
   flex-direction: column;
   width: 90%;
+
 `;
 
 

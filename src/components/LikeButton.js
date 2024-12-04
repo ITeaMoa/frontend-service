@@ -81,8 +81,8 @@ const handleClick = (e) => {
 
 const Button = styled.div`
   border: 1px solid #ddd;
-  padding: 2px 4px;
-  width: 50px;
+  padding: 2px 8px;
+  // width: 50px;
   border-radius: 15px;
   color: white;
   font-weight: bold;

@@ -129,7 +129,7 @@ const Container = styled.div`
 
 const Logo = styled.div`
   position: absolute;
-  top:1.5%;
+  top:15px;
 
   img {
     width: 90%; 

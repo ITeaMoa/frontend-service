@@ -19,7 +19,12 @@ const MyPage = () => {
     const fetchProjects = async () => {
       try {
         const response = await axios.get('data.json'); 
-        setProjects(response.data);
+        if (response.data && response.data.length > 0) {
+          setProjects(response.data);
+        } else {
+          console.warn("No projects found in data.json");
+          setProjects([]); // 데이터가 없을 경우 빈 배열로 초기화
+        }
       } catch (error) {
         console.error("Error fetching the projects:", error);
       }
@@ -38,7 +43,12 @@ const MyPage = () => {
               'Authorization': 'API Key' // 실제 API 키로 교체하세요
             }
           });
-          setProjects(response.data); // 응답 데이터가 예상 형식이라고 가정
+          if (response.data && response.data.length > 0) {
+            setProjects(response.data); // 응답 데이터가 예상 형식이라고 가정
+          } else {
+            console.warn("No applied projects found");
+            setProjects([]); // 데이터가 없을 경우 빈 배열로 초기화
+          }
         } catch (error) {
           console.error("신청 프로젝트를 가져오는 중 오류 발생:", error);
         }

@@ -72,19 +72,9 @@ const ApplyPage = ({}) => {
 
   const handleCommentSubmit = async () => {
     if (commentInput.trim() && project) {
-      const timestamp = new Date().toISOString(); // 현재 시간
-
-      // timestamp가 유효한지 확인
-      if (isNaN(Date.parse(timestamp))) {
-        console.error("Invalid timestamp:", timestamp);
-        alert("유효하지 않은 시간입니다.");
-        return;
-      }
-
       const newComment = {
-        userid: "USER#1234",  // 현재 사용자 ID
+        userId: "USER#f448fd8c-5061-702c-8c22-3636be5d18c9",  // 현재 사용자 ID (여기에 실제 사용자 ID를 사용하세요)
         comment: commentInput,
-        timestamp: timestamp  // 현재 시간
       };
 
       try {
@@ -103,7 +93,7 @@ const ApplyPage = ({}) => {
 
         setCommentInput('');  // 입력 필드 초기화
       } catch (error) {
-        console.error("Error submitting comment:", error);
+        console.error("댓글 제출 중 오류 발생:", error);
         alert("댓글 제출에 실패했습니다."); // 사용자에게 피드백 추가
       }
     }
@@ -135,7 +125,7 @@ const ApplyPage = ({}) => {
       // 선택한 역할을 서버에 전송
       await postSelectedRole(selectedRole);
 
-      // try {
+      // try { 상언쓰
       //   // 선택한 역할을 서버에 전송
       //   const applicationData = {
       //     pk: project.pk, // 프로젝트의 pk를 사용
@@ -146,6 +136,21 @@ const ApplyPage = ({}) => {
   
       //   const response = await axios.post('http://localhost:8080/main/application', applicationData); // API 호출
   
+
+      // try { 보명님
+      //   // 선택한 역할을 서버에 전송
+      //   const applicationData = {
+      //     userId: "f448fd8c-5061-702c-8c22-3636be5d18c9", // 현재 사용자 ID (여기에 실제 사용자 ID를 사용하세요)
+      //     feedId: projectId, // 프로젝트 ID
+      //     part: selectedRole, // 선택한 역할
+      //   };
+  
+      //   // API 호출
+      //   await axios.post('http://localhost:8080/feeds/apply?feedType=PROJECT', applicationData, {
+      //     headers: {
+      //       'Authorization': 'API Key' // 여기에 실제 API 키를 입력하세요
+      //     }
+      //   });
 
       setPopupMessage("제출되었습니다.");
 

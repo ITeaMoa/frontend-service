@@ -95,11 +95,12 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   height: 100vh;
+  marin-top: 100px;
 `;
 
 const Logo = styled.div`
   position: absolute;
-  top:1.5%;
+  top:15px;
 
   img {
     width: 90%; 

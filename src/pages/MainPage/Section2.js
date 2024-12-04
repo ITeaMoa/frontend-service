@@ -143,7 +143,7 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
 const SectionWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center; //가운데ㅐ 정렬
+  align-items: center;
   width: calc(100% / 2 + 100px);
   justify-content: center;
   max-width: 1200px;

@@ -135,11 +135,13 @@ const SectionWrapper = styled.div`
   border-radius: 30px 30px 1px 30px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   background-color: rgba(160, 218, 251, 0.5);
+
 `;
 
 const SectionTitle = styled.h2`
   font-size: 24px;
   margin-bottom: 20px;
+  text-align: center;
 `;
 
 const ProjectList = styled.div`

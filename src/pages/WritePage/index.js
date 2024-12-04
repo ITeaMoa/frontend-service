@@ -44,7 +44,7 @@ const WritePage = () => {
       }, {}),
     };
 
-    fetch('http://localhost:8080/feeds/create?feedType=PROJECT', {
+    fetch(`http://localhost:8080/feeds/create?feedType=PROJECT&userId=f448fd8c-5061-702c-8c22-3636be5d18c9`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

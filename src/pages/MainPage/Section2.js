@@ -6,12 +6,19 @@ import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 import axios from 'axios';
 import LikeButton from '../../components/LikeButton';
 import Pagination from '../../components/Pagination';
+import Modal from '../../components/Modal';
 
 const Section2 = () => {
   const [allProjects, setAllProjects] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [projectsPerPage] = useState(6); 
   const navigate = useNavigate();
+  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false); // 모달 상태 추가
+  const [selectedRole, setSelectedRole] = useState(null); // 선택된 역할 상태 추가
+  const [project, setProject] = useState(null); // 선택된 프로젝트 상태 추가
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [popupMessage, setPopupMessage] = useState(''); // 팝업 메시지 상태
+
 
   // const fetchAllProjects = async () => {
   //   const response = await axios.get('/data.json');
@@ -88,6 +95,89 @@ const currentProjects = allProjects.slice(indexOfFirstProject, indexOfLastProjec
 
 const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+// const handleApplyClick = (selectedProject) => {
+//   setProject(selectedProject); // 선택된 프로젝트 저장
+//   setIsRoleModalOpen(true); // 역할 선택 모달 열기
+// };
+
+const handleApplyClick = () => {
+  setIsRoleModalOpen(true); // 역할 선택 모달 열기
+};
+
+const handleRoleSelect = (role) => {
+  setSelectedRole(role);
+};
+
+const handleApplySubmit = async () => {
+  if (!selectedRole) {
+    alert("역할을 선택하세요.");
+    return;
+  }
+
+  // 역할 선택 모달 닫기
+  setIsRoleModalOpen(false);
+
+  try {
+    // 선택한 역할을 서버에 전송
+    await postSelectedRole(selectedRole);
+
+    // try { 상언쓰
+    //   // 선택한 역할을 서버에 전송
+    //   const applicationData = {
+    //     pk: project.pk, // 프로젝트의 pk를 사용
+    //     sk: "1234", // 사용자 식별자 (예시로 하드코딩, 실제로는 로그인 사용자 ID로 대체)
+    //     part: selectedRole, // 선택한 역할
+    //     feedType: "PROJECT" // 고정된 값
+    //   };
+
+    //   const response = await axios.post('http://localhost:8080/main/application', applicationData); // API 호출
+
+
+    // try { 보명님
+    //   // 선택한 역할을 서버에 전송
+    //   const applicationData = {
+    //     userId: "f448fd8c-5061-702c-8c22-3636be5d18c9", // 현재 사용자 ID (여기에 실제 사용자 ID를 사용하세요)
+    //     feedId: projectId, // 프로젝트 ID
+    //     part: selectedRole, // 선택한 역할
+    //   };
+
+    //   // API 호출
+    //   await axios.post('http://localhost:8080/feeds/apply?feedType=PROJECT', applicationData, {
+    //     headers: {
+    //       'Authorization': 'API Key' // 여기에 실제 API 키를 입력하세요
+    //     }
+    //   });
+
+    setPopupMessage("제출되었습니다.");
+
+    // 제출 확인 팝업 표시
+    setIsSubmitted(true);
+  } catch (error) {
+    console.error("Submission failed:", error);
+
+    setPopupMessage("제출에 실패했습니다. 다시 시도하세요.");
+    
+    // 제출 확인 팝업 표시
+    setIsSubmitted(true);
+  }
+};
+
+// 제출 확인 팝업 닫기 함수
+const handleCloseSubmissionPopup = () => {
+  setIsSubmitted(false);
+  setPopupMessage(''); // 메시지 초기화
+};
+
+// 선택한 역할을 서버에 전송하는 모의 함수
+const postSelectedRole = async (role) => {
+  try {
+    const response = await axios.post('/api/submitRole', { role });
+    return response.data; // 서버로부터의 응답 데이터 반환
+  } catch (error) {
+    throw new Error('서버 요청 실패');
+  }
+};
+
 
   return (
     <SectionWrapper>
@@ -123,7 +213,7 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
                 마감일자 | {new Date(project.deadline).toLocaleDateString()}
               </Details>
             </ProjectInfo>
-            <ApplyButton onClick={() => handleProjectClick(project)}>신청하기</ApplyButton>
+            <ApplyButton onClick={() => handleApplyClick(project)}>신청하기</ApplyButton>
           </ProjectCard>
         ))}
       </ProjectList>
@@ -136,6 +226,35 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
       
       />
       
+     
+      <Modal isOpen={isRoleModalOpen} onClose={() => setIsRoleModalOpen(false)} modalType="apply">
+       
+        <RoleButtonContainer>
+        <h3>지원할 역할을 선택하세요</h3>
+          {project && project.role ? (
+            project.role.map((role, index) => (
+              <RoleButton
+                key={index}
+                onClick={() => handleRoleSelect(role)}
+                isSelected={selectedRole === role}
+              >
+                {role.name}
+              </RoleButton>
+            ))
+          ) : (
+            <p>역할 정보를 불러오는 중입니다...</p>
+          )}
+        </RoleButtonContainer>
+        <SubmitButton onClick={handleApplySubmit}>제출</SubmitButton>
+      </Modal>
+
+      {/* 제출 결과 팝업 */}
+      {isSubmitted && (
+        <Modal isOpen={isSubmitted} onClose={handleCloseSubmissionPopup}>
+          <h3>{popupMessage}</h3>
+          <CloseButton onClick={handleCloseSubmissionPopup}>Close</CloseButton>
+        </Modal>
+      )}
     </SectionWrapper>
   );
 };
@@ -335,6 +454,70 @@ const ApplyButton = styled.button`
     background-color: #A0DAFB;
   }
 `;
+
+const RoleButton = styled.button`
+  padding: 24px 25px;
+  margin-bottom: 20px;
+  border: 1px solid;
+  border-radius: 14px 14px 1px 14px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-color: rgba(160, 218, 251);
+  background-color: ${({ isSelected }) => (isSelected ? 'rgba(160, 218, 251)' : 'white')};
+  color: #0A8ED9;
+  font-size: 16px;
+  white-space: nowrap;
+  font-size: 18px;
+  min-width: 60%;
+  padding: 10px 20px;
+
+  &:hover {
+    background-color: rgba(160, 218, 251);
+  }
+`;
+
+const RoleButtonContainer = styled.div`
+  // margin-top: -20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+
+  h3{
+    font-size: 24px;
+    margin-bottom: 40px;
+  }
+`;
+
+const SubmitButton = styled.button`
+  border: none;
+  border-radius: 15px;
+  background-color: #62b9ec;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 10px 20px;
+  margin-top: 70px;
+
+
+  &:hover {
+    background-color: #a0dafb;
+  }
+`;
+
+
+const CloseButton = styled(SubmitButton)`
+  margin-top: 20px; 
+`;
+
+
+
+
+
+
+
+
+
 
 
 

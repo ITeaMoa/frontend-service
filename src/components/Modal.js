@@ -45,6 +45,7 @@ const ModalOverlay = styled.div`
     z-index: 1000;
     border: 2px solid #ddd;
     border-radius: 30px 30px 1px 30px;
+    position:fixed;
 
     ${({ modalType }) => modalType === 'nav' && `
         // top: 100%;
@@ -82,6 +83,19 @@ const ModalContent = styled.div`
         height: 400px;
         margin-right: 20px;
         padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-conent: center;
+    `}
+
+     ${({ modalType }) => modalType === 'close' && `
+         display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-conent: center;
+    
+      
     `}
 
     ${({ modalType }) => modalType === 'mypage' && `

@@ -6,6 +6,7 @@ import { faSearch, faSlidersH } from '@fortawesome/free-solid-svg-icons';
 import { faBell as regularBell, faCommentDots as regularComment, faUser as regularUser } from '@fortawesome/free-regular-svg-icons'; 
 import Modal from './Modal';
 import TagSelector from './TagSelector';
+import { useAuth } from '../context/AuthContext'; // AuthContext에서 useAuth 가져오기
 
 
 
@@ -60,6 +61,7 @@ const option3 = [
 
   const [searchValue, setSearchValue] = useState("");
   const navigate = useNavigate();
+  const { logout } = useAuth(); // logout 함수 가져오기
 
   // const [toggleActive, setToggleActive] = useState(false); // 토글 상태 추가
   //로컬 스토리지에서 초기값 가져오기
@@ -138,6 +140,11 @@ const option3 = [
   };
  
 
+  // 로그아웃 버튼 클릭 핸들러
+  const handleLogout = () => {
+    logout(navigate); // logout 호출 시 navigate 전달
+  };
+
   return (
     <NavWrapper showSearch={showSearch}>
       <Logo>
@@ -193,7 +200,7 @@ const option3 = [
             <UserIcon onClick={() => navigate('/MyPage')} className="user">
               <FontAwesomeIcon  icon={regularUser} size="15px" />
             </UserIcon>
-            <LogoutButton>로그아웃</LogoutButton>
+            <LogoutButton onClick={handleLogout}>로그아웃</LogoutButton>
           </>
         ) : (
           <>

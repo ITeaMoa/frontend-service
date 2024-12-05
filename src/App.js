@@ -6,7 +6,7 @@ import MyPage from "./pages/MyPage";
 import LoginPage from "./pages/LoginPage";
 import { Outlet, Route, Routes } from 'react-router-dom';
 import SignupPage from './pages/SignupPage';
-// import { AuthProvider } from './context/AuthContext'; // 경로를 맞춰주세요
+import { AuthProvider } from './context/AuthContext'; // 경로를 맞춰주세요
 
 
 const Layout = () => {
@@ -19,7 +19,7 @@ const Layout = () => {
 
 function App() {
   return (
-    // <AuthProvider>
+    <AuthProvider>
     <div className="App">
       <Routes>
         <Route path="/" element={<Layout />}>
@@ -34,7 +34,7 @@ function App() {
         </Route>
       </Routes>
     </div>
-  // </AuthProvider>
+  </AuthProvider>
   );
 }
 

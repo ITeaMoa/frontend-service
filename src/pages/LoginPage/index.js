@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-
-
+import { useAuth } from '../../context/AuthContext';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,10 +17,7 @@ const LoginPage = () => {
     console.log('ID 저장:', rememberMe);
 
     try {
-        const response = await axios.post('http://localhost:8000/signin', {
-            email: email,
-            password: password
-        });
+        const response = await login(email, password);
         console.log('로그인 성공:', response.data);
         // Navigate to another page or handle successful login
     } catch (error) {
@@ -30,11 +26,9 @@ const LoginPage = () => {
     }
   };
 
-
   const handleAddButtonClick = () => {
     navigate('/SignupPage'); 
   };
-
 
   return (
     <Container>
@@ -140,7 +134,7 @@ const Con1 = styled.form`
   border-color: #A0DAFB;
   border-radius: 30px 30px 1px 30px;
   width: 90%;
-  padding: 25px;
+  padding: 15px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 
 `;

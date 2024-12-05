@@ -320,13 +320,15 @@ const ApplyPage = ({}) => {
           ) : (
             <p>역할 정보를 불러오는 중입니다...</p>
           )}
+         
         </RoleButtonContainer>
         <SubmitButton onClick={handleApplySubmit}>제출</SubmitButton>
+       
       </Modal>
 
       {/* 제출 결과 팝업 */}
       {isSubmitted && (
-        <Modal isOpen={isSubmitted} onClose={handleCloseSubmissionPopup}>
+        <Modal isOpen={isSubmitted} onClose={handleCloseSubmissionPopup}  modalType="close">
           <h3>{popupMessage}</h3>
           <CloseButton onClick={handleCloseSubmissionPopup}>Close</CloseButton>
         </Modal>
@@ -351,8 +353,8 @@ const Container = styled.div`
 
 const BackButton = styled.button`
   position: absolute;
-  left: 10%;
-  top: 5%;
+  left: 50px;
+  top: 50px;
   background: transparent;
   border: none;
   color: #62b9ec;
@@ -368,7 +370,7 @@ const BackButton = styled.button`
 const Title = styled.div`
   position: absolute;
   left: 10%;
-  top: 5%;
+  top: 50px;
   cursor: text;
   width: 80%;
   font-size: 24px;
@@ -635,7 +637,7 @@ const RoleButtonContainer = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  justify-content: space-between;
+  justify-content:center;
 
   h3{
     font-size: 24px;
@@ -662,6 +664,7 @@ const SubmitButton = styled.button`
 
 const CloseButton = styled(SubmitButton)`
   margin-top: 20px; 
+
 `;
 
 

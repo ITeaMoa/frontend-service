@@ -10,9 +10,11 @@ const apiClient = axios.create({
 });
 
 apiClient.interceptors.request.use(async (config) => {
-    // Skip adding Authorization header for signin
-    if (config.url === '/signin') {
-        console.log('Skipping interceptor for /signin');
+    const publicEndpoints = ['/signup', '/verify/verify-email', '/verify/confirm-email'];
+
+    // Skip adding Authorization header for these endpoints
+    if (publicEndpoints.some(endpoint => config.url.includes(endpoint))) {
+        console.log(`Skipping interceptor for ${config.url}`);
         return config;
     }
 

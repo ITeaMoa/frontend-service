@@ -24,6 +24,8 @@ const SignUpPage = () => {
 
     try {
       const response = await apiClient.post('/verify/verify-email', { email });
+      console.log('Email:', email);
+
       setSuccessMessage('인증번호가 이메일로 발송되었습니다.');
       setErrorMessage('');
     } catch (error) {
@@ -49,6 +51,7 @@ const SignUpPage = () => {
       setIsAuthCodeValid(true);
       setSuccessMessage('이메일 인증이 완료되었습니다.');
       setErrorMessage('');
+      console.log("email verification succeed")
     } catch (error) {
       setIsAuthCodeValid(false);
       setErrorMessage(
@@ -91,6 +94,7 @@ const SignUpPage = () => {
       const payload = { email, nickname, password };
       const response = await apiClient.post('/signup', payload);
 
+
       console.log('Signup successful:', response.data); // Debugging
       setSuccessMessage('회원가입이 완료되었습니다.');
       setErrorMessage('');
@@ -124,7 +128,7 @@ const SignUpPage = () => {
       
       <Title>Sign Up</Title>
       <Con1>
-        <Form>
+        <Form onSubmit={handleSubmit}>
           {/* Email Verification */}
           <Label>이 메 일</Label>
             <InputContainer>

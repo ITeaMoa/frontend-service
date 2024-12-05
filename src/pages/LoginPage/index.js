@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import {useLocation, useNavigate } from 'react-router-dom';
 import apiClient from '../../services/api'; // 추가
-import { storeTokens } from '../../services/auth'; //추가
+import { storeTokens } from '../../services/auth'; // 추가
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -21,13 +21,12 @@ const LoginPage = () => {
 
     try {
       // Make API request
-      console.log('check here before apiclient')
+      // console.log('check here before apiclient')
       const response = await apiClient.post('/signin', { email, password });;
-
+      console.log('Login successful:', response.data);
       const accessToken = response.data.access_token;
       const idToken = response.data.id_token;
       const refreshToken = response.data.refresh_token;
-      console.log('Login successful:', response.data);
 
       storeTokens(accessToken, idToken, refreshToken, rememberMe);
 

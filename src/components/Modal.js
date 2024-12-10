@@ -33,7 +33,7 @@ return (
 };
 
 const ModalOverlay = styled.div`
-    position: absolute;
+
     top: 0;
     left: 0;
     right: 0;
@@ -54,6 +54,7 @@ const ModalOverlay = styled.div`
         width: 100%;
         height: auto;
         margin-top: 232px;
+        position:absolute;
     `}
 
      ${({ modalType }) => modalType === 'mypage' && `

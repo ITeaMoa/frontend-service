@@ -96,6 +96,9 @@ function Section1( ) {
                   initialLikesCount={project.likesCount} 
                   onLikeChange={(newLiked, newLikesCount) => handleLikeClick(index, newLiked, newLikesCount)} 
                   buttonStyle="s1"
+                  apiEndpoint="http://localhost:8080/main/like"
+                  pk={project.pk}
+                  sk={project.sk}
                 />
 
 {/* <LikeButton 

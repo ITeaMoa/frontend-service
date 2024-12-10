@@ -62,6 +62,7 @@ const option3 = [
   const [searchValue, setSearchValue] = useState("");
   const navigate = useNavigate();
   const { logout } = useAuth(); // logout 함수 가져오기
+  const { isLoggedIn: authIsLoggedIn } = useAuth(); // AuthContext에서 isLoggedIn 가져오기
 
   // const [toggleActive, setToggleActive] = useState(false); // 토글 상태 추가
   //로컬 스토리지에서 초기값 가져오기
@@ -187,8 +188,8 @@ const option3 = [
         </SearchContainer>
       )}
 
-          
-            <UserActions>
+
+        <UserActions>
         {isLoggedIn ? (
           <>
             <UserIcon className="bell">
@@ -253,7 +254,7 @@ const NavWrapper = styled.nav`
 const Logo = styled.div`
  margin-top: -50px;
   img {
-    width: 90%; 
+    width: 100%; 
     max-width: 300px;
     // height: auto; 
     cursor: pointer;

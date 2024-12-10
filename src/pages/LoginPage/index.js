@@ -110,7 +110,7 @@ const Logo = styled.div`
   top:15px;
 
   img {
-    width: 90%; 
+    width: 100%; 
     max-width: 300px; 
     height: auto; 
     cursor: pointer;

@@ -100,7 +100,8 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
 //   setIsRoleModalOpen(true); // 역할 선택 모달 열기
 // };
 
-const handleApplyClick = () => {
+const handleApplyClick = (project) => {
+  setProject(project); // 선택한 프로젝트 상태 저장
   setIsRoleModalOpen(true); // 역할 선택 모달 열기
 };
 
@@ -132,21 +133,6 @@ const handleApplySubmit = async () => {
 
     //   const response = await axios.post('http://localhost:8080/main/application', applicationData); // API 호출
 
-
-    // try { 보명님
-    //   // 선택한 역할을 서버에 전송
-    //   const applicationData = {
-    //     userId: "f448fd8c-5061-702c-8c22-3636be5d18c9", // 현재 사용자 ID (여기에 실제 사용자 ID를 사용하세요)
-    //     feedId: projectId, // 프로젝트 ID
-    //     part: selectedRole, // 선택한 역할
-    //   };
-
-    //   // API 호출
-    //   await axios.post('http://localhost:8080/feeds/apply?feedType=PROJECT', applicationData, {
-    //     headers: {
-    //       'Authorization': 'API Key' // 여기에 실제 API 키를 입력하세요
-    //     }
-    //   });
 
     setPopupMessage("제출되었습니다.");
 
@@ -194,6 +180,9 @@ const postSelectedRole = async (role) => {
                 initialLiked={project.liked} 
                 initialLikesCount={project.likesCount} 
                 onLikeChange={(newLiked, newLikesCount) => handleLikeClick(index, newLiked, newLikesCount)} // 내부 상태 업데이트
+                apiEndpoint="http://localhost:8080/main/like" // MainPage API 엔드포인트
+                pk={project.pk} 
+                sk={project.sk}
               />
             </LikeButtonWrapper>
             <ProjectTitle>{project.title}</ProjectTitle>
@@ -437,8 +426,8 @@ const Details = styled.div`
 `;
 
 const ApplyButton = styled.button`
-  align-self: flex-end; // Aligns the button to the right
-  margin-top: auto; // Pushes the button to the bottom
+  align-self: flex-end;
+  margin-top: auto;
   margin-right: 5px;
   border: 1px solid #ddd;
   border-radius: 14px 14px 1px 14px; 
@@ -508,6 +497,7 @@ const SubmitButton = styled.button`
 
 const CloseButton = styled(SubmitButton)`
   margin-top: 20px; 
+  margin-left: 120px;
 `;
 
 

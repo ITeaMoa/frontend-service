@@ -6,6 +6,7 @@ import Section2 from "./Section2";
 import {useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Modal from '../../components/Modal';
+import Dropdown from '../../components/DropDown'
 
 
 
@@ -28,6 +29,53 @@ const MainPage = () => {
     personalUrl: []
   });
 
+  const option3 = [
+    { value: '웹', label: '웹' },
+    { value: '모바일', label: '모바일' },
+    { value: '정보보안', label: '정보보안' },
+    { value: 'AWS', label: 'AWS' },
+    { value: 'Git', label: 'Git' },
+    { value: 'Github', label: 'Github' },
+    { value: '클라우드', label: '클라우드' },
+    { value: '블록체인', label: '블록체인' },
+    { value: '인공지능', label: '인공지능' },
+    { value: '빅데이터', label: '빅데이터' },
+    { value: 'Spring Boot', label: 'Spring Boot' },
+    { value: 'React', label: 'React' },
+    { value: 'Vue', label: 'Vue' },
+    { value: 'Python', label: 'Python' },
+    { value: 'Node.js', label: 'Node.js' },
+    { value: 'TypeScript', label: 'TypeScript' },
+    { value: '게임', label: '게임' },
+    { value: 'UI/UX', label: 'UI/UX' },
+    { value: '알고리즘', label: '알고리즘' },
+    { value: '자료구조', label: '자료구조' },
+    { value: 'C/C++', label: 'C/C++' },
+    { value: 'C#', label: 'C#' },
+    { value: 'SQL', label: 'SQL' },
+    { value: 'NoSQL', label: 'NoSQL' },
+    { value: 'Django', label: 'Django' },
+    { value: 'Figma', label: 'Figma' },
+    { value: 'Swift', label: 'Swift' },
+    { value: 'Kotlin', label: 'Kotlin' },
+    { value: 'React Native', label: 'React Native' },
+    { value: 'Android', label: 'Android' },
+    { value: 'iOS', label: 'iOS' },
+    { value: 'GCP', label: 'GCP' },
+    { value: 'Kubernetes', label: 'Kubernetes' },
+    { value: 'Docker', label: 'Docker' },
+    { value: 'Ruby', label: 'Ruby' },
+    { value: 'R', label: 'R' },
+    { value: 'Go', label: 'Go' },
+    { value: 'Next.js', label: 'Next.js' },
+    { value: 'Express', label: 'Express' },
+    { value: 'Firebase', label: 'Firebase' },
+    { value: 'Linux/Unix', label: 'Linux/Unix' },
+    { value: '데이터마이닝', label: '데이터마이닝' },
+    { value: 'Solidity', label: 'Solidity' },
+  ];
+  
+
   const handleAddButtonClick = () => {
       navigate('/WritePage'); 
   };
@@ -42,12 +90,11 @@ const MainPage = () => {
 
   const updateUserProfile = async () => {
     const data = {
-      name: userProfile.name,
+      // name: userProfile.name,
       headline: userProfile.headline,
       tags: userProfile.tags.length > 0 ? userProfile.tags : [],
       experiences: userProfile.experiences.length > 0 ? userProfile.experiences : [],
       avatarUrl: userProfile.avatarUrl,
-      headLine: userProfile.headLine,
       educations: userProfile.educations.length > 0 ? userProfile.educations : [],
       personalUrl: userProfile.personalUrl.length > 0 ? userProfile.personalUrl : []
     };
@@ -86,10 +133,10 @@ const MainPage = () => {
         <Modal isOpen={isRoleModalOpen} onClose={handleModalClose} modalType="mypage">
           <StyledModalTitle>프로필 설정</StyledModalTitle>
           <StyledForm onSubmit={(e) => { e.preventDefault(); updateUserProfile(); }}>
-            <Label>
+            {/* <Label>
               name
             </Label>
-            <input type="text" name="name" placeholder="" onChange={handleInputChange} />
+            <input type="text" name="name" placeholder="" onChange={handleInputChange} /> */}
             
             <Label>
               E-mail
@@ -104,13 +151,18 @@ const MainPage = () => {
             <Label>
               기술 스택 <span>*</span>
             </Label>
-            <input type="text" name="tags" placeholder="" onChange={handleInputChange} required />
+            <Dropdown 
+                options={option3} 
+                placeholder={"태그를 선택하시오"}
+                dropdownType = 'main'
+                onTagSelect={(selectedTags) => setUserProfile(prevState => ({
+                  ...prevState,
+                  tags: selectedTags 
+                }))}
+              
+            />
             
-            <Label>
-              수상 경력
-            </Label>
-            <input type="text" name="experiences" placeholder="" onChange={handleInputChange} />
-            
+        
             <Label>
               학교/전공
             </Label>
@@ -120,6 +172,12 @@ const MainPage = () => {
               개인 링크
             </Label>
             <input type="text" name="personalUrl" placeholder="" onChange={handleInputChange} />
+
+            <Label>
+              수상 경력
+            </Label>
+            <input type="text" name="experiences" placeholder="" onChange={handleInputChange} />
+            
             <StyledButton type="submit">제출</StyledButton>
           </StyledForm>
         </Modal>
@@ -183,7 +241,7 @@ const Label = styled.label`
   display: inline-block;
   // flex-direction: column;
   font-weight: bold; 
-  margin-bottom: 5px; 
+  // margin-bottom: 5px; 
   margin-top:-10px;
   color: #1489CE;
   

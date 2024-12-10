@@ -1,7 +1,7 @@
 [
   {
-    "pk": "FEED#5678",
-    "sk": "FEEDTYPE#PROJECT",
+    "pk": "FEED5678",
+    "sk": "FEEDTYPEPROJECT",
     "entityType": "Feed",
     "creatorID": "USER#1234",
     "title": "ITeaMoa Web Application Project",
@@ -21,13 +21,18 @@
       { "name": "신청자2", "status": "반려", "skills": ["Machine Learning", "JavaScript"], "field": "프론트" },
       { "name": "신청자3", "status": "승인", "skills": ["Deep Learning", "TensorFlow"], "field": "백엔드" }
     ],
+    "roles": [
+      {"name": "백엔드", "count": 3},
+      {"name": "프론트엔드", "count": 1},
+      {"name": "AI 엔지니어", "count": 2}
+    ],
     "postStatus": true,
     "timestamp": "2024-09-02T10:00:00Z",
     "savedFeed": false
   },
   {
-    "pk": "FEED#5679",
-    "sk": "FEEDTYPE#PROJECT",
+    "pk": "FEED5679",
+    "sk": "FEEDTYPEPROJECT",
     "entityType": "Feed",
     "creatorID": "USER#5678",
     "title": "Mobile App Development",
@@ -47,13 +52,18 @@
       { "name": "신청자5", "status": "반려", "skills": ["Flutter", "Dart"], "field": "디자이너" },
       { "name": "신청자6", "status": "승인", "skills": ["Swift", "iOS Development"], "field": "프론트" }
     ],
+    "roles": [
+      {"name": "모바일", "count": 2},
+      {"name": "UI/UX Designer", "count": 1},
+      {"name": "백엔드", "count": 1}
+    ],
     "postStatus": true,
     "timestamp": "2024-09-03T10:00:00Z",
     "savedFeed": false
   },
   {
-    "pk": "FEED#5680",
-    "sk": "FEEDTYPE#PROJECT",
+    "pk": "FEED5680",
+    "sk": "FEEDTYPEPROJECT",
     "entityType": "Feed",
     "creatorID": "USER#9101",
     "title": "E-commerce Platform Development",
@@ -72,13 +82,18 @@
       { "name": "신청자9", "status": "승인", "skills": ["Ruby on Rails", "PostgreSQL"], "field": "백엔드" },
       { "name": "신청자10", "status": "반려", "skills": ["PHP", "Laravel"], "field": "백엔드" }
     ],
+    "roles": [
+      {"name": "백엔드", "count": 3},
+      {"name": "프론트엔드", "count": 2},
+      {"name": "디자이너", "count": 1}
+    ],
     "postStatus": true,
     "timestamp": "2024-09-10T10:00:00Z",
     "savedFeed": false
   },
   {
-    "pk": "FEED#5681",
-    "sk": "FEEDTYPE#PROJECT",
+    "pk": "FEED5681",
+    "sk": "FEEDTYPEPROJECT",
     "entityType": "Feed",
     "creatorID": "USER#1122",
     "title": "AI Chatbot for Customer Service",
@@ -98,13 +113,18 @@
       { "name": "신청자12", "status": "승인", "skills": ["Machine Learning", "JavaScript"], "field": "백엔드" },
       { "name": "신청자13", "status": "반려", "skills": ["Chatbot Framework", "Node.js"], "field": "디자이너" }
     ],
+    "roles": [
+      {"name": "AI 엔지니어", "count": 2},
+      {"name": "프론트엔드", "count": 1},
+      {"name": "디자이너", "count": 1}
+    ],
     "postStatus": true,
     "timestamp": "2024-09-08T10:00:00Z",
     "savedFeed": false
   },
   {
-    "pk": "FEED#5682",
-    "sk": "FEEDTYPE#PROJECT",
+    "pk": "FEED5682",
+    "sk": "FEEDTYPEPROJECT",
     "entityType": "Feed",
     "creatorID": "USER#3344",
     "title": "Blockchain-Based Voting System",
@@ -122,13 +142,18 @@
       { "name": "신청자15", "status": "반려", "skills": ["Ethereum", "Solidity"], "field": "프론트" },
       { "name": "신청자16", "status": "승인", "skills": ["Hyperledger", "Security"], "field": "디자이너" }
     ],
+    "roles": [
+      {"name": "블록체인 엔지니어", "count": 2},
+      {"name": "정보보안", "count": 1},
+      {"name": "프론트엔드", "count": 1}
+    ],
     "postStatus": true,
     "timestamp": "2024-09-15T10:00:00Z",
     "savedFeed": false
   },
   {
-    "pk": "FEED#5683",
-    "sk": "FEEDTYPE#PROJECT",
+    "pk": "FEED5683",
+    "sk": "FEEDTYPEPROJECT",
     "entityType": "Feed",
     "creatorID": "USER#5566",
     "title": "Augmented Reality Game Development",
@@ -147,13 +172,13 @@
       { "name": "신청자17", "status": "승인", "skills": ["Unity", "C#"], "field": "백엔드" },
       { "name": "신청자18", "status": "반려", "skills": ["Augmented Reality", "3D Modeling"], "field": "디자이너" }
     ],
+    "roles": [
+      {"name": "모바일", "count": 2},
+      {"name": "디자이너", "count": 1},
+      {"name": "백엔드", "count": 1}
+    ],
     "postStatus": true,
     "timestamp": "2024-09-20T10:00:00Z",
     "savedFeed": false
   }
 ]
-
-
-
-
-

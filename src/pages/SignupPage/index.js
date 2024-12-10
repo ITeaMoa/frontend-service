@@ -11,6 +11,7 @@ const SignUpPage = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [nickname, setNickname] = useState('');
   const [isAuthNumberSent, setIsAuthNumberSent] = useState(false);
+  const [isResendDisabled, setIsResendDisabled] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,6 +39,10 @@ const SignUpPage = () => {
         console.log('인증 번호 발송 응답:', response.data);
         alert('인증번호가 발송되었습니다. 이메일을 확인하세요.');
         setIsAuthNumberSent(true);
+        setIsResendDisabled(true);
+        setTimeout(() => {
+          setIsResendDisabled(false);
+        }, 180000); //180000ms = 3분 
     } catch (error) {
         console.error('인증 번호 발송 오류:', error);
         alert('인증 번호 발송에 실패했습니다. 다시 시도하세요.');
@@ -78,19 +83,40 @@ const SignUpPage = () => {
     }
   };
 
+  const isPasswordValid = (password) => {
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{12,18}$/;
+    return passwordRegex.test(password);
+  };
+
   const handleSignup = async () => {
+    // try {
+    //     const response = await axios.post('http://localhost:8000/signup', {
+    //         email: email,
+    //         nickname: nickname,
+    //         password: password,
+    //     });
+    //     console.log('회원가입 응답:', response.data);
+    //     alert('회원가입이 완료되었습니다.');
+    //     navigate('/?showModal=true'); // Redirect after successful signup
+    // } catch (error) {
+    //     console.error('회원가입 오류:', error);
+    //     alert('회원가입에 실패했습니다. 다시 시도하세요.');
+    // }
+    navigate('/?showModal=true'); // Redirect after successful signup
+
+  };
+
+  const handleCheckNickname = async () => {
     try {
-        const response = await axios.post('http://localhost:8000/signup', {
-            email: email,
-            nickname: nickname,
-            password: password,
-        });
-        console.log('회원가입 응답:', response.data);
-        alert('회원가입이 완료되었습니다.');
-        navigate('/?showModal=true'); // Redirect after successful signup
+      const response = await axios.post('http://localhost:8000/verify/nickname', { nickname });
+      if (response.data.available) {
+        alert('사용 가능한 닉네임입니다.');
+      } else {
+        alert('중복되는 닉네임입니다. 다른 닉네임을 선택하세요.');
+      }
     } catch (error) {
-        console.error('회원가입 오류:', error);
-        alert('회원가입에 실패했습니다. 다시 시도하세요.');
+      console.error('닉네임 확인 오류:', error);
+      alert('닉네임 확인에 실패했습니다. 다시 시도하세요.');
     }
   };
 
@@ -109,13 +135,16 @@ const SignUpPage = () => {
       <Form onSubmit={handleSubmit}>
 
       <Label>닉 네 임</Label>
-        <Input 
-          type="text" 
-          value={nickname} 
-          onChange={(e) => setNickname(e.target.value)} 
-          placeholder="닉네임 입력" 
-          required 
-        />
+        <InputContainer>
+          <Input 
+            type="text" 
+            value={nickname} 
+            onChange={(e) => setNickname(e.target.value)} 
+            placeholder="닉네임 입력" 
+            required 
+          />
+          <AuthButton type="button" onClick={handleCheckNickname} style={{ padding: '14px 26px' }}>중복 확인</AuthButton>
+        </InputContainer>
        
         <Label>이 메 일</Label>
         <InputContainer>
@@ -126,7 +155,7 @@ const SignUpPage = () => {
             placeholder="이메일 입력" 
             required 
           />
-          <AuthButton type="button" onClick={isAuthNumberSent ? handleResendCode : handleAuthNumberSend}>
+          <AuthButton type="button" onClick={isAuthNumberSent ? handleResendCode : handleAuthNumberSend} disabled={isResendDisabled}>
             {isAuthNumberSent ? '인증번호 재발송' : '인증번호 발송'}
           </AuthButton>
   
@@ -151,6 +180,9 @@ const SignUpPage = () => {
           placeholder="비밀번호 입력" 
           required 
         />
+        <span style={{ fontSize: '12px', color: 'gray', textAlign: 'center' }}>
+          영문 대/소문자, 숫자, 특수문자를 조합하여 12~18자 이내
+        </span>
         <Label>비밀번호 확인</Label>
         <Input 
           type="password" 
@@ -160,10 +192,11 @@ const SignUpPage = () => {
           required 
           style={{ borderColor: confirmPassword && password !== confirmPassword ? 'red' : '#ccc' }}
         />
-        {confirmPassword && password !== confirmPassword && <span style={{ color: 'red' }}>비밀번호가 일치하지 않습니다.</span>}
+        {confirmPassword && password !== confirmPassword && (
+          <span style={{ color: 'red', fontSize: '12px', textAlign: 'center', display: 'block' }}>비밀번호가 일치하지 않습니다.</span>
+        )}
         
-        {/* <Button type="submit">가입하기</Button> */}
-        <Button type="button" onClick={handleSignup}>가입하기</Button>
+        <Button type="button" onClick={handleSignup} disabled={!isPasswordValid(password)}>가입하기</Button>
 
         </Form>
 
@@ -213,7 +246,7 @@ const Logo = styled.div`
   top:15px;
 
   img {
-    width: 90%; 
+    width: 100%; 
     max-width: 300px;
     height: auto; 
     cursor: pointer;
@@ -292,7 +325,10 @@ const Button = styled.button`
     color: #aaa;
   }
 
-
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
 `;
 
 const InputContainer = styled.div`

@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 
 
-const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => {} }) => {
+const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => {} }, dropdownType) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [searchTerm, setSearchTerm] = useState(''); 
@@ -96,6 +96,7 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
                 isFocused={isFocused}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
+                dropdownType={dropdownType}
             >
                 <SearchInput
                     type="text"
@@ -153,11 +154,12 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
 
 const DropdownWrapper = styled.div`
     position: relative;
-    width: 300px;
+    // width: 300px;
+     width: ${({ dropdownType }) => (dropdownType === 'main' ? '400px' : '300px')};
 `;
 
 const DropdownHeader = styled.div`
-    border: 2px solid ${({ isFocused }) => (isFocused ? '#007BFF' : '#A0DAFB')};
+    border: 2px solid ${({ isFocused, dropdownType }) => (dropdownType === 'main' ? 'transparent' : isFocused ? '#007BFF' : '#A0DAFB')};
     border-radius: 15px;
     padding: 8px;   
     cursor: pointer;
@@ -168,6 +170,13 @@ const DropdownHeader = styled.div`
     margin-left: 20px;
     font-size: 14px;
     color: black;
+
+     ${({ dropdownType }) => dropdownType === 'main' && `
+        width : 400px;
+        margin-left: 0px;
+        font-size: 1000px;
+    `}
+
 `;
 
 const DropdownList = styled.div`

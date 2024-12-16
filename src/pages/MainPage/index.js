@@ -19,13 +19,12 @@ const MainPage = () => {
   const showModal = query.get('showModal') === 'true'; // 쿼리 파라미터 확인
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false); // 모달 상태 추가
   const fileInputRef = useRef(null); // 파일 입력을 위한 ref
-  const [images, setImages] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null); // 선택된 파일 상태
   const [userProfile, setUserProfile] = useState({
-    name: "",
-    headline: "",
+
     tags: [],
     experiences: [],
-    avatarUrl: "",
+    avatarUrl: null,
     headLine: "",
     educations: [],
     personalUrl: []
@@ -82,36 +81,47 @@ const MainPage = () => {
       navigate('/WritePage'); 
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUserProfile(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-  };
+
+ 
 
   const updateUserProfile = async () => {
-    const data = {
-      // name: userProfile.name,
-      headline: userProfile.headline,
-      tags: userProfile.tags.length > 0 ? userProfile.tags : [],
-      experiences: userProfile.experiences.length > 0 ? userProfile.experiences : [],
-      avatarUrl: userProfile.avatarUrl,
-      educations: userProfile.educations.length > 0 ? userProfile.educations : [],
-      personalUrl: userProfile.personalUrl.length > 0 ? userProfile.personalUrl : []
+    const data = new FormData();// 파일과 JSON 데이터를 함께 전송하기 위해서
+
+    
+        // 파일 추가
+        if (selectedFile) {
+          data.append('file', selectedFile); // 선택된 파일 추가
+      }
+
+
+    // 파일 추가 (여기서는 avatarUrl이 파일 경로라고 가정)
+    const avatarFile = userProfile.avatarUrl; // 여기서 avatarUrl은 파일의 Blob 또는 File 객체여야 합니다.
+    if (avatarFile) {
+        data.append('file', avatarFile); // 파일 추가
+    }
+
+    // 프로필 정보 추가
+    const profileData = {
+        tags: userProfile.tags.length > 0 ? userProfile.tags : [],
+        experiences: userProfile.experiences.length > 0 ? userProfile.experiences : [],
+        headLine: userProfile.headline,
+        educations: userProfile.educations.length > 0 ? userProfile.educations : [],
+        personalUrl: userProfile.personalUrl.length > 0 ? userProfile.personalUrl : []
     };
 
+    data.append('profile', JSON.stringify(profileData)); // JSON 문자열로 추가
+
     try {
-      const response = await axios.put('http://localhost:8080/profile/1234', data, {
-        headers: {
-          'Authorization': 'API Key' // Replace with your actual API key
-        }
-      });
-      console.log(response.data);
+        const response = await axios.put('http://localhost:8080/profile/f448fd8c-5061-702c-8c22-3636be5d18c9', data, {
+            headers: {
+                ...data.getHeaders() // FormData의 헤더 추가
+            }
+        });
+        console.log(response.data);
     } catch (error) {
-      console.error(error);
+        console.error(error);
     }
-  };
+};
 
   const handleModalClose = () => {
     setIsRoleModalOpen(false);
@@ -125,40 +135,39 @@ const MainPage = () => {
     setIsRoleModalOpen(showModal);
   }, [location.search]); // location.search가 변경될 때마다 실행
 
-  const InputChange = (event) => {
-    const { name, files } = event.target;
+  
 
-    if (name === "avatar" && files.length > 0) {
-        const file = files[0];
-        const reader = new FileReader();
 
-        reader.onloadend = () => {
-            // 사용자 프로필에 avatarUrl 업데이트
-            setUserProfile(prevState => ({
-                ...prevState,
-                avatarUrl: reader.result // Base64 URL
-            }));
-        };
-
-        reader.readAsDataURL(file); // 파일을 Base64 URL로 변환
-    } else {
-        // 다른 입력 처리
-        setUserProfile(prevState => ({
-            ...prevState,
-            [name]: event.target.value
-        }));
-    }
+const handleInputChange = (event) => {
+  const { name, value } = event.target;
+  setUserProfile(prevState => ({
+      ...prevState,
+      [name]: value
+  }));
 };
+
+
 
 const handleLabelClick = () => {
   // 파일 입력 클릭
   fileInputRef.current.click();
 };
 
+//다중파일
+// const handleImageUpload = (e) => {
+//   const files = Array.from(e.target.files);
+//   setImages(prevImages => [...prevImages, ...files]);
+// };
+
+//단일 파일
 const handleImageUpload = (e) => {
-  const files = Array.from(e.target.files);
-  setImages(prevImages => [...prevImages, ...files]);
+  const file = e.target.files[0]; // 첫 번째 파일만 선택
+  if (file) {
+      setSelectedFile(file); // 상태에 파일 저장
+  }
 };
+
+
 
 
   return (
@@ -171,47 +180,22 @@ const handleImageUpload = (e) => {
         <Modal isOpen={isRoleModalOpen} onClose={handleModalClose} modalType="mypage">
           <StyledModalTitle>프로필 설정</StyledModalTitle>
           <StyledForm onSubmit={(e) => { e.preventDefault(); updateUserProfile(); }}>
-            {/* <Label>
-              name
-            </Label>
-            <input type="text" name="name" placeholder="" onChange={handleInputChange} /> */}
+            
             
             <Label>
-              E-mail
+                프로필 사진
             </Label>
-            <input type="email" name="headline" placeholder="" onChange={handleInputChange} />
-            
-            <Label>
-                Avatar URL
-            </Label>
+            <FileInput 
+                type="file" 
+                name="avatar" 
+                accept="image/*" 
+                // onChange={handleFileChange} 
+                onChange={handleImageUpload}
+                ref={fileInputRef} // 참조 연결
+            />
+            {selectedFile && <ImagePreview src={URL.createObjectURL(selectedFile)} alt="미리보기" />}
+            <CustomButton type="button"onClick={handleLabelClick}>업로드</CustomButton>
 
-             <input 
-                  type="file" 
-                  name="avatar" 
-                  accept="image/*" // 이미지 파일만 허용
-                  onChange={InputChange} 
-                  // onChange={handleImageUpload}
-              />
-
-       
-              {/* <input 
-                  type="file" 
-                  name="avatar" 
-                  accept="image/*" // 이미지 파일만 허용
-                  // onChange={InputChange} 
-                  onChange={handleImageUpload}
-              />
-              <CustomButton   onClick={handleLabelClick}  htmlFor="file-upload">파일 선택</CustomButton> 
-              <ImagePreview>
-            {images.map((img, index) => (
-              <ImageItem key={index}>
-                <ImagePreviewText>{img.name}</ImagePreviewText>
-                <RemoveButton onClick={() => setImages(images.filter((_, i) => i !== index))}>×</RemoveButton>
-              </ImageItem>
-            ))}
-          </ImagePreview> */}
-      
-  
             
             
             <Label>
@@ -358,6 +342,7 @@ const FileInput = styled.input`
 `;
 
 const CustomButton = styled.label`
+    text-align: center;
     background-color:  #62B9EC; 
     color: white; 
     font-weight: bold;
@@ -365,7 +350,7 @@ const CustomButton = styled.label`
     border: none; 
     border-radius: 5px; 
     cursor: pointer; 
-    font-size: 14px; 
+    font-size: 12px; 
     transition: background-color 0.3s; 
     width: 20%;
 
@@ -377,8 +362,8 @@ const CustomButton = styled.label`
 
 
 const ImagePreview = styled.img`
-    margin-top: 10px;
-    max-width: 100%; // 최대 너비 100%로 설정
+    margin-top: 5px;
+    max-width: 50%; // 최대 너비 100%로 설정
     height: auto; // 비율 유지
     border-radius: 10px; // 모서리 둥글게
 `;

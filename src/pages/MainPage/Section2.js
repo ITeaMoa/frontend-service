@@ -170,7 +170,7 @@ const postSelectedRole = async (role) => {
       <SectionTitle>프로젝트 목록</SectionTitle>
       <ProjectList>
       {currentProjects.map((project, index) => (
-          <ProjectCard key={index}>
+          <ProjectCard key={index}  onClick={() => handleProjectClick(project)}>
             <ProjectOwner>
               <FontAwesomeIcon icon={regularUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
               {project.creatorID}
@@ -345,6 +345,22 @@ const ProjectCard = styled.div`
     max-height: 300px; 
   }
 
+
+  &:hover {
+    background-color: #A0DAFB;
+  }
+
+  @media (max-width: 1200px) {
+    width: calc(33.33% - 20px); /* 3열로 조정 */
+  }
+
+  @media (max-width: 768px) {
+    width: calc(50% - 20px); /* 2열로 조정 */
+  }
+
+  @media (max-width: 480px) {
+    width: 100%; /* 1열로 조정 */
+  }
 
 `;
 

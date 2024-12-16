@@ -116,20 +116,20 @@ const SignUpPage = () => {
   };
 
   const handleSignup = async () => {
-    // try {
-    //     const response = await axios.post('http://localhost:8000/signup', {
-    //         email: email,
-    //         nickname: nickname,
-    //         password: password,
-    //     });
-    //     console.log('회원가입 응답:', response.data);
-    //     alert('회원가입이 완료되었습니다.');
-    //     navigate('/?showModal=true'); // Redirect after successful signup
-    // } catch (error) {
-    //     console.error('회원가입 오류:', error);
-    //     alert('회원가입에 실패했습니다. 다시 시도하세요.');
-    // }
-    navigate('/?showModal=true'); // Redirect after successful signup
+    try {
+        const response = await axios.post('http://localhost:8000/signup', {
+            email: email,
+            nickname: nickname,
+            password: password,
+        });
+        console.log('회원가입 응답:', response.data);
+        alert('회원가입이 완료되었습니다.');
+        navigate('/?showModal=true');
+    } catch (error) {
+        console.error('회원가입 오류:', error);
+        alert('회원가입에 실패했습니다. 다시 시도하세요.');
+    }
+    navigate('/?showModal=true'); 
 
   };
 

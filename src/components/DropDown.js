@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 
 
-const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => {} }) => {
+const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => {} , dropdownType}) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [searchTerm, setSearchTerm] = useState(''); 
@@ -90,12 +90,14 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
   
 
     return (
-        <DropdownWrapper ref={dropdownRef}> {/* 드롭다운 참조 추가 */}
+        <DropdownWrapper ref={dropdownRef}
+        dropdownType={dropdownType} > {/* 드롭다운 참조 추가 */}
             <DropdownHeader 
                 onClick={handlePlaceholderClick} 
                 isFocused={isFocused}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
+                dropdownType={dropdownType}
             >
                 <SearchInput
                     type="text"
@@ -154,10 +156,21 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
 const DropdownWrapper = styled.div`
     position: relative;
     width: 300px;
+
+    ${({ dropdownType }) => dropdownType === 'main' && `
+  
+    width: 110%;
+        left: -30px;
+        
+    `}
+
+
+
+    
 `;
 
 const DropdownHeader = styled.div`
-    border: 2px solid ${({ isFocused }) => (isFocused ? '#007BFF' : '#A0DAFB')};
+    border: 2px solid ${({ isFocused, dropdownType }) => (dropdownType === 'main' ? 'transparent' : isFocused ? '#007BFF' : '#A0DAFB')};
     border-radius: 15px;
     padding: 8px;   
     cursor: pointer;
@@ -168,6 +181,13 @@ const DropdownHeader = styled.div`
     margin-left: 20px;
     font-size: 14px;
     color: black;
+
+    
+
+   
+   
+   
+
 `;
 
 const DropdownList = styled.div`

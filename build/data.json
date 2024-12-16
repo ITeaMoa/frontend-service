@@ -21,7 +21,11 @@
       { "name": "신청자2", "status": "반려", "skills": ["Machine Learning", "JavaScript"], "field": "프론트" },
       { "name": "신청자3", "status": "승인", "skills": ["Deep Learning", "TensorFlow"], "field": "백엔드" }
     ],
+<<<<<<< HEAD
     "role": [
+=======
+    "roles": [
+>>>>>>> 8c78e98b5ed4571575395d9d22f3b7ff2135709e
       {"name": "백엔드", "count": 3},
       {"name": "프론트엔드", "count": 1},
       {"name": "AI 엔지니어", "count": 2}
@@ -52,7 +56,11 @@
       { "name": "신청자5", "status": "반려", "skills": ["Flutter", "Dart"], "field": "디자이너" },
       { "name": "신청자6", "status": "승인", "skills": ["Swift", "iOS Development"], "field": "프론트" }
     ],
+<<<<<<< HEAD
     "role": [
+=======
+    "roles": [
+>>>>>>> 8c78e98b5ed4571575395d9d22f3b7ff2135709e
       {"name": "모바일", "count": 2},
       {"name": "UI/UX Designer", "count": 1},
       {"name": "백엔드", "count": 1}
@@ -82,7 +90,11 @@
       { "name": "신청자9", "status": "승인", "skills": ["Ruby on Rails", "PostgreSQL"], "field": "백엔드" },
       { "name": "신청자10", "status": "반려", "skills": ["PHP", "Laravel"], "field": "백엔드" }
     ],
+<<<<<<< HEAD
     "role": [
+=======
+    "roles": [
+>>>>>>> 8c78e98b5ed4571575395d9d22f3b7ff2135709e
       {"name": "백엔드", "count": 3},
       {"name": "프론트엔드", "count": 2},
       {"name": "디자이너", "count": 1}
@@ -113,7 +125,11 @@
       { "name": "신청자12", "status": "승인", "skills": ["Machine Learning", "JavaScript"], "field": "백엔드" },
       { "name": "신청자13", "status": "반려", "skills": ["Chatbot Framework", "Node.js"], "field": "디자이너" }
     ],
+<<<<<<< HEAD
     "role": [
+=======
+    "roles": [
+>>>>>>> 8c78e98b5ed4571575395d9d22f3b7ff2135709e
       {"name": "AI 엔지니어", "count": 2},
       {"name": "프론트엔드", "count": 1},
       {"name": "디자이너", "count": 1}
@@ -142,7 +158,11 @@
       { "name": "신청자15", "status": "반려", "skills": ["Ethereum", "Solidity"], "field": "프론트" },
       { "name": "신청자16", "status": "승인", "skills": ["Hyperledger", "Security"], "field": "디자이너" }
     ],
+<<<<<<< HEAD
     "role": [
+=======
+    "roles": [
+>>>>>>> 8c78e98b5ed4571575395d9d22f3b7ff2135709e
       {"name": "블록체인 엔지니어", "count": 2},
       {"name": "정보보안", "count": 1},
       {"name": "프론트엔드", "count": 1}
@@ -172,7 +192,11 @@
       { "name": "신청자17", "status": "승인", "skills": ["Unity", "C#"], "field": "백엔드" },
       { "name": "신청자18", "status": "반려", "skills": ["Augmented Reality", "3D Modeling"], "field": "디자이너" }
     ],
+<<<<<<< HEAD
     "role": [
+=======
+    "roles": [
+>>>>>>> 8c78e98b5ed4571575395d9d22f3b7ff2135709e
       {"name": "모바일", "count": 2},
       {"name": "디자이너", "count": 1},
       {"name": "백엔드", "count": 1}
@@ -182,8 +206,3 @@
     "savedFeed": false
   }
 ]
-
-
-
-
-

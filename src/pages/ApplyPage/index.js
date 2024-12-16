@@ -101,7 +101,7 @@ const ApplyPage = ({}) => {
 
   // 프로젝트가 로딩 중일 때
   if (!project) {
-    return <Container>Project ID:{projectId}</Container>;
+    return <Container>Loading project...</Container>;
   }
 
   const handleApplyClick = () => {
@@ -125,17 +125,7 @@ const ApplyPage = ({}) => {
       // 선택한 역할을 서버에 전송
       await postSelectedRole(selectedRole);
 
-      // try { 상언쓰
-      //   // 선택한 역할을 서버에 전송
-      //   const applicationData = {
-      //     pk: project.pk, // 프로젝트의 pk를 사용
-      //     sk: "1234", // 사용자 식별자 (예시로 하드코딩, 실제로는 로그인 사용자 ID로 대체)
-      //     part: selectedRole, // 선택한 역할
-      //     feedType: "PROJECT" // 고정된 값
-      //   };
-  
-      //   const response = await axios.post('http://localhost:8080/main/application', applicationData); // API 호출
-  
+    
 
       // try { 보명님
       //   // 선택한 역할을 서버에 전송
@@ -175,7 +165,7 @@ const ApplyPage = ({}) => {
   // 선택한 역할을 서버에 전송하는 모의 함수
   const postSelectedRole = async (role) => {
     try {
-      const response = await axios.post('/api/submitRole', { role });
+      const response = await axios.post('/api/submitRole', { role});
       return response.data; // 서버로부터의 응답 데이터 반환
     } catch (error) {
       throw new Error('서버 요청 실패');
@@ -196,8 +186,12 @@ const ApplyPage = ({}) => {
         <LikeButton 
           initialLiked={liked} 
           initialLikesCount={project.likesCount} 
-          onLikeChange={handleLike} // handleLike로 변경
+          onLikeChange={handleLike} 
           buttonStyle='apply'
+          apiEndpoint={`http://localhost:8080/feeds/${projectId}`}
+          userId="f448fd8c-5061-702c-8c22-3636be5d18c9"
+          pk={project.pk} 
+          sk={project.sk} 
         />
         
         <Post>
@@ -225,7 +219,7 @@ const ApplyPage = ({}) => {
                     <span key={index}>{role.name}({role.count})</span>
                   ))
                 ) : (
-                  <span>역할 정보를 불러오는 중입니다...</span>
+                  <span>역할 정보가 없습니다.</span>
                 )}
             </Detail>
             <Detail>
@@ -238,9 +232,13 @@ const ApplyPage = ({}) => {
         </PostDetails>
 
           <TagsSection>
-          {project.tags.map((tag, index) => (
-              <TagButton key={index}>{tag}</TagButton>
-            ))}
+          {project.tags && Array.isArray(project.tags) ? (
+              project.tags.map((tag, index) => (
+                <TagButton key={index}>{tag}</TagButton>
+              ))
+            ) : (
+              <span>태그 정보가 없습니다.</span>
+            )}
           </TagsSection>
 
           <ApplyButton onClick={handleApplyClick}>신청하기</ApplyButton>
@@ -265,7 +263,7 @@ const ApplyPage = ({}) => {
         
 
         <CommentsSection>
-          <CommentsTitle>댓글 ({project ? project.comments.length : 0})</CommentsTitle>
+          <CommentsTitle>댓글 ({project.comments ? project.comments.length : 0})</CommentsTitle>
       
            <CommentInputWrapper>
             <CommentInput
@@ -279,25 +277,24 @@ const ApplyPage = ({}) => {
               </CommentInputWrapper> 
 
               <CommentsList>
-            {project.comments.map((comment, index) => (
-              <Comment key={index}>
-
-                <Users>
-                <FontAwesomeIcon icon={faUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
-                <Timestamp>
-                <strong >{comment.userID} </strong>
-                <span style={{ fontSize: 'small', color: '#aaa' }}>
-                {new Date(comment.timestamp).toLocaleDateString()} {new Date(comment.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </span>
-                </Timestamp>
-
-                </Users>
-
-                <Comments>
-                {comment.comment}
-                </Comments>
-              </Comment>
-            ))}
+            {project.comments && Array.isArray(project.comments) ? (
+              project.comments.map((comment, index) => (
+                <Comment key={index}>
+                  <Users>
+                    <FontAwesomeIcon icon={faUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
+                    <Timestamp>
+                      <strong>{comment.userID}</strong>
+                      <span style={{ fontSize: 'small', color: '#aaa' }}>
+                        {new Date(comment.timestamp).toLocaleDateString()} {new Date(comment.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </Timestamp>
+                  </Users>
+                  <Comments>{comment.comment}</Comments>
+                </Comment>
+              ))
+            ) : (
+              <span>댓글 정보가 없습니다.</span>
+            )}
           </CommentsList>
           
         </CommentsSection>

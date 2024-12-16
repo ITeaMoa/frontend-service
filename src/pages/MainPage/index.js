@@ -369,25 +369,3 @@ const ImagePreview = styled.img`
 `;
 
 
-const ImageItem = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 5px;
-`;
-
-
-
-
-const ImagePreviewText = styled.span`
-  font-size: 14px;
-
-`;
-
-const RemoveButton = styled.button`
-  background: none;
-  border: none;
-  color: red;
-  cursor: pointer;
-  font-size: 18px;
-`;

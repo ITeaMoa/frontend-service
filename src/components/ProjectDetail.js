@@ -27,7 +27,7 @@ const ProjectDetail = ({ project, onBack}) => {
     const indexOfLastApplicant = currentPage * applicantsPerPage;
     const indexOfFirstApplicant = indexOfLastApplicant - applicantsPerPage;
     const currentApplicants = filteredApplicants.slice(indexOfFirstApplicant, indexOfLastApplicant);
-    const totalPages = Math.ceil(filteredApplicants.length / applicantsPerPage);
+    // const totalPages = Math.ceil(filteredApplicants.length / applicantsPerPage);
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     const handleStatusChange = (applicant, status) => {
@@ -56,11 +56,11 @@ const ProjectDetail = ({ project, onBack}) => {
         }
     };
 
-    const handlePageChange = (pageNumber) => {
-        if (!isPopupVisible) {
-            setCurrentPage(pageNumber);
-        }
-    };
+    // const handlePageChange = (pageNumber) => {
+    //     if (!isPopupVisible) {
+    //         setCurrentPage(pageNumber);
+    //     }
+    // };
 
     return (
         <DetailContainer>

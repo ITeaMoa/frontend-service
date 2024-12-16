@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import Nav from "../../components/Nav";
 import Section1 from "./Section1";
@@ -18,6 +18,8 @@ const MainPage = () => {
   //URL이 http://example.com/?showModal=true라면 location.search는 "?showModal=true"가 됨
   const showModal = query.get('showModal') === 'true'; // 쿼리 파라미터 확인
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false); // 모달 상태 추가
+  const fileInputRef = useRef(null); // 파일 입력을 위한 ref
+  const [images, setImages] = useState([]);
   const [userProfile, setUserProfile] = useState({
     name: "",
     headline: "",
@@ -123,6 +125,42 @@ const MainPage = () => {
     setIsRoleModalOpen(showModal);
   }, [location.search]); // location.search가 변경될 때마다 실행
 
+  const InputChange = (event) => {
+    const { name, files } = event.target;
+
+    if (name === "avatar" && files.length > 0) {
+        const file = files[0];
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+            // 사용자 프로필에 avatarUrl 업데이트
+            setUserProfile(prevState => ({
+                ...prevState,
+                avatarUrl: reader.result // Base64 URL
+            }));
+        };
+
+        reader.readAsDataURL(file); // 파일을 Base64 URL로 변환
+    } else {
+        // 다른 입력 처리
+        setUserProfile(prevState => ({
+            ...prevState,
+            [name]: event.target.value
+        }));
+    }
+};
+
+const handleLabelClick = () => {
+  // 파일 입력 클릭
+  fileInputRef.current.click();
+};
+
+const handleImageUpload = (e) => {
+  const files = Array.from(e.target.files);
+  setImages(prevImages => [...prevImages, ...files]);
+};
+
+
   return (
     <>
     <Nav showSearch={showSearch} /> 
@@ -142,6 +180,39 @@ const MainPage = () => {
               E-mail
             </Label>
             <input type="email" name="headline" placeholder="" onChange={handleInputChange} />
+            
+            <Label>
+                Avatar URL
+            </Label>
+
+             <input 
+                  type="file" 
+                  name="avatar" 
+                  accept="image/*" // 이미지 파일만 허용
+                  onChange={InputChange} 
+                  // onChange={handleImageUpload}
+              />
+
+       
+              {/* <input 
+                  type="file" 
+                  name="avatar" 
+                  accept="image/*" // 이미지 파일만 허용
+                  // onChange={InputChange} 
+                  onChange={handleImageUpload}
+              />
+              <CustomButton   onClick={handleLabelClick}  htmlFor="file-upload">파일 선택</CustomButton> 
+              <ImagePreview>
+            {images.map((img, index) => (
+              <ImageItem key={index}>
+                <ImagePreviewText>{img.name}</ImagePreviewText>
+                <RemoveButton onClick={() => setImages(images.filter((_, i) => i !== index))}>×</RemoveButton>
+              </ImageItem>
+            ))}
+          </ImagePreview> */}
+      
+  
+            
             
             <Label>
               자기소개 <span>*</span>
@@ -282,3 +353,56 @@ const StyledTextArea = styled.textarea`
 `;
 
 
+const FileInput = styled.input`
+    display: none; // 기본 파일 입력 숨기기
+`;
+
+const CustomButton = styled.label`
+    background-color:  #62B9EC; 
+    color: white; 
+    font-weight: bold;
+    padding: 10px;
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    font-size: 14px; 
+    transition: background-color 0.3s; 
+    width: 20%;
+
+
+    &:hover {
+        background-color: #0056b3; // 호버 시 배경색 변화
+    }
+`;
+
+
+const ImagePreview = styled.img`
+    margin-top: 10px;
+    max-width: 100%; // 최대 너비 100%로 설정
+    height: auto; // 비율 유지
+    border-radius: 10px; // 모서리 둥글게
+`;
+
+
+const ImageItem = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 5px;
+`;
+
+
+
+
+const ImagePreviewText = styled.span`
+  font-size: 14px;
+
+`;
+
+const RemoveButton = styled.button`
+  background: none;
+  border: none;
+  color: red;
+  cursor: pointer;
+  font-size: 18px;
+`;

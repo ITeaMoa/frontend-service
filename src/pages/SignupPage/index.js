@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -12,6 +12,7 @@ const SignUpPage = () => {
   const [nickname, setNickname] = useState('');
   const [isAuthNumberSent, setIsAuthNumberSent] = useState(false);
   const [isResendDisabled, setIsResendDisabled] = useState(false);
+  const [remainingTime, setRemainingTime] = useState(180); // 3분
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,40 +25,66 @@ const SignUpPage = () => {
     navigate('/?showModal=true');
   };
 
+  // const handleAuthNumberSend = async () => {
+  //   try {
+  //     const response = await axios.post('http://localhost:8000/verify/verify-email', 
+  //       { email: email }, 
+  //       { 
+  //         headers: { 
+  //           'Content-Type': 'application/json',
+  //         }
+  //       }
+  //     );
+  //     console.log('인증 번호 발송 응답:', response.data);
+  //     alert('인증번호가 발송되었습니다. 이메일을 확인하세요.');
+  //     setIsAuthNumberSent(true);
+  //     setIsResendDisabled(true);
+  //     setRemainingTime(180); // 타이머 초기화
+  //   } catch (error) {
+  //     console.error('인증 번호 발송 오류:', error);
+  //     alert('인증 번호 발송에 실패했습니다. 다시 시도하세요.');
+  //   }
+  // };
+
+  //서버 연결 안하고 타이머 테스트 
   const handleAuthNumberSend = async () => {
-    try {
-        // const token = 'your_token_here'; // Replace with your actual token
-        const response = await axios.post('http://localhost:8000/verify/verify-email', 
-            { email: email }, 
-            { 
-                headers: { 
-                    'Content-Type': 'application/json',
-                    // 'Authorization': `Bearer ${token}` // Add Bearer Token
-                }
-            }
-        );
-        console.log('인증 번호 발송 응답:', response.data);
-        alert('인증번호가 발송되었습니다. 이메일을 확인하세요.');
-        setIsAuthNumberSent(true);
-        setIsResendDisabled(true);
-        setTimeout(() => {
-          setIsResendDisabled(false);
-        }, 180000); //180000ms = 3분 
-    } catch (error) {
-        console.error('인증 번호 발송 오류:', error);
-        alert('인증 번호 발송에 실패했습니다. 다시 시도하세요.');
-    }
+    // 서버 요청 대신 가상의 인증 번호 발송 기능
+    console.log('인증 번호 발송 요청:', email);
+    alert('인증번호가 발송되었습니다. 이메일을 확인하세요.');
+
+    // 인증 번호 발송 상태 업데이트
+    setIsAuthNumberSent(true);
+    setIsResendDisabled(true);
+    setRemainingTime(180); // 타이머 초기화
+
+    // 실제 서버 요청 대신 3초 후에 완료된 것으로 간주
+    setTimeout(() => {
+      console.log('인증 번호 발송 완료');
+    }, 3000); // 3초 후에 타이머 시작
   };
+
+  // 타이머 관리
+  useEffect(() => {
+    let timer;
+    if (isResendDisabled && remainingTime > 0) {
+      timer = setInterval(() => {
+        setRemainingTime(prev => prev - 1);
+      }, 1000); // 1초마다 감소
+    } else if (remainingTime === 0) {
+      setIsResendDisabled(false);
+      clearInterval(timer);
+    }
+    return () => clearInterval(timer); // 컴포넌트 언마운트 시 정리
+  }, [isResendDisabled, remainingTime]);
 
   const handleResendCode = async () => {
     try {
-        const token = 'your_token_here'; // Replace with your actual token
+       
         const response = await axios.post('http://localhost:8000/verify/resend-code', 
             { email: email }, 
             { 
                 headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` // Add Bearer Token
+                    'Content-Type': 'application/json'
                 }
             }
         );
@@ -160,7 +187,6 @@ const SignUpPage = () => {
           </AuthButton>
   
         </InputContainer>
-          
         <Label>인 증 번 호</Label>
         <InputContainer>
         <Input 
@@ -172,6 +198,12 @@ const SignUpPage = () => {
         />
          <AuthButton type="button" onClick={handleConfirmEmail}>인증번호 확인</AuthButton>
          </InputContainer>
+         {isResendDisabled && (
+        <RemainTime>
+          남은 시간: {Math.floor(remainingTime / 60)}:{(remainingTime % 60).toString().padStart(2, '0')}
+        </RemainTime>
+      )}
+          
         <Label>비밀번호</Label>
         <Input 
           type="password" 
@@ -334,7 +366,6 @@ const Button = styled.button`
 const InputContainer = styled.div`
   display: flex;
   align-items: center;
-  // justify-content: center;
   width: 100%;
   
 `;
@@ -352,6 +383,12 @@ const AuthButton = styled(Button)`
 
   
 `;
+
+const RemainTime= styled.div`
+font-size: 14px;
+color: red;
+`;
+
 
 const SocialLogin = styled.h2`
   display: flex;
@@ -432,3 +469,5 @@ const Icon = styled.img`
   vertical-align: middle;
 
 `;
+
+

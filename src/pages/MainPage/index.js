@@ -151,10 +151,11 @@ const MainPage = () => {
             <Label>
               기술 스택 <span>*</span>
             </Label>
+           
             <Dropdown 
                 options={option3} 
                 placeholder={"태그를 선택하시오"}
-                dropdownType = 'main'
+                dropdownType = "main"
                 onTagSelect={(selectedTags) => setUserProfile(prevState => ({
                   ...prevState,
                   tags: selectedTags 

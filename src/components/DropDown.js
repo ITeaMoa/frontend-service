@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 
 
-const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => {} }, dropdownType) => {
+const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => {} , dropdownType}) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [searchTerm, setSearchTerm] = useState(''); 
@@ -90,7 +90,8 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
   
 
     return (
-        <DropdownWrapper ref={dropdownRef}> {/* 드롭다운 참조 추가 */}
+        <DropdownWrapper ref={dropdownRef}
+        dropdownType={dropdownType} > {/* 드롭다운 참조 추가 */}
             <DropdownHeader 
                 onClick={handlePlaceholderClick} 
                 isFocused={isFocused}
@@ -154,8 +155,18 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
 
 const DropdownWrapper = styled.div`
     position: relative;
-    // width: 300px;
-     width: ${({ dropdownType }) => (dropdownType === 'main' ? '400px' : '300px')};
+    width: 300px;
+
+    ${({ dropdownType }) => dropdownType === 'main' && `
+  
+    width: 110%;
+        left: -30px;
+        
+    `}
+
+
+
+    
 `;
 
 const DropdownHeader = styled.div`
@@ -171,11 +182,11 @@ const DropdownHeader = styled.div`
     font-size: 14px;
     color: black;
 
-     ${({ dropdownType }) => dropdownType === 'main' && `
-        width : 400px;
-        margin-left: 0px;
-        font-size: 1000px;
-    `}
+    
+
+   
+   
+   
 
 `;
 

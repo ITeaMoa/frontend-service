@@ -15,16 +15,7 @@ function Section1( ) {
   const navigate = useNavigate(); // useNavigate 훅을 사용하여 navigate 함수 생성
   // const [project, setProject] = useState(null);
 
-  // // API에서 사용자 좋아요 피드를 가져오는 함수
-  // const fetchUserLikedProjects = async (userId) => {
-  //   try {
-  //     const response = await axios.get(`http://localhost:8080/main/like?userId=${userId}`);
-  //     return response.data; // 사용자가 좋아요를 누른 프로젝트 목록 반환
-  //   } catch (error) {
-  //     console.error('Error fetching liked projects:', error);
-  //     return [];
-  //   }
-  // };
+
 
   // // API에서 인기 프로젝트 데이터를 가져오는 함수
   // const fetchPopularProjects = async () => {

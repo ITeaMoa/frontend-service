@@ -132,7 +132,7 @@ const handleClick = (e) => {
 //   pk: pk,
 //   sk: sk,
 //   feedType: "PROJECT"
-// };
+// };근데 이 부분이 api에 없음. 상언 오빠만 이씅ㅁ
 
 // try {
 //   if (newLiked) {

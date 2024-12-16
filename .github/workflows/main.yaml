@@ -15,14 +15,14 @@ jobs:
 
       - name: Install dependencies w/ ci
         run: npm ci
-        working-directory: frontend-service
+        # working-directory: frontend-service
 
       - name: Find build directory
         run: find . -type d -name build  # Find where the build directory is created
 
       - name: Build app
         run:  npm run build
-        working-directory: frontend-service
+        # working-directory: frontend-service
     
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2

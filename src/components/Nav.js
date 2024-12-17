@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import {useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faSlidersH } from '@fortawesome/free-solid-svg-icons';
 import { faBell as regularBell, faCommentDots as regularComment, faUser as regularUser } from '@fortawesome/free-regular-svg-icons'; 
@@ -62,7 +62,7 @@ const option3 = [
   const [searchValue, setSearchValue] = useState("");
   const navigate = useNavigate();
   const { logout } = useAuth(); // logout 함수 가져오기
-  const { isLoggedIn: authIsLoggedIn } = useAuth(); // AuthContext에서 isLoggedIn 가져오기
+  // const { isLoggedIn: authIsLoggedIn } = useAuth(); // AuthContext에서 isLoggedIn 가져오기
 
   // const [toggleActive, setToggleActive] = useState(false); // 토글 상태 추가
   //로컬 스토리지에서 초기값 가져오기
@@ -98,9 +98,9 @@ const option3 = [
   };
 
 
-  const toggleFilterVisibility = () => {
-    setIsModalOpen(true)
-    };
+  // const toggleFilterVisibility = () => {
+  //   setIsModalOpen(true)
+  //   };
 
 
  //키보드 받기 

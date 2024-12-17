@@ -114,11 +114,11 @@ const SectionWrapper = styled.div`
   margin-bottom: 40px;
 `;
 
-const SectionTitle = styled.h2`
-  font-size: 24px;
-  margin-top: 20px;
-  margin-bottom: 20px;
-`;
+// const SectionTitle = styled.h2`
+//   font-size: 24px;
+//   margin-top: 20px;
+//   margin-bottom: 20px;
+// `;
 
 const ProjectList = styled.div`
   display: flex;
@@ -168,16 +168,16 @@ const ProjectOwner = styled.div`
   margin-left: 10px;
 `;
 
-const ProjectLikes = styled.div`
-  position: absolute;
-  border: 1px solid #ddd;
-  border-radius: 15px;
-  padding: 2px 8px;
-  color: white;
-  font-weight: bold;
-  background-color: #C4C4C4;
-  transform: translate(300px,-25px);
-`;
+// const ProjectLikes = styled.div`
+//   position: absolute;
+//   border: 1px solid #ddd;
+//   border-radius: 15px;
+//   padding: 2px 8px;
+//   color: white;
+//   font-weight: bold;
+//   background-color: #C4C4C4;
+//   transform: translate(300px,-25px);
+// `;
 
 const ProjectTitle = styled.h3`
   font-size: 20px;

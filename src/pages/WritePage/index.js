@@ -6,14 +6,15 @@ import Modal from '../../components/Modal';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-
+import axios from 'axios';
 
 
 
 const WritePage = () => {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
-  const [participants, setParticipants] = useState(0);
+  // const [participants, setParticipants] = useState(0);
+  const [period, setPeriod] = useState('');
   const [deadline, setDeadline] = useState('');
   const [progress, setProgress] = useState('');
   const [description, setDescription] = useState('');
@@ -26,6 +27,8 @@ const WritePage = () => {
     const updatedRoles = selectedRoles.filter(r => r.role !== role);
     setSelectedRoles([...updatedRoles, { role, count }]);
   };
+  // roles에서 count 값을 합산하여 recruitmentNum 설정
+  const recruitmentNum = selectedRoles.reduce((total, role) => total + role.count, 0);
 
   const handleSave = () => {
     const dataToSend = {
@@ -34,38 +37,32 @@ const WritePage = () => {
       postStatus: true,
       savedFeed: false,
       tags: selectedTags,
-      recruitmentNum: participants,
+      recruitmentNum,
       deadline: new Date(deadline).toISOString(),
       place: progress,
-      period: 3,
+      period,
       roles: selectedRoles.reduce((acc, role) => {
         acc[role.role] = role.count;
         return acc;
       }, {}),
     };
 
-    fetch(`http://localhost:8080/feeds/create?feedType=PROJECT&userId=f448fd8c-5061-702c-8c22-3636be5d18c9`, {
-      method: 'POST',
+    axios.post(`http://localhost:8080/feeds/create?feedType=PROJECT&userId=f448fd8c-5061-702c-8c22-3636be5d18c9`, dataToSend, {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'YOUR_API_KEY',
       },
-      body: JSON.stringify(dataToSend),
     })
     .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log('Success:', data);
+      console.log('Success:', response.data);
       navigate('/MainPage');
     })
     .catch((error) => {
       console.error('Error:', error);
     });
   };
+
+
+   
 
   const option1 = [
     { value: '기간 미정', label: '기간 미정' },
@@ -166,7 +163,9 @@ const handleTagSelect = (option) => {
   }
 };
 
-
+const handlePeriodSelect = (selectedOption) => {
+  setPeriod(selectedOption.value); // 선택된 값을 period 상태에 저장
+};
 
   return (
     <>
@@ -237,7 +236,7 @@ const handleTagSelect = (option) => {
 
           <InputWrapper>   
           <Label> 진행기간 </Label>
-          <Dropdown options={option1} placeholder={"기간미정~6개월이상"}/>
+          <Dropdown options={option1} placeholder={"기간미정~6개월이상"} onSelect={handlePeriodSelect}/>
 
           </InputWrapper>
           </InputBox>

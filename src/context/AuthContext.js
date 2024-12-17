@@ -21,13 +21,13 @@ const removeToken = () => {
   localStorage.removeItem('jwtToken');
 };
 
-// JWT 토큰 유효성 검사
-const isTokenExpired = (token) => {
-  if (!token) return true;
-  const payload = JSON.parse(atob(token.split('.')[1]));
-  const exp = payload.exp * 1000; // exp는 초 단위로 되어 있으므로 밀리초로 변환
-  return Date.now() >= exp; // 현재 시간과 만료 시간을 비교
-};
+// // JWT 토큰 유효성 검사
+// const isTokenExpired = (token) => {
+//   if (!token) return true;
+//   const payload = JSON.parse(atob(token.split('.')[1]));
+//   const exp = payload.exp * 1000; // exp는 초 단위로 되어 있으므로 밀리초로 변환
+//   return Date.now() >= exp; // 현재 시간과 만료 시간을 비교
+// };
 
 // Context 생성
 export const AuthContext = createContext();

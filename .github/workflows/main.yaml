@@ -31,22 +31,25 @@ jobs:
             aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             aws-region: ${{ secrets.AWS_REGION }}
 
+      - name: Copy build folder to terraform directory
+        run: cp -r ./build ./terraform/
+
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
 
       # Initialize Terraform for the "upload" environment
       - name: Terraform Init
-        working-directory: terraform/upload
+        working-directory: terraform
         run: terraform init
 
       # Plan Terraform changes for the "upload" environment
       - name: Terraform Plan
-        working-directory: terraform/upload
+        working-directory: terraform
         run: terraform plan
 
       # Apply Terraform changes for the "upload" environment
       - name: Terraform Apply
-        working-directory: terraform/upload
+        working-directory: terraform
         run: terraform apply -auto-approve
     
       # Verify deletion

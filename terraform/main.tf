@@ -12,11 +12,11 @@ resource "null_resource" "delete_all_objects" {
 
 resource "aws_s3_object" "upload-build-file" {
     depends_on = [null_resource.delete_all_objects]
-    for_each        = fileset("../../build/", "**")
+    for_each        = fileset("${path.root}/build/", "**")
 
     bucket          = "${var.static_bucket_name}"
     key             = each.value
-    source          = "../../build/${each.value}"
+    source          = "${path.root}/build/${each.value}"
 
     content_type = lookup({
     "html" = "text/html",

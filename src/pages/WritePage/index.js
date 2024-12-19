@@ -7,23 +7,16 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
-<<<<<<< Updated upstream
 // import axios from '../../api/axios'
 
 
 
-=======
->>>>>>> Stashed changes
 
 const WritePage = () => {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   // const [participants, setParticipants] = useState(0);
-<<<<<<< Updated upstream
   const [period, setPeriod] = useState('');
-=======
-  const [period, setPeriod] = useState(''); // period 상태 추가
->>>>>>> Stashed changes
   const [deadline, setDeadline] = useState('');
   const [progress, setProgress] = useState('');
   const [description, setDescription] = useState('');
@@ -36,14 +29,9 @@ const WritePage = () => {
     const updatedRoles = selectedRoles.filter(r => r.role !== role);
     setSelectedRoles([...updatedRoles, { role, count }]);
   };
-<<<<<<< Updated upstream
   // roles에서 count 값을 합산하여 recruitmentNum 설정
   const recruitmentNum = selectedRoles.reduce((total, role) => total + role.count, 0);
 
-=======
-  const recruitmentNum = selectedRoles.reduce((total, role) => total + role.count, 0);
-  
->>>>>>> Stashed changes
   const handleSave = () => {
     const dataToSend = {
       title,
@@ -61,11 +49,7 @@ const WritePage = () => {
       }, {}),
     };
 
-<<<<<<< Updated upstream
     axios.post(`/feeds/create?feedType=PROJECT&userId=f448fd8c-5061-702c-8c22-3636be5d18c9`, dataToSend, {
-=======
-    axios.post(`http://localhost:8080/feeds/create?feedType=PROJECT&userId=f448fd8c-5061-702c-8c22-3636be5d18c9`, dataToSend, {
->>>>>>> Stashed changes
       headers: {
         'Content-Type': 'application/json',
       },
@@ -184,12 +168,6 @@ const handleTagSelect = (option) => {
 const handlePeriodSelect = (selectedOption) => {
   setPeriod(selectedOption.value); // 선택된 값을 period 상태에 저장
 };
-<<<<<<< Updated upstream
-=======
-
-
-
->>>>>>> Stashed changes
 
   return (
     <>
@@ -260,11 +238,7 @@ const handlePeriodSelect = (selectedOption) => {
 
           <InputWrapper>   
           <Label> 진행기간 </Label>
-<<<<<<< Updated upstream
           <Dropdown options={option1} placeholder={"기간미정~6개월이상"} onSelect={handlePeriodSelect}/>
-=======
-          <Dropdown options={option1} placeholder={"기간미정~6개월이상"}  onSelect={handlePeriodSelect}/>
->>>>>>> Stashed changes
 
           </InputWrapper>
           </InputBox>

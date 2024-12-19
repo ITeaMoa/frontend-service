@@ -1,10 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import axios from 'axios';
+import axios from '../api/axios'
 
-// axios 인스턴스 생성
-const apiClient = axios.create({
-  baseURL: 'http://localhost:8080',
-});
+
 
 // JWT 토큰을 Local Storage에 저장
 const saveToken = (token) => {
@@ -50,13 +47,13 @@ export const AuthProvider = ({ children }) => {
   // 로그인 함수
   const login = async (userId, password) => {
     try {
-      const response = await axios.post('http://localhost:8000/signin', {
+      const response = await axios.post('/signin', {
         email: userId,
         password,
       });
 
       if (response.status === 200) {
-        const userData = response.data.user; // 사용자 정보
+        const userData = response.data.user; // 사용자 정보// 사용자 정보 (여기에 user.id가 포함되어 있어야 함)
         const token = response.data.token; // JWT
 
         setUser(userData);
@@ -96,7 +93,7 @@ export const AuthProvider = ({ children }) => {
 
   const socialLogin = async (provider, { code, state }) => {
     try {
-      const response = await apiClient.post(`/home/login/${provider}`, {
+      const response = await axios.post(`/home/login/${provider}`, {
         code,
         state,
       });
@@ -138,8 +135,9 @@ export const AuthProvider = ({ children }) => {
   // Access Token 발급 요청 함수
   const getAccessToken = async (refreshToken) => {
     try {
-      const response = await apiClient.post('http://localhost:8000/refresh', {
-        email: "pbh7080@gmail.com", // 이메일을 하드코딩하거나 인자로 받을 수 있습니다.
+      const response = await axios.post('/refresh', {
+        // const response = await axios.post('http://localhost:8000/refresh', {
+        // email, // 이메일을 하드코딩하거나 인자로 받을 수 있습니다.
         refresh_token: refreshToken // 전달받은 refreshToken 사용
       });
 
@@ -151,12 +149,14 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn, login, logout, socialLogin, getAccessToken }}>
+    <AuthContext.Provider value={{ user, isLoggedIn, login, logout, socialLogin, getAccessToken}}>
       {children}
     </AuthContext.Provider>
   );
 };
 //이거 이용하므로 export const으로 함수 export 할 필요 없음
+
+
 
 // Context 사용을 위한 커스텀 훅
 export const useAuth = () => {

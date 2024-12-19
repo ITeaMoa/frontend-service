@@ -5,6 +5,8 @@ import axios from 'axios';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons'; 
 import { useNavigate } from 'react-router-dom'; 
 import LikeButton from '../../components/LikeButton';
+// import axios from '../../api/axios'
+
 
 //각 섹션의 데이터를 상태로 관리합니다: useState를 사용하여 데이터를 저장하고, 
 //useEffect를 통해 컴포넌트가 마운트될 때 데이터를 Fetch
@@ -13,16 +15,15 @@ function Section1( ) {
   const [popularProjects, setPopularProjects] = useState([]);
   //    [ 현재 상태값, 상태 업데이트 함수]
   const navigate = useNavigate(); // useNavigate 훅을 사용하여 navigate 함수 생성
-  // const [project, setProject] = useState(null);
+  // // const [project, setProject] = useState(null);
+
 
 
 
   // // API에서 인기 프로젝트 데이터를 가져오는 함수
   // const fetchPopularProjects = async () => {
   //   try {
-  //     const response = await axios.get('http://localhost:8080/main/liked?feedType=PROJECT'); // API 호출
-  //     const userId = 1; // 예시로 사용자 ID를 1로 설정
-  //     const likedProjects = await fetchUserLikedProjects(userId);
+  //     const response = await axios.get('/main/liked?feedType=PROJECT'); // API 호출
 
   //     // API 응답에서 받은 데이터 처리
   //     const projectsWithLikes = response.data.map(project => {
@@ -87,19 +88,10 @@ function Section1( ) {
                   initialLikesCount={project.likesCount} 
                   onLikeChange={(newLiked, newLikesCount) => handleLikeClick(index, newLiked, newLikesCount)} 
                   buttonStyle="s1"
-                  apiEndpoint="http://localhost:8080/main/like"
-                  pk={project.pk}
-                  sk={project.sk}
+                  apiEndpoint="/main/like"
+                  sk={project.pk}
                 />
 
-{/* <LikeButton 
-  initialLiked={project.liked} 
-  initialLikesCount={project.likesCount} 
-  onLikeChange={(newLiked, newLikesCount) => handleLikeClick(index, newLiked, newLikesCount)} 
-  buttonStyle="s1"
-  pk={project.pk} // 프로젝트의 pk
-  sk={project.sk} // 프로젝트의 sk
-/> */}
             </LikeButtonWrapper>
             <ProjectTitle>{project.title}</ProjectTitle>
             <ProjectInfo>

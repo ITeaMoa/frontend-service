@@ -4,6 +4,7 @@ import Nav from "../../components/Nav";
 import axios from 'axios';
 import ProjectDetail from '../../components/ProjectDetail';
 import ProjectListComponent from '../../components/ProjectListComponent';
+// import axios from '../../api/axios'
 
 
 const MyPage = () => {
@@ -12,7 +13,7 @@ const MyPage = () => {
   const [projectsPerPage] = useState(5); 
   const [selectedList, setSelectedList] = useState('applied');
   const [selectedProject, setSelectedProject] = useState(null);
-  const isLoggedIn = true; 
+  // const isLoggedIn = true; 
   const showSearch = false;
 
   useEffect(() => {
@@ -38,7 +39,7 @@ const MyPage = () => {
     const fetchAppliedProjects = async () => {
       if (selectedList === 'applied') {
         try {
-          const response = await axios.get('http://localhost:8080/feeds/applications?userId=1111', {
+          const response = await axios.get('/feeds/applications?userId=1111', {
             headers: {
               'Authorization': 'API Key' // 실제 API 키로 교체하세요
             }
@@ -85,7 +86,7 @@ const MyPage = () => {
 
   return (
     <Container>
-      <Nav isLoggedIn={isLoggedIn} showSearch={showSearch}/>
+      <Nav  showSearch={showSearch}/>
 
           <List>
             <ul>

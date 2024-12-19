@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+// import axios from '../../api/axios'
 
 const SignUpPage = () => {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ const SignUpPage = () => {
 
   // const handleAuthNumberSend = async () => {
   //   try {
-  //     const response = await axios.post('http://localhost:8000/verify/verify-email', 
+  //     const response = await axios.post('/verify/verify-email', 
   //       { email: email }, 
   //       { 
   //         headers: { 
@@ -80,7 +81,7 @@ const SignUpPage = () => {
   const handleResendCode = async () => {
     try {
        
-        const response = await axios.post('http://localhost:8000/verify/resend-code', 
+        const response = await axios.post('/verify/resend-code', 
             { email: email }, 
             { 
                 headers: { 
@@ -98,7 +99,7 @@ const SignUpPage = () => {
 
   const handleConfirmEmail = async () => {
     try {
-        const response = await axios.post('http://localhost:8000/verify/confirm-email', 
+        const response = await axios.post('/confirm-email', 
             { email: email, verification_code: authNumber }, 
             { headers: { 'Content-Type': 'application/json' } }
         );
@@ -117,7 +118,7 @@ const SignUpPage = () => {
 
   const handleSignup = async () => {
     try {
-        const response = await axios.post('http://localhost:8000/signup', {
+        const response = await axios.post('/signup', {
             email: email,
             nickname: nickname,
             password: password,
@@ -135,7 +136,7 @@ const SignUpPage = () => {
 
   const handleCheckNickname = async () => {
     try {
-      const response = await axios.post('http://localhost:8000/verify/nickname', { nickname });
+      const response = await axios.post('/verify/nickname', { nickname });
       if (response.data.available) {
         alert('사용 가능한 닉네임입니다.');
       } else {

@@ -3,19 +3,24 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons'; 
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
-import axios from 'axios';
+// import axios from 'axios';
+// import axios from '../api/axios'
+// import { useAuth } from '../../context/AuthContext'
 
 
 const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle, apiEndpoint}) => {
   const [liked, setLiked] = useState(initialLiked);
   const [likesCount, setLikesCount] = useState(initialLikesCount);
+  // const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
+
+
 
 
   // // 컴포넌트가 마운트될 때 사용자의 좋아요 상태를 가져옵니다.
   // useEffect(() => {
   //   const fetchUserLikes = async () => {
   //     try {
-  //       const response = await axios.get(`http://localhost:8080/main/like?userId=${userId}`);
+  //       const response = await axios.get(`/main/like?userId=${user.id}`);
   //       // 응답에서 사용자의 좋아요 상태를 설정합니다.
   //       // 예를 들어, 응답이 { liked: true, likesCount: 10 } 형태라고 가정
   //       if (response.data) {
@@ -28,7 +33,7 @@ const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle
   //   };
 
   //   fetchUserLikes();
-  // }, [userId]);
+  // }, [user]);
 
   // props가 변경될 때 상태 업데이트
   useEffect(() => {
@@ -49,31 +54,11 @@ const handleClick = (e) => {
       onLikeChange(newLiked, newLikesCount); // 이벤트 객체 생략
     }
 
-    // // API 호출(상언))
-    // try {
-    //   const data = {
-    //     pk: pk,
-    //     sk: sk,
-    //     feedType: "PROJECT"
-    //   };
+    
 
-    //   if (newLiked) {
-    //     // 좋아요 추가
-    //     await axios.post('http://localhost:8080/main/like', data);
-    //   } else {
-    //     // 좋아요 제거
-    //     await axios.delete('http://localhost:8080/main/like', { data });
-    //   }
-    // } catch (error) {
-    //   console.error('Error updating like status:', error);
-    //   // 상태를 원래대로 되돌리기
-    //   setLiked(!newLiked);
-    //   setLikesCount(newLikesCount - (newLiked ? 1 : -1));
-    // }
-
-  //   / API 호출
+  //   / API 호출//메인페이지
   //   const data = {
-  //     pk: pk,
+  //     pk: user.id,
   //     sk: sk,
   //     feedType: "PROJECT"
   //   };
@@ -96,25 +81,14 @@ const handleClick = (e) => {
 
 
 
-    //API 호출 보명
-    // try {
-    //   const data = ''; // 필요한 데이터가 있으면 여기에 추가
-    //   const response = await axios.put('http://localhost:8080/feeds/102c77b5-ae6c-444a-866f-65a3f676b8f3/like?userId=1111&feedType=PROJECT', data);
-    //   console.log(response.data);
-    // } catch (error) {
-    //   console.error('Error updating like status:', error);
-    //   // 상태를 원래대로 되돌리기
-    //   setLiked(!newLiked);
-    //   setLikesCount(newLikesCount - (newLiked ? 1 : -1));
-    // }
+ 
 
-
-// // API 호출//보명님
+// // API 호출//보명님//상세페이지
 
 //     try {
 //       const response = await axios.put(`${apiEndpoint}/like`, null, {
 //         params: {
-//           userId: userId,
+//           userId: user.id,
 //           feedType: "PROJECT"
 //         }
 //       });
@@ -127,28 +101,6 @@ const handleClick = (e) => {
 //     }
 //   };
 
-// // API 호출
-// const data = {
-//   pk: pk,
-//   sk: sk,
-//   feedType: "PROJECT"
-// };근데 이 부분이 api에 없음. 상언 오빠만 이씅ㅁ
-
-// try {
-//   if (newLiked) {
-//     // 좋아요 추가
-//     await axios.post(apiEndpoint, data);
-//   } else {
-//     // 좋아요 제거
-//     await axios.delete(apiEndpoint, { data });
-//   }
-// } catch (error) {
-//   console.error('Error updating like status:', error);
-//   // 상태를 원래대로 되돌리기
-//   setLiked(!newLiked);
-//   setLikesCount(newLikesCount - (newLiked ? 1 : -1));
-// }
-// };
 
     
 

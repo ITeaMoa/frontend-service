@@ -4,10 +4,11 @@ import Nav from "../../components/Nav";
 import SearchFeed from "./SearchFeed"; 
 import styled from 'styled-components';
 import axios from 'axios';
+// import axios from '../../api/axios'
 
 const SearchPage = () => {
     const [searchResults, setSearchResults] = useState([]);
-    const [selectedTags, setSelectedTags] = useState([]); // 선택된 태그 상태
+    // const [selectedTags, setSelectedTags] = useState([]); // 선택된 태그 상태
     const showSearch = true;
 
     const useQuery = () => {
@@ -87,8 +88,8 @@ const SearchPage = () => {
       //     const tags = selectedTags.join(','); // 선택된 태그를 문자열로 변환
     
       //     // 태그와 키워드를 기반으로 API 호출
-      //     const tagResponse = await axios.get(`http://localhost:8080/main/search-tags?feedType=PROJECT&tags=${encodeURIComponent(tags)}`);
-      //     const keywordResponse = await axios.get(`http://localhost:8080/main/search-keyword?feedType=PROJECT&keyword=${encodeURIComponent(searchTerm)}`);
+      //     const tagResponse = await axios.get(`/search-tags?feedType=PROJECT&tags=${encodeURIComponent(tags)}`);
+      //     const keywordResponse = await axios.get(`/main/search-keyword?feedType=PROJECT&keyword=${encodeURIComponent(searchTerm)}`);
     
       //     // 두 결과를 결합
       //     const combinedResults = [...tagResponse.data, ...keywordResponse.data];

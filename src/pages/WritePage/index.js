@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
+// import axios from '../../api/axios'
+
 
 
 
@@ -47,7 +49,7 @@ const WritePage = () => {
       }, {}),
     };
 
-    axios.post(`http://localhost:8080/feeds/create?feedType=PROJECT&userId=f448fd8c-5061-702c-8c22-3636be5d18c9`, dataToSend, {
+    axios.post(`/feeds/create?feedType=PROJECT&userId=f448fd8c-5061-702c-8c22-3636be5d18c9`, dataToSend, {
       headers: {
         'Content-Type': 'application/json',
       },

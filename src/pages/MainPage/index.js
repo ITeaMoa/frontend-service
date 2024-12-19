@@ -7,6 +7,8 @@ import {useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Modal from '../../components/Modal';
 import Dropdown from '../../components/DropDown'
+// import axios from '../../api/axios'
+import { useAuth } from '../../context/AuthContext'
 
 
 
@@ -17,6 +19,7 @@ const MainPage = () => {
   const query = new URLSearchParams(location.search);
   //URL이 http://example.com/?showModal=true라면 location.search는 "?showModal=true"가 됨
   const showModal = query.get('showModal') === 'true'; // 쿼리 파라미터 확인
+  const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false); // 모달 상태 추가
   const fileInputRef = useRef(null); // 파일 입력을 위한 ref
   const [selectedFile, setSelectedFile] = useState(null); // 선택된 파일 상태
@@ -86,6 +89,8 @@ const MainPage = () => {
 
   const updateUserProfile = async () => {
     const data = new FormData();// 파일과 JSON 데이터를 함께 전송하기 위해서
+    
+
 
     
         // 파일 추가
@@ -112,7 +117,7 @@ const MainPage = () => {
     data.append('profile', JSON.stringify(profileData)); // JSON 문자열로 추가
 
     try {
-        const response = await axios.put('http://localhost:8080/profile/f448fd8c-5061-702c-8c22-3636be5d18c9', data, {
+        const response = await axios.put(`/profile/${user.id}`, data, {
             headers: {
                 ...data.getHeaders() // FormData의 헤더 추가
             }

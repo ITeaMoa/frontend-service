@@ -7,6 +7,8 @@ import axios from 'axios';
 import LikeButton from '../../components/LikeButton';
 import Pagination from '../../components/Pagination';
 import Modal from '../../components/Modal';
+import { useAuth } from '../../context/AuthContext'
+
 
 const Section2 = () => {
   const [allProjects, setAllProjects] = useState([]);
@@ -18,30 +20,15 @@ const Section2 = () => {
   const [project, setProject] = useState(null); // 선택된 프로젝트 상태 추가
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [popupMessage, setPopupMessage] = useState(''); // 팝업 메시지 상태
+  const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
 
 
-  // const fetchAllProjects = async () => {
-  //   const response = await axios.get('/data.json');
-  //   setAllProjects(response.data);
-  // };
-
-
-   // // API에서 사용자 좋아요 피드를 가져오는 함수
-  // const fetchUserLikedProjects = async (userId) => {
-  //   try {
-  //     const response = await axios.get(`http://localhost:8080/main/like?userId=${userId}`);
-  //     return response.data; // 사용자가 좋아요를 누른 프로젝트 목록 반환
-  //   } catch (error) {
-  //     console.error('Error fetching liked projects:', error);
-  //     return [];
-  //   }
-  // };
 
 
 // 실제 연결
 //   const fetchAllProjects = async () => {
 //     try {
-//       const response = await axios.get('http://localhost:8080/main?feedType=PROJECT'); // API 호출
+//       const response = await axios.get('/main?feedType=PROJECT'); // API 호출
 //       const projectsWithLikes = response.data.map((project, index) => ({
 //         id: index, // 프로젝트 ID 추가 (또는 실제 ID 사용)
 //         ...project,
@@ -120,29 +107,21 @@ const handleApplySubmit = async () => {
 
   try {
     // 선택한 역할을 서버에 전송
-    await postSelectedRole(selectedRole);
+    const applicationData = {
+      pk: project.pk, // 프로젝트의 pk를 사용
+      sk: user.id, 
+      part: selectedRole, // 선택한 역할
+      feedType: "PROJECT" // 고정된 값
+    };
 
-    // try { 상언쓰
-    //   // 선택한 역할을 서버에 전송
-    //   const applicationData = {
-    //     pk: project.pk, // 프로젝트의 pk를 사용
-    //     sk: "1234", // 사용자 식별자 (예시로 하드코딩, 실제로는 로그인 사용자 ID로 대체)
-    //     part: selectedRole, // 선택한 역할
-    //     feedType: "PROJECT" // 고정된 값
-    //   };
-
-    //   const response = await axios.post('http://localhost:8080/main/application', applicationData); // API 호출
-
+    await axios.post('/main/application', applicationData); // API 호출
 
     setPopupMessage("제출되었습니다.");
-
     // 제출 확인 팝업 표시
     setIsSubmitted(true);
   } catch (error) {
     console.error("Submission failed:", error);
-
     setPopupMessage("제출에 실패했습니다. 다시 시도하세요.");
-    
     // 제출 확인 팝업 표시
     setIsSubmitted(true);
   }
@@ -154,15 +133,15 @@ const handleCloseSubmissionPopup = () => {
   setPopupMessage(''); // 메시지 초기화
 };
 
-// 선택한 역할을 서버에 전송하는 모의 함수
-const postSelectedRole = async (role) => {
-  try {
-    const response = await axios.post('/api/submitRole', { role });
-    return response.data; // 서버로부터의 응답 데이터 반환
-  } catch (error) {
-    throw new Error('서버 요청 실패');
-  }
-};
+// // 선택한 역할을 서버에 전송하는 모의 함수
+// const postSelectedRole = async (role) => {
+//   try {
+//     const response = await axios.post('/api/submitRole', { role });
+//     return response.data; // 서버로부터의 응답 데이터 반환
+//   } catch (error) {
+//     throw new Error('서버 요청 실패');
+//   }
+// };
 
 
   return (
@@ -180,9 +159,8 @@ const postSelectedRole = async (role) => {
                 initialLiked={project.liked} 
                 initialLikesCount={project.likesCount} 
                 onLikeChange={(newLiked, newLikesCount) => handleLikeClick(index, newLiked, newLikesCount)} // 내부 상태 업데이트
-                apiEndpoint="http://localhost:8080/main/like" // MainPage API 엔드포인트
-                pk={project.pk} 
-                sk={project.sk}
+                apiEndpoint="/main/like" // MainPage API 엔드포인트
+                sk={project.pk}
               />
             </LikeButtonWrapper>
             <ProjectTitle>{project.title}</ProjectTitle>
@@ -202,7 +180,11 @@ const postSelectedRole = async (role) => {
                 마감일자 | {new Date(project.deadline).toLocaleDateString()}
               </Details>
             </ProjectInfo>
-            <ApplyButton onClick={() => handleApplyClick(project)}>신청하기</ApplyButton>
+            <ApplyButton onClick={(e) => {
+          e.stopPropagation(); // 이벤트 전파 방지
+          handleApplyClick(project);
+        }}>
+        신청하기</ApplyButton>
           </ProjectCard>
         ))}
       </ProjectList>

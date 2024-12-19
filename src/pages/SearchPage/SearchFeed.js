@@ -225,11 +225,14 @@ const SectionWrapper = styled.div`
   margin-bottom: 40px;
 `;
 
+<<<<<<< Updated upstream
 // const SectionTitle = styled.h2`
 //   font-size: 24px;
 //   margin-top: 20px;
 //   margin-bottom: 20px;
 // `;
+=======
+>>>>>>> Stashed changes
 
 const ProjectList = styled.div`
   display: flex;
@@ -323,6 +326,7 @@ const ProjectOwner = styled.div`
   margin-left: 10px;
 `;
 
+<<<<<<< Updated upstream
 // const ProjectLikes = styled.div`
 //   position: absolute;
 //   border: 1px solid #ddd;
@@ -333,6 +337,9 @@ const ProjectOwner = styled.div`
 //   background-color: #C4C4C4;
 //   transform: translate(300px,-25px);
 // `;
+=======
+
+>>>>>>> Stashed changes
 
 const ProjectTitle = styled.h3`
   font-size: 20px;

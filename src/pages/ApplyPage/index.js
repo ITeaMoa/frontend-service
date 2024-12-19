@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 import React, { useState, useEffect,useCallback  } from 'react';
+=======
+import React, { useState, useEffect, useCallback } from 'react';
+>>>>>>> Stashed changes
 import styled from 'styled-components';
 import Nav from '../../components/Nav';
 import { useNavigate , useParams } from 'react-router-dom';
@@ -11,7 +15,10 @@ import Modal from '../../components/Modal'; // 모달 컴포넌트 import
 // import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 const ApplyPage = () => {
   const navigate = useNavigate(); 
   const {projectId } = useParams(); // URL에서 projectId 가져오기
@@ -28,7 +35,45 @@ const ApplyPage = () => {
   const [popupMessage, setPopupMessage] = useState(''); // 팝업 메시지 상태
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
 
+<<<<<<< Updated upstream
   
+=======
+  // const fetchProjectDetails = async () => {
+  //   try {
+  //     // 데이터 가져오기
+  //     const response = await axios.get('/data.json');
+
+  //     // 가져온 데이터에서 특정 프로젝트 찾기
+  //     const selectedProject = response.data.find(item => item.pk === projectId);
+      
+  //     // 상태 업데이트
+  //     if (selectedProject) {
+  //       setProject(selectedProject);
+  //     } else {
+  //       console.error("Project not found for projectId:", projectId);
+  //       setProject(null); // 프로젝트가 없을 경우 상태를 null로 설정
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching project details:", error);
+  //     setProject(null); // 오류 발생 시 상태를 null로 설정
+  //   }
+  // };
+
+  // //selectedProject 변수에 items 배열에서 pk와 projectId가 일치하는 첫번째 프로젝트가 저장됨
+  // //find() 메서드는 배열에서 조건을 만족하는 첫번쨰 요소(items의 [0]) 반환 
+  // //item : items 배열의 각 요소를 나타냄( 화살표 함수의 매개변수)
+
+  // useEffect(() => {
+  //   fetchProjectDetails();
+  // }, [projectId])
+  // //useEffect : 컴포넌트가 렌더링 된 후에 사이드 이펙트 수행을 위함 . 데이터 fecthing등에 사용됨 
+  // //projecId가 변경될 때 마 실행
+  // //첫번째 인자: 실행할 함수 , 두번째 인재 의존성 배열
+  //-> React Hook useEffect has a missing dependency: 'fetchProjectDetails'. Either
+//include it or remove the dependency array react-hooks/exhaustive-deps  > 이런 에러 뜸
+
+
+>>>>>>> Stashed changes
   // fetchProjectDetails를 useCallback으로 래핑하여 메모이제이션
   const fetchProjectDetails = useCallback(async () => {
     try {
@@ -50,7 +95,10 @@ const ApplyPage = () => {
   useEffect(() => {
     fetchProjectDetails(); // 프로젝트 세부 정보를 가져옵니다.
   }, [fetchProjectDetails]); // 의존성 배열에 fetchProjectDetails 추가
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 
   const handleLike = () => {
     setLiked(prevLiked => {

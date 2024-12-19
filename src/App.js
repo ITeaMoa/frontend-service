@@ -26,7 +26,7 @@ function App() {
           <Route index element={<MainPage />} />
           <Route path="WritePage" element={<WritePage />} />
           <Route path="ApplyPage/:projectId" element={<ApplyPage />} />
-          /* :기호 : 뒤에 오는 부분이 동적 매개변수 임을 나타냄 . 즉 고정된 값이 아니라 사용자가 제공하는 값*/
+         
           <Route path="SearchPage" element={<SearchPage />} />
           <Route path="MyPage" element={<MyPage/>} />
           <Route path="LoginPage" element={<LoginPage />} />

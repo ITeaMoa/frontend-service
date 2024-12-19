@@ -4,8 +4,7 @@ import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 // import axios from 'axios';
-// import axios from '../api/axios'
-// import { useAuth } from '../../context/AuthContext'
+// import axios from '../../api/axios'
 
 
 const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle, apiEndpoint}) => {

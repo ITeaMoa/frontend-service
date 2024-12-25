@@ -58,7 +58,7 @@ const SearchPage = () => {
       //     const tags = selectedTags.join(','); // 선택된 태그를 문자열로 변환
     
       //     // 태그와 검색어를 기반으로 API 호출
-      //     const response = await axios.get(`http://localhost:8080/main/search-tags?feedType=PROJECT&tags=${encodeURIComponent(tags)}&keyword=${encodeURIComponent(searchTerm)}`);
+      //     const response = await axios.get(`/main/search-tags?feedType=PROJECT&tags=${encodeURIComponent(tags)}&keyword=${encodeURIComponent(searchTerm)}`);
     
       //     // API 호출 결과 설정
       //     setSearchResults(response.data);

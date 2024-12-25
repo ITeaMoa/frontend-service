@@ -28,7 +28,7 @@ const SignUpPage = () => {
 
   // const handleAuthNumberSend = async () => {
   //   try {
-  //     const response = await axios.post('/verify/verify-email', 
+  //     const response = await axios.post('login/verify/email', 
   //       { email: email }, 
   //       { 
   //         headers: { 
@@ -81,7 +81,7 @@ const SignUpPage = () => {
   const handleResendCode = async () => {
     try {
        
-        const response = await axios.post('/verify/resend-code', 
+        const response = await axios.post('login/verify/resend', 
             { email: email }, 
             { 
                 headers: { 
@@ -99,7 +99,7 @@ const SignUpPage = () => {
 
   const handleConfirmEmail = async () => {
     try {
-        const response = await axios.post('/confirm-email', 
+        const response = await axios.post('login/confirm/email', 
             { email: email, verification_code: authNumber }, 
             { headers: { 'Content-Type': 'application/json' } }
         );
@@ -118,7 +118,7 @@ const SignUpPage = () => {
 
   const handleSignup = async () => {
     try {
-        const response = await axios.post('/signup', {
+        const response = await axios.post('login/confirm/signup', {
             email: email,
             nickname: nickname,
             password: password,
@@ -136,7 +136,7 @@ const SignUpPage = () => {
 
   const handleCheckNickname = async () => {
     try {
-      const response = await axios.post('/verify/nickname', { nickname });
+      const response = await axios.post('lgoin/verify/nickname', { nickname });
       if (response.data.available) {
         alert('사용 가능한 닉네임입니다.');
       } else {

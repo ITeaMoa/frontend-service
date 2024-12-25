@@ -1,15 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment } from '@fortawesome/free-solid-svg-icons';
-import Pagination from './Pagination'; 
+import Pagination from '../../components/Pagination'; 
+import axios from '../../api/axios'
+// import { useAuth } from '../../context/AuthContext'
 
-const ProjectDetail = ({ project, onBack}) => {
+const ProjectDetail = ({ project, onBack, onClose}) => {
+    const [applicants, setApplicants] = useState([]);
+
     const [visibleButtons, setVisibleButtons] = useState({});
     const [clickedButtons, setClickedButtons] = useState({});
     const [selectedField, setSelectedField] = useState('전체');
     const [currentPage, setCurrentPage] = useState(1);
     const applicantsPerPage = 5;
+
+    // 모집 완료 버튼 상태 추가
+    const [isClosed, setIsClosed] = useState(false);
+    // const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
+
 
     // 팝업 상태 추가
     const [isPopupVisible, setIsPopupVisible] = useState(false);
@@ -19,16 +28,59 @@ const ProjectDetail = ({ project, onBack}) => {
     // 버튼 비활성화 상태 추가
     const [disabledButtons, setDisabledButtons] = useState({});
 
-    const applicants = project.applicants || [];
-    const filteredApplicants = selectedField === '전체'
-        ? applicants
-        : applicants.filter(applicant => applicant.field === selectedField);
 
-    const indexOfLastApplicant = currentPage * applicantsPerPage;
-    const indexOfFirstApplicant = indexOfLastApplicant - applicantsPerPage;
-    const currentApplicants = filteredApplicants.slice(indexOfFirstApplicant, indexOfLastApplicant);
-    // const totalPages = Math.ceil(filteredApplicants.length / applicantsPerPage);
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+    // 역할 목록 정의
+    const roles = project.role && Array.isArray(project.role) ? 
+        ['전체', ...project.role.map(role => role.name)] : 
+        ['전체'];
+
+    useEffect(() => {
+        const fetchApplicants = async () => {
+            try {
+                const params = {
+                    feedId: project.pk,
+                };
+
+                // '전체'일 경우 part를 아예 제거
+                if (selectedField !== '전체') {
+                    params.part = selectedField; // 선택된 역할 설정
+                }
+
+                const response = await axios.get('my/writing/part', { params });
+                
+                if (response.data) {
+                    setApplicants(response.data); // API 응답 데이터 설정
+                } else {
+                    console.warn("No applicants found");
+                    setApplicants([]); // 데이터가 없을 경우 빈 배열로 초기화
+                }
+            } catch (error) {
+                console.error("Error fetching applicants:", error);
+            }
+        };
+
+        fetchApplicants();
+    }, [project.pk, selectedField]); // feedId 또는 selectedField가 변경될 때 호출
+
+
+    // const applicants = project.applicants || [];
+    // const filteredApplicants = selectedField === '전체'
+    //     ? applicants
+    //     : applicants.filter(applicant => applicant.field === selectedField);
+
+    // const indexOfLastApplicant = currentPage * applicantsPerPage;
+    // const indexOfFirstApplicant = indexOfLastApplicant - applicantsPerPage;
+    // const currentApplicants = filteredApplicants.slice(indexOfFirstApplicant, indexOfLastApplicant);
+    // // const totalPages = Math.ceil(filteredApplicants.length / applicantsPerPage);
+    // const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+
+     // Pagination 로직
+     const indexOfLastApplicant = currentPage * applicantsPerPage;
+     const indexOfFirstApplicant = indexOfLastApplicant - applicantsPerPage;
+     const currentApplicants = applicants.slice(indexOfFirstApplicant, indexOfLastApplicant);
+     
+     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     const handleStatusChange = (applicant, status) => {
         if (disabledButtons[applicant.name]) return; // 비활성화된 버튼이면 함수 종료
@@ -38,13 +90,36 @@ const ProjectDetail = ({ project, onBack}) => {
         setIsPopupVisible(true);
     };
 
-    const confirmStatusChange = () => {
-        console.log(`Changing status for ${selectedApplicant.name} to ${newStatus}`);
-        setVisibleButtons(prevState => ({ ...prevState, [selectedApplicant.name]: newStatus }));
-        setClickedButtons(prevState => ({ ...prevState, [selectedApplicant.name]: newStatus }));
-        setDisabledButtons(prevState => ({ ...prevState, [selectedApplicant.name]: true })); // 버튼 비활성화
-        setIsPopupVisible(false);
+    // const confirmStatusChange = () => {
+    //     console.log(`Changing status for ${selectedApplicant.name} to ${newStatus}`);
+    //     setVisibleButtons(prevState => ({ ...prevState, [selectedApplicant.name]: newStatus }));
+    //     setClickedButtons(prevState => ({ ...prevState, [selectedApplicant.name]: newStatus }));
+    //     setDisabledButtons(prevState => ({ ...prevState, [selectedApplicant.name]: true })); // 버튼 비활성화
+    //     setIsPopupVisible(false);
+    // };
+
+    const confirmStatusChange = async () => {
+        const requestData = {
+            pk: selectedApplicant.userid, // 신청자의 userId
+            sk: project.pk // feedId
+        };
+
+        const url = newStatus === "반려" ? 'my/writing/reject' : 'my/writing/accept';
+
+        try {
+            const response = await axios.patch(url, requestData);
+            console.log(`Response: ${response.data}`);
+
+            setVisibleButtons(prevState => ({ ...prevState, [selectedApplicant.name]: newStatus }));
+            setClickedButtons(prevState => ({ ...prevState, [selectedApplicant.name]: newStatus }));
+            setDisabledButtons(prevState => ({ ...prevState, [selectedApplicant.name]: true }));
+        } catch (error) {
+            console.error(`Error changing status for ${selectedApplicant.name}:`, error);
+        } finally {
+            setIsPopupVisible(false);
+        }
     };
+
 
     const cancelStatusChange = () => {
         setIsPopupVisible(false);
@@ -62,6 +137,41 @@ const ProjectDetail = ({ project, onBack}) => {
     //     }
     // };
 
+    // // 모집 완료 요청 함수
+    // const handleCloseApplication = async () => {
+    //     const requestData = {
+    //         pk: project.pk, // feedId
+    //         sk: "PROJECT"   // feedType
+    //     };
+
+    //     try {
+    //         const response = await axios.patch('my/writing/close', requestData);
+    //         console.log(`Response: ${response.data}`);
+    //         setIsClosed(true); // 모집 완료 상태 업데이트
+    //     } catch (error) {
+    //         console.error('Error closing application:', error);
+    //     }
+    // };
+
+
+    const handleCloseApplication = async () => {
+        const requestData = {
+            pk: project.pk, // feedId
+            sk: "PROJECT"   // feedType
+        };
+
+        try {
+            const response = await axios.patch('my/writing/close', requestData);
+            console.log(`Response: ${response.data}`);
+            setIsClosed(true); // 모집 완료 상태 업데이트
+            
+            // 부모 컴포넌트에 상태 업데이트 요청
+            onClose(project.pk); // 프로젝트 ID를 전달
+        } catch (error) {
+            console.error('Error closing application:', error);
+        }
+    };
+    
     return (
         <DetailContainer>
             <LeftSection>
@@ -75,8 +185,16 @@ const ProjectDetail = ({ project, onBack}) => {
                     <InfoItem>진행 장소 | {project.place}</InfoItem>
                     <InfoItem>모집 현황 | {project.applyNum}명 / {project.recruitmentNum}명</InfoItem>
                     <InfoItem>진행 기간 | {project.period}개월</InfoItem>
-                    <InfoItem>모집 역할 | 백엔드(2), 디자이너(1)</InfoItem>
+                    <InfoItem>모집 역할 | {project.role && Array.isArray(project.role) ? (
+                  project.role.map((role, index) => (
+                    <span key={index}>{role.name}({role.count})</span>
+                  ))
+                ) : (
+                  <span>역할 정보가 없습니다.</span>
+                )}</InfoItem>
+                
                     <InfoItem>신청자 수 | 백엔드(3), 디자이너(1)</InfoItem>
+                    {/* <InfoItem>신청자 수 | {project.recruitmentRoles</InfoItem> */}
                 </DetailInfo>
                 <Tags>
                     {project.tags.map((tag, index) => (
@@ -85,7 +203,13 @@ const ProjectDetail = ({ project, onBack}) => {
                 </Tags>
                 <ButtonContainerHorizontal>
                     <BackButton onClick={onBack}>목록</BackButton>
-                    <Button>모집완료</Button>
+                    <Button 
+                    onClick={handleCloseApplication}
+                    isClicked={isClosed} // 클릭 상태 전달
+                    disabled={isClosed} 
+                >
+                    모집완료
+                </Button>
                 </ButtonContainerHorizontal>
             </LeftSection>
             <RightSection>
@@ -93,7 +217,7 @@ const ProjectDetail = ({ project, onBack}) => {
                     <HeaderContainer>
                         <h3>신청현황</h3>
                         <FieldButtons>
-                            {['전체', '백엔드', '프론트', '디자이너', '데이터분석가'].map(field => (
+                            {/* {['전체', '백엔드', '프론트', '디자이너', '데이터분석가'].map(field => (
                                 <FieldButton 
                                     key={field} 
                                     onClick={() => handleFieldClick(field)}
@@ -101,8 +225,19 @@ const ProjectDetail = ({ project, onBack}) => {
                                 >
                                     {field}
                                 </FieldButton>
-                            ))}
-                        </FieldButtons>
+                            ))} */}
+                           {roles.map((field, index) => (
+                        <FieldButton 
+                            key={index} 
+                            onClick={() => handleFieldClick(field)} 
+                            $isSelected={selectedField === field} 
+                        >
+                            {field}
+                        </FieldButton>
+                    ))}
+                </FieldButtons>
+            
+    
                     </HeaderContainer>
                     {currentApplicants.length > 0 ? (
                         currentApplicants.map((applicant, index) => (
@@ -159,9 +294,15 @@ const ProjectDetail = ({ project, onBack}) => {
                     )}
                 </ApplicationStatus>
                 <StyledPaginationContainer>
-                    <Pagination 
+                    {/* <Pagination 
                         currentPage={currentPage}
                         totalProjects={filteredApplicants.length}
+                        projectsPerPage={applicantsPerPage} 
+                        onPageChange={paginate} 
+                    /> */}
+                     <Pagination 
+                        currentPage={currentPage}
+                        totalProjects={applicants.length}
                         projectsPerPage={applicantsPerPage} 
                         onPageChange={paginate} 
                     />
@@ -355,14 +496,29 @@ const StatusButton = styled.button`
 
 `;
 
+// const Button = styled.button`
+//     background-color: #3563E9;
+//     color: white;
+//     border: none;
+//     padding: 10px 25px;
+//     border-radius: 5px;
+//     cursor: pointer;
+
+// `;
+
+
 const Button = styled.button`
-    background-color: #3563E9;
-    color: white;
+    background-color: ${({ isClicked }) => isClicked ? 'grey' : '#3563E9'};
+    color: ${({ isClicked }) => isClicked ? 'white' : 'white'};
     border: none;
     padding: 10px 25px;
     border-radius: 5px;
     cursor: pointer;
+    opacity: ${({ isClicked }) => isClicked ? 0.6 : 1}; /* 비활성화된 경우 투명도 조정 */
 
+    &:hover {
+        background-color: ${({ isClicked }) => isClicked ? 'grey' : '#2e51a3'}; /* 클릭되지 않았을 때 호버 효과 */
+    }
 `;
 
 const BackButton = styled.button`

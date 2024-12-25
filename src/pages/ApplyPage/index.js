@@ -51,6 +51,27 @@ const ApplyPage = () => {
     fetchProjectDetails(); // 프로젝트 세부 정보를 가져옵니다.
   }, [fetchProjectDetails]); // 의존성 배열에 fetchProjectDetails 추가
 
+  // const fetchProjectDetails = useCallback(async () => {
+  //   try {
+  //     const response = await axios.get(`/main?feedType=PROJECT`); // 프로젝트 목록 가져오기
+  //     const selectedProject = response.data.find(item => item.pk === projectId); // 특정 프로젝트 찾기
+      
+  //     if (selectedProject) {
+  //       setProject(selectedProject);
+  //     } else {
+  //       console.error("Project not found for projectId:", projectId);
+  //       setProject(null);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching project details:", error);
+  //     setProject(null); // 오류 발생 시 상태를 null로 설정
+  //   }
+  // }, [projectId]);
+
+  // useEffect(() => {
+  //   fetchProjectDetails(); // 프로젝트 세부 정보를 가져옵니다.
+  // }, [fetchProjectDetails]);
+
 
   const handleLike = () => {
     setLiked(prevLiked => {
@@ -74,12 +95,10 @@ const ApplyPage = () => {
       };
 
       try {
-        // API 호출하여 댓글 작성
-        await axios.post(`/feeds/${projectId}/PROJECT/comments`, newComment, {
-          headers: {
-            'Authorization': 'API Key' // 여기에 실제 API 키를 입력하세요
-          }
+        await axios.post(`/feed/${projectId}/comments`, newComment, {
+          params: { feedType: "PROJECT" }
         });
+  
 
         // 기존 댓글 배열에 새로운 댓글 추가
         setProject(prevProject => ({
@@ -148,25 +167,27 @@ const ApplyPage = () => {
   //   }
   // };
 
-  // 선택한 역할을 서버에 전송하는 함수
-  const postSelectedRole = async (role) => {
-    const applicationData = {
-      userId: user.id, // 현재 사용자 ID
-      feedId: projectId, // 프로젝트 ID
-      part: role, // 선택한 역할
-    };
 
-    try {
-      const response = await axios.post(
-        `/feeds/apply?feedType=PROJECT`,
-        applicationData
-      );
-      return response.data; // 서버로부터의 응답 데이터 반환
-    } catch (error) {
-      console.error('서버 요청 실패:', error);
-      throw new Error('서버 요청 실패');
-    }
+
+// 선택한 역할을 서버에 전송하는 함수
+const postSelectedRole = async (role) => {
+  const applicationData = {
+    userId: user.id, // 현재 사용자 ID
+    feedId: projectId, // 프로젝트 ID
+    part: role, // 선택한 역할
   };
+
+  try {
+    const response = await axios.post(
+      `/feed/apply?feedType=PROJECT&projectId=${projectId}`, // projectId를 쿼리 파라미터로 추가
+      applicationData
+    );
+    return response.data; // 서버로부터의 응답 데이터 반환
+  } catch (error) {
+    console.error('서버 요청 실패:', error);
+    throw error; // 오류 발생 시 적절히 처리
+  }
+};
 
 
   return (
@@ -185,7 +206,7 @@ const ApplyPage = () => {
           initialLikesCount={project.likesCount} 
           onLikeChange={handleLike} 
           buttonStyle='apply'
-          apiEndpoint={`/feeds/${projectId}`}
+          apiEndpoint={`/feed/${projectId}`}
           userId="f448fd8c-5061-702c-8c22-3636be5d18c9"
         />
         
@@ -221,7 +242,16 @@ const ApplyPage = () => {
                 <Label>모집 현황 |</Label> {project.applyNum ? `${project.applyNum}명 / ${project.recruitmentNum}명` : '정보 없음'}
             </Detail>
             <Detail>
-                <Label>신청자 수 |</Label> 백엔드(3), 디자이너(1)
+                {/* <Label>신청자 수 |</Label> 백엔드(3), 디자이너(1) */}
+                   {/* <Label>신청자 수 |</Label> {project recruitmentRoles*/}
+                <Label>신청자 수 |</Label>
+        {project && project.role ? (
+          project.role.map((role, index) => (
+            <span key={index}>{role.name}({role.count}) </span>
+          ))
+        ) : (
+          <span>역할 정보가 없습니다.</span>
+        )}
             </Detail>
        
         </PostDetails>

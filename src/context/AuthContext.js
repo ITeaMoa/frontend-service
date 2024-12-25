@@ -47,14 +47,14 @@ export const AuthProvider = ({ children }) => {
   // 로그인 함수
   const login = async (userId, password) => {
     try {
-      const response = await axios.post('/signin', {
+      const response = await axios.post('login/confirm/signin', {
         email: userId,
         password,
       });
 
       if (response.status === 200) {
         const userData = response.data.user; // 사용자 정보// 사용자 정보 (여기에 user.id가 포함되어 있어야 함)
-        const token = response.data.token; // JWT
+        const token = response.data.access_token; // JWT 
 
         setUser(userData);
         saveToken(token); // 로컬 스토리지에 JWT 저장
@@ -133,18 +133,20 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Access Token 발급 요청 함수
-  const getAccessToken = async (refreshToken) => {
+  const getAccessToken = async (email, refreshToken) => {
     try {
-      const response = await axios.post('/refresh', {
+      const response = await axios.post('login/verify/refresh', {
         // const response = await axios.post('http://localhost:8000/refresh', {
-        // email, // 이메일을 하드코딩하거나 인자로 받을 수 있습니다.
+        email, // 이메일을 하드코딩하거나 인자로 받을 수 있습니다.
         refresh_token: refreshToken // 전달받은 refreshToken 사용
       });
 
-      return response.data; // API 응답 반환
+      if (response.status === 200) {
+        return response.data; // API 응답 반환
+      }
     } catch (error) {
       console.error('Access Token 발급 요청 중 오류 발생:', error);
-      return null;
+      return null; // 오류 발생 시 null 반환
     }
   };
 

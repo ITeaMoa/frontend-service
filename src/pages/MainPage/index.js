@@ -91,8 +91,6 @@ const MainPage = () => {
     const data = new FormData();// 파일과 JSON 데이터를 함께 전송하기 위해서
     
 
-
-    
         // 파일 추가
         if (selectedFile) {
           data.append('file', selectedFile); // 선택된 파일 추가
@@ -117,7 +115,7 @@ const MainPage = () => {
     data.append('profile', JSON.stringify(profileData)); // JSON 문자열로 추가
 
     try {
-        const response = await axios.put(`/profile/${user.id}`, data, {
+        const response = await axios.put(`my/profile/${user.id}`, data, {
             headers: {
                 ...data.getHeaders() // FormData의 헤더 추가
             }

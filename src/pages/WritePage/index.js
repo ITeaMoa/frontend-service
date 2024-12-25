@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 // import axios from '../../api/axios'
+import { useAuth } from '../../context/AuthContext'
 
 
 
@@ -15,6 +16,7 @@ import axios from 'axios';
 const WritePage = () => {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
+  const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
   // const [participants, setParticipants] = useState(0);
   const [period, setPeriod] = useState('');
   const [deadline, setDeadline] = useState('');
@@ -49,9 +51,13 @@ const WritePage = () => {
       }, {}),
     };
 
-    axios.post(`/feeds/create?feedType=PROJECT&userId=f448fd8c-5061-702c-8c22-3636be5d18c9`, dataToSend, {
+    axios.post(`/feed/create`, dataToSend, {
       headers: {
         'Content-Type': 'application/json',
+      },
+      params: {
+        feedType: 'PROJECT', 
+        userId: user.id,     
       },
     })
     .then(response => {

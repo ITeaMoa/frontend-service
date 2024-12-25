@@ -25,7 +25,7 @@ const Section2 = () => {
 
 
 
-// 실제 연결
+// //실제 연결
 //   const fetchAllProjects = async () => {
 //     try {
 //       const response = await axios.get('/main?feedType=PROJECT'); // API 호출

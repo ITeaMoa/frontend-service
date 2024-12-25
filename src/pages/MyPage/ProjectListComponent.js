@@ -3,11 +3,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 import styled from 'styled-components';
-import Pagination from './Pagination';
-
+import Pagination from '../../components/Pagination';
+import axios from '../../api/axios'; // Axios import 추가
+import { useAuth } from '../../context/AuthContext'
 
 const ProjectListComponent = ({ selectedList, currentProjects, handleProjectClick, projectsPerPage, totalProjects, paginate, currentPage }) => {
   const [isFading, setIsFading] = useState(false);
+  const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
+  // const [projects, setProjects] = useState(currentProjects);
+  // const [projects, setProjects] = useState([]); // 초기값을 빈 배열로 설정
 
 
   const handleButtonClick = (project) => {
@@ -19,6 +23,45 @@ const ProjectListComponent = ({ selectedList, currentProjects, handleProjectClic
     }, 100);
   };
 
+ 
+
+  const handleCancelApplication = async (userId, feedId) => {
+    if (!userId || !feedId) {
+        console.error("userId or feedId is null");
+        return; // 유효하지 않으면 함수 종료
+    }
+
+    const requestData = {
+        pk: userId, // userId
+        sk: feedId  // feedId
+    };
+
+    try {
+        const response = await axios.patch('my/writing/cancel', requestData);
+        console.log('Response:', response.data);
+    } catch (error) {
+        console.error('Error cancelling application:', error);
+    }
+}
+
+//   const handleCloseApplication = (projectId) => {
+//     // 모집 완료 상태를 업데이트
+//     setProjects(prevProjects => 
+//         prevProjects.map(project => 
+//             project.pk === projectId ? { ...project, isCompleted: true } : project
+//         )
+//     );
+// };
+
+
+
+// // onClose 콜백을 props로 받아와서 사용
+// const handleProjectClose = (projectId) => {
+//   handleCloseApplication(projectId);
+// };
+
+
+  //<ProjectItem key={project.pk} isLast={index === currentProjects.length - 1}>
 
   return (
     <Container>
@@ -27,7 +70,7 @@ const ProjectListComponent = ({ selectedList, currentProjects, handleProjectClic
           <p>작성한 프로젝트가 없습니다.</p>
         )}
         {selectedList === 'written' && currentProjects.map((project, index) => (
-          <ProjectItem key={project.pk} isLast={index === currentProjects.length - 1}>
+          <ProjectItem key={project.pk} >
             <ProjectHeader>
               <HeaderItem>
                 <FontAwesomeIcon icon={regularUser} size="15px" />
@@ -44,9 +87,29 @@ const ProjectListComponent = ({ selectedList, currentProjects, handleProjectClic
                 <Tag key={index}>{tag}</Tag> 
               ))}
             </Tags>
-            <Button onClick={() => handleButtonClick(project)}>
+
+            <Button 
+                onClick={() => handleButtonClick(project)}
+                disabled={project.isCompleted} // 모집 완료 시 버튼 비활성화
+            >
+                {project.isCompleted ? '모집완료' : '모집 현황'}
+            </Button> 
+            {/* <Button 
+                onClick={() => handleCloseApplication(project.pk)}
+                disabled={project.isCompleted} // 모집 완료 시 버튼 비활성화
+            >
+                모집완료
+            </Button> */}
+            {/* <Button onClick={() => handleButtonClick(project)}>
             {project.isCompleted ? '모집완료' : '모집 현황'}
-            </Button>
+            </Button> */}
+
+<Button 
+    onClick={() => handleButtonClick(project)}
+    disabled={project.isCompleted} // 모집 완료 시 버튼 비활성화
+>
+    {project.isCompleted ? '모집완료' : '모집 현황'}
+</Button>
           </ProjectItem>
         ))}
 
@@ -54,7 +117,7 @@ const ProjectListComponent = ({ selectedList, currentProjects, handleProjectClic
           <p>신청한 프로젝트가 없습니다.</p>
         )}
         {selectedList === 'applied' && currentProjects.map((project, index) => (
-          <ProjectItem key={project.pk} isLast={index === currentProjects.length - 1}>
+          <ProjectItem key={project.pk} >
             <ProjectHeader>
               <HeaderItem>
                 <FontAwesomeIcon icon={regularUser} size="15px" />
@@ -69,8 +132,14 @@ const ProjectListComponent = ({ selectedList, currentProjects, handleProjectClic
                 <Tag key={index}>{tag}</Tag>
               ))}
             </Tags>
-            <Button2>
-              {project.isCompleted ? '모집완료' : '신청 취소'}
+            <Button2 onClick={() => {
+              if (user && user.id && project.pk) {
+                handleCancelApplication(user.id, project.pk);
+              } else {
+                console.error("User or project information is missing");
+              }
+            }}>
+              신청 취소
             </Button2>
             <AdditionalInfo>
               <span>지원 분야 | 백엔드</span>

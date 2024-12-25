@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+// import React, { useEffect, useState ,  useCallback} from 'react';
+import React, { useEffect, useState} from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
@@ -6,6 +7,7 @@ import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 import { useNavigate } from 'react-router-dom'; 
 import LikeButton from '../../components/LikeButton';
 // import axios from '../../api/axios'
+// import { useAuth } from '../../context/AuthContext'
 
 
 //각 섹션의 데이터를 상태로 관리합니다: useState를 사용하여 데이터를 저장하고, 
@@ -16,29 +18,55 @@ function Section1( ) {
   //    [ 현재 상태값, 상태 업데이트 함수]
   const navigate = useNavigate(); // useNavigate 훅을 사용하여 navigate 함수 생성
   // // const [project, setProject] = useState(null);
+  // const [likedProjects, setLikedProjects] = useState([]);
+  // const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
+  // const userId = user ? user.id : null; // userId 설정
 
 
+// // 사용자 좋아요 상태 가져오기
+// const fetchUserLikes = useCallback(async () => {
+//   if (!user) return; // 사용자 정보가 없으면 종료
+//   try {
+//     const response = await axios.get(`/main/like?userId=${user.id}`);
+//     if (response.data) {
+//       setLikedProjects(prevLiked => [
+//         ...prevLiked,
+//         { id: user.id, liked: response.data.liked, likesCount: response.data.likesCount || 0 }
+//       ]);
+//     }
+//   } catch (error) {
+//     console.error('Error fetching user likes:', error);
+//   }
+// }, [user]);
 
+// // API에서 인기 프로젝트 데이터를 가져오는 함수
+// const fetchPopularProjects = useCallback(async () => {
+//   try {
+//     const response = await axios.get('/main/liked?feedType=PROJECT');
+//     const projectsWithLikes = response.data.map((project) => {
+//       const isLiked = likedProjects.find(likedProject => likedProject.id === project.id);
+//       return {
+//         ...project,
+//         liked: isLiked ? isLiked.liked : false, // 사용자가 눌렀던 상태 반영
+//         likesCount: project.likesCount || 0,
+//       };
+//     });
+//     setPopularProjects(projectsWithLikes);
+//   } catch (error) {
+//     console.error('Error fetching popular projects:', error);
+//   }
+// }, [likedProjects]);
 
-  // // API에서 인기 프로젝트 데이터를 가져오는 함수
-  // const fetchPopularProjects = async () => {
-  //   try {
-  //     const response = await axios.get('/main/liked?feedType=PROJECT'); // API 호출
+// useEffect(() => {
+//   fetchPopularProjects();
+// }, [fetchPopularProjects]);
 
-  //     // API 응답에서 받은 데이터 처리
-  //     const projectsWithLikes = response.data.map(project => {
-  //       const isLiked = likedProjects.some(likedProject => likedProject.id === project.id); // 좋아요 여부 확인
-  //       return {
-  //         ...project,
-  //         liked: isLiked, // 사용자가 좋아요를 눌렀다면 true
-  //         likesCount: project.likesCount || 0 // likesCount가 없으면 0으로 초기화
-  //       };
-  //     });
-  //     setPopularProjects(projectsWithLikes);
-  //   } catch (error) {
-  //     console.error('Error fetching popular projects:', error);
-  //   }
-  // };
+// useEffect(() => {
+//   fetchUserLikes();
+// }, [fetchUserLikes]);
+
+  
+
 
     const fetchPopularProjects = async () => {
     try {

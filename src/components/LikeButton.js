@@ -10,7 +10,7 @@ import styled from 'styled-components';
 // import axios from '../../api/axios'
 
 
-const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle, apiEndpoint}) => {
+const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle, apiEndpoint, userId}) => {
   const [liked, setLiked] = useState(initialLiked);
   const [likesCount, setLikesCount] = useState(initialLikesCount);
   // const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
@@ -40,7 +40,7 @@ const handleClick = (e) => {
 
   //   / API 호출//메인페이지
   //   const data = {
-  //     pk: user.id,
+  //     pk: userId,
   //     sk: sk,
   //     feedType: "PROJECT"
   //   };
@@ -70,7 +70,7 @@ const handleClick = (e) => {
 //     try {
 //       const response = await axios.put(`${apiEndpoint}/like`, null, {
 //         params: {
-//           userId: user.id,
+//           userId: userId,
 //           feedType: "PROJECT"
 //         }
 //       });

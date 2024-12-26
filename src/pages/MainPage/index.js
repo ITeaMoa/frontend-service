@@ -4,10 +4,10 @@ import Nav from "../../components/Nav";
 import Section1 from "./Section1";
 import Section2 from "./Section2";
 import {useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+// import axios from 'axios';
 import Modal from '../../components/Modal';
 import Dropdown from '../../components/DropDown'
-// import axios from '../../api/axios'
+import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 
 

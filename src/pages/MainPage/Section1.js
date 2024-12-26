@@ -127,6 +127,7 @@ function Section1( ) {
                   buttonStyle="s1"
                   apiEndpoint="/main/like"
                   sk={project.pk}
+                  
                 />
 
             </LikeButtonWrapper>

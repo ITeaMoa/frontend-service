@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-// import axios from '../../api/axios'
+// import axios from 'axios';
+import axios from '../../api/axios'
 
 const SignUpPage = () => {
   const navigate = useNavigate();
@@ -26,43 +26,43 @@ const SignUpPage = () => {
     navigate('/?showModal=true');
   };
 
-  // const handleAuthNumberSend = async () => {
-  //   try {
-  //     const response = await axios.post('login/verify/email', 
-  //       { email: email }, 
-  //       { 
-  //         headers: { 
-  //           'Content-Type': 'application/json',
-  //         }
-  //       }
-  //     );
-  //     console.log('인증 번호 발송 응답:', response.data);
-  //     alert('인증번호가 발송되었습니다. 이메일을 확인하세요.');
-  //     setIsAuthNumberSent(true);
-  //     setIsResendDisabled(true);
-  //     setRemainingTime(180); // 타이머 초기화
-  //   } catch (error) {
-  //     console.error('인증 번호 발송 오류:', error);
-  //     alert('인증 번호 발송에 실패했습니다. 다시 시도하세요.');
-  //   }
-  // };
-
-  //서버 연결 안하고 타이머 테스트 
   const handleAuthNumberSend = async () => {
-    // 서버 요청 대신 가상의 인증 번호 발송 기능
-    console.log('인증 번호 발송 요청:', email);
-    alert('인증번호가 발송되었습니다. 이메일을 확인하세요.');
-
-    // 인증 번호 발송 상태 업데이트
-    setIsAuthNumberSent(true);
-    setIsResendDisabled(true);
-    setRemainingTime(180); // 타이머 초기화
-
-    // 실제 서버 요청 대신 3초 후에 완료된 것으로 간주
-    setTimeout(() => {
-      console.log('인증 번호 발송 완료');
-    }, 3000); // 3초 후에 타이머 시작
+    try {
+      const response = await axios.post('login/verify/email', 
+        { email: email }, 
+        { 
+          headers: { 
+            'Content-Type': 'application/json',
+          }
+        }
+      );
+      console.log('인증 번호 발송 응답:', response.data);
+      alert('인증번호가 발송되었습니다. 이메일을 확인하세요.');
+      setIsAuthNumberSent(true);
+      setIsResendDisabled(true);
+      setRemainingTime(180); // 타이머 초기화
+    } catch (error) {
+      console.error('인증 번호 발송 오류:', error);
+      alert('인증 번호 발송에 실패했습니다. 다시 시도하세요.');
+    }
   };
+
+  // //서버 연결 안하고 타이머 테스트 
+  // const handleAuthNumberSend = async () => {
+  //   // 서버 요청 대신 가상의 인증 번호 발송 기능
+  //   console.log('인증 번호 발송 요청:', email);
+  //   alert('인증번호가 발송되었습니다. 이메일을 확인하세요.');
+
+  //   // 인증 번호 발송 상태 업데이트
+  //   setIsAuthNumberSent(true);
+  //   setIsResendDisabled(true);
+  //   setRemainingTime(180); // 타이머 초기화
+
+  //   // 실제 서버 요청 대신 3초 후에 완료된 것으로 간주
+  //   setTimeout(() => {
+  //     console.log('인증 번호 발송 완료');
+  //   }, 3000); // 3초 후에 타이머 시작
+  // };
 
   // 타이머 관리
   useEffect(() => {

@@ -25,7 +25,7 @@ const ApplyPage = () => {
   // const [liked, setLiked] = useState(false);
   const [liked, setLiked] = useState(initialLiked || false); // 초기 좋아요 상태 설정
   const [likesCount, setLikesCount] = useState(initialLikesCount || 0); // 초기 좋아요 수 설정
-  // const isLoggedIn = true; // 또는 false로 설정하여 로그인 상태를 나타냄
+  // // const isLoggedIn = true; // 또는 false로 설정하여 로그인 상태를 나타냄
   const showSearch = true;
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
@@ -42,15 +42,17 @@ const ApplyPage = () => {
       
       if (selectedProject) {
         setProject(selectedProject);
+        setLikesCount(selectedProject.likesCount || 0); // 초기 좋아요 수 설정
       } else {
         console.error("Project not found for projectId:", projectId);
         setProject(null);
       }
     } catch (error) {
       console.error("Error fetching project details:", error);
-      setProject(null); // 오류 발생 시 상태를 null로 설정
+      setProject(null); 
     }
-  }, [projectId]); // projectId가 변경될 때만 새로운 함수를 생성
+  }, [projectId]);
+
 
   useEffect(() => {
     fetchProjectDetails(); // 프로젝트 세부 정보를 가져옵니다.
@@ -78,14 +80,15 @@ const ApplyPage = () => {
   // }, [fetchProjectDetails]);
 
 
-  const handleLike = () => {
-    setLiked(prevLiked => {
-      const newLikedState = !prevLiked;
-      setLikesCount(prevCount => newLikedState ? prevCount + 1 : prevCount - 1); // 좋아요 수 업데이트
-      return newLikedState; 
-    });
-  };
 
+  
+ //좋아요 상태 업데이트 함수//아마 최종서버 연결
+ const handleLike = (newLiked, newLikesCount) => {
+  setLiked(newLiked);
+  setLikesCount(newLikesCount);
+};
+
+  
 
   // const handleLike = () => {
   //   setLiked(prevLiked => {
@@ -104,7 +107,7 @@ const ApplyPage = () => {
   const handleCommentSubmit = async () => {
     if (commentInput.trim() && project) {
       const newComment = {
-        userId: user.id, 
+        userId: user ? user.id : null, // user가 null인 경우 처리
         comment: commentInput,
       };
 
@@ -112,21 +115,18 @@ const ApplyPage = () => {
         await axios.post(`/feed/${projectId}/comments`, newComment, {
           params: { feedType: "PROJECT" }
         });
-  
-
-        // 기존 댓글 배열에 새로운 댓글 추가
         setProject(prevProject => ({
           ...prevProject,
-          comments: [...prevProject.comments, newComment]  // 댓글 추가
+          comments: [...prevProject.comments, newComment] 
         }));
-
-        setCommentInput('');  // 입력 필드 초기화
+        setCommentInput(''); 
       } catch (error) {
         console.error("댓글 제출 중 오류 발생:", error);
-        alert("댓글 제출에 실패했습니다."); // 사용자에게 피드백 추가
+        alert("댓글 제출에 실패했습니다."); 
       }
     }
   };
+
 
   // 프로젝트가 로딩 중일 때
   if (!project) {
@@ -217,12 +217,13 @@ const postSelectedRole = async (role) => {
 
         <Title> {project.title} </Title>
 
-        <LikeButton 
+       <LikeButton 
           initialLiked={liked} 
           initialLikesCount={likesCount} 
           onLikeChange={handleLike} 
           buttonStyle='apply'
-          apiEndpoint={`/feed/${projectId}`}
+          apiEndpoint={`/feed/${projectId}/like`} 
+          userId={user ? user.id : null} // user가 null인 경우 처리
         />
         
         

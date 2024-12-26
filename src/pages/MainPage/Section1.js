@@ -87,9 +87,18 @@ function Section1( ) {
     fetchPopularProjects();
   }, []);
 
-  // 클릭된 프로젝트의 ID를 사용하여 상세 페이지로 이동
+  // // 클릭된 프로젝트의 ID를 사용하여 상세 페이지로 이동
+  // const handleProjectClick = (project) => {
+  //   navigate(`/ApplyPage/${project.pk}`); // 수정된 pk로 상세 페이지로 이동
+  // };
+
   const handleProjectClick = (project) => {
-    navigate(`/ApplyPage/${project.pk}`); // 수정된 pk로 상세 페이지로 이동
+    navigate(`/ApplyPage/${project.pk}`, { 
+      state: { 
+        liked: project.liked, 
+        likesCount: project.likesCount // likesCount도 함께 전달
+      } 
+    });
   };
   
   const handleLikeClick = (index, newLiked, newLikesCount) => {

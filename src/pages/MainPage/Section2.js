@@ -60,9 +60,23 @@ const Section2 = () => {
     fetchAllProjects();
   }, []);
 
+  // const handleProjectClick = (project) => {
+  //   navigate(`/ApplyPage/${project.pk}`);
+  // };
+
+  // const handleProjectClick = (project) => {
+  //   navigate(`/ApplyPage/${project.pk}`, { state: { liked: project.liked } }); // 상태 전달
+  // };
+
   const handleProjectClick = (project) => {
-    navigate(`/ApplyPage/${project.pk}`);
+    navigate(`/ApplyPage/${project.pk}`, { 
+      state: { 
+        liked: project.liked, 
+        likesCount: project.likesCount // likesCount도 함께 전달
+      } 
+    });
   };
+  
 
 
   const handleLikeClick = (index, newLiked, newLikesCount) => {

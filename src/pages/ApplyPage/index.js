@@ -1,7 +1,7 @@
 import React, { useState, useEffect,useCallback  } from 'react';
 import styled from 'styled-components';
 import Nav from '../../components/Nav';
-import { useNavigate , useParams } from 'react-router-dom';
+import { useNavigate , useParams, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft,faComment } from '@fortawesome/free-solid-svg-icons';
 import { faUser } from '@fortawesome/free-regular-svg-icons';
@@ -18,8 +18,13 @@ const ApplyPage = () => {
   //usestate : 컴포넌트 상태 관리에 씀
   //첫번째 요소: 현재 상태 값, 두번째 요소 : 상태를 없데이트하는 값 
   const [commentInput, setCommentInput] = useState('');
+  const location = useLocation(); // 경로 상태 가져오기
+  const { liked: initialLiked, likesCount: initialLikesCount } = location.state || {}; // 좋아요 상태와 수 가져오기
+
   const [project, setProject] = useState(null);
-  const [liked, setLiked] = useState(false);
+  // const [liked, setLiked] = useState(false);
+  const [liked, setLiked] = useState(initialLiked || false); // 초기 좋아요 상태 설정
+  const [likesCount, setLikesCount] = useState(initialLikesCount || 0); // 초기 좋아요 수 설정
   // const isLoggedIn = true; // 또는 false로 설정하여 로그인 상태를 나타냄
   const showSearch = true;
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
@@ -76,16 +81,25 @@ const ApplyPage = () => {
   const handleLike = () => {
     setLiked(prevLiked => {
       const newLikedState = !prevLiked;
-      if (project) {
-        setProject(prevProject => ({
-          ...prevProject,
-          likesCount: newLikedState ? prevProject.likesCount + 1 : prevProject.likesCount - 1
-        }));
-      }
-      
-      return newLikedState; // 새로운 좋아요 상태 반환
+      setLikesCount(prevCount => newLikedState ? prevCount + 1 : prevCount - 1); // 좋아요 수 업데이트
+      return newLikedState; 
     });
   };
+
+
+  // const handleLike = () => {
+  //   setLiked(prevLiked => {
+  //     const newLikedState = !prevLiked;
+  //     if (project) {
+  //       setProject(prevProject => ({
+  //         ...prevProject,
+  //         likesCount: newLikedState ? prevProject.likesCount + 1 : prevProject.likesCount - 1
+  //       }));
+  //     }
+      
+  //     return newLikedState; // 새로운 좋아요 상태 반환
+  //   });
+  // };
 
   const handleCommentSubmit = async () => {
     if (commentInput.trim() && project) {
@@ -190,6 +204,8 @@ const postSelectedRole = async (role) => {
 };
 
 
+
+
   return (
     <>
       <Nav showSearch={showSearch}/>
@@ -203,12 +219,12 @@ const postSelectedRole = async (role) => {
 
         <LikeButton 
           initialLiked={liked} 
-          initialLikesCount={project.likesCount} 
+          initialLikesCount={likesCount} 
           onLikeChange={handleLike} 
           buttonStyle='apply'
           apiEndpoint={`/feed/${projectId}`}
-          userId="f448fd8c-5061-702c-8c22-3636be5d18c9"
         />
+        
         
         <Post>
         <PostDetails>

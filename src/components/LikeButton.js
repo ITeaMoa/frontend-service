@@ -1,3 +1,6 @@
+//사용자 좋아요 ui와 이벤트 처리
+
+
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons'; 
@@ -13,26 +16,6 @@ const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle
   // const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
 
 
-
-
-  // // 컴포넌트가 마운트될 때 사용자의 좋아요 상태를 가져옵니다.
-  // useEffect(() => {
-  //   const fetchUserLikes = async () => {
-  //     try {
-  //       const response = await axios.get(`/main/like?userId=${user.id}`);
-  //       // 응답에서 사용자의 좋아요 상태를 설정합니다.
-  //       // 예를 들어, 응답이 { liked: true, likesCount: 10 } 형태라고 가정
-  //       if (response.data) {
-  //         setLiked(response.data.liked);
-  //         setLikesCount(response.data.likesCount);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching user likes:', error);
-  //     }
-  //   };
-
-  //   fetchUserLikes();
-  // }, [user]);
 
   // props가 변경될 때 상태 업데이트
   useEffect(() => {

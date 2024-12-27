@@ -138,20 +138,6 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
     // };
 
     // // 모집 완료 요청 함수
-    // const handleCloseApplication = async () => {
-    //     const requestData = {
-    //         pk: project.pk, // feedId
-    //         sk: "PROJECT"   // feedType
-    //     };
-
-    //     try {
-    //         const response = await axios.patch('my/writing/close', requestData);
-    //         console.log(`Response: ${response.data}`);
-    //         setIsClosed(true); // 모집 완료 상태 업데이트
-    //     } catch (error) {
-    //         console.error('Error closing application:', error);
-    //     }
-    // };
 
 
     const handleCloseApplication = async () => {

@@ -35,6 +35,14 @@ const WritePage = () => {
   const recruitmentNum = selectedRoles.reduce((total, role) => total + role.count, 0);
 
   const handleSave = () => {
+// 사용자 로그인 상태 확인
+if (!user) {
+  alert('사용자가 로그인되어 있지 않습니다. 로그인 후 다시 시도해 주세요.');
+  return; // user가 null이면 함수 종료
+}
+
+
+    const deadlineISO = new Date(deadline).toISOString();
     const dataToSend = {
       title,
       content: description,
@@ -42,7 +50,7 @@ const WritePage = () => {
       savedFeed: false,
       tags: selectedTags,
       recruitmentNum,
-      deadline: new Date(deadline).toISOString(),
+      deadline: deadlineISO,
       place: progress,
       period,
       roles: selectedRoles.reduce((acc, role) => {

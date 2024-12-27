@@ -7,10 +7,10 @@ import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 // import axios from 'axios';
-// import axios from '../../api/axios'
+import axios from '../api/axios'
 
 
-const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle, apiEndpoint, userId}) => {
+const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle, apiEndpoint, userId,sk}) => {
   const [liked, setLiked] = useState(initialLiked);
   const [likesCount, setLikesCount] = useState(initialLikesCount);
   // const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
@@ -25,7 +25,8 @@ const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle
 
 
 
-const handleClick = (e) => {
+
+  const handleClick = async (e) => {
     e.stopPropagation(); // 부모 클릭 이벤트 전파 방지
     const newLiked = !liked;
     const newLikesCount = newLiked ? likesCount + 1 : likesCount - 1;
@@ -36,6 +37,40 @@ const handleClick = (e) => {
       onLikeChange(newLiked, newLikesCount); // 이벤트 객체 생략
     }
 
+    // API 호출
+    const data = {
+      pk: userId,
+      sk: sk, // sk 변수가 정의되어야 합니다.
+      feedType: "PROJECT"
+    };
+
+    try {
+      if (newLiked) {
+        // 좋아요 추가
+        await axios.post(apiEndpoint, data);
+      } else {
+        // 좋아요 제거
+        await axios.delete(apiEndpoint, { data });
+      }
+    } catch (error) {
+      console.error('Error updating like status:', error);
+      // 상태를 원래대로 되돌리기
+      setLiked(!newLiked);
+      setLikesCount(newLikesCount - (newLiked ? 1 : -1));
+    }
+  };
+
+
+// const handleClick = (e) => {
+//     e.stopPropagation(); // 부모 클릭 이벤트 전파 방지
+//     const newLiked = !liked;
+//     const newLikesCount = newLiked ? likesCount + 1 : likesCount - 1;
+
+//     setLiked(newLiked);
+//     setLikesCount(newLikesCount);
+//     if (onLikeChange) {
+//       onLikeChange(newLiked, newLikesCount); // 이벤트 객체 생략
+//     }
     
 
   //   / API 호출//메인페이지
@@ -86,8 +121,6 @@ const handleClick = (e) => {
 
     
 
-    
-};
 
 
   return (

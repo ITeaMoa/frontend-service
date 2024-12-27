@@ -8,6 +8,7 @@ import LikeButton from '../../components/LikeButton';
 import Pagination from '../../components/Pagination';
 import Modal from '../../components/Modal';
 import { useAuth } from '../../context/AuthContext'
+// import axios from '../../api/axios';
 
 
 const Section2 = () => {
@@ -29,6 +30,14 @@ const Section2 = () => {
 //   const fetchAllProjects = async () => {
 //     try {
 //       const response = await axios.get('/main?feedType=PROJECT'); // API 호출
+
+//       // 응답 데이터가 없거나 빈 배열일 경우 처리
+//     if (!response.data || response.data.length === 0) {
+//       console.warn('프로젝트 데이터가 없습니다.');
+//       setAllProjects([]); // 빈 배열로 초기화
+//       return;
+//     }
+
 //       const projectsWithLikes = response.data.map((project, index) => ({
 //         id: index, // 프로젝트 ID 추가 (또는 실제 ID 사용)
 //         ...project,
@@ -147,15 +156,7 @@ const handleCloseSubmissionPopup = () => {
   setPopupMessage(''); // 메시지 초기화
 };
 
-// // 선택한 역할을 서버에 전송하는 모의 함수
-// const postSelectedRole = async (role) => {
-//   try {
-//     const response = await axios.post('/api/submitRole', { role });
-//     return response.data; // 서버로부터의 응답 데이터 반환
-//   } catch (error) {
-//     throw new Error('서버 요청 실패');
-//   }
-// };
+
 
 
   return (

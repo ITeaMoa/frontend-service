@@ -23,12 +23,12 @@ const SignUpPage = () => {
     console.log('비밀번호 확인:', confirmPassword);
     console.log('닉네임:', nickname);
 
-    navigate('/?showModal=true');
+    // navigate('/?showModal=true');
   };
 
   const handleAuthNumberSend = async () => {
     try {
-      const response = await axios.post('login/verify/email', 
+      const response = await axios.post('/login/verify/email', 
         { email: email }, 
         { 
           headers: { 
@@ -42,11 +42,20 @@ const SignUpPage = () => {
       setIsResendDisabled(true);
       setRemainingTime(180); // 타이머 초기화
     } catch (error) {
-      console.error('인증 번호 발송 오류:', error);
-      alert('인증 번호 발송에 실패했습니다. 다시 시도하세요.');
+      if (error.response) {
+        // 서버가 응답한 오류 메시지를 확인
+        console.error('인증 번호 발송 오류:', error.response.data);
+        if (error.response.status === 409) {
+          alert('가입된 이메일입니다. 다른 이메일을 사용하세요.');
+        } else {
+          alert('인증 번호 발송에 실패했습니다. 다시 시도하세요.');
+        }
+      } else {
+        console.error('인증 번호 발송 오류:', error);
+        alert('인증 번호 발송에 실패했습니다. 다시 시도하세요.');
+      }
     }
   };
-
   // //서버 연결 안하고 타이머 테스트 
   // const handleAuthNumberSend = async () => {
   //   // 서버 요청 대신 가상의 인증 번호 발송 기능
@@ -72,7 +81,7 @@ const SignUpPage = () => {
         setRemainingTime(prev => prev - 1);
       }, 1000); // 1초마다 감소
     } else if (remainingTime === 0) {
-      setIsResendDisabled(false);
+      // setIsResendDisabled(false);
       clearInterval(timer);
     }
     return () => clearInterval(timer); // 컴포넌트 언마운트 시 정리
@@ -116,38 +125,81 @@ const SignUpPage = () => {
     return passwordRegex.test(password);
   };
 
-  const handleSignup = async () => {
-    try {
-        const response = await axios.post('login/confirm/signup', {
-            email: email,
-            nickname: nickname,
-            password: password,
-        });
-        console.log('회원가입 응답:', response.data);
-        alert('회원가입이 완료되었습니다.');
-        navigate('/?showModal=true');
-    } catch (error) {
-        console.error('회원가입 오류:', error);
-        alert('회원가입에 실패했습니다. 다시 시도하세요.');
-    }
-    navigate('/?showModal=true'); 
+//   const handleSignup = async () => {
+//     try {
+//         const response = await axios.post('login/confirm/signup', {
+//             email,
+//             nickname,
+//             password,
+//         });
+//         console.log('회원가입 응답:', response.data);
+//         alert('회원가입이 완료되었습니다.');
 
-  };
+//         // MainPage로 닉네임을 전달하며 이동
+//         navigate('/?showModal=true', { state: { nickname } });
+//     } catch (error) {
+//         console.error('회원가입 오류:', error);
+//         alert('회원가입에 실패했습니다. 다시 시도하세요.');
+//     }
+//     navigate('/?showModal=true', { state: { nickname } }); //나중 삭제
+// };
+
+
+const handleSignup = async () => {
+  if (password !== confirmPassword) {
+      alert('비밀번호가 일치하지 않습니다.');
+      return;
+  }
+
+  if (!isPasswordValid(password)) {
+      alert('비밀번호 형식이 유효하지 않습니다.');
+      return;
+  }
+
+  try {
+      const response = await axios.post('login/confirm/signup', {
+          email,
+          nickname,
+          password,
+      });
+      
+      // 응답 데이터의 구조에 맞게 메시지 처리
+      console.log('회원가입 응답:', response.data);
+      alert(response.data.message); // 서버에서 반환된 메시지를 사용자에게 알림
+
+      // MainPage로 닉네임을 전달하며 이동
+      navigate('/?showModal=true', { state: { nickname } });
+  } catch (error) {
+      console.error('회원가입 오류:', error);
+      if (error.response) {
+          alert(`회원가입에 실패했습니다: ${error.response.data.message || '다시 시도하세요.'}`);
+      } else {
+          alert('회원가입에 실패했습니다. 다시 시도하세요.');
+      }
+  }
+};
 
   const handleCheckNickname = async () => {
     try {
-      const response = await axios.post('lgoin/verify/nickname', { nickname });
-      if (response.data.available) {
+      const response = await axios.post('login/verify/nickname', { nickname });
+  
+      // 서버 응답에서 message 필드를 확인
+      if (response.data.message === "Nickname is available.") {
         alert('사용 가능한 닉네임입니다.');
       } else {
         alert('중복되는 닉네임입니다. 다른 닉네임을 선택하세요.');
       }
     } catch (error) {
-      console.error('닉네임 확인 오류:', error);
-      alert('닉네임 확인에 실패했습니다. 다시 시도하세요.');
+      if (error.response) {
+        // 서버가 응답한 오류 메시지를 출력
+        console.error('닉네임 확인 오류:', error.response.data);
+        alert('닉네임 확인에 실패했습니다: ' + error.response.data.message);
+      } else {
+        console.error('닉네임 확인 오류:', error);
+        alert('닉네임 확인에 실패했습니다. 다시 시도하세요.');
+      }
     }
   };
-
   return (
     <Container>
        <Logo>
@@ -183,7 +235,7 @@ const SignUpPage = () => {
             placeholder="이메일 입력" 
             required 
           />
-          <AuthButton type="button" onClick={isAuthNumberSent ? handleResendCode : handleAuthNumberSend} disabled={isResendDisabled}>
+          <AuthButton type="button" onClick={isAuthNumberSent ? handleResendCode : handleAuthNumberSend}>
             {isAuthNumberSent ? '인증번호 재발송' : '인증번호 발송'}
           </AuthButton>
   

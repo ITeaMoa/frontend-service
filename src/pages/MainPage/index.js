@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef} from 'react';
 import styled from 'styled-components';
 import Nav from "../../components/Nav";
 import Section1 from "./Section1";
@@ -8,7 +8,7 @@ import {useLocation, useNavigate } from 'react-router-dom';
 import Modal from '../../components/Modal';
 import Dropdown from '../../components/DropDown'
 import axios from '../../api/axios'
-import { useAuth } from '../../context/AuthContext'
+// import { useAuth } from '../../context/AuthContext'
 
 
 
@@ -19,10 +19,11 @@ const MainPage = () => {
   const query = new URLSearchParams(location.search);
   //URL이 http://example.com/?showModal=true라면 location.search는 "?showModal=true"가 됨
   const showModal = query.get('showModal') === 'true'; // 쿼리 파라미터 확인
-  const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
+  // const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false); // 모달 상태 추가
   const fileInputRef = useRef(null); // 파일 입력을 위한 ref
   const [selectedFile, setSelectedFile] = useState(null); // 선택된 파일 상태
+  const { nickname } = location.state || {}; // 닉네임 받기
   const [userProfile, setUserProfile] = useState({
 
     tags: [],
@@ -89,7 +90,17 @@ const MainPage = () => {
 
   const updateUserProfile = async () => {
     const data = new FormData();// 파일과 JSON 데이터를 함께 전송하기 위해서
-    
+    // if (!user) {
+    //   console.error("User object is null or undefined");
+    //   return; // 또는 적절한 오류 처리
+    // }
+
+    // 닉네임이 있는지 확인
+    if (!nickname) {
+      console.error("Nickname is required");
+      alert("회원가입 및 로그인해주세요");
+      return; // 닉네임이 없으면 종료
+  }
 
         // 파일 추가
         if (selectedFile) {
@@ -115,7 +126,7 @@ const MainPage = () => {
     data.append('profile', JSON.stringify(profileData)); // JSON 문자열로 추가
 
     try {
-        const response = await axios.put(`my/profile/${user.id}`, data, {
+        const response = await axios.put(`my/profile/${nickname}`, data, {
             headers: {
                 ...data.getHeaders() // FormData의 헤더 추가
             }

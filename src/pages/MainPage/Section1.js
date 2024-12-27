@@ -1,13 +1,13 @@
-// import React, { useEffect, useState ,  useCallback} from 'react';
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState ,  useCallback} from 'react';
+// import React, { useEffect, useState} from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import axios from 'axios';
+// import axios from 'axios';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons'; 
 import { useNavigate } from 'react-router-dom'; 
 import LikeButton from '../../components/LikeButton';
-// import axios from '../../api/axios'
-// import { useAuth } from '../../context/AuthContext'
+import axios from '../../api/axios'
+import { useAuth } from '../../context/AuthContext'
 
 
 //각 섹션의 데이터를 상태로 관리합니다: useState를 사용하여 데이터를 저장하고, 
@@ -17,75 +17,83 @@ function Section1( ) {
   const [popularProjects, setPopularProjects] = useState([]);
   //    [ 현재 상태값, 상태 업데이트 함수]
   const navigate = useNavigate(); // useNavigate 훅을 사용하여 navigate 함수 생성
-  // // const [project, setProject] = useState(null);
-  // const [likedProjects, setLikedProjects] = useState([]);
-  // const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
-  // const userId = user ? user.id : null; // userId 설정
+  // const [project, setProject] = useState(null);
+  const [likedProjects, setLikedProjects] = useState([]);
+  const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
+  
 
 
-// // 사용자 좋아요 상태 가져오기
-// const fetchUserLikes = useCallback(async () => {
-//   if (!user) return; // 사용자 정보가 없으면 종료
-//   try {
-//     const response = await axios.get(`/main/like?userId=${user.id}`);
-//     if (response.data) {
-//       setLikedProjects(prevLiked => [
-//         ...prevLiked,
-//         { id: user.id, liked: response.data.liked, likesCount: response.data.likesCount || 0 }
-//       ]);
-//     }
-//   } catch (error) {
-//     console.error('Error fetching user likes:', error);
-//   }
-// }, [user]);
+// 사용자 좋아요 상태 가져오기
+const fetchUserLikes = useCallback(async () => {
+  if (!user) return; // 사용자 정보가 없으면 종료
+  try {
+    const response = await axios.get(`/main/like?userId=${user.id}`);
+    if (response.data) {
+      setLikedProjects(prevLiked => [
+        ...prevLiked,
+        { id: user.id, liked: response.data.liked, likesCount: response.data.likesCount || 0 }
+      ]);
+    }
+  } catch (error) {
+    console.error('Error fetching user likes:', error);
+  }
+}, [user]);
 
-// // API에서 인기 프로젝트 데이터를 가져오는 함수
-// const fetchPopularProjects = useCallback(async () => {
-//   try {
-//     const response = await axios.get('/main/liked?feedType=PROJECT');
-//     const projectsWithLikes = response.data.map((project) => {
-//       const isLiked = likedProjects.find(likedProject => likedProject.id === project.id);
-//       return {
-//         ...project,
-//         liked: isLiked ? isLiked.liked : false, // 사용자가 눌렀던 상태 반영
-//         likesCount: project.likesCount || 0,
-//       };
-//     });
-//     setPopularProjects(projectsWithLikes);
-//   } catch (error) {
-//     console.error('Error fetching popular projects:', error);
-//   }
-// }, [likedProjects]);
+// API에서 인기 프로젝트 데이터를 가져오는 함수
+const fetchPopularProjects = useCallback(async () => {
+  try {
+    const response = await axios.get('/main/liked?feedType=PROJECT');
 
-// useEffect(() => {
-//   fetchPopularProjects();
-// }, [fetchPopularProjects]);
+      // 응답 데이터가 없거나 빈 배열일 경우 처리
+      if (!response.data || response.data.length === 0) {
+        console.warn('프로젝트 데이터가 없습니다.');
+        setPopularProjects([]); // 빈 배열로 초기화
+        return;
+      }
 
-// useEffect(() => {
-//   fetchUserLikes();
-// }, [fetchUserLikes]);
+    const projectsWithLikes = response.data.map((project) => {
+      const isLiked = likedProjects.find(likedProject => likedProject.id === project.id);
+      return {
+        ...project,
+        liked: isLiked ? isLiked.liked : false, // 사용자가 눌렀던 상태 반영
+        likesCount: project.likesCount || 0,
+      };
+    });
+    setPopularProjects(projectsWithLikes);
+  } catch (error) {
+    console.error('Error fetching popular projects:', error);
+  }
+}, [likedProjects]);
+
+useEffect(() => {
+  fetchPopularProjects();
+}, [fetchPopularProjects]);
+
+useEffect(() => {
+  fetchUserLikes();
+}, [fetchUserLikes]);
 
   
 
 
-    const fetchPopularProjects = async () => {
-    try {
-      const response = await axios.get('/data.json');
-      // 각 프로젝트에 liked 속성과 초기 likesCount 추가
-      const projectsWithLikes = response.data.map(project => ({
-        ...project,
-        liked: false, // 초기 상태는 좋아요가 눌리지 않은 상태
-        likesCount: project.likesCount || 0 // likesCount가 없으면 0으로 초기화
-      }));
-      setPopularProjects(projectsWithLikes);
-    } catch (error) {
-      console.error('Error fetching popular projects:', error);
-    }
-  };
+  //   const fetchPopularProjects = async () => {
+  //   try {
+  //     const response = await axios.get('/data.json');
+  //     // 각 프로젝트에 liked 속성과 초기 likesCount 추가
+  //     const projectsWithLikes = response.data.map(project => ({
+  //       ...project,
+  //       liked: false, // 초기 상태는 좋아요가 눌리지 않은 상태
+  //       likesCount: project.likesCount || 0 // likesCount가 없으면 0으로 초기화
+  //     }));
+  //     setPopularProjects(projectsWithLikes);
+  //   } catch (error) {
+  //     console.error('Error fetching popular projects:', error);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchPopularProjects();
-  }, []);
+  // useEffect(() => {
+  //   fetchPopularProjects();
+  // }, []);
 
   // // 클릭된 프로젝트의 ID를 사용하여 상세 페이지로 이동
   // const handleProjectClick = (project) => {

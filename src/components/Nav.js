@@ -113,9 +113,14 @@ const option3 = [
     console.log('e.target.value', e.target.value);
   }
 
+  // const handleAddButtonClick = () => {
+  //   navigate(`/SearchPage?q=${searchValue}`); // 검색 입력값을 포함한 URL로 이동
+  // };
   const handleAddButtonClick = () => {
-    navigate(`/SearchPage?q=${searchValue}`); // 검색 입력값을 포함한 URL로 이동
-  };
+    // 검색 입력값과 선택된 태그를 URL로 전달
+    const tagsQuery = selectedTags.length > 0 ? `&tags=${selectedTags.join(',')}` : '';
+    navigate(`/SearchPage?q=${searchValue}${tagsQuery}`); 
+};
 
 
   const handleTagSelect = (option) => {

@@ -74,7 +74,7 @@ const ProjectListComponent = ({ selectedList, currentProjects, handleProjectClic
             <ProjectHeader>
               <HeaderItem>
                 <FontAwesomeIcon icon={regularUser} size="15px" />
-                <span>{project.creatorID}</span>
+                <span>{project.creatorId}</span>
               </HeaderItem>
               <HeaderItem>
                 <StyledFontAwesomeIcon icon={faHeart} />

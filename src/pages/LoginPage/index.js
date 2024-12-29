@@ -7,22 +7,26 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('로그인 시도'); // 로그인 시도 로그 추가
     console.log('이메일:', email);
     console.log('비밀번호:', password);
     console.log('ID 저장:', rememberMe);
-
+  
     try {
-        const response = await login(email, password);
-        console.log('로그인 성공:', response.data);
-        // Navigate to another page or handle successful login
+      const response = await login(email, password);
+      if (response) {
+        console.log('로그인 성공:', response);
+        navigate('/'); // 로그인 성공 시 홈으로 리디렉션
+      }
     } catch (error) {
-        console.error('로그인 실패:', error);
-        // Handle error (e.g., show a message to the user)
+      console.error('로그인 실패:', error);
+      alert('로그인에 실패하였습니다. 아이디와 비밀번호를 확인하세요.');
     }
   };
 
@@ -126,7 +130,7 @@ const Form = styled.form`
 
 `;
 
-const Con1 = styled.form`
+const Con1 = styled.div`
   display: flex;
   flex-direction: column;
   border: 2px solid;

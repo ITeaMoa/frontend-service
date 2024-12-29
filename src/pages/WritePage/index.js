@@ -34,7 +34,7 @@ const WritePage = () => {
   // roles에서 count 값을 합산하여 recruitmentNum 설정
   const recruitmentNum = selectedRoles.reduce((total, role) => total + role.count, 0);
 
-  const handleSave = () => {
+  const handleSave = (isTemporary) => {
 // 사용자 로그인 상태 확인
 if (!user) {
   alert('사용자가 로그인되어 있지 않습니다. 로그인 후 다시 시도해 주세요.');
@@ -47,7 +47,7 @@ if (!user) {
       title,
       content: description,
       postStatus: true,
-      savedFeed: false,
+      savedFeed: isTemporary,
       tags: selectedTags,
       recruitmentNum,
       deadline: deadlineISO,
@@ -58,6 +58,8 @@ if (!user) {
         return acc;
       }, {}),
     };
+
+    console.log('Data to send:', dataToSend); // 데이터 전송 전에 콘솔에 출력
 
     axios.post(`/feed/create`, dataToSend, {
       headers: {
@@ -70,7 +72,7 @@ if (!user) {
     })
     .then(response => {
       console.log('Success:', response.data);
-      navigate('/MainPage');
+      navigate('/');
     })
     .catch((error) => {
       console.error('Error:', error);
@@ -290,8 +292,8 @@ const handlePeriodSelect = (selectedOption) => {
         </Body>
 
         <Submit>
-        <SaveButton onClick={handleSave}>임시저장</SaveButton>
-        <SaveButton onClick={handleSave}>저장하기</SaveButton>
+        <SaveButton onClick={() => handleSave(true)}>임시저장</SaveButton>
+        <SaveButton onClick={() => handleSave(false)}>저장하기</SaveButton>
         </Submit>
       </WriteWrapper>
     </>

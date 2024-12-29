@@ -8,7 +8,7 @@ import {useLocation, useNavigate } from 'react-router-dom';
 import Modal from '../../components/Modal';
 import Dropdown from '../../components/DropDown'
 import axios from '../../api/axios'
-// import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../context/AuthContext'
 
 
 
@@ -19,7 +19,7 @@ const MainPage = () => {
   const query = new URLSearchParams(location.search);
   //URL이 http://example.com/?showModal=true라면 location.search는 "?showModal=true"가 됨
   const showModal = query.get('showModal') === 'true'; // 쿼리 파라미터 확인
-  // const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
+  const { user } = useAuth(); // AuthContext에서 사용자 정보 가져오기
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false); // 모달 상태 추가
   const fileInputRef = useRef(null); // 파일 입력을 위한 ref
   const [selectedFile, setSelectedFile] = useState(null); // 선택된 파일 상태
@@ -88,58 +88,88 @@ const MainPage = () => {
 
  
 
-  const updateUserProfile = async () => {
-    const data = new FormData();// 파일과 JSON 데이터를 함께 전송하기 위해서
-    // if (!user) {
-    //   console.error("User object is null or undefined");
-    //   return; // 또는 적절한 오류 처리
-    // }
+//   const updateUserProfile = async () => {
+//     const data = new FormData();// 파일과 JSON 데이터를 함께 전송하기 위해서
+  
+//     // 닉네임이 있는지 확인
+//     if (!nickname) {
+//       console.error("Nickname is required");
+//       alert("회원가입 및 로그인해주세요");
+//       return; // 닉네임이 없으면 종료
+//   }
 
-    // 닉네임이 있는지 확인
-    if (!nickname) {
+//         // 파일 추가
+//         if (selectedFile) {
+//           data.append('file', selectedFile); // 선택된 파일 추가
+//       }
+
+
+//     // 파일 추가 (여기서는 avatarUrl이 파일 경로라고 가정)
+//     const avatarFile = userProfile.avatarUrl; // 여기서 avatarUrl은 파일의 Blob 또는 File 객체여야 합니다.
+//     if (avatarFile) {
+//         data.append('file', avatarFile); // 파일 추가
+//     }
+
+//     // 프로필 정보 추가
+//     const profileData = {
+//         tags: userProfile.tags.length > 0 ? userProfile.tags : [],
+//         experiences: userProfile.experiences.length > 0 ? userProfile.experiences : [],
+//         headLine: userProfile.headline,
+//         educations: userProfile.educations.length > 0 ? userProfile.educations : [],
+//         personalUrl: userProfile.personalUrl.length > 0 ? userProfile.personalUrl : []
+//     };
+
+//     data.append('profile', JSON.stringify(profileData)); // JSON 문자열로 추가
+
+//     try {
+//         const response = await axios.put(`my/profile/${nickname}`, data, {
+//             headers: {
+//                 ...data.getHeaders() // FormData의 헤더 추가
+//             }
+//         });
+//         console.log(response.data);
+//     } catch (error) {
+//         console.error(error);
+//     }
+// };
+
+const updateUserProfile = async () => {
+  const data = new FormData(); // 파일과 JSON 데이터를 함께 전송하기 위해서
+
+  // 닉네임이 있는지 확인
+  if (!nickname) {
       console.error("Nickname is required");
       alert("회원가입 및 로그인해주세요");
       return; // 닉네임이 없으면 종료
   }
 
-        // 파일 추가
-        if (selectedFile) {
-          data.append('file', selectedFile); // 선택된 파일 추가
-      }
+  // 파일 추가
+  if (selectedFile) {
+      data.append('file', selectedFile); // 선택된 파일 추가
+  }
 
+  // 프로필 정보 추가
+  const profileData = {
+      tags: userProfile.tags.length > 0 ? userProfile.tags : [],
+      experiences: userProfile.experiences.length > 0 ? userProfile.experiences : [],
+      headLine: userProfile.headLine, // 여기서는 headLine로 수정
+      educations: userProfile.educations.length > 0 ? userProfile.educations : [],
+      personalUrl: userProfile.personalUrl.length > 0 ? userProfile.personalUrl : []
+  };
 
-    // 파일 추가 (여기서는 avatarUrl이 파일 경로라고 가정)
-    const avatarFile = userProfile.avatarUrl; // 여기서 avatarUrl은 파일의 Blob 또는 File 객체여야 합니다.
-    if (avatarFile) {
-        data.append('file', avatarFile); // 파일 추가
-    }
+  data.append('profile', JSON.stringify(profileData)); // JSON 문자열로 추가
 
-    // 프로필 정보 추가
-    const profileData = {
-        tags: userProfile.tags.length > 0 ? userProfile.tags : [],
-        experiences: userProfile.experiences.length > 0 ? userProfile.experiences : [],
-        headLine: userProfile.headline,
-        educations: userProfile.educations.length > 0 ? userProfile.educations : [],
-        personalUrl: userProfile.personalUrl.length > 0 ? userProfile.personalUrl : []
-    };
-
-    data.append('profile', JSON.stringify(profileData)); // JSON 문자열로 추가
-
-    try {
-        const response = await axios.put(`my/profile/${nickname}`, data, {
-            headers: {
-                ...data.getHeaders() // FormData의 헤더 추가
-            }
-        });
-        console.log(response.data);
-    } catch (error) {
-        console.error(error);
-    }
+  try {
+      const response = await axios.put(`my/profile/${nickname}`, data);
+      console.log(response.data);
+  } catch (error) {
+      console.error(error);
+  }
 };
 
   const handleModalClose = () => {
     setIsRoleModalOpen(false);
-    updateUserProfile(); // Call the update function when modal closes
+    updateUserProfile(); 
   };
 
   useEffect(() => {
@@ -147,7 +177,12 @@ const MainPage = () => {
     const query = new URLSearchParams(location.search);
     const showModal = query.get('showModal') === 'true';
     setIsRoleModalOpen(showModal);
-  }, [location.search]); // location.search가 변경될 때마다 실행
+
+    // 사용자가 로그인했는지 확인하고 프로필이 불완전한지 체크
+    if (user && (!userProfile.headLine || userProfile.tags.length === 0)) {
+      setIsRoleModalOpen(true); // 프로필이 불완전하면 모달 열기
+    }
+  }, [location.search, user, userProfile]); // 의존성 배열에 userProfile 추가
 
   
 

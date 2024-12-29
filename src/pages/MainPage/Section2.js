@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+// import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -52,22 +53,45 @@ const Section2 = () => {
 //   };
 
 
-  const fetchAllProjects = async () => {
-    const response = await axios.get('/data.json');
+  // const fetchAllProjects = async () => {
+  //   const response = await axios.get('/data.json');
     
-    // 각 프로젝트에 liked 속성과 초기 likesCount 추가
-    const projectsWithLikes = response.data.map(project => ({
-      ...project,
-      liked: false, // 초기 상태는 좋아요가 눌리지 않은 상태
-      likesCount: project.likesCount || 0 // likesCount가 없으면 0으로 초기화
-    }));
+  //   // 각 프로젝트에 liked 속성과 초기 likesCount 추가
+  //   const projectsWithLikes = response.data.map(project => ({
+  //     ...project,
+  //     liked: false, // 초기 상태는 좋아요가 눌리지 않은 상태
+  //     likesCount: project.likesCount || 0 // likesCount가 없으면 0으로 초기화
+  //   }));
 
-    setAllProjects(projectsWithLikes);
-  };
+  //   setAllProjects(projectsWithLikes);
+  // };
+
+  const fetchAllProjects = useCallback(async () => {
+    try {
+      const response = await axios.get('/main?feedType=PROJECT');
+
+      if (!response.data || response.data.length === 0) {
+        console.warn('프로젝트 데이터가 없습니다.');
+        setAllProjects([]); 
+        return;
+      }
+
+      const projectsWithLikes = response.data.map((project, index) => ({
+        id: index,
+        ...project,
+        liked: false,
+        likesCount: Math.max(project.likesCount || 0, 0)
+      }));
+
+      setAllProjects(projectsWithLikes);
+    } catch (error) {
+      console.error('인기 프로젝트 가져오기 실패:', error);
+    }
+  }, []);
 
   useEffect(() => {
     fetchAllProjects();
-  }, []);
+  }, [fetchAllProjects]);
 
   // const handleProjectClick = (project) => {
   //   navigate(`/ApplyPage/${project.pk}`);
@@ -79,10 +103,10 @@ const Section2 = () => {
 
   const handleProjectClick = (project) => {
     navigate(`/ApplyPage/${project.pk}`, { 
-      state: { 
-        liked: project.liked, 
-        likesCount: project.likesCount // likesCount도 함께 전달
-      } 
+      // state: { 
+      //   liked: project.liked, 
+      //   likesCount: project.likesCount // likesCount도 함께 전달
+      // } 
     });
   };
   
@@ -93,7 +117,7 @@ const Section2 = () => {
       const newProjects = [...prevProjects];
       const project = newProjects[index];
       project.liked = newLiked;
-      project.likesCount = newLikesCount;
+      project.likesCount = Math.max(newLikesCount, 0);
       return newProjects;
     });
   };
@@ -167,7 +191,7 @@ const handleCloseSubmissionPopup = () => {
           <ProjectCard key={index}  onClick={() => handleProjectClick(project)}>
             <ProjectOwner>
               <FontAwesomeIcon icon={regularUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
-              {project.creatorID}
+              {project.creatorId}
             </ProjectOwner>
             <LikeButtonWrapper>
               <LikeButton 
@@ -176,6 +200,7 @@ const handleCloseSubmissionPopup = () => {
                 onLikeChange={(newLiked, newLikesCount) => handleLikeClick(index, newLiked, newLikesCount)} // 내부 상태 업데이트
                 apiEndpoint="/main/like" // MainPage API 엔드포인트
                 sk={project.pk}
+                userId={user ? user.id : null} // user가 null인 경우 처리
               />
             </LikeButtonWrapper>
             <ProjectTitle>{project.title}</ProjectTitle>
@@ -284,25 +309,27 @@ const ProjectList = styled.div`
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
-  max-height: 150vh;
+  max-height: 1200px;
+  min-width: 100%;
+  align-items: center;
   
   @media (max-width: 1600px) {
 
-    max-height: 180vh;
+    // max-height: 180vh;
   
   }
 
   @media (max-width: 1200px) {
-    max-height: 200vh;
+    // max-height: 160vh;
   
   }
 
   @media (max-width: 768px) {
-    max-height: 200vh;
+    // max-height: 140vh;
   }
 
   @media (max-width: 480px) {
-    max-height: 200vh;
+    // max-height: 120vh;
   }
 `;
 
@@ -322,12 +349,20 @@ const ProjectCard = styled.div`
   background-color: white;
   min-height: 200px;
   max-height: 800px;
+  // min-width: 400px; 
+ 
+ @media (max-width: 1400px) {
+    
+    max-height: 400px;
+     min-width: 350px;
+  }
 
 
 
   @media (max-width: 1200px) {
     
-    max-height: 500px;
+    max-height: 400px;
+    //  min-width: 350px;
   }
 
   @media (max-width: 768px) {

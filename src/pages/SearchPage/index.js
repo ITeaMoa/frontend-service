@@ -23,52 +23,79 @@ const SearchPage = () => {
 
 
  
-const fetchSearchItems = useCallback(async (searchTerm, tags) => {
-  try {
-    // 임시 데이터 가져오기
-    const response = await axios.get('/data.json'); // 로컬 JSON 파일에서 데이터 가져오기
+// const fetchSearchItems = useCallback(async (searchTerm, tags) => {
+//   try {
+//     // 임시 데이터 가져오기
+//     const response = await axios.get('/data.json'); // 로컬 JSON 파일에서 데이터 가져오기
 
-    // 제목에 검색어가 포함된 아이템 필터링
-    const filteredProjects = response.data.filter(item => 
-        item.title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+//     // 제목에 검색어가 포함된 아이템 필터링
+//     const filteredProjects = response.data.filter(item => 
+//         item.title.toLowerCase().includes(searchTerm.toLowerCase())
+//     );
 
-    // 태그에 따라 추가 필터링
-    const finalResults = filteredProjects.filter(item => {
-        return selectedTags.length === 0 || (item.tags && selectedTags.some(tag => item.tags.includes(tag)));
-    });
+//     // 태그에 따라 추가 필터링
+//     const finalResults = filteredProjects.filter(item => {
+//         return selectedTags.length === 0 || (item.tags && selectedTags.some(tag => item.tags.includes(tag)));
+//     });
 
-    setSearchResults(finalResults); // 필터링된 결과 설정
-} catch (error) {
-    console.error("Error fetching search items:", error);
-}
-}, [selectedTags]); // selectedTags를 의존성 배열에 추가
+//     setSearchResults(finalResults); // 필터링된 결과 설정
+// } catch (error) {
+//     console.error("Error fetching search items:", error);
+// }
+// }, [selectedTags]); // selectedTags를 의존성 배열에 추가
 
 
 //최종(검색+ 태그)
-//   const fetchSearchItems = useCallback(async (searchTerm, tags) => {
-//     try {
-//         const tagsQuery = tags.join(',');
-//         const tagResponse = await axios.get(`/main/search-tags?feedType=PROJECT&tags=${encodeURIComponent(tagsQuery)}`);
-//         const keywordResponse = await axios.get(`/main/search-keyword?feedType=PROJECT&keyword=${encodeURIComponent(searchTerm)}`);
+  const fetchSearchItems = useCallback(async (searchTerm, tags) => {
+    try {
+        const tagsQuery = tags.join(',');
+        const tagResponse = await axios.get(`/main/search-tags?feedType=PROJECT&tags=${encodeURIComponent(tagsQuery)}`);
+        const keywordResponse = await axios.get(`/main/search-keyword?feedType=PROJECT&keyword=${encodeURIComponent(searchTerm)}`);
 
-//         const combinedResults = [
-//             ...tagResponse.data,
-//             ...keywordResponse.data.filter(item => 
-//                 !combinedResults.some(result => result.id === item.id) // 중복 제거
-//             )
-//         ];
+        const combinedResults = [
+            ...tagResponse.data,
+            ...keywordResponse.data.filter(item => 
+                !combinedResults.some(result => result.id === item.id) // 중복 제거
+            )
+        ];
 
-//         // 여기서 selectedTags를 사용하여 결과를 필터링할 수 있습니다.
-//         const filteredResults = combinedResults.filter(item => {
-//             // 예시: item.tags가 selectedTags에 포함된 경우
-//             return selectedTags.length === 0 || selectedTags.some(tag => item.tags.includes(tag));
-//         });
+        // 여기서 selectedTags를 사용하여 결과를 필터링할 수 있습니다.
+        const filteredResults = combinedResults.filter(item => {
+            // 예시: item.tags가 selectedTags에 포함된 경우
+            return selectedTags.length === 0 || selectedTags.some(tag => item.tags.includes(tag));
+        });
 
-//         setSearchResults(filteredResults);
-//     } catch (error) {
-//         console.error("Error fetching search items:", error);
-//     }
+        setSearchResults(filteredResults);
+    } catch (error) {
+        console.error("Error fetching search items:", error);
+    }
+}, [selectedTags]); // selectedTags를 의존성 배열에 추가
+
+
+// //최종(검색+ 태그)
+// const fetchSearchItems = useCallback(async (searchTerm, tags) => {
+//   try {
+//       const tagsQuery = tags.join(',');
+//       const tagResponse = await axios.get(`/main/search-tags?feedType=PROJECT&tags=${encodeURIComponent(tagsQuery)}`);
+//       const keywordResponse = await axios.get(`/main?feedType=PROJECT`);
+
+//       const combinedResults = [
+//           ...tagResponse.data,
+//           ...keywordResponse.data.filter(item => 
+//               !combinedResults.some(result => result.id === item.id) // 중복 제거
+//           )
+//       ];
+
+//       // 여기서 selectedTags를 사용하여 결과를 필터링할 수 있습니다.
+//       const filteredResults = combinedResults.filter(item => {
+//           // 예시: item.tags가 selectedTags에 포함된 경우
+//           return selectedTags.length === 0 || selectedTags.some(tag => item.tags.includes(tag));
+//       });
+
+//       setSearchResults(filteredResults);
+//   } catch (error) {
+//       console.error("Error fetching search items:", error);
+//   }
 // }, [selectedTags]); // selectedTags를 의존성 배열에 추가
 
 

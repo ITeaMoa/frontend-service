@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import axios from '../api/axios'
+// import axios from '../api/axios'
+import axios from 'axios';
 
 
 
@@ -16,6 +17,14 @@ const getToken = () => {
 // Local Storage에서 JWT 토큰 제거
 const removeToken = () => {
   localStorage.removeItem('jwtToken');
+};
+
+// JWT 디코드 함수
+const parseJwt = (token) => {
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => `%${('00' + c.charCodeAt(0).toString(16)).slice(-2)}`).join(''));
+  return JSON.parse(jsonPayload);
 };
 
 // // JWT 토큰 유효성 검사
@@ -44,30 +53,68 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // 로그인 함수
-  const login = async (userId, password) => {
+  const login = async (email, password) => {
     try {
-      const response = await axios.post('login/confirm/signin', {
-        email: userId,
+      const response = await axios.post('/login/confirm/signin', {
+        email,
         password,
       });
-
+  
+      console.log('응답 데이터:', response.data); // 응답 데이터 로그
+  
       if (response.status === 200) {
-        const userData = response.data.user; // 사용자 정보// 사용자 정보 (여기에 user.id가 포함되어 있어야 함)
         const token = response.data.access_token; // JWT 
-
-        setUser(userData);
+        const idToken = response.data.id_token; // id_token 가져오기
+  
+        console.log('로그인 성공, JWT 토큰:', token); // JWT 로그
+  
         saveToken(token); // 로컬 스토리지에 JWT 저장
-        localStorage.setItem('user', JSON.stringify(userData)); // 사용자 정보 저장
         setIsLoggedIn(true); // 로그인 상태 업데이트
-
+  
+        // ID 토큰 디코드하여 사용자 정보 추출
+        const decodedToken = parseJwt(idToken);
+        const userId = decodedToken.sub; // 'sub' 필드에서 사용자 ID 추출
+  
+        // 사용자 정보를 상태에 저장
+        const userInfo = { id: userId, email }; // 필요한 정보 저장
+        setUser(userInfo); // 상태에 저장
+        console.log('로그인한 사용자 정보:', userInfo); // 사용자 정보 로그
+  
+        // 사용자 정보를 로컬 스토리지에 저장
+        localStorage.setItem('user', JSON.stringify(userInfo)); // 로컬 스토리지에 저장
+  
         return response;
       }
     } catch (error) {
-      console.error('로그인 실패:', error);
+      console.error('로그인 실패:', error.response ? error.response.data : error);
       throw error; // 오류를 상위로 전파
     }
   };
+
+  // // 로그인 함수
+  // const login = async (email, password) => {
+  //   try {
+  //     const response = await axios.post('/confirm/signin', {
+  //       email: email,
+  //       password,
+  //     });
+
+  //     if (response.status === 200) {
+  //       const userData = response.data.user; // 사용자 정보// 사용자 정보 (여기에 user.id가 포함되어 있어야 함)
+  //       const token = response.data.access_token; // JWT 
+
+  //       setUser(userData);
+  //       saveToken(token); // 로컬 스토리지에 JWT 저장
+  //       localStorage.setItem('user', JSON.stringify(userData)); // 사용자 정보 저장
+  //       setIsLoggedIn(true); // 로그인 상태 업데이트
+
+  //       return response;
+  //     }
+  //   } catch (error) {
+  //     console.error('로그인 실패:', error);
+  //     throw error; // 오류를 상위로 전파
+  //   }
+  // };
 
 //   // 소셜 로그인 함수
 //   const socialLogin = async (provider, { code, state }) => {

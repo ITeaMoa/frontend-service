@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-// import axios from 'axios';
-import axios from '../../api/axios'
+import axios from 'axios';
+// import axios from '../../api/axios'
 
 const SignUpPage = () => {
   const navigate = useNavigate();
@@ -182,7 +182,8 @@ const handleSignup = async () => {
   const handleCheckNickname = async () => {
     try {
       const response = await axios.post('login/verify/nickname', { nickname });
-  
+  // 서버 응답에서 message 필드를 확인
+      console.log('닉네임 확인 응답:', response.data); // 서버 응답 로그
       // 서버 응답에서 message 필드를 확인
       if (response.data.message === "Nickname is available.") {
         alert('사용 가능한 닉네임입니다.');

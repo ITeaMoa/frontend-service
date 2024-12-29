@@ -1,7 +1,7 @@
 import React, { useState, useEffect,useCallback  } from 'react';
 import styled from 'styled-components';
 import Nav from '../../components/Nav';
-import { useNavigate , useParams, useLocation } from 'react-router-dom';
+import { useNavigate , useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft,faComment } from '@fortawesome/free-solid-svg-icons';
 import { faUser } from '@fortawesome/free-regular-svg-icons';
@@ -18,13 +18,13 @@ const ApplyPage = () => {
   //usestate : 컴포넌트 상태 관리에 씀
   //첫번째 요소: 현재 상태 값, 두번째 요소 : 상태를 없데이트하는 값 
   const [commentInput, setCommentInput] = useState('');
-  const location = useLocation(); // 경로 상태 가져오기
-  const { liked: initialLiked, likesCount: initialLikesCount } = location.state || {}; // 좋아요 상태와 수 가져오기
+  // const location = useLocation(); // 경로 상태 가져오기
+  // const { liked: initialLiked, likesCount: initialLikesCount } = location.state || {}; // 좋아요 상태와 수 가져오기
 
   const [project, setProject] = useState(null);
   // const [liked, setLiked] = useState(false);
-  const [liked, setLiked] = useState(initialLiked || false); // 초기 좋아요 상태 설정
-  const [likesCount, setLikesCount] = useState(initialLikesCount || 0); // 초기 좋아요 수 설정
+  // const [liked, setLiked] = useState(initialLiked || false); // 초기 좋아요 상태 설정
+  // const [likesCount, setLikesCount] = useState(initialLikesCount || 0); // 초기 좋아요 수 설정
   // // const isLoggedIn = true; // 또는 false로 설정하여 로그인 상태를 나타냄
   const showSearch = true;
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
@@ -34,58 +34,76 @@ const ApplyPage = () => {
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
 
   
-  // fetchProjectDetails를 useCallback으로 래핑하여 메모이제이션
-  const fetchProjectDetails = useCallback(async () => {
-    try {
-      const response = await axios.get('/data.json'); // 데이터 가져오기
-      const selectedProject = response.data.find(item => item.pk === projectId); // 특정 프로젝트 찾기
-      
-      if (selectedProject) {
-        setProject(selectedProject);
-        setLikesCount(selectedProject.likesCount || 0); // 초기 좋아요 수 설정
-      } else {
-        console.error("Project not found for projectId:", projectId);
-        setProject(null);
-      }
-    } catch (error) {
-      console.error("Error fetching project details:", error);
-      setProject(null); 
-    }
-  }, [projectId]);
+// user.id를 콘솔에 출력
+useEffect(() => {
+  if (user) {
+    console.log('User ID:', user.id); // 로그인한 사용자 ID 출력
+  } else {
+    console.log('사용자가 로그인하지 않았습니다.');
+  }
+}, [user]); // user가 변경될 때마다 실행
 
 
-  useEffect(() => {
-    fetchProjectDetails(); // 프로젝트 세부 정보를 가져옵니다.
-  }, [fetchProjectDetails]); // 의존성 배열에 fetchProjectDetails 추가
-
+  // // fetchProjectDetails를 useCallback으로 래핑하여 메모이제이션
   // const fetchProjectDetails = useCallback(async () => {
   //   try {
-  //     const response = await axios.get(`/main?feedType=PROJECT`); // 프로젝트 목록 가져오기
+  //     const response = await axios.get('/data.json'); // 데이터 가져오기
   //     const selectedProject = response.data.find(item => item.pk === projectId); // 특정 프로젝트 찾기
       
   //     if (selectedProject) {
   //       setProject(selectedProject);
+  //       setLikesCount(selectedProject.likesCount || 0); // 초기 좋아요 수 설정
   //     } else {
   //       console.error("Project not found for projectId:", projectId);
   //       setProject(null);
   //     }
   //   } catch (error) {
   //     console.error("Error fetching project details:", error);
-  //     setProject(null); // 오류 발생 시 상태를 null로 설정
+  //     setProject(null); 
   //   }
   // }, [projectId]);
 
+
   // useEffect(() => {
   //   fetchProjectDetails(); // 프로젝트 세부 정보를 가져옵니다.
-  // }, [fetchProjectDetails]);
+  // }, [fetchProjectDetails]); // 의존성 배열에 fetchProjectDetails 추가
+
+  const fetchProjectDetails = useCallback(async () => {
+    try {
+      const response = await axios.get(`/main?feedType=PROJECT`); // 프로젝트 목록 가져오기
+      const selectedProject = response.data.find(item => item.pk === projectId); // 특정 프로젝트 찾기
+      
+      if (selectedProject) {
+        setProject(selectedProject);
+      } else {
+        console.error("Project not found for projectId:", projectId);
+        setProject(null);
+      }
+    } catch (error) {
+      console.error("Error fetching project details:", error);
+      setProject(null); // 오류 발생 시 상태를 null로 설정
+    }
+  }, [projectId]);
+
+  useEffect(() => {
+    fetchProjectDetails(); // 프로젝트 세부 정보를 가져옵니다.
+  }, [fetchProjectDetails]);
 
 
 
   
- //좋아요 상태 업데이트 함수//아마 최종서버 연결
- const handleLike = (newLiked, newLikesCount) => {
-  setLiked(newLiked);
-  setLikesCount(newLikesCount);
+//  //좋아요 상태 업데이트 함수//아마 최종서버 연결
+//  const handleLikeChange = (newLiked, newLikesCount) => {
+//   setLiked(newLiked);
+//   setLikesCount(newLikesCount);
+// };
+
+const handleLikeClick = (newLiked, newLikesCount) => {
+  setProject(prevProject => ({
+    ...prevProject,
+    liked: newLiked,
+    likesCount: Math.max(newLikesCount, 0),
+  }));
 };
 
   
@@ -217,15 +235,28 @@ const postSelectedRole = async (role) => {
 
         <Title> {project.title} </Title>
 
-       <LikeButton 
+       {/* <LikeButton 
           initialLiked={liked} 
           initialLikesCount={likesCount} 
           onLikeChange={handleLike} 
           buttonStyle='apply'
           apiEndpoint={`/feed/${projectId}/like`} 
           userId={user ? user.id : null} // user가 null인 경우 처리
+          isApplyPage={true} // 또는 false로 설정하여 페이지 구분
+         
         />
-        
+         */}
+
+
+              <LikeButton 
+                initialLiked={project.liked} 
+                initialLikesCount={project.likesCount} 
+                onLikeChange={(newLiked, newLikesCount) => handleLikeClick(newLiked, newLikesCount)} // 내부 상태 업데이트
+                apiEndpoint="/main/like" // MainPage API 엔드포인트
+                buttonStyle='apply'
+                sk={project.pk}
+                userId={user ? user.id : null} // user가 null인 경우 처리
+              />
         
         <Post>
         <PostDetails>
@@ -300,7 +331,7 @@ const postSelectedRole = async (role) => {
  
           </ChatButton>
 
-          <AuthorID> <FontAwesomeIcon icon={faUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} /> 작성자: {project.creatorID}</AuthorID>
+          <AuthorID> <FontAwesomeIcon icon={faUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} /> 작성자: {project.creatorId}</AuthorID>
           </AuthorSection>
         
 
@@ -320,20 +351,26 @@ const postSelectedRole = async (role) => {
 
               <CommentsList>
             {project.comments && Array.isArray(project.comments) ? (
-              project.comments.map((comment, index) => (
-                <Comment key={index}>
-                  <Users>
-                    <FontAwesomeIcon icon={faUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
-                    <Timestamp>
-                      <strong>{comment.userID}</strong>
-                      <span style={{ fontSize: 'small', color: '#aaa' }}>
-                        {new Date(comment.timestamp).toLocaleDateString()} {new Date(comment.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </span>
-                    </Timestamp>
-                  </Users>
-                  <Comments>{comment.comment}</Comments>
-                </Comment>
-              ))
+              project.comments.map((comment, index) => {
+                const date = new Date(comment.timestamp);
+                const formattedDate = isNaN(date) ? '날짜 정보 없음' : date.toLocaleDateString();
+                const formattedTime = isNaN(date) ? '' : date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                return (
+                  <Comment key={index}>
+                    <Users>
+                      <FontAwesomeIcon icon={faUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
+                      <Timestamp>
+                        <strong>{comment.userID}</strong>
+                        <span style={{ fontSize: 'small', color: '#aaa' }}>
+                          {formattedDate} {formattedTime}
+                        </span>
+                      </Timestamp>
+                    </Users>
+                    <Comments>{comment.comment}</Comments>
+                  </Comment>
+                );
+              })
             ) : (
               <span>댓글 정보가 없습니다.</span>
             )}
@@ -382,7 +419,7 @@ const Container = styled.div`
   position: relative;
   padding: 20px;
   // margin-top: calc(100vh - 640px);
-  margin-top: 250px;
+  margin-top: 300px;
   min-height: calc(100vh - 250px);
   display: flex;
   flex-direction: column;
@@ -415,6 +452,7 @@ const Title = styled.div`
   font-size: 24px;
   z-index:-3;
   font-weight: bold;
+  text-align: center;
 
   &::after {
     content: '';

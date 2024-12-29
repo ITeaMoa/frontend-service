@@ -6,51 +6,53 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons'; 
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
-// import axios from 'axios';
-import axios from '../api/axios'
+import axios from 'axios';
+// import axios from '../api/axios'
 
 
-const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle, apiEndpoint, userId,sk}) => {
-  const [liked, setLiked] = useState(initialLiked);
-  const [likesCount, setLikesCount] = useState(initialLikesCount);
-  // const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
-
-
+const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle, apiEndpoint, userId, sk }) => {
+  const [liked, setLiked] = useState(() => {
+    const storedLiked = localStorage.getItem(`liked_${userId}_${sk}`);
+    return storedLiked === 'true' ? true : initialLiked; // 올바른 초기화 보장
+  });
+  const [likesCount, setLikesCount] = useState(() => {
+    const storedLikesCount = localStorage.getItem(`likesCount_${userId}_${sk}`);
+    return storedLikesCount ? parseInt(storedLikesCount, 10) : initialLikesCount; // 올바른 초기화 보장
+  });
 
   // props가 변경될 때 상태 업데이트
   useEffect(() => {
-    setLiked(initialLiked);
+    const storedLiked = localStorage.getItem(`liked_${userId}_${sk}`);
+    setLiked(storedLiked === 'true' ? true : initialLiked);
     setLikesCount(initialLikesCount);
-  }, [initialLiked, initialLikesCount]);
-
-
-
+  }, [initialLiked, initialLikesCount, userId, sk]);
 
   const handleClick = async (e) => {
-    e.stopPropagation(); // 부모 클릭 이벤트 전파 방지
+    e.stopPropagation(); // 이벤트 전파 방지
     const newLiked = !liked;
-    const newLikesCount = newLiked ? likesCount + 1 : likesCount - 1;
+    const newLikesCount = newLiked ? likesCount + 1 : Math.max(likesCount - 1, 0);
 
+    // 상태 업데이트
     setLiked(newLiked);
     setLikesCount(newLikesCount);
     if (onLikeChange) {
-      onLikeChange(newLiked, newLikesCount); // 이벤트 객체 생략
+      onLikeChange(newLiked, newLikesCount);
     }
 
-    // API 호출
-    const data = {
+    // API 호출 및 로컬 스토리지 업데이트
+    const likeData = {
       pk: userId,
-      sk: sk, // sk 변수가 정의되어야 합니다.
+      sk: sk,
       feedType: "PROJECT"
     };
 
     try {
       if (newLiked) {
         // 좋아요 추가
-        await axios.post(apiEndpoint, data);
+        await axios.post(apiEndpoint, likeData);
       } else {
         // 좋아요 제거
-        await axios.delete(apiEndpoint, { data });
+        await axios.delete(apiEndpoint, { data: likeData });
       }
     } catch (error) {
       console.error('Error updating like status:', error);
@@ -58,25 +60,28 @@ const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle
       setLiked(!newLiked);
       setLikesCount(newLikesCount - (newLiked ? 1 : -1));
     }
+
+    // 상태를 로컬 스토리지에 저장
+    localStorage.setItem(`liked_${userId}_${sk}`, newLiked);
+    localStorage.setItem(`likesCount_${userId}_${sk}`, newLikesCount);
   };
 
 
-// const handleClick = (e) => {
-//     e.stopPropagation(); // 부모 클릭 이벤트 전파 방지
-//     const newLiked = !liked;
-//     const newLikesCount = newLiked ? likesCount + 1 : likesCount - 1;
+  // const handleClick = async (e) => {
+  //   e.stopPropagation(); // 부모 클릭 이벤트 전파 방지
+  //   const newLiked = !liked;
+  //   const newLikesCount = newLiked ? likesCount + 1 : likesCount - 1;
 
-//     setLiked(newLiked);
-//     setLikesCount(newLikesCount);
-//     if (onLikeChange) {
-//       onLikeChange(newLiked, newLikesCount); // 이벤트 객체 생략
-//     }
-    
+  //   setLiked(newLiked);
+  //   setLikesCount(newLikesCount);
+  //   if (onLikeChange) {
+  //     onLikeChange(newLiked, newLikesCount); // 이벤트 객체 생략
+  //   }
 
-  //   / API 호출//메인페이지
+  //   // API 호출
   //   const data = {
   //     pk: userId,
-  //     sk: sk,
+  //     sk: sk, // sk 변수가 정의되어야 합니다.
   //     feedType: "PROJECT"
   //   };
 
@@ -98,25 +103,6 @@ const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle
 
 
 
- 
-
-// // API 호출//보명님//상세페이지
-
-//     try {
-//       const response = await axios.put(`${apiEndpoint}/like`, null, {
-//         params: {
-//           userId: userId,
-//           feedType: "PROJECT"
-//         }
-//       });
-//       console.log(response.data); // 필요시 응답 로그
-//     } catch (error) {
-//       console.error('Error updating like status:', error);
-//       // 상태를 원래대로 되돌리기
-//       setLiked(!newLiked);
-//       setLikesCount(newLikesCount - (newLiked ? 1 : -1));
-//     }
-//   };
 
 
     

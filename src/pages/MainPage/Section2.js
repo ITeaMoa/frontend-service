@@ -4,12 +4,12 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons'; 
-import axios from 'axios';
+//import axios from 'axios';
 import LikeButton from '../../components/LikeButton';
 import Pagination from '../../components/Pagination';
 import Modal from '../../components/Modal';
 import { useAuth } from '../../context/AuthContext'
-// import axios from '../../api/axios';
+import axios from '../../api/axios';
 
 
 const Section2 = () => {

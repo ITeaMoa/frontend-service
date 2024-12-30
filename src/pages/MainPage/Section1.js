@@ -2,11 +2,11 @@ import React, { useEffect, useState, useCallback } from 'react';
 // import React, { useEffect, useState} from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import axios from 'axios';
+//import axios from 'axios';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons'; 
 import { useNavigate } from 'react-router-dom'; 
 import LikeButton from '../../components/LikeButton';
-// import axios from '../../api/axios'
+import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 
 //각 섹션의 데이터를 상태로 관리합니다: useState를 사용하여 데이터를 저장하고, 

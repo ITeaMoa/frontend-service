@@ -8,7 +8,7 @@ import Pagination from '../../components/Pagination';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext'
 
-const ProjectListComponent = ({ selectedList, currentProjects, handleProjectClick, projectsPerPage, totalProjects, paginate, currentPage }) => {
+const ProjectListComponent = ({ selectedList, currentProjects = [], handleProjectClick, projectsPerPage, totalProjects, paginate, currentPage }) => {
   const [isFading, setIsFading] = useState(false);
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
   // const [projects, setProjects] = useState(currentProjects);
@@ -118,24 +118,24 @@ const ProjectListComponent = ({ selectedList, currentProjects, handleProjectClic
           <p>신청한 프로젝트가 없습니다.</p>
         )}
         {selectedList === 'applied' && currentProjects.map((project, index) => (
-          <ProjectItem key={project.pk} >
+          <ProjectItem key={project.sk}>
             <ProjectHeader>
               <HeaderItem>
                 <FontAwesomeIcon icon={regularUser} size="15px" />
-                <span>{project.creatorId}</span>
+                <span>{project.pk}</span>
                 <StyledFontAwesomeIcon2 icon={faHeart} />
-                <span>{project.likesCount}</span>
+                <span>{project.likesCount || 0}</span>
               </HeaderItem>
             </ProjectHeader>
-            <p>{project.title}</p>
+            {/* <p>{project.part}</p> */}
             <Tags>
-              {project.tags.map((tag, index) => (
+              {project.tags && project.tags.map((tag, index) => (
                 <Tag key={index}>{tag}</Tag>
               ))}
             </Tags>
             <Button2 onClick={() => {
-              if (user && user.id && project.pk) {
-                handleCancelApplication(user.id, project.pk);
+              if (user && user.id && project.sk) {
+                handleCancelApplication(user.id, project.sk);
               } else {
                 console.error("User or project information is missing");
               }
@@ -143,10 +143,8 @@ const ProjectListComponent = ({ selectedList, currentProjects, handleProjectClic
               신청 취소
             </Button2>
             <AdditionalInfo>
-              <span>지원 분야 | 백엔드</span>
-              <span>모집 현황 | {project.applyNum} / {project.recruitmentNum}</span>
-              <span>마감 일자 | {new Date(project.deadline).toLocaleDateString()}</span>
-              <span>진행 기간 | {project.period}개월</span>
+              <span>상태: Pending</span>
+              <span>신청 일자: {new Date(project.timestamp).toLocaleDateString()}</span>
             </AdditionalInfo>
           </ProjectItem>
         ))}

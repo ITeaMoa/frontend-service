@@ -32,16 +32,26 @@ const ApplyPage = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [popupMessage, setPopupMessage] = useState(''); // 팝업 메시지 상태
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
+  // const [likedProjects, setLikedProjects] = useState([]); // 좋아요 상태를 배열로 관리
+  // const [likesCount, setLikesCount] = useState(0); // likesCount 상태 추가
 
-  
-// user.id를 콘솔에 출력
-useEffect(() => {
-  if (user) {
-    console.log('User ID:', user.id); // 로그인한 사용자 ID 출력
-  } else {
-    console.log('사용자가 로그인하지 않았습니다.');
-  }
-}, [user]); // user가 변경될 때마다 실행
+  // user.id를 콘솔에 출력
+  useEffect(() => {
+    if (user) {
+      console.log('User ID:', user.id); // 로그인한 사용자 ID 출력
+    } else {
+      console.log('사용자가 로그인하지 않았습니다.');
+    }
+  }, [user]); // user가 변경될 때마다 실행
+
+  useEffect(() => {
+    if (user) {
+      console.log('User:', user); // 로그인한 사용자 정보 출력
+      console.log('Project Creator ID:', project ? project.creatorId : 'Project is null'); // 프로젝트 생성자 ID 출력
+    } else {
+      console.log('사용자가 로그인하지 않았습니다.');
+    }
+  }, [user, project]); // user와 project가 변경될 때마다 실행
 
 
   // // fetchProjectDetails를 useCallback으로 래핑하여 메모이제이션
@@ -75,6 +85,7 @@ useEffect(() => {
       
       if (selectedProject) {
         setProject(selectedProject);
+        // setLikesCount(Math.max(selectedProject.likesCount || 0, 0)); // Ensure likesCount is not negative
       } else {
         console.error("Project not found for projectId:", projectId);
         setProject(null);
@@ -84,6 +95,23 @@ useEffect(() => {
       setProject(null); // 오류 발생 시 상태를 null로 설정
     }
   }, [projectId]);
+
+  // const fetchProjectDetails = useCallback(async () => {
+  //   try {
+  //     const response = await axios.get(`/main?feedType=PROJECT&projectId=${projectId}`); // projectId를 쿼리 파라미터로 추가
+  //     const selectedProject = response.data; // 응답 데이터에서 프로젝트 정보 가져오기
+  
+  //     if (selectedProject) {
+  //       setProject(selectedProject);
+  //     } else {
+  //       console.error("Project not found for projectId:", projectId);
+  //       setProject(null);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching project details:", error);
+  //     setProject(null); // 오류 발생 시 상태를 null로 설정
+  //   }
+  // }, [projectId]);
 
   useEffect(() => {
     fetchProjectDetails(); // 프로젝트 세부 정보를 가져옵니다.
@@ -99,28 +127,10 @@ useEffect(() => {
 // };
 
 const handleLikeClick = (newLiked, newLikesCount) => {
-  setProject(prevProject => ({
-    ...prevProject,
-    liked: newLiked,
-    likesCount: Math.max(newLikesCount, 0),
-  }));
+  console.log(`Liked: ${newLiked}, Likes Count: ${newLikesCount}`);
 };
 
-  
 
-  // const handleLike = () => {
-  //   setLiked(prevLiked => {
-  //     const newLikedState = !prevLiked;
-  //     if (project) {
-  //       setProject(prevProject => ({
-  //         ...prevProject,
-  //         likesCount: newLikedState ? prevProject.likesCount + 1 : prevProject.likesCount - 1
-  //       }));
-  //     }
-      
-  //     return newLikedState; // 새로운 좋아요 상태 반환
-  //   });
-  // };
 
   const handleCommentSubmit = async () => {
     if (commentInput.trim() && project) {
@@ -248,14 +258,25 @@ const postSelectedRole = async (role) => {
          */}
 
 
-              <LikeButton 
+              {/* <LikeButton 
+                initialLiked={likedProjects.find(like => like.id === projectId)?.liked || false} 
+                initialLikesCount={likedProjects.find(like => like.id === projectId)?.likesCount || 0} 
+                onLikeChange={handleLikeClick} 
+                apiEndpoint="/main/like" 
+                buttonStyle='apply'ㅌ
+                sk={project.pk}
+                userId={user ? user.id : null} 
+              /> */}
+
+                  <LikeButton 
                 initialLiked={project.liked} 
                 initialLikesCount={project.likesCount} 
-                onLikeChange={(newLiked, newLikesCount) => handleLikeClick(newLiked, newLikesCount)} // 내부 상태 업데이트
-                apiEndpoint="/main/like" // MainPage API 엔드포인트
-                buttonStyle='apply'
+                onLikeChange={handleLikeClick}
+                buttonStyle="apply"
+                apiEndpoint="/main/like"
                 sk={project.pk}
                 userId={user ? user.id : null} // user가 null인 경우 처리
+                
               />
         
         <Post>
@@ -331,7 +352,10 @@ const postSelectedRole = async (role) => {
  
           </ChatButton>
 
-          <AuthorID> <FontAwesomeIcon icon={faUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} /> 작성자: {project.creatorId}</AuthorID>
+          <AuthorID>
+            <FontAwesomeIcon icon={faUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
+            작성자: {project.creatorId === user.id || project.creatorId === null ? '나' : project.creatorId}
+          </AuthorID>
           </AuthorSection>
         
 
@@ -394,9 +418,18 @@ const postSelectedRole = async (role) => {
               </RoleButton>
             ))
           ) : (
-            <p>역할 정보를 불러오는 중입니다...</p>
+            <p>역할 정보가 없습니다.</p>
           )}
-         
+          <RoleButton
+            onClick={() => {
+              if (selectedRole !== '무관') {
+                handleRoleSelect('무관');
+              }
+            }}
+            isSelected={selectedRole === '무관'}
+          >
+            무관
+          </RoleButton>
         </RoleButtonContainer>
         <SubmitButton onClick={handleApplySubmit}>제출</SubmitButton>
        

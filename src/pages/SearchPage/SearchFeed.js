@@ -7,6 +7,7 @@ import LikeButton from '../../components/LikeButton';
 import Pagination from '../../components/Pagination';
 import Modal from '../../components/Modal';
 // import { useAuth } from '../../context/AuthContext'; // AuthContext 경로를 맞춰주세요
+import { useAuth } from '../../context/AuthContext'
 
 
 //searchpage에서 itemslist 가져오기
@@ -19,12 +20,14 @@ const SearchFeed = ({ itemList, setSearchResults }) => {
   const [project, setProject] = useState(null); // 선택된 프로젝트 상태 추가
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [popupMessage, setPopupMessage] = useState(''); // 팝업 메시지 상태
-  // const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
+  const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
 
 
 
   const handleProjectClick = (project) => {
-    navigate(`/ApplyPage/${project.pk}`);
+    if (project) { // project가 null이 아닐 때만 navigate 호출
+        navigate(`/ApplyPage/${project.pk}`);
+    }
   };
 
  
@@ -94,7 +97,7 @@ const handleCloseSubmissionPopup = () => {
       <ProjectList>
         {itemList.length === 1 ? ( // 검색 결과가 하나일 때
           <CenteredProjectCard>
-            <ProjectCard onClick={() => handleProjectClick(project)}>
+            <ProjectCard onClick={() => handleProjectClick(itemList[0])}>
               <ProjectOwner>
                 <FontAwesomeIcon icon={regularUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
                 {itemList[0].creatorID}
@@ -128,7 +131,7 @@ const handleCloseSubmissionPopup = () => {
               </ProjectInfo>
               <ApplyButton onClick={(e) => {
           e.stopPropagation(); // 이벤트 전파 방지
-          handleApplyClick(project);
+          handleApplyClick(itemList[0]);
         }}>
         신청하기</ApplyButton>
             </ProjectCard>
@@ -137,18 +140,21 @@ const handleCloseSubmissionPopup = () => {
           currentProjects.map((project, index) => ( // 검색 결과가 여러 개일 때
             <ProjectCard key={index} onClick={() => handleProjectClick(project)} >
               <ProjectOwner>
-                <FontAwesomeIcon icon={regularUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
-                {project.creatorID}
+              <FontAwesomeIcon icon={regularUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
+              {project.creatorId === user.id || project.creatorId === null ? '나' : project.creatorId}
               </ProjectOwner>
            
               <LikeButtonWrapper>
-                <LikeButton 
-                  initialLiked={project.liked} // 각 project의 liked 속성 사용
-                  initialLikesCount={project.likesCount} // 각 project의 likesCount 사용
-                  onLikeChange={(newLiked, newLikesCount) => handleLikeClick(index, newLiked, newLikesCount)} // index 사용
-                  apiEndpoint="/main/like" // MainPage API 엔드포인트
-                  sk={project.pk}
-                />
+            
+              <LikeButton 
+                initialLiked={project.liked} 
+                initialLikesCount={project.likesCount} 
+                onLikeChange={(newLiked, newLikesCount) => handleLikeClick(index, newLiked, newLikesCount)} 
+                buttonStyle="s1"
+                apiEndpoint="/main/like"
+                sk={project.pk}
+                userId={user ? user.id : null} // user가 null인 경우 처리
+              />
               </LikeButtonWrapper>
               <ProjectTitle>{project.title}</ProjectTitle>
               <Content>{project.content}</Content>
@@ -221,7 +227,7 @@ const SectionWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  margin-top: 80px;
+  margin-top: 30px;
   margin-bottom: 40px;
 `;
 
@@ -235,6 +241,7 @@ const ProjectList = styled.div`
   width: 50%;
   max-height: 150vh;
   max-width: 1200px;
+  align-items: center;
 
   @media (max-width: 1200px) {
     width: 80%;

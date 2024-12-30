@@ -17,7 +17,7 @@ const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle
   });
   const [likesCount, setLikesCount] = useState(() => {
     const storedLikesCount = localStorage.getItem(`likesCount_${userId}_${sk}`);
-    return storedLikesCount ? parseInt(storedLikesCount, 10) : initialLikesCount; // 올바른 초기화 보장
+    return storedLikesCount ? Math.abs(parseInt(storedLikesCount, 10)) : Math.abs(initialLikesCount); // 음수일 경우 절대값으로 초기화
   });
 
   // props가 변경될 때 상태 업데이트
@@ -32,38 +32,40 @@ const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle
     const newLiked = !liked;
     const newLikesCount = newLiked ? likesCount + 1 : Math.max(likesCount - 1, 0);
 
-    // 상태 업데이트
-    setLiked(newLiked);
-    setLikesCount(newLikesCount);
-    if (onLikeChange) {
-      onLikeChange(newLiked, newLikesCount);
-    }
-
     // API 호출 및 로컬 스토리지 업데이트
     const likeData = {
-      pk: userId,
-      sk: sk,
-      feedType: "PROJECT"
+        pk: userId,
+        sk: sk,
+        feedType: "PROJECT"
     };
 
     try {
-      if (newLiked) {
-        // 좋아요 추가
-        await axios.post(apiEndpoint, likeData);
-      } else {
-        // 좋아요 제거
-        await axios.delete(apiEndpoint, { data: likeData });
-      }
-    } catch (error) {
-      console.error('Error updating like status:', error);
-      // 상태를 원래대로 되돌리기
-      setLiked(!newLiked);
-      setLikesCount(newLikesCount - (newLiked ? 1 : -1));
-    }
+        if (newLiked) {
+            // 좋아요 추가
+            const response = await axios.post(apiEndpoint, likeData);
+            console.log('좋아요 추가 성공:', response.data); // API 응답 로그
+        } else {
+            // 좋아요 제거
+            const response = await axios.delete(apiEndpoint, { data: likeData });
+            console.log('좋아요 제거 성공:', response.data); // API 응답 로그
+        }
 
-    // 상태를 로컬 스토리지에 저장
-    localStorage.setItem(`liked_${userId}_${sk}`, newLiked);
-    localStorage.setItem(`likesCount_${userId}_${sk}`, newLikesCount);
+        // 상태 업데이트
+        setLiked(newLiked);
+        setLikesCount(newLikesCount < 0 ? 0 : newLikesCount);
+        if (onLikeChange) {
+            onLikeChange(newLiked, newLikesCount);
+        }
+
+        // 상태를 로컬 스토리지에 저장
+        localStorage.setItem(`liked_${userId}_${sk}`, newLiked);
+        localStorage.setItem(`likesCount_${userId}_${sk}`, newLikesCount);
+    } catch (error) {
+        console.error('Error updating like status:', error);
+        // 상태를 원래대로 되돌리기
+        setLiked(liked); // 원래 상태로 복원
+        setLikesCount(likesCount); // 원래 likesCount로 복원
+    }
   };
 
 
@@ -112,7 +114,7 @@ const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle
   return (
     <Button onClick={handleClick} buttonStyle={buttonStyle}>
       <FontAwesomeIcon icon={liked ? faHeart : regularHeart} style={{ color: liked ? 'red' : 'white', marginRight: '4px' }} />
-      {likesCount}
+      {Math.abs(likesCount)}
     </Button>
   );
 };

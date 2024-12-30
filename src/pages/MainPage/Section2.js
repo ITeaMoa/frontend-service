@@ -155,15 +155,15 @@ const handleApplySubmit = async () => {
   try {
     // 선택한 역할을 서버에 전송
     const applicationData = {
-      pk: project.pk, // 프로젝트의 pk를 사용
-      sk: user.id, 
+      pk: user.id, // 프로젝트의 pk를 사용
+      sk: project.pk, 
       part: selectedRole, // 선택한 역할
       feedType: "PROJECT" // 고정된 값
     };
 
     await axios.post('/main/application', applicationData); // API 호출
 
-    setPopupMessage("제출되었습니다.");
+    setPopupMessage("신청이 완료되었습니다.");
     // 제출 확인 팝업 표시
     setIsSubmitted(true);
   } catch (error) {
@@ -190,8 +190,8 @@ const handleCloseSubmissionPopup = () => {
       {currentProjects.map((project, index) => (
           <ProjectCard key={index}  onClick={() => handleProjectClick(project)}>
             <ProjectOwner>
-              <FontAwesomeIcon icon={regularUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
-              {project.creatorId}
+            <FontAwesomeIcon icon={regularUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
+            {project.creatorId === user.id || project.creatorId === null ? '나' : project.creatorId}
             </ProjectOwner>
             <LikeButtonWrapper>
               <LikeButton 
@@ -253,7 +253,19 @@ const handleCloseSubmissionPopup = () => {
               </RoleButton>
             ))
           ) : (
-            <p>역할 정보를 불러오는 중입니다...</p>
+            <>
+              <p>역할 정보가 없습니다.</p>
+              <RoleButton
+                onClick={() => {
+                  if (selectedRole !== '무관') { // 현재 선택된 역할과 다를 때만 업데이트
+                    handleRoleSelect('무관'); // '무관' 역할 선택
+                  }
+                }}
+                isSelected={selectedRole === '무관'}
+              >
+                무관
+              </RoleButton>
+            </>
           )}
         </RoleButtonContainer>
         <SubmitButton onClick={handleApplySubmit}>제출</SubmitButton>
@@ -262,7 +274,7 @@ const handleCloseSubmissionPopup = () => {
       {/* 제출 결과 팝업 */}
       {isSubmitted && (
         <Modal isOpen={isSubmitted} onClose={handleCloseSubmissionPopup}>
-          <h3>{popupMessage}</h3>
+          <h3 style={{ textAlign: 'center' }}>{popupMessage}</h3>
           <CloseButton onClick={handleCloseSubmissionPopup}>Close</CloseButton>
         </Modal>
       )}

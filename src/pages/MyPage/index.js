@@ -47,30 +47,7 @@ useEffect(() => {
   // }, []);
 
   // 선택된 목록이 변경될 때 신청 프로젝트를 가져오는 새로운 useEffect
-  useEffect(() => {
-    const fetchAppliedProjects = async () => {
-      if (selectedList === 'applied') {
-        try {
-          const response = await axios.get('/feed/applications', {
-            params: {
-              userId: user.id // userId를 쿼리 파라미터로 추가
-            }
-          
-          });
-          if (response.data && response.data.length > 0) {
-            setProjects(response.data); // 응답 데이터가 예상 형식이라고 가정
-          } else {
-            console.warn("No applied projects found");
-            setProjects([]); // 데이터가 없을 경우 빈 배열로 초기화
-          }
-        } catch (error) {
-          console.error("신청 프로젝트를 가져오는 중 오류 발생:", error);
-        }
-      }
-    };
-
-    fetchAppliedProjects();
-  },[selectedList, user.id]); // selectedList에 의존
+ 
 
   useEffect(() => {
     const fetchAppliedProjects = async () => {
@@ -81,14 +58,16 @@ useEffect(() => {
               userId: user.id // userId를 쿼리 파라미터로 추가
             }
           });
+          console.log("Fetched applied projects:", response.data); // JSON 응답을 콘솔에 출력
           if (response.data && response.data.length > 0) {
             setProjects(response.data);
           } else {
             console.warn("No applied projects found");
-            setProjects([]);
+            setProjects([]); // 데이터가 없을 경우 빈 배열로 초기화
           }
         } catch (error) {
           console.error("신청 프로젝트를 가져오는 중 오류 발생:", error);
+          setProjects([]); // 오류 발생 시에도 빈 배열로 초기화
         }
       }
     };
@@ -97,35 +76,7 @@ useEffect(() => {
   }, [selectedList, user]); // user를 의존성 배열에 포함
 
 
-//wrttien
-  useEffect(() => {
-    const fetchCreatorProjects = async () => {
-      if (selectedList === 'written') {
-        try { 
-          const sk = 'PROJECT'; // 고정된 sk 값
 
-          
-          const response = await axios.get('/writing', {
-            params: {
-              creatorId: user.id, // creatorId를 쿼리 파라미터로 추가
-              sk: sk,
-            }
-          });
-  
-          if (response.data) {
-            setProjects(response.data); // 응답 데이터가 예상 형식이라고 가정
-          } else {
-            console.warn("No projects found for the creator");
-            setProjects([]); // 데이터가 없을 경우 빈 배열로 초기화
-          }
-        } catch (error) {
-          console.error("작성된 프로젝트를 가져오는 중 오류 발생:", error);
-        }
-      }
-    };
-  
-    fetchCreatorProjects();
-  }, [selectedList, user.id]); // user.id도 의존성 배열에 포함
 
 //written
 useEffect(() => {
@@ -135,10 +86,12 @@ useEffect(() => {
         const sk = 'PROJECT';
         const response = await axios.get('/writing', {
           params: {
-            creatorId: user.id, // creatorId를 쿼리 파라미터로 추가
+           pk: user.id, // creatorId를 쿼리 파라미터로 추가
             sk: sk,
           }
         });
+
+        console.log("Fetched creator projects:", response.data); // 응답 데이터를 콘솔에 출력
 
         if (response.data) {
           setProjects(response.data);
@@ -211,7 +164,7 @@ useEffect(() => {
 
   const indexOfLastProject = currentPage * projectsPerPage;
   const indexOfFirstProject = indexOfLastProject - projectsPerPage;
-  const currentProjects = projects.slice(indexOfFirstProject, indexOfLastProject);
+  const currentProjects = projects.slice(indexOfFirstProject, indexOfLastProject) || [];
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 

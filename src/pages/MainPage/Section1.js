@@ -34,7 +34,7 @@ function Section1() {
         setPopularProjects(prevProjects => 
           prevProjects.map(project => ({
             ...project,
-            liked: project.id === user.id ? response.data.liked : project.liked
+            liked: project.id === user.id ? response.data.liked : false,
           }))
         );
       }
@@ -88,12 +88,14 @@ function Section1() {
   };
   
   const handleLikeClick = (index, newLiked, newLikesCount) => {
+    // Ensure likesCount is not negative
+    const updatedLikesCount = newLiked ? newLikesCount : Math.max(newLikesCount - 1, 0); // Ensure likesCount is not negative
     setPopularProjects((prevProjects) => {
-      const newProjects = [...prevProjects];
-      const project = newProjects[index];
-      project.liked = newLiked;
-      project.likesCount = newLikesCount;
-      return newProjects;
+        const newProjects = [...prevProjects];
+        const project = newProjects[index];
+        project.liked = newLiked;
+        project.likesCount = Math.max(updatedLikesCount, 0); // Ensure likesCount is not negative
+        return newProjects;
     });
   };
 
@@ -101,39 +103,43 @@ function Section1() {
     <SectionWrapper>
       <SectionTitle>인기 프로젝트</SectionTitle>
       <ProjectList>
-        {popularProjects.slice(0, 3).map((project, index) => (
-          <ProjectCard key={index} onClick={() => handleProjectClick(project)}>
-            <ProjectOwner>
-              <FontAwesomeIcon icon={regularUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
-              {project.creatorId}
-            </ProjectOwner>
-            <LikeButtonWrapper>
-              <LikeButton 
-                initialLiked={project.liked} 
-                initialLikesCount={project.likesCount} 
-                onLikeChange={(newLiked, newLikesCount) => handleLikeClick(index, newLiked, newLikesCount)} 
-                buttonStyle="s1"
-                apiEndpoint="/main/like"
-                sk={project.pk}
-                userId={user ? user.id : null} // user가 null인 경우 처리
-              />
-            </LikeButtonWrapper>
-            <ProjectTitle>{project.title}</ProjectTitle>
-            <ProjectInfo>
-              <Tags>
-                {project.tags.map((tag, tagIndex) => (
-                  <Tag key={tagIndex}>{tag}</Tag>
-                ))}
-              </Tags>
-              <Details>
-                모집현황 | {project.recruitmentNum}명 
-              </Details>
-              <Details>
-                마감일자 | {new Date(project.deadline).toLocaleDateString()}
-              </Details>
-            </ProjectInfo>
-          </ProjectCard>
-        ))}
+        {Array.isArray(popularProjects) && popularProjects.length > 0 ? (
+          popularProjects.slice(0, 3).map((project, index) => (
+            <ProjectCard key={index} onClick={() => handleProjectClick(project)}>
+              <AuthorID>
+                <FontAwesomeIcon icon={regularUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
+                {project.creatorId === user.id || project.creatorId === null ? '나' : project.creatorId}
+              </AuthorID>
+              <LikeButtonWrapper>
+                <LikeButton 
+                  initialLiked={project.liked} 
+                  initialLikesCount={project.likesCount} 
+                  onLikeChange={(newLiked, newLikesCount) => handleLikeClick(index, newLiked, newLikesCount)} 
+                  buttonStyle="s1"
+                  apiEndpoint="/main/like"
+                  sk={project.pk}
+                  userId={user ? user.id : null} // user가 null인 경우 처리
+                />
+              </LikeButtonWrapper>
+              <ProjectTitle>{project.title}</ProjectTitle>
+              <ProjectInfo>
+                <Tags>
+                  {project.tags.map((tag, tagIndex) => (
+                    <Tag key={tagIndex}>{tag}</Tag>
+                  ))}
+                </Tags>
+                <Details>
+                  모집현황 | {project.recruitmentNum}명 
+                </Details>
+                <Details>
+                  마감일자 | {new Date(project.deadline).toLocaleDateString()}
+                </Details>
+              </ProjectInfo>
+            </ProjectCard>
+          ))
+        ) : (
+          <div>프로젝트가 없습니다.</div> // 프로젝트가 없을 경우 메시지 표시
+        )}
       </ProjectList>
     </SectionWrapper>
   );
@@ -190,7 +196,7 @@ const ProjectCard = styled.div`
   }
 `;
 
-const ProjectOwner = styled.div`
+const AuthorID = styled.div`
   font-weight: bold;
   position: absolute;
   color: #858585;

@@ -117,16 +117,15 @@ const option3 = [
   //   navigate(`/SearchPage?q=${searchValue}`); // 검색 입력값을 포함한 URL로 이동
   // };
   const handleAddButtonClick = () => {
-    // 검색 입력값과 선택된 태그를 URL로 전달
     const tagsQuery = selectedTags.length > 0 ? `&tags=${selectedTags.join(',')}` : '';
-    navigate(`/SearchPage?q=${searchValue}${tagsQuery}`); 
-};
+    navigate(`/SearchPage?q=${searchValue}${tagsQuery}`); // 검색어와 선택된 태그를 URL로 전달
+  };
 
 
   const handleTagSelect = (option) => {
     setSelectedTags((prevTags) => {
         if (!prevTags.includes(option.label)) {
-            return [...prevTags, option.label];
+            return [...prevTags, option.label]; // 선택된 태그 추가
         }
         return prevTags;
     });
@@ -150,6 +149,8 @@ const option3 = [
   const handleLogout = () => {
     logout(navigate); // logout 호출 시 navigate 전달
   };
+
+
 
   return (
     <NavWrapper showSearch={showSearch}>

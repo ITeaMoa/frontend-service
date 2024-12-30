@@ -354,7 +354,7 @@ const postSelectedRole = async (role) => {
 
           <AuthorID>
             <FontAwesomeIcon icon={faUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
-            작성자: {project.creatorId === user.id || project.creatorId === null ? '나' : project.creatorId}
+            작성자: {project.creatorId}
           </AuthorID>
           </AuthorSection>
         

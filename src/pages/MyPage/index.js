@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Nav from "../../components/Nav";
-import axios from 'axios';
+// import axios from 'axios';
 import ProjectDetail from './ProjectDetail';
 import ProjectListComponent from './ProjectListComponent';
 import { useAuth } from '../../context/AuthContext'
-// import axios from '../../api/axios;
+import axios from '../../api/axios';
 
 
 const MyPage = () => {

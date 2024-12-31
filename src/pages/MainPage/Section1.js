@@ -55,6 +55,10 @@ function Section1() {
         return;
       }
 
+          // 응답 데이터를 콘솔에 찍기
+    console.log('응답 데이터:', response.data);
+      
+
       const projectsWithLikes = response.data.map((project) => {
         const isLiked = likedProjects.find(likedProject => likedProject.id === project.id);
         return {
@@ -87,15 +91,37 @@ function Section1() {
     });
   };
   
-  const handleLikeClick = (index, newLiked, newLikesCount) => {
-    // Ensure likesCount is not negative
-    const updatedLikesCount = newLiked ? newLikesCount : Math.max(newLikesCount - 1, 0); // Ensure likesCount is not negative
-    setPopularProjects((prevProjects) => {
-        const newProjects = [...prevProjects];
-        const project = newProjects[index];
-        project.liked = newLiked;
-        project.likesCount = Math.max(updatedLikesCount, 0); // Ensure likesCount is not negative
-        return newProjects;
+  // const handleLikeClick = (index, newLiked, newLikesCount) => {
+  //   // Ensure likesCount is not negative
+  //   const updatedLikesCount = newLiked ? newLikesCount : Math.max(newLikesCount - 1, 0); // Ensure likesCount is not negative
+  //   setPopularProjects((prevProjects) => {
+  //       const newProjects = [...prevProjects];
+  //       const project = newProjects[index];
+  //       project.liked = newLiked;
+  //       project.likesCount = Math.max(updatedLikesCount, 0); // Ensure likesCount is not negative
+  //       return newProjects;
+  //   });
+  // };
+
+  const handleLikeClick = (projectId, newLiked) => {
+    setPopularProjects(prevProjects => 
+      prevProjects.map(project => {
+        if (project.id === projectId) {
+          const newLikesCount = newLiked ? project.likesCount + 1 : Math.max(project.likesCount - 1, 0);
+          return { ...project, liked: newLiked, likesCount: newLikesCount };
+        }
+        return project;
+      })
+    );
+  
+    // likedProjects 상태 업데이트
+    setLikedProjects(prev => {
+      const existingLike = prev.find(p => p.id === projectId);
+      if (existingLike) {
+        return prev.map(p => p.id === projectId ? { ...p, liked: newLiked } : p);
+      } else {
+        return [...prev, { id: projectId, liked: newLiked, likesCount: newLiked ? 1 : 0 }];
+      }
     });
   };
 

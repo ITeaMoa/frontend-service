@@ -4,8 +4,8 @@ import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 import styled from 'styled-components';
 import Pagination from '../../components/Pagination';
-// import axios from '../../api/axios'; // Axios import 추가
-import axios from 'axios';
+import axios from '../../api/axios'; // Axios import 추가
+// import axios from 'axios';
 import { useAuth } from '../../context/AuthContext'
 
 const ProjectListComponent = ({ selectedList, currentProjects = [], handleProjectClick, projectsPerPage, totalProjects, paginate, currentPage }) => {

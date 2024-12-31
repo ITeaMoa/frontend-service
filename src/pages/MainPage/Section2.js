@@ -76,12 +76,17 @@ const Section2 = () => {
         return;
       }
 
-      const projectsWithLikes = response.data.map((project, index) => ({
-        id: index,
-        ...project,
-        liked: false,
-        likesCount: Math.max(project.likesCount || 0, 0)
-      }));
+      const projectsWithLikes = response.data.map((project) => {
+        const liked = localStorage.getItem(`liked_${user.id}_${project.pk}`) === 'true'; // 로컬 스토리지에서 좋아요 상태 가져오기
+        const likesCount = parseInt(localStorage.getItem(`likesCount_${user.id}_${project.pk}`), 10) || project.likesCount || 0;
+        
+        return {
+          ...project,
+          liked,
+          likesCount: Math.max(likesCount, 0)
+        };
+      });
+
 
       setAllProjects(projectsWithLikes);
     } catch (error) {
@@ -112,12 +117,23 @@ const Section2 = () => {
   
 
 
-  const handleLikeClick = (index, newLiked, newLikesCount) => {
-    setAllProjects((prevProjects) => {
+  // const handleLikeClick = (index, newLiked, newLikesCount) => {
+  //   setAllProjects((prevProjects) => {
+  //     const newProjects = [...prevProjects];
+  //     const project = newProjects[index];
+  //     project.liked = newLiked;
+  //     project.likesCount = Math.max(newLikesCount, 0);
+  //     return newProjects;
+  //   });
+  // };
+
+  const handleLikeClick = (index, newLiked) => {
+    setAllProjects(prevProjects => {
       const newProjects = [...prevProjects];
       const project = newProjects[index];
+      const newLikesCount = newLiked ? project.likesCount + 1 : Math.max(project.likesCount - 1, 0);
       project.liked = newLiked;
-      project.likesCount = Math.max(newLikesCount, 0);
+      project.likesCount = newLikesCount;
       return newProjects;
     });
   };

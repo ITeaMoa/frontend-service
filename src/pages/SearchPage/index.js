@@ -3,7 +3,8 @@ import { useLocation } from 'react-router-dom';
 import Nav from "../../components/Nav"; 
 import SearchFeed from "./SearchFeed"; 
 import styled from 'styled-components';
-import axios from 'axios';
+// import axios from 'axios';
+import axios from '../../api/axios';
 
 const SearchPage = () => {
     const [searchResults, setSearchResults] = useState([]);

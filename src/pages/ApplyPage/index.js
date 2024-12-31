@@ -5,10 +5,10 @@ import { useNavigate , useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft,faComment } from '@fortawesome/free-solid-svg-icons';
 import { faUser } from '@fortawesome/free-regular-svg-icons';
-import axios from 'axios';
+// import axios from 'axios';
 import LikeButton from '../../components/LikeButton';
 import Modal from '../../components/Modal'; // 모달 컴포넌트 import
-// import axios from '../../api/axios'
+import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 
 

@@ -6,8 +6,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons'; 
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
-import axios from 'axios';
-// import axios from '../api/axios'
+// import axios from 'axios';
+import axios from '../api/axios'
 
 
 const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle, apiEndpoint, userId, sk }) => {
@@ -17,7 +17,7 @@ const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle
   });
   const [likesCount, setLikesCount] = useState(() => {
     const storedLikesCount = localStorage.getItem(`likesCount_${userId}_${sk}`);
-    return storedLikesCount ? Math.abs(parseInt(storedLikesCount, 10)) : Math.abs(initialLikesCount); // 음수일 경우 절대값으로 초기화
+    return storedLikesCount ? parseInt(storedLikesCount, 10) : initialLikesCount; // 음수일 경우 초기값 사용
   });
 
   // props가 변경될 때 상태 업데이트
@@ -50,12 +50,19 @@ const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle
             console.log('좋아요 제거 성공:', response.data); // API 응답 로그
         }
 
-        // 상태 업데이트
-        setLiked(newLiked);
-        setLikesCount(newLikesCount < 0 ? 0 : newLikesCount);
-        if (onLikeChange) {
-            onLikeChange(newLiked, newLikesCount);
-        }
+        // // 상태 업데이트
+        // setLiked(newLiked);
+        // setLikesCount(newLikesCount < 0 ? 0 : newLikesCount);
+        // if (onLikeChange) {
+        //     onLikeChange(newLiked, newLikesCount);
+        // }
+
+         // 상태 업데이트
+      setLiked(newLiked);
+      setLikesCount(newLikesCount);
+      if (onLikeChange) {
+        onLikeChange(newLiked, newLikesCount);
+      }
 
         // 상태를 로컬 스토리지에 저장
         localStorage.setItem(`liked_${userId}_${sk}`, newLiked);

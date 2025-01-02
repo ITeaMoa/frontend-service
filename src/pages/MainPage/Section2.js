@@ -314,12 +314,21 @@ const SectionWrapper = styled.div`
   @media (max-width: 1200px) {
     margin-top: 40px;
     margin-bottom: 30px;
+    margin-left: 180px;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 1100px) {
     margin-top: 30px;
     margin-bottom: 20px;
+    margin-left: 150px;
   }
+
+   @media (max-width: 1000px) {
+    margin-top: 30px;
+    margin-bottom: 20px;
+    margin-left: 100px;
+  }
+
 
   @media (max-width: 480px) {
     margin-top: 20px;
@@ -331,6 +340,12 @@ const SectionTitle = styled.h2`
   font-size: 24px;
   margin-top: 20px;
   margin-bottom: 20px;
+
+
+   @media (max-width: 1200px) {
+    margin-left: 200px;
+  }
+
 `;
 
 const ProjectList = styled.div`

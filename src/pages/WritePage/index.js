@@ -13,7 +13,7 @@ import { useAuth } from '../../context/AuthContext'
 
 
 
-const WritePage = () => {
+const WritePage = ({feedType}) => {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
@@ -21,8 +21,7 @@ const WritePage = () => {
   const [period, setPeriod] = useState('');
   const [deadline, setDeadline] = useState('');
   const [progress, setProgress] = useState('');
-  const [description, setDescription] = useState('');
-  const isLoggedIn = true; 
+  const [description, setDescription] = useState(''); 
   const showSearch = false;
 
   const [selectedRoles, setSelectedRoles] = useState([]); // State to store selected roles with counts
@@ -33,6 +32,8 @@ const WritePage = () => {
   };
   // roles에서 count 값을 합산하여 recruitmentNum 설정
   const recruitmentNum = selectedRoles.reduce((total, role) => total + role.count, 0);
+
+  // const [isProject, setIsProject] = useState(true); // 프로젝트 여부 상태 추가
 
   const handleSave = (isTemporary) => {
 // 사용자 로그인 상태 확인
@@ -66,7 +67,7 @@ if (!user) {
         'Content-Type': 'application/json',
       },
       params: {
-        feedType: 'PROJECT', 
+        feedType, // 네비게이션의 토글에 따라 feedType 설정
         userId: user.id,     
       },
     })
@@ -185,9 +186,14 @@ const handlePeriodSelect = (selectedOption) => {
   setPeriod(selectedOption.value); // 선택된 값을 period 상태에 저장
 };
 
+const handleToggleChange = (newFeedType) => {
+  console.log("Feed type changed to:", newFeedType);
+  // feedType을 업데이트하는 로직 추가
+};
+
   return (
     <>
-      <Nav isLoggedIn={isLoggedIn} showSearch={showSearch} />
+      <Nav showSearch={showSearch} onToggleChange={handleToggleChange} />
       <WriteWrapper>
       <BackButton onClick={() => navigate(-1)} style={{ display: 'flex', alignItems: 'center' }}>
       <FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: '5px' }} />

@@ -86,7 +86,12 @@ const MainPage = () => {
   };
 
 
- 
+  const [feedType, setFeedType] = useState('PROJECT'); // 초기값 설정
+
+  const handleToggleChange = (newFeedType) => {
+    setFeedType(newFeedType); // feedType 업데이트
+    console.log("현재 feedType:", newFeedType); // 콘솔에 현재 feedType 출력
+};
 
 //   const updateUserProfile = async () => {
 //     const data = new FormData();// 파일과 JSON 데이터를 함께 전송하기 위해서
@@ -221,10 +226,10 @@ const handleImageUpload = (e) => {
 
   return (
     <>
-    <Nav showSearch={showSearch} /> 
+    <Nav showSearch={showSearch} onToggleChange={handleToggleChange} /> 
     <MainWrapper>
-      <Section1/>
-      <Section2/>
+      <Section1 feedType={feedType}/>
+      <Section2 feedType={feedType}/>
       {showModal && (
         <Modal isOpen={isRoleModalOpen} onClose={handleModalClose} modalType="mypage">
           <StyledModalTitle>프로필 설정</StyledModalTitle>

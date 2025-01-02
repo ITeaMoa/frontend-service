@@ -67,33 +67,33 @@ const ProjectListComponent = ({ selectedList, currentProjects = [], handleProjec
   return (
     <Container>
       <ProjectList isFading={isFading}>
-        {selectedList === 'written' && currentProjects.length === 0 && (
-          <p>작성한 프로젝트가 없습니다.</p>
-        )}
-        {selectedList === 'written' && currentProjects.map((project, index) => (
-          <ProjectItem key={project.pk} >
-            <ProjectHeader>
-              <HeaderItem>
-                <FontAwesomeIcon icon={regularUser} size="15px" />
-                <span>{project.creatorId}</span>
-              </HeaderItem>
-              <HeaderItem>
-                <StyledFontAwesomeIcon icon={faHeart} />
-                <span>{project.likesCount}</span>
-              </HeaderItem>
-            </ProjectHeader>
-            <p>{project.title}</p>
-            <Tags>
-              {project.tags.map((tag, index) => (
-                <Tag key={index}>{tag}</Tag> 
-              ))}
-            </Tags>
-
-            <Button 
-                onClick={() => handleButtonClick(project)}
-                disabled={project.isCompleted} // 모집 완료 시 버튼 비활성화
-            >
-                {project.isCompleted ? '모집완료' : '모집 현황'}
+      {selectedList === 'written' && currentProjects && currentProjects.map((project, index) => (
+  <ProjectItem key={project.pk}>
+    <ProjectHeader>
+      <HeaderItem>
+        <FontAwesomeIcon icon={regularUser} size="15px" />
+        <span>{project.creatorId}</span>
+      </HeaderItem>
+      <HeaderItem>
+        <StyledFontAwesomeIcon icon={faHeart} />
+        <span>{project.likesCount}</span>
+      </HeaderItem>
+    </ProjectHeader>
+    <p>{project.title}</p>
+    <Tags>
+      {Array.isArray(project.tags) && project.tags.length > 0 ? (
+        project.tags.map((tag, index) => (
+          <Tag key={index}>{tag}</Tag>
+        ))
+      ) : (
+        <span>태그가 없습니다.</span> // 태그가 없을 때 표시할 메시지
+      )}
+    </Tags>
+    <Button 
+      onClick={() => handleButtonClick(project)}
+      disabled={project.isCompleted} // 모집 완료 시 버튼 비활성화
+    >
+      {project.isCompleted ? '모집완료' : '모집 현황'}
             </Button> 
             {/* <Button 
                 onClick={() => handleCloseApplication(project.pk)}
@@ -122,7 +122,7 @@ const ProjectListComponent = ({ selectedList, currentProjects = [], handleProjec
             <ProjectHeader>
               <HeaderItem>
                 <FontAwesomeIcon icon={regularUser} size="15px" />
-                <span>{project.pk}</span>
+                <span>{project.sk}</span>
                 <StyledFontAwesomeIcon2 icon={faHeart} />
                 <span>{project.likesCount || 0}</span>
               </HeaderItem>

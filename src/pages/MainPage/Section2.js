@@ -12,7 +12,7 @@ import { useAuth } from '../../context/AuthContext'
 import axios from '../../api/axios';
 
 
-const Section2 = () => {
+const Section2 = ({ feedType }) => {
   const [allProjects, setAllProjects] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [projectsPerPage] = useState(6); 
@@ -68,31 +68,30 @@ const Section2 = () => {
 
   const fetchAllProjects = useCallback(async () => {
     try {
-      const response = await axios.get('/main?feedType=PROJECT');
-
+      const response = await axios.get(`/main?feedType=${feedType}`); // feedType을 쿼리 파라미터로 사용
+  
       if (!response.data || response.data.length === 0) {
         console.warn('프로젝트 데이터가 없습니다.');
         setAllProjects([]); 
         return;
       }
-
+  
       const projectsWithLikes = response.data.map((project) => {
-        const liked = localStorage.getItem(`liked_${user.id}_${project.pk}`) === 'true'; // 로컬 스토리지에서 좋아요 상태 가져오기
-        const likesCount = parseInt(localStorage.getItem(`likesCount_${user.id}_${project.pk}`), 10) || project.likesCount || 0;
-        
+        const liked = user ? localStorage.getItem(`liked_${user.id}_${project.pk}`) === 'true' : false;
+        const likesCount = user ? parseInt(localStorage.getItem(`likesCount_${user.id}_${project.pk}`), 10) || project.likesCount || 0 : project.likesCount || 0;
+  
         return {
           ...project,
           liked,
           likesCount: Math.max(likesCount, 0)
         };
       });
-
-
+  
       setAllProjects(projectsWithLikes);
     } catch (error) {
       console.error('인기 프로젝트 가져오기 실패:', error);
     }
-  }, []);
+  }, [feedType, user]); // feedType을 의존성 배열에 추가
 
   useEffect(() => {
     fetchAllProjects();
@@ -398,6 +397,7 @@ const ProjectCard = styled.div`
    
     margin: 15px 5px;
     max-height: 400px; 
+   
   }
 
   @media (max-width: 480px) {
@@ -413,6 +413,7 @@ const ProjectCard = styled.div`
 
   @media (max-width: 1200px) {
     width: calc(33.33% - 20px); /* 3열로 조정 */
+    
   }
 
   @media (max-width: 768px) {

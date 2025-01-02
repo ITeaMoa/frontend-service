@@ -12,7 +12,7 @@ import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 
 
-const ApplyPage = () => {
+const ApplyPage = ({ feedType }) => {
   const navigate = useNavigate(); 
   const {projectId } = useParams(); // URL에서 projectId 가져오기
   //usestate : 컴포넌트 상태 관리에 씀
@@ -34,6 +34,8 @@ const ApplyPage = () => {
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
   // const [likedProjects, setLikedProjects] = useState([]); // 좋아요 상태를 배열로 관리
   // const [likesCount, setLikesCount] = useState(0); // likesCount 상태 추가
+
+  const [currentFeedType, setCurrentFeedType] = useState(feedType || "PROJECT"); // Add state for feedType
 
   // user.id를 콘솔에 출력
   useEffect(() => {
@@ -80,12 +82,11 @@ const ApplyPage = () => {
 
   const fetchProjectDetails = useCallback(async () => {
     try {
-      const response = await axios.get(`/main?feedType=PROJECT`); // 프로젝트 목록 가져오기
+      const response = await axios.get(`/main?feedType=${currentFeedType}`); // Use currentFeedType
       const selectedProject = response.data.find(item => item.pk === projectId); // 특정 프로젝트 찾기
       
       if (selectedProject) {
         setProject(selectedProject);
-        // setLikesCount(Math.max(selectedProject.likesCount || 0, 0)); // Ensure likesCount is not negative
       } else {
         console.error("Project not found for projectId:", projectId);
         setProject(null);
@@ -94,7 +95,7 @@ const ApplyPage = () => {
       console.error("Error fetching project details:", error);
       setProject(null); // 오류 발생 시 상태를 null로 설정
     }
-  }, [projectId]);
+  }, [projectId, currentFeedType]); // Add currentFeedType to dependencies
 
   // const fetchProjectDetails = useCallback(async () => {
   //   try {
@@ -141,7 +142,7 @@ const handleLikeClick = (newLiked, newLikesCount) => {
 
       try {
         await axios.post(`/feed/${projectId}/comments`, newComment, {
-          params: { feedType: "PROJECT" }
+          params: { feedType: currentFeedType } // Use currentFeedType
         });
         setProject(prevProject => ({
           ...prevProject,
@@ -232,11 +233,16 @@ const postSelectedRole = async (role) => {
 };
 
 
+const handleToggleChange = (newFeedType) => {
+  setCurrentFeedType(newFeedType);
+  console.log("Current feedType:", newFeedType);
+};
+
 
 
   return (
     <>
-      <Nav showSearch={showSearch}/>
+      <Nav showSearch={showSearch} onToggleChange={handleToggleChange} />
       <Container>
         <BackButton onClick={() => navigate(-1)} style={{ display: 'flex', alignItems: 'center' }}>
           <FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: '5px' }} />
@@ -299,28 +305,26 @@ const postSelectedRole = async (role) => {
             </Detail>
             <Detail>
                 <Label>모집 역할 |</Label>
-                {project.role && Array.isArray(project.role) ? (
-                  project.role.map((role, index) => (
-                    <span key={index}>{role.name}({role.count})</span>
-                  ))
+                {project.roles ? (
+                    Object.entries(project.roles).map(([role, count], index) => (
+                        <span key={index}>{role}({count})</span>
+                    ))
                 ) : (
-                  <span>역할 정보가 없습니다.</span>
+                    <span>역할 정보가 없습니다.</span>
                 )}
             </Detail>
             <Detail>
-                <Label>모집 현황 |</Label> {project.applyNum ? `${project.applyNum}명 / ${project.recruitmentNum}명` : '정보 없음'}
+                <Label>모집 현황 |</Label> {project.recruitmentNum ? `${project.applyNum}명 / ${project.recruitmentNum}명` : '정보 없음'}
             </Detail>
             <Detail>
-                {/* <Label>신청자 수 |</Label> 백엔드(3), 디자이너(1) */}
-                   {/* <Label>신청자 수 |</Label> {project recruitmentRoles*/}
                 <Label>신청자 수 |</Label>
-        {project && project.role ? (
-          project.role.map((role, index) => (
-            <span key={index}>{role.name}({role.count}) </span>
-          ))
-        ) : (
-          <span>역할 정보가 없습니다.</span>
-        )}
+                {project.recruitmentRoles ? (
+                    Object.entries(project.recruitmentRoles).map(([role, count], index) => (
+                        <span key={index}>{role}({count})</span>
+                    ))
+                ) : (
+                    <span>역할 정보가 없습니다.</span>
+                )}
             </Detail>
        
         </PostDetails>

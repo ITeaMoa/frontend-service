@@ -11,7 +11,7 @@ import { useAuth } from '../context/AuthContext'; // AuthContext에서 useAuth �
 
 
 
-const Nav = ({showSearch}) => {
+const Nav = ({showSearch, onToggleChange}) => {
 
 const option3 = [
   { value: '웹', label: '웹' },
@@ -91,10 +91,20 @@ const option3 = [
     localStorage.setItem('toggleActive', JSON.stringify(toggleActive));
   }, [toggleActive]);
 
+
+
   const handleToggleChange = () => {
     const newToggleState = !toggleActive;
     setToggleActive(newToggleState);
-    localStorage.setItem('toggleActive', JSON.stringify(newToggleState)); // 상태 변경 시 로컬 스토리지에 저장
+    
+    // 상태 변경 시 로컬 스토리지에 저장
+    localStorage.setItem('toggleActive', JSON.stringify(newToggleState));
+
+    if (onToggleChange) { // onToggleChange가 함수인지 확인
+      onToggleChange(newToggleState ? 'STUDY' : 'PROJECT'); // 상태에 따라 feedType 변경
+    } else {
+      console.error("onToggleChange is not a function");
+    }
   };
 
 
@@ -153,7 +163,7 @@ const option3 = [
 
 
   return (
-    <NavWrapper showSearch={showSearch}>
+    <NavWrapper showSearch={showSearch} >
       <Logo>
       <img
           alt="Logo"
@@ -163,7 +173,7 @@ const option3 = [
 
       <ToggleContainer>
         <ToggleLabel active={toggleActive}>STUDY</ToggleLabel>
-        <ToggleSwitch type="checkbox" checked={toggleActive} onChange={handleToggleChange} />
+        <ToggleSwitch type="checkbox" checked={!toggleActive} onChange={handleToggleChange} />
         <ToggleLabel active={!toggleActive}>PROJECT</ToggleLabel>
       </ToggleContainer>
       
@@ -280,7 +290,7 @@ const ToggleLabel = styled.label`
   margin: 0 10px;
   font-size: 16px;
   font-weight: bold;
-  color: ${props => (props.active ? '#aaa' : '#0080ff')}; // 활성화 여부에 따라 색상 변경
+  color: ${props => (props.active ? '#0080ff' : '#aaa')}; // 활성화 여부에 따라 색상 변경
 `;
 
 const ToggleSwitch = styled.input`

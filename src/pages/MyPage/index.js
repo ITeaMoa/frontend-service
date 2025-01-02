@@ -17,6 +17,7 @@ const MyPage = () => {
   // const isLoggedIn = true; 
   const showSearch = false;
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
+  const [feedType, setFeedType] = useState('PROJECT'); // feedType 상태 추가
 
   // user.id를 콘솔에 출력
 useEffect(() => {
@@ -26,6 +27,11 @@ useEffect(() => {
     console.log('사용자가 로그인하지 않았습니다.');
   }
 }, [user]); // user가 변경될 때마다 실행
+
+const handleToggleChange = (newFeedType) => {
+  setFeedType(newFeedType); // feedType 업데이트
+  console.log("현재 feedType:", newFeedType); // 콘솔에 현재 feedType 출력
+};
 
 
   // useEffect(() => {
@@ -51,19 +57,24 @@ useEffect(() => {
 
   useEffect(() => {
     const fetchAppliedProjects = async () => {
-      if (selectedList === 'applied' && user) { // user가 null이 아닐 때만 실행
+      if (selectedList === 'applied' && user) {
         try {
           const response = await axios.get('/feed/applications', {
             params: {
-              userId: user.id // userId를 쿼리 파라미터로 추가
+              userId: user.id,
             }
           });
-          console.log("Fetched applied projects:", response.data); // JSON 응답을 콘솔에 출력
+          console.log("Fetched applied projects:", response.data);
           if (response.data && response.data.length > 0) {
-            setProjects(response.data);
+            // 'APPLICATION#' 부분을 제거한 sk를 포함하여 프로젝트 상태 업데이트
+            const modifiedProjects = response.data.map(project => ({
+              ...project,
+              sk: project.sk.replace('APPLICATION#', '') // sk에서 'APPLICATION#' 제거
+            }));
+            setProjects(modifiedProjects);
           } else {
             console.warn("No applied projects found");
-            setProjects([]); // 데이터가 없을 경우 빈 배열로 초기화
+            setProjects([]);
           }
         } catch (error) {
           console.error("신청 프로젝트를 가져오는 중 오류 발생:", error);
@@ -73,26 +84,22 @@ useEffect(() => {
     };
 
     fetchAppliedProjects();
-  }, [selectedList, user]); // user를 의존성 배열에 포함
-
+  }, [selectedList, user, feedType]); // feedType 추가
 
 
 
 //written
 useEffect(() => {
   const fetchCreatorProjects = async () => {
-    if (selectedList === 'written' && user) { // user가 null이 아닐 때만 실행
-      try { 
-        const sk = 'PROJECT';
-        const response = await axios.get('/writing', {
+    if (selectedList === 'written' && user) {
+      try {
+        const response = await axios.get('/my/writing', {
           params: {
-           pk: user.id, // creatorId를 쿼리 파라미터로 추가
-            sk: sk,
+            creatorId: user.id,
+            sk: feedType // feedType 추가
           }
         });
-
-        console.log("Fetched creator projects:", response.data); // 응답 데이터를 콘솔에 출력
-
+        console.log("Fetched creator projects:", response.data);
         if (response.data) {
           setProjects(response.data);
         } else {
@@ -106,7 +113,7 @@ useEffect(() => {
   };
 
   fetchCreatorProjects();
-}, [selectedList, user]); // user를 의존성 배열에 포함
+}, [selectedList, user, feedType]); // feedType 추가
 
 
 // //특정 프로젝트 누를때 
@@ -168,6 +175,40 @@ useEffect(() => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+
+     // 선택된 프로젝트의 세부정보 가져오기
+  // 특정 프로젝트의 세부정보 가져오기
+  useEffect(() => {
+    const fetchProjectDetail = async (projectId) => {
+      try {
+        const response = await axios.get(`/main`, {
+          params: { feedType } // feedType을 올바르게 전달
+        });
+
+        // projectId에서 'APPLICATION#' 부분을 제거
+        const strippedProjectId = projectId.replace('APPLICATION#', '');
+
+        // pk와 strippedProjectId가 같은 프로젝트 찾기
+        const specificProject = response.data.find(project => project.pk === strippedProjectId);
+        if (specificProject) {
+          console.log("Fetched project details:", specificProject); // Fetch된 프로젝트 세부정보를 콘솔에 출력
+          setSelectedProject(specificProject);
+        } else {
+          console.warn("No specific project found with the given ID:", strippedProjectId); // 추가된 로그
+          setSelectedProject(null);
+        }
+      } catch (error) {
+        console.error("프로젝트 세부정보를 가져오는 중 오류 발생:", error);
+      }
+    };
+
+    // selectedProject의 sk를 사용하여 세부정보 가져오기
+    if (selectedProject) {
+      fetchProjectDetail(selectedProject.sk); // selectedProject.sk를 사용하여 세부정보 가져오기
+    }
+  }, [selectedProject, feedType]); // feedType 추가
+
+
   const handleListClick = (listType) => {
     setSelectedList(listType);
     setCurrentPage(1); 
@@ -197,7 +238,7 @@ useEffect(() => {
 const handleProjectClose = async (projectId) => {
   const requestData = {
       pk: projectId,
-      sk: "PROJECT"
+      sk: {feedType}
   };
 
   try {
@@ -219,7 +260,7 @@ const handleProjectClose = async (projectId) => {
 
   return (
     <Container>
-      <Nav  showSearch={showSearch}/>
+      <Nav  showSearch={showSearch}  onToggleChange={handleToggleChange}/>
 
           <List>
             <ul>

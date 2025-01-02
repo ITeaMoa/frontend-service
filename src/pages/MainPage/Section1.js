@@ -12,13 +12,15 @@ import { useAuth } from '../../context/AuthContext'
 //각 섹션의 데이터를 상태로 관리합니다: useState를 사용하여 데이터를 저장하고, 
 //useEffect를 통해 컴포넌트가 마운트될 때 데이터를 Fetch
 
-function Section1() {
+function Section1({ feedType }) {
   const [popularProjects, setPopularProjects] = useState([]);
   //    [ 현재 상태값, 상태 업데이트 함수]
   const navigate = useNavigate(); // useNavigate 훅을 사용하여 navigate 함수 생성
   // const [project, setProject] = useState(null);
   const [likedProjects, setLikedProjects] = useState([]);
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
+  
+
 
   // 사용자 좋아요 상태 가져오기
   const fetchUserLikes = useCallback(async () => {
@@ -43,27 +45,23 @@ function Section1() {
     }
   }, [user]);
 
-  // API에서 인기 프로젝트 데이터를 가져오는 함수
   const fetchPopularProjects = useCallback(async () => {
     try {
-      const response = await axios.get('/main/liked?feedType=PROJECT');
+      const response = await axios.get(`/main/liked?feedType=${feedType}`); // feedType을 사용
 
-      // 응답 데이터가 없거나 빈 배열일 경우 처리
       if (!response.data || response.data.length === 0) {
         console.warn('프로젝트 데이터가 없습니다.');
-        setPopularProjects([]); // 빈 배열로 초기화
+        setPopularProjects([]);
         return;
       }
 
-          // 응답 데이터를 콘솔에 찍기
-    console.log('응답 데이터:', response.data);
-      
+      console.log('응답 데이터:', response.data);
 
       const projectsWithLikes = response.data.map((project) => {
         const isLiked = likedProjects.find(likedProject => likedProject.id === project.id);
         return {
           ...project,
-          liked: isLiked ? isLiked.liked : false, // 사용자가 눌렀던 상태 반영
+          liked: isLiked ? isLiked.liked : false,
           likesCount: project.likesCount || 0,
         };
       });
@@ -71,7 +69,8 @@ function Section1() {
     } catch (error) {
       console.error('Error fetching popular projects:', error);
     }
-  }, [likedProjects]);
+  }, [feedType, likedProjects]);
+
 
   useEffect(() => {
     fetchPopularProjects();
@@ -82,14 +81,16 @@ function Section1() {
   }, [fetchUserLikes]);
 
   // 클릭된 프로젝트의 ID를 사용하여 상세 페이지로 이동
-  const handleProjectClick = (project) => {
-    navigate(`/ApplyPage/${project.pk}`, { 
-      state: { 
-        liked: project.liked, 
-        likesCount: project.likesCount // likesCount도 함께 전달
-      } 
-    });
-  };
+// 클릭된 프로젝트의 ID를 사용하여 상세 페이지로 이동
+const handleProjectClick = (project, feedType) => {
+  navigate(`/ApplyPage/${project.pk}`, { 
+    state: { 
+      liked: project.liked, 
+      likesCount: project.likesCount, // likesCount도 함께 전달
+      feedType // 현재 feedType 전달
+    } 
+  });
+};
   
   // const handleLikeClick = (index, newLiked, newLikesCount) => {
   //   // Ensure likesCount is not negative

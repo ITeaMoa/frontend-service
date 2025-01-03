@@ -27,8 +27,29 @@ const WritePage = ({feedType}) => {
   const [selectedRoles, setSelectedRoles] = useState([]); // State to store selected roles with counts
 
   const handleRoleSelect = (role, count) => {
-    const updatedRoles = selectedRoles.filter(r => r.role !== role);
-    setSelectedRoles([...updatedRoles, { role, count }]);
+    // 즉시 상태 업데이트를 확인하기 위해 새로운 배열 생성
+    let newSelectedRoles;
+    
+    if (count > 0) {
+      const existingRoleIndex = selectedRoles.findIndex(r => r.role === role);
+      
+      if (existingRoleIndex >= 0) {
+        newSelectedRoles = selectedRoles.map((r, index) => 
+          index === existingRoleIndex ? { ...r, count } : r
+        );
+      } else {
+        newSelectedRoles = [...selectedRoles, { role, count }];
+      }
+    } else {
+      newSelectedRoles = selectedRoles.filter(r => r.role !== role);
+    }
+    
+    // 상태 업데이트
+    setSelectedRoles(newSelectedRoles);
+    
+    // 디버깅 로그
+    console.log('Role selected:', role, 'Count:', count);
+    console.log('New selected roles:', newSelectedRoles);
   };
   // roles에서 count 값을 합산하여 recruitmentNum 설정
   const recruitmentNum = selectedRoles.reduce((total, role) => total + role.count, 0);
@@ -36,47 +57,86 @@ const WritePage = ({feedType}) => {
   // const [isProject, setIsProject] = useState(true); // 프로젝트 여부 상태 추가
 
   const handleSave = (isTemporary) => {
-// 사용자 로그인 상태 확인
-if (!user) {
-  alert('사용자가 로그인되어 있지 않습니다. 로그인 후 다시 시도해 주세요.');
-  return; // user가 null이면 함수 종료
-}
+    // 현재 선택된 역할들 로깅
+    console.log('Current selectedRoles at save:', selectedRoles);
+    
+    // 사용자 로그인 확인
+    if (!user) {
+      alert('사용자가 로그인되어 있지 않습니다. 로그인 후 다시 시도해 주세요.');
+      return;
+    }
 
+    // 역할 검증 강화
+    if (!selectedRoles || !selectedRoles.some(role => role.count > 0)) {
+      alert('최소 하나 이상의 역할을 선택해주세요.');
+      return;
+    }
+
+    // 다른 필수 필드 검증
+    if (!title.trim()) {
+      alert('제목을 입력해주세요.');
+      return;
+    }
+
+    if (!description.trim()) {
+      alert('본문을 입력해주세요.');
+      return;
+    }
+
+    if (!deadline) {
+      alert('마감일자를 선택해주세요.');
+      return;
+    }
+
+    if (!progress.trim()) {
+      alert('진행장소를 입력해주세요.');
+      return;
+    }
+
+    // roles 객체 생성
+    const roles = selectedRoles.reduce((acc, { role, count }) => {
+      if (count > 0) {
+        acc[role] = count;
+      }
+      return acc;
+    }, {});
 
     const deadlineISO = new Date(deadline).toISOString();
     const dataToSend = {
-      title,
-      content: description,
+      title: title.trim(),
+      content: description.trim(),
       postStatus: true,
       savedFeed: isTemporary,
       tags: selectedTags,
-      recruitmentNum,
+      recruitmentNum: selectedRoles.reduce((sum, role) => sum + role.count, 0),
       deadline: deadlineISO,
-      place: progress,
-      period,
-      roles: selectedRoles.reduce((acc, role) => {
-        acc[role.role] = role.count;
-        return acc;
-      }, {}),
+      place: progress.trim(),
+      period: period || '기간 미정',
+      roles: roles
     };
 
-    console.log('Data to send:', dataToSend); // 데이터 전송 전에 콘솔에 출력
+    // API 요청 전 데이터 확인
+    console.log('Final data to send:', dataToSend);
 
+    // API 요청에 에러 처리 추가
     axios.post(`/feed/create`, dataToSend, {
       headers: {
         'Content-Type': 'application/json',
       },
       params: {
-        feedType, // 네비게이션의 토글에 따라 feedType 설정
-        userId: user.id,     
+        feedType,
+        userId: user.id,
       },
     })
     .then(response => {
-      console.log('Success:', response.data);
+      console.log('Success response:', response.data);
+      alert(isTemporary ? '임시저장되었습니다.' : '저장되었습니다.');
       navigate('/');
     })
     .catch((error) => {
-      console.error('Error:', error);
+      console.error('Error details:', error.response?.data);
+      console.error('Full error:', error);
+      alert(`저장 중 오류가 발생했습니다: ${error.response?.data?.message || '알 수 없는 오류가 발생했습니다.'}`);
     });
   };
 
@@ -412,8 +472,8 @@ const InputBox = styled.div`
 `;
 
 const InputWrapper = styled.div`
-  flex: 1 1 300px; /* 2열로 배치하고 여백 고려 */
-  min-width: 200px; //기본적으로는 300px가자면서 min이 300px가 됨
+  flex: 1 1 45%; /* 2열로 배치하고 여백 고려 */
+  min-width: 200px;
   max-width: 400px;
   display: flex;
   align-items: center;

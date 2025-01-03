@@ -411,29 +411,28 @@ const handleToggleChange = (newFeedType) => {
        
         <RoleButtonContainer>
         <h3>지원할 역할을 선택하세요</h3>
-          {project && project.role ? (
-            project.role.map((role, index) => (
-              <RoleButton
-                key={index}
-                onClick={() => handleRoleSelect(role)}
-                isSelected={selectedRole === role}
-              >
-                {role.name}
-              </RoleButton>
-            ))
-          ) : (
+        {project && project.roles ? (
+          // roles 객체를 배열로 변환하여 매핑
+          Object.entries(project.roles).map(([role, count], index) => (
+            <RoleButton
+              key={index}
+              onClick={() => handleRoleSelect(role)}
+              isSelected={selectedRole === role}
+            >
+              {role} ({count})
+            </RoleButton>
+          ))
+        ) : (
+          <>
             <p>역할 정보가 없습니다.</p>
-          )}
-          <RoleButton
-            onClick={() => {
-              if (selectedRole !== '무관') {
-                handleRoleSelect('무관');
-              }
-            }}
-            isSelected={selectedRole === '무관'}
-          >
-            무관
-          </RoleButton>
+            <RoleButton
+              onClick={() => handleRoleSelect('무관')}
+              isSelected={selectedRole === '무관'}
+            >
+              무관
+            </RoleButton>
+          </>
+        )}
         </RoleButtonContainer>
         <SubmitButton onClick={handleApplySubmit}>제출</SubmitButton>
        

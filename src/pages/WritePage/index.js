@@ -214,8 +214,10 @@ useEffect(() => {
 }, [selectedRoles]); // selectedRoles가 변경될 때마다 로그 출력
 
 const handleTagSelect = (option) => {
-  // 태그가 선택되지 않은 경우 추가
-  setSelectedTags([...selectedTags, option.label]); // 선택된 태그 추가
+    // 태그가 선택되지 않은 경우 추가, 중복 방지
+    if (!selectedTags.includes(option.label)) {
+        setSelectedTags([...selectedTags, option.label]); // 선택된 태그 추가
+    }
 };
 
 const handlePeriodSelect = (selectedOption) => {
@@ -475,7 +477,7 @@ const Input = styled.input`
 }
 
 &:focus {
-    border-color: #007BFF;/
+    border-color: #007BFF;
     outline: none; 
 }
 

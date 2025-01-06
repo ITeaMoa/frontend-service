@@ -36,11 +36,9 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
     const handleOptionClick = (option) => {
         if (!selectedOptions.includes(option.label)) {
             setSelectedOptions([...selectedOptions, option.label]);
-            const count = peopleCounts[option.label] || 0; // 현재 카운트 가져오기
-            onTagSelect(option.label, count + 1); // 선택된 옵션의 label과 카운트를 전달
+            onTagSelect(option); // Call onTagSelect when an option is selected
         } else {
             setSelectedOptions(selectedOptions.filter(selected => selected !== option.label));
-            onTagSelect(option.label, 0); // 선택 해제 시 카운트를 0으로 전달
         }
     };
 
@@ -56,28 +54,28 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
     };
 
     const incrementCount = (option) => {
-        setPeopleCounts(prevCounts => {
-            const newCounts = {
-                ...prevCounts,
-                [option.label]: (prevCounts[option.label] || 0) + 1
-            };
-            console.log('Incremented counts:', newCounts); // 디버깅 로그
-            return newCounts;
-        });
+        setPeopleCounts(prevCounts => ({
+            ...prevCounts,
+            [option.label]: (prevCounts[option.label] || 0) + 1
+        }));
     };
 
     const decrementCount = (option) => {
         setPeopleCounts(prevCounts => {
             const newCount = (prevCounts[option.label] || 0) - 1;
-            const newCounts = newCount > 0 ? {
-                ...prevCounts,
-                [option.label]: newCount
-            } : {
-                ...prevCounts,
-                [option.label]: 0
-            };
-            console.log('Decremented counts:', newCounts); // 디버깅 로그
-            return newCounts;
+            if (newCount > 0) {
+                return {
+                    ...prevCounts,
+                    [option.label]: newCount
+                };
+            } else {
+                // 카운트가 0이 되면 선택 해제
+                setSelectedOptions(selectedOptions.filter(selected => selected !== option.label));
+                return {
+                    ...prevCounts,
+                    [option.label]: 0 // 0일 때는 카운트를 0으로 유지
+                };
+            }
         });
     };
 

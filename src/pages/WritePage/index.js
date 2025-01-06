@@ -82,11 +82,6 @@ const WritePage = ({feedType}) => {
       return acc;
     }, {});
 
-    // 추가: roles가 비어있을 경우 처리
-    if (Object.keys(roles).length === 0) {
-        console.warn("선택된 역할이 없습니다."); // 경고 메시지 추가
-    }
-
     const deadlineISO = new Date(deadline).toISOString();
     const dataToSend = {
       title,
@@ -105,7 +100,7 @@ const WritePage = ({feedType}) => {
     };
 
     // API 요청 전 데이터 확인
-    console.log('Data to send:', dataToSend);
+    console.log('Final data to send:', dataToSend);
 
     // API 요청에 에러 처리 추가
     axios.post(`/feed/create`, dataToSend, {

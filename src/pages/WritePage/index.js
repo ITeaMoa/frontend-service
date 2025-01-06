@@ -13,18 +13,31 @@ import { useAuth } from '../../context/AuthContext'
 
 
 
-const WritePage = ({feedType}) => {
+const WritePage = ({ feedType: initialFeedType }) => {
+  const [feedType, setFeedType] = useState('project');
+  const [selectedRoles, setSelectedRoles] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [period, setPeriod] = useState('');
+
+  // feedType 변경 시 로그 출력
+  useEffect(() => {
+    console.log('현재 feedType:', feedType);
+  }, [feedType]);
+
+  // 선택된 역할 변경 시 로그 출력
+  useEffect(() => {
+    console.log('현재 선택된 역할:', selectedRoles);
+  }, [selectedRoles]);
+
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
   // const [participants, setParticipants] = useState(0);
-  const [period, setPeriod] = useState('');
   const [deadline, setDeadline] = useState('');
   const [progress, setProgress] = useState('');
   const [description, setDescription] = useState(''); 
   const showSearch = false;
 
-  const [selectedRoles, setSelectedRoles] = useState([]); // 상태 초기화
   const [recruitmentNum, setRecruitmentNum] = useState(0); // recruitmentNum 상태 추가
 
   
@@ -56,8 +69,12 @@ const WritePage = ({feedType}) => {
         return;
     }
 
-    // dataToSend 객체 생성
+    // deadline을 ISO 형식으로 변환
     const deadlineISO = new Date(deadline).toISOString();
+
+    // period를 개월 수로 변환
+    const periodValue = parseInt(period, 10); // period를 숫자로 변환
+
     const dataToSend = {
         title,
         content: description,
@@ -67,29 +84,14 @@ const WritePage = ({feedType}) => {
         recruitmentNum: recruitmentNum > 0 ? recruitmentNum : 1, // recruitmentNum이 0일 경우 기본값 설정
         deadline: deadlineISO,
         place: progress,
-        period,
+        period: periodValue, // 변환된 숫자만 전송
         roles: selectedRoles.length > 0 ? selectedRoles.reduce((acc, role) => {
-            acc[role.role] = role.count;
+            acc[role.role.toLowerCase()] = role.count; // 역할을 소문자로 변환
             return acc;
         }, {}) : {}, // roles가 비어있을 경우 빈 객체로 설정
     };
-  //   const dataToSend = {
-  //     title,
-  //     content: description,
-  //     postStatus: true,
-  //     savedFeed: isTemporary,
-  //     tags: selectedTags,
-  //     recruitmentNum: 3, // recruitmentNum을 하드코딩 (예: 3)
-  //     deadline: deadlineISO,
-  //     place: progress,
-  //     period,
-  //     roles: { // roles을 하드코딩 (예: 두 개의 역할)
-  //         '프론트엔드': 1,
-  //         '백엔드': 2,
-  //     },
-  // };
 
-    console.log('전송할 데이터:', dataToSend);
+    console.log('전송할 데이터:', JSON.stringify(dataToSend, null, 2));
 
     // API 요청
     axios.post(`/feed/create`, dataToSend, {
@@ -200,7 +202,6 @@ const option3 = [
 
 
 const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열기 상태
-const [selectedTags, setSelectedTags] = useState([]); // 선택된 태그 상태
 
 const handleAddTagClick = () => {
     setIsModalOpen(true); 
@@ -223,25 +224,19 @@ const handleRoleSelect = (option, count) => {
     setRecruitmentNum(newRecruitmentNum);
 };
 
-// 추가된 useEffect
-useEffect(() => {
-    console.log('현재 선택된 역할:', selectedRoles);
-}, [selectedRoles]); // selectedRoles가 변경될 때마다 로그 출력
-
 const handleTagSelect = (option) => {
-    // 태그가 선택되지 않은 경우 추가, 중복 방지
     if (!selectedTags.includes(option.label)) {
-        setSelectedTags([...selectedTags, option.label]); // 선택된 태그 추가
+        setSelectedTags([...selectedTags, option.label]);
     }
 };
 
 const handlePeriodSelect = (selectedOption) => {
-  setPeriod(selectedOption.value); // 선택된 값을 period 상태에 저장
+    setPeriod(selectedOption.value);
 };
 
 const handleToggleChange = (newFeedType) => {
-  console.log("Feed type changed to:", newFeedType);
-  // feedType을 업데이트하는 로직 추가
+    console.log("Feed type changed to:", newFeedType);
+    setFeedType(newFeedType); // feedType 상태 업데이트
 };
 
   return (

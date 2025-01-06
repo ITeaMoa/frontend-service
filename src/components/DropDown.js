@@ -3,18 +3,16 @@ import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 
-
-const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => {} , dropdownType}) => {
+const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => {}, dropdownType }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOptions, setSelectedOptions] = useState([]);
-    const [searchTerm, setSearchTerm] = useState(''); 
+    const [searchTerm, setSearchTerm] = useState('');
     const [isFocused, setIsFocused] = useState(false);
     const [peopleCounts, setPeopleCounts] = useState({}); // 각 옵션에 대한 인원수 상태 추가
 
     const dropdownRef = useRef(null); // 드롭다운 참조 추가
-    //useRef: 리액트 컴포넌트에서 직접 DOM 조작
 
-    //옵션 필터링 : 검색어를 표함하는 옵션만 표시
+    // 옵션 필터링: 검색어를 포함하는 옵션만 표시
     const filteredOptions = options.filter(option =>
         option.label.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -33,16 +31,16 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
         };
     }, []);
 
-    // const handleOptionClick = (option) => {
-    //     if (!selectedOptions.includes(option.label)) {
-    //         setSelectedOptions([...selectedOptions, option.label]);
-    //         incrementCount(option); // 옵션 선택 시 카운트 증가
-    //         onTagSelect(option, (peopleCounts[option.label] || 0) + 1); // 부모에게 카운트 전달
-    //         console.log(`Selected option: ${option.label}`); // 선택된 옵션을 콘솔에 출력
-    //     } else {
-    //         decrementCount(option); // 옵션 선택 해제 시 카운트 감소
-    //     }
-    // };
+    const handleOptionClick = (option) => {
+        if (!selectedOptions.includes(option.label)) {
+            setSelectedOptions([...selectedOptions, option.label]);
+            incrementCount(option); // 옵션 선택 시 카운트 증가
+            onTagSelect(option, (peopleCounts[option.label] || 0) + 1); // 부모에게 카운트 전달
+            console.log(`Selected option: ${option.label}`); // 선택된 옵션을 콘솔에 출력
+        } else {
+            decrementCount(option); // 옵션 선택 해제 시 카운트 감소
+        }
+    };
 
     // 카운트 버튼 클릭 핸들러
     const handleCountChange = (option, change) => {
@@ -53,17 +51,6 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
             decrementCount(option);
             onTagSelect(option, (peopleCounts[option.label] || 0) + change); // 카운트 감소
         }
-    };
-
-    const handlePlaceholderClick = () => {
-        // setIsOpen(isOpen);
-        setIsOpen(prevState => !prevState);
-        setSearchTerm('');
-
-    };
-
-    const handleInputChange = (e) => {
-        setSearchTerm(e.target.value);
     };
 
     const incrementCount = (option) => {
@@ -92,6 +79,15 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
         });
     };
 
+    const handlePlaceholderClick = () => {
+        setIsOpen(prevState => !prevState);
+        setSearchTerm('');
+    };
+
+    const handleInputChange = (e) => {
+        setSearchTerm(e.target.value);
+    };
+
     const getPlaceholderText = () => {
         if (selectedOptions.length === 0) return placeholder;
         if (selectedOptions.length > 8) {
@@ -100,11 +96,8 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
         return selectedOptions.join(', ');
     };
 
-  
-
     return (
-        <DropdownWrapper ref={dropdownRef}
-        dropdownType={dropdownType} > {/* 드롭다운 참조 추가 */}
+        <DropdownWrapper ref={dropdownRef} dropdownType={dropdownType}>
             <DropdownHeader 
                 onClick={handlePlaceholderClick} 
                 isFocused={isFocused}
@@ -122,11 +115,8 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
                 />
                 <FontAwesomeIcon
                     icon={isOpen ? faChevronUp : faChevronDown} 
-                    style={{ color:  '#A0DAFB', fontSize:"1.2em"  }} // 열릴 때와 닫힐 때 색상 다르게 설정
-                    // onClick={handlePlaceholderClick} // 화살표 클릭 시 드롭다운 토글
-                 
-
-                    />
+                    style={{ color:  '#A0DAFB', fontSize:"1.2em" }}
+                />
             </DropdownHeader>
             {isOpen && (
                 <DropdownList>
@@ -135,6 +125,7 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
                             <DropdownItem 
                                 key={option.value} 
                                 isSelected={selectedOptions.includes(option.label)}
+                                onClick={() => handleOptionClick(option)} // 옵션 클릭 시
                             >
                                 {option.label}
                                 {showCountButtons && (
@@ -154,7 +145,6 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
         </DropdownWrapper>
     );
 };
-
 
 const DropdownWrapper = styled.div`
     position: relative;

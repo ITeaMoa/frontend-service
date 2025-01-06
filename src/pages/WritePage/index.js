@@ -33,48 +33,90 @@ const WritePage = ({feedType}) => {
     console.log('Updated selectedRoles:', newRoles);
   };
   // roles에서 count 값을 합산하여 recruitmentNum 설정
-  const recruitmentNum = selectedRoles.reduce((total, role) => total + role.count, 0);
+  // const recruitmentNum = selectedRoles.reduce((total, role) => total + role.count, 0);
 
   // const [isProject, setIsProject] = useState(true); // 프로젝트 여부 상태 추가
 
   const handleSave = (isTemporary) => {
-// 사용자 로그인 상태 확인
-if (!user) {
-  alert('사용자가 로그인되어 있지 않습니다. 로그인 후 다시 시도해 주세요.');
-  return; // user가 null이면 함수 종료
-}
+    // 현재 선택된 역할들 로깅
+    console.log('Current selectedRoles at save:', selectedRoles);
+    
+    // 사용자 로그인 확인
+    if (!user) {
+      alert('사용자가 로그인되어 있지 않습니다. 로그인 후 다시 시도해 주세요.');
+      return;
+    }
 
+    // 역할 검증 강화
+    if (!selectedRoles || !selectedRoles.some(role => role.count > 0)) {
+      alert('최소 하나 이상의 역할을 선택해주세요.');
+      return;
+    }
+
+    // 다른 필수 필드 검증
+    if (!title.trim()) {
+      alert('제목을 입력해주세요.');
+      return;
+    }
+
+    if (!description.trim()) {
+      alert('본문을 입력해주세요.');
+      return;
+    }
+
+    if (!deadline) {
+      alert('마감일자를 선택해주세요.');
+      return;
+    }
+
+    if (!progress.trim()) {
+      alert('진행장소를 입력해주세요.');
+      return;
+    }
+
+    // roles 객체 생성
+    const roles = selectedRoles.reduce((acc, { role, count }) => {
+      if (count > 0) {
+        acc[role] = count;
+      }
+      return acc;
+    }, {});
+
+    // 추가: roles가 비어있을 경우 처리
+    if (Object.keys(roles).length === 0) {
+        console.warn("선택된 역할이 없습니다."); // 경고 메시지 추가
+    }
 
     const deadlineISO = new Date(deadline).toISOString();
     const dataToSend = {
-      title,
-      content: description,
+      title: title.trim(),
+      content: description.trim(),
       postStatus: true,
       savedFeed: isTemporary,
       tags: selectedTags,
-      recruitmentNum,
+      recruitmentNum: selectedRoles.reduce((sum, role) => sum + role.count, 0),
       deadline: deadlineISO,
-      place: progress,
-      period,
-      roles: selectedRoles.reduce((acc, role) => {
-        acc[role.role] = role.count;
-        return acc;
-      }, {}),
+      place: progress.trim(),
+      period: period || '기간 미정',
+      roles: roles
     };
 
-    console.log('Data to send:', dataToSend); // 데이터 전송 전에 콘솔에 출력
+    // API 요청 전 데이터 확인
+    console.log('Data to send:', dataToSend);
 
+    // API 요청에 에러 처리 추가
     axios.post(`/feed/create`, dataToSend, {
       headers: {
         'Content-Type': 'application/json',
       },
       params: {
-        feedType, // 네비게이션의 토글에 따라 feedType 설정
-        userId: user.id,     
+        feedType,
+        userId: user.id,
       },
     })
     .then(response => {
-      console.log('Success:', response.data);
+      console.log('Success response:', response.data);
+      alert(isTemporary ? '임시저장되었습니다.' : '저장되었습니다.');
       navigate('/');
     })
     .catch((error) => {
@@ -184,7 +226,11 @@ const closeModal = () => {
 };
 
 const handleTagSelect = (option) => {
-  if (!selectedTags.includes(option.label)) {
+  if (selectedTags.includes(option.label)) {
+      // 태그가 이미 선택된 경우 제거
+      setSelectedTags(selectedTags.filter(tag => tag !== option.label));
+  } else {
+      // 태그가 선택되지 않은 경우 추가
       setSelectedTags([...selectedTags, option.label]); // 선택된 태그 추가
   }
 };
@@ -267,7 +313,7 @@ const handleToggleChange = (newFeedType) => {
 
           <InputWrapper>   
           <Label> 진행기간 </Label>
-          <Dropdown options={option1} placeholder={"기간미정~6개월이상"} onSelect={handlePeriodSelect}/>
+          <Dropdown options={option1} placeholder={"기간미정~6개월이상"} onTagSelect={handlePeriodSelect} />
 
           </InputWrapper>
           </InputBox>
@@ -419,8 +465,8 @@ const InputBox = styled.div`
 `;
 
 const InputWrapper = styled.div`
-  flex: 1 1 300px; /* 2열로 배치하고 여백 고려 */
-  min-width: 200px; //기본적으로는 300px가자면서 min이 300px가 됨
+  flex: 1 1 45%; /* 2열로 배치하고 여백 고려 */
+  min-width: 200px;
   max-width: 400px;
   display: flex;
   align-items: center;

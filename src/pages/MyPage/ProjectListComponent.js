@@ -236,7 +236,6 @@ const Tags = styled.div`
   display: flex;  
   margin: 10px 0;
   align-items: left;
-  min-height: 40px;
 `;
 
 const Tag = styled.span`
@@ -287,12 +286,10 @@ const AdditionalInfo = styled.div`
   text-align: left;
   display: flex;
   flex-direction: column;
-  margin-top: 50px;
+  margin-top: 10px;
   font-size: 12px;
   color: #666;
   right: 15px;
   bottom: 30px;
-  padding-top: 20px;
-
   
 `;

@@ -89,16 +89,19 @@ const WritePage = ({feedType}) => {
 
     const deadlineISO = new Date(deadline).toISOString();
     const dataToSend = {
-      title: title.trim(),
-      content: description.trim(),
+      title,
+      content: description,
       postStatus: true,
       savedFeed: isTemporary,
       tags: selectedTags,
-      recruitmentNum: selectedRoles.reduce((sum, role) => sum + role.count, 0),
+      recruitmentNum,
       deadline: deadlineISO,
-      place: progress.trim(),
-      period: period || '기간 미정',
-      roles: roles
+      place: progress,
+      period,
+      roles: selectedRoles.reduce((acc, role) => {
+        acc[role.role] = role.count;
+        return acc;
+      }, {}),
     };
 
     // API 요청 전 데이터 확인
@@ -110,13 +113,12 @@ const WritePage = ({feedType}) => {
         'Content-Type': 'application/json',
       },
       params: {
-        feedType,
-        userId: user.id,
+        feedType, // 네비게이션의 토글에 따라 feedType 설정
+        userId: user.id,     
       },
     })
     .then(response => {
-      console.log('Success response:', response.data);
-      alert(isTemporary ? '임시저장되었습니다.' : '저장되었습니다.');
+      console.log('Success:', response.data);
       navigate('/');
     })
     .catch((error) => {
@@ -465,8 +467,8 @@ const InputBox = styled.div`
 `;
 
 const InputWrapper = styled.div`
-  flex: 1 1 45%; /* 2열로 배치하고 여백 고려 */
-  min-width: 200px;
+  flex: 1 1 300px; /* 2열로 배치하고 여백 고려 */
+  min-width: 200px; //기본적으로는 300px가자면서 min이 300px가 됨
   max-width: 400px;
   display: flex;
   align-items: center;

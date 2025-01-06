@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Nav from '../../components/Nav';
 import Dropdown from '../../components/DropDown';
@@ -24,105 +24,75 @@ const WritePage = ({feedType}) => {
   const [description, setDescription] = useState(''); 
   const showSearch = false;
 
-  const [selectedRoles, setSelectedRoles] = useState([]); // State to store selected roles with counts
+  const [selectedRoles, setSelectedRoles] = useState([]); // 상태 초기화
+  const [recruitmentNum, setRecruitmentNum] = useState(0); // recruitmentNum 상태 추가
 
-  const handleRoleSelect = (role, count) => {
-    const updatedRoles = selectedRoles.filter(r => r.role !== role);
-    const newRoles = [...updatedRoles, { role, count }];
-    setSelectedRoles(newRoles);
-    console.log('Updated selectedRoles:', newRoles);
-  };
-  // roles에서 count 값을 합산하여 recruitmentNum 설정
-  // const recruitmentNum = selectedRoles.reduce((total, role) => total + role.count, 0);
+  
 
   // const [isProject, setIsProject] = useState(true); // 프로젝트 여부 상태 추가
 
   const handleSave = (isTemporary) => {
-    // 현재 선택된 역할들 로깅
-    console.log('Current selectedRoles at save:', selectedRoles);
-    
-    // 사용자 로그인 확인
-    if (!user) {
-      alert('사용자가 로그인되어 있지 않습니다. 로그인 후 다시 시도해 주세요.');
-      return;
+    // 필수 필드 유효성 검사
+    if (!title.trim() || !description.trim() || !deadline || !progress.trim() || selectedRoles.length === 0) {
+        alert('모든 필드를 올바르게 입력해주세요.'); // 누락된 필드에 대한 경고
+        return;
     }
 
-    // 역할 검증 강화
-    if (!selectedRoles || !selectedRoles.some(role => role.count > 0)) {
-      alert('최소 하나 이상의 역할을 선택해주세요.');
-      return;
-    }
-
-    // 다른 필수 필드 검증
-    if (!title.trim()) {
-      alert('제목을 입력해주세요.');
-      return;
-    }
-
-    if (!description.trim()) {
-      alert('본문을 입력해주세요.');
-      return;
-    }
-
-    if (!deadline) {
-      alert('마감일자를 선택해주세요.');
-      return;
-    }
-
-    if (!progress.trim()) {
-      alert('진행장소를 입력해주세요.');
-      return;
-    }
-
-    // roles 객체 생성
-    const roles = selectedRoles.reduce((acc, { role, count }) => {
-      if (count > 0) {
-        acc[role] = count;
-      }
-      return acc;
-    }, {});
-
+    // dataToSend 객체 생성
     const deadlineISO = new Date(deadline).toISOString();
     const dataToSend = {
-      title,
-      content: description,
-      postStatus: true,
-      savedFeed: isTemporary,
-      tags: selectedTags,
-      recruitmentNum,
-      deadline: deadlineISO,
-      place: progress,
-      period,
-      roles: selectedRoles.reduce((acc, role) => {
-        acc[role.role] = role.count;
-        return acc;
-      }, {}),
+        title,
+        content: description,
+        postStatus: true,
+        savedFeed: isTemporary,
+        tags: selectedTags,
+        recruitmentNum: recruitmentNum > 0 ? recruitmentNum : 1, // recruitmentNum이 0일 경우 기본값 설정
+        deadline: deadlineISO,
+        place: progress,
+        period,
+        roles: selectedRoles.length > 0 ? selectedRoles.reduce((acc, role) => {
+            acc[role.role] = role.count;
+            return acc;
+        }, {}) : {}, // roles가 비어있을 경우 빈 객체로 설정
     };
+  //   const dataToSend = {
+  //     title,
+  //     content: description,
+  //     postStatus: true,
+  //     savedFeed: isTemporary,
+  //     tags: selectedTags,
+  //     recruitmentNum: 3, // recruitmentNum을 하드코딩 (예: 3)
+  //     deadline: deadlineISO,
+  //     place: progress,
+  //     period,
+  //     roles: { // roles을 하드코딩 (예: 두 개의 역할)
+  //         '프론트엔드': 1,
+  //         '백엔드': 2,
+  //     },
+  // };
 
-    // API 요청 전 데이터 확인
-    console.log('Final data to send:', dataToSend);
+    console.log('전송할 데이터:', dataToSend);
 
-    // API 요청에 에러 처리 추가
+    // API 요청
     axios.post(`/feed/create`, dataToSend, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      params: {
-        feedType, // 네비게이션의 토글에 따라 feedType 설정
-        userId: user.id,     
-      },
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        params: {
+            feedType,
+            userId: user.id,
+        },
     })
     .then(response => {
-      console.log('Success:', response.data);
-      navigate('/');
+        console.log('Success:', response.data);
+        navigate('/');
     })
     .catch((error) => {
-      console.error('Error:', error);
-      if (error.response) {
-        console.error('Response data:', error.response.data); // 서버에서 반환한 데이터 출력
-        console.error('Response status:', error.response.status); // 상태 코드 출력
-        console.error('Response headers:', error.response.headers); // 헤더 출력
-      }
+        console.error('Error:', error);
+        if (error.response) {
+            console.error('응답 데이터:', error.response.data);
+            console.error('응답 상태:', error.response.status);
+        }
     });
   };
 
@@ -222,14 +192,30 @@ const closeModal = () => {
     setIsModalOpen(false); 
 };
 
+const handleRoleSelect = (role, count) => {
+    const updatedRoles = selectedRoles.filter(r => r.role !== role); // 기존 역할 제거
+    if (count > 0) {
+        setSelectedRoles([...updatedRoles, { role, count }]); // 새로운 역할 추가
+    } else {
+        setSelectedRoles(updatedRoles); // 역할이 0이면 제거
+    }
+
+    // selectedRoles의 내용을 콘솔에 출력
+    console.log('현재 선택된 역할:', [...updatedRoles, { role, count }]);
+
+    // recruitmentNum 업데이트
+    const newRecruitmentNum = [...updatedRoles, { role, count }].reduce((total, r) => total + r.count, 0);
+    setRecruitmentNum(newRecruitmentNum);
+};
+
+// 추가된 useEffect
+useEffect(() => {
+    console.log('현재 선택된 역할:', selectedRoles);
+}, [selectedRoles]); // selectedRoles가 변경될 때마다 로그 출력
+
 const handleTagSelect = (option) => {
-  if (selectedTags.includes(option.label)) {
-      // 태그가 이미 선택된 경우 제거
-      setSelectedTags(selectedTags.filter(tag => tag !== option.label));
-  } else {
-      // 태그가 선택되지 않은 경우 추가
-      setSelectedTags([...selectedTags, option.label]); // 선택된 태그 추가
-  }
+  // 태그가 선택되지 않은 경우 추가
+  setSelectedTags([...selectedTags, option.label]); // 선택된 태그 추가
 };
 
 const handlePeriodSelect = (selectedOption) => {
@@ -303,7 +289,7 @@ const handleToggleChange = (newFeedType) => {
             options={option2} 
             placeholder={"프론트엔드,백엔드..."} 
             showCountButtons={true}
-            onTagSelect={handleRoleSelect}
+            onTagSelect={(role, count) => handleRoleSelect(role, count)} // 매개변수 전달
           />
           </InputWrapper>
 

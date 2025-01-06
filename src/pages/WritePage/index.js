@@ -33,8 +33,26 @@ const WritePage = ({feedType}) => {
 
   const handleSave = (isTemporary) => {
     // 필수 필드 유효성 검사
-    if (!title.trim() || !description.trim() || !deadline || !progress.trim() || selectedRoles.length === 0) {
-        alert('모든 필드를 올바르게 입력해주세요.'); // 누락된 필드에 대한 경고
+    const missingFields = []; // 누락된 필드를 저장할 배열
+
+    if (!title.trim()) {
+        missingFields.push('제목');
+    }
+    if (!description.trim()) {
+        missingFields.push('본문');
+    }
+    if (!deadline) {
+        missingFields.push('마감일자');
+    }
+    if (!progress.trim()) {
+        missingFields.push('진행장소');
+    }
+    if (selectedRoles.length === 0) {
+        missingFields.push('모집 역할');
+    }
+
+    if (missingFields.length > 0) {
+        alert(`다음 필드를 올바르게 입력해주세요: ${missingFields.join(', ')}`); // 누락된 필드에 대한 경고
         return;
     }
 
@@ -192,19 +210,16 @@ const closeModal = () => {
     setIsModalOpen(false); 
 };
 
-const handleRoleSelect = (role, count) => {
-    const updatedRoles = selectedRoles.filter(r => r.role !== role); // 기존 역할 제거
+const handleRoleSelect = (option, count) => {
+    const updatedRoles = selectedRoles.filter(r => r.role !== option.label); // 기존 역할 제거
     if (count > 0) {
-        setSelectedRoles([...updatedRoles, { role, count }]); // 새로운 역할 추가
+        setSelectedRoles([...updatedRoles, { role: option.label, count }]); // 새로운 역할 추가
     } else {
         setSelectedRoles(updatedRoles); // 역할이 0이면 제거
     }
 
-    // selectedRoles의 내용을 콘솔에 출력
-    console.log('현재 선택된 역할:', [...updatedRoles, { role, count }]);
-
     // recruitmentNum 업데이트
-    const newRecruitmentNum = [...updatedRoles, { role, count }].reduce((total, r) => total + r.count, 0);
+    const newRecruitmentNum = [...updatedRoles, { role: option.label, count }].reduce((total, r) => total + r.count, 0);
     setRecruitmentNum(newRecruitmentNum);
 };
 
@@ -287,12 +302,18 @@ const handleToggleChange = (newFeedType) => {
           <InputWrapper>   
           <Label>모집 역할</Label>
   
-          <Dropdown 
+          {/* <Dropdown 
             options={option2} 
             placeholder={"프론트엔드,백엔드..."} 
             showCountButtons={true}
             onTagSelect={(role, count) => handleRoleSelect(role, count)} // 매개변수 전달
-          />
+          /> */}
+          <Dropdown 
+    options={option2} 
+    placeholder={"프론트엔드,백엔드..."} 
+    showCountButtons={true}
+    onTagSelect={handleRoleSelect} // 역할과 카운트를 직접 전달
+/>
           </InputWrapper>
 
 

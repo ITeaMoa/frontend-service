@@ -33,12 +33,25 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
         };
     }, []);
 
-    const handleOptionClick = (option) => {
-        if (!selectedOptions.includes(option.label)) {
-            setSelectedOptions([...selectedOptions, option.label]);
-            onTagSelect(option); // Call onTagSelect when an option is selected
+    // const handleOptionClick = (option) => {
+    //     if (!selectedOptions.includes(option.label)) {
+    //         setSelectedOptions([...selectedOptions, option.label]);
+    //         incrementCount(option); // 옵션 선택 시 카운트 증가
+    //         onTagSelect(option, (peopleCounts[option.label] || 0) + 1); // 부모에게 카운트 전달
+    //         console.log(`Selected option: ${option.label}`); // 선택된 옵션을 콘솔에 출력
+    //     } else {
+    //         decrementCount(option); // 옵션 선택 해제 시 카운트 감소
+    //     }
+    // };
+
+    // 카운트 버튼 클릭 핸들러
+    const handleCountChange = (option, change) => {
+        if (change > 0) {
+            incrementCount(option);
+            onTagSelect(option, (peopleCounts[option.label] || 0) + change); // 카운트 증가
         } else {
-            setSelectedOptions(selectedOptions.filter(selected => selected !== option.label));
+            decrementCount(option);
+            onTagSelect(option, (peopleCounts[option.label] || 0) + change); // 카운트 감소
         }
     };
 
@@ -121,24 +134,14 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
                         filteredOptions.map(option => (
                             <DropdownItem 
                                 key={option.value} 
-                                onClick={() => {
-                                    if (!showCountButtons) {
-                                        handleOptionClick(option);
-                                    }
-                                }} 
                                 isSelected={selectedOptions.includes(option.label)}
                             >
                                 {option.label}
                                 {showCountButtons && (
                                     <CountContainer>
-                                        <Button onClick={() => decrementCount(option)}>-</Button>
+                                        <Button onClick={() => handleCountChange(option, -1)}>-</Button>
                                         <Count>{peopleCounts[option.label] || 0}</Count>
-                                        <Button onClick={() => {
-                                            incrementCount(option);
-                                            if (!selectedOptions.includes(option.label)) {
-                                                setSelectedOptions([...selectedOptions, option.label]);
-                                            }
-                                        }}>+</Button>
+                                        <Button onClick={() => handleCountChange(option, 1)}>+</Button>
                                     </CountContainer>
                                 )}
                             </DropdownItem>

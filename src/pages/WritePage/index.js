@@ -28,7 +28,9 @@ const WritePage = ({feedType}) => {
 
   const handleRoleSelect = (role, count) => {
     const updatedRoles = selectedRoles.filter(r => r.role !== role);
-    setSelectedRoles([...updatedRoles, { role, count }]);
+    const newRoles = [...updatedRoles, { role, count }];
+    setSelectedRoles(newRoles);
+    console.log('Updated selectedRoles:', newRoles);
   };
   // roles에서 count 값을 합산하여 recruitmentNum 설정
   const recruitmentNum = selectedRoles.reduce((total, role) => total + role.count, 0);
@@ -77,6 +79,11 @@ if (!user) {
     })
     .catch((error) => {
       console.error('Error:', error);
+      if (error.response) {
+        console.error('Response data:', error.response.data); // 서버에서 반환한 데이터 출력
+        console.error('Response status:', error.response.status); // 상태 코드 출력
+        console.error('Response headers:', error.response.headers); // 헤더 출력
+      }
     });
   };
 
@@ -253,7 +260,7 @@ const handleToggleChange = (newFeedType) => {
             options={option2} 
             placeholder={"프론트엔드,백엔드..."} 
             showCountButtons={true}
-            onRoleSelect={handleRoleSelect} // Pass the handler to Dropdown
+            onTagSelect={handleRoleSelect}
           />
           </InputWrapper>
 

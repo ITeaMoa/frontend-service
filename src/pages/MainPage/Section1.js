@@ -47,7 +47,7 @@ function Section1({ feedType }) {
 
   const fetchPopularProjects = useCallback(async () => {
     try {
-      const response = await axios.get(`/main/liked?feedType=${feedType}`); // feedType을 사용
+      const response = await axios.get(`/main/liked?feedType=${feedType}`);
 
       if (!response.data || response.data.length === 0) {
         console.warn('프로젝트 데이터가 없습니다.');
@@ -61,6 +61,7 @@ function Section1({ feedType }) {
         const isLiked = likedProjects.find(likedProject => likedProject.id === project.id);
         return {
           ...project,
+          creatorId: project.userId,
           liked: isLiked ? isLiked.liked : false,
           likesCount: project.likesCount || 0,
         };
@@ -134,8 +135,7 @@ const handleProjectClick = (project, feedType) => {
           <ProjectCard key={index} onClick={() => handleProjectClick(project)}>
             <AuthorID>
               <FontAwesomeIcon icon={regularUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
-              {/* {project.creatorId === user.id || project.creatorId === null ? '나' : project.creatorId} */}
-              {project.creatorId}
+              {user ? (project.creatorId === user.id ? '나' : project.creatorId) : project.creatorId}
             </AuthorID>
             <LikeButtonWrapper>
               <LikeButton 

@@ -29,19 +29,29 @@ const ProjectListComponent = ({ selectedList, currentProjects = [], handleProjec
   const handleCancelApplication = async (userId, feedId) => {
     if (!userId || !feedId) {
         console.error("userId or feedId is null");
-        return; // 유효하지 않으면 함수 종료
+        return;
     }
 
     const requestData = {
-        pk: userId, // userId
-        sk: feedId  // feedId
+        pk: userId,
+        sk: feedId,
+        status: "CANCEL"  // 또는 "CANCELLED" (백엔드 팀과 정확한 enum 값 확인 필요)
     };
 
     try {
-        const response = await axios.patch('my/writing/cancel', requestData);
+        console.log('Sending request with data:', requestData);
+        
+        const response = await axios.patch('/api/my/writing/cancel', requestData);
         console.log('Response:', response.data);
+        alert('신청이 취소되었습니다.');
+        window.location.reload();
     } catch (error) {
-        console.error('Error cancelling application:', error);
+        console.error('Error details:', {
+            status: error.response?.status,
+            data: error.response?.data,
+            config: error.config
+        });
+        alert(`신청 취소 중 오류가 발생했습니다. (${error.response?.data || '알 수 없는 오류'})`);
     }
 }
 

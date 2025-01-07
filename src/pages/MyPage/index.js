@@ -93,27 +93,39 @@ useEffect(() => {
   const fetchCreatorProjects = async () => {
     if (selectedList === 'written' && user) {
       try {
+        console.log('=== Request Details ===');
+        console.log('Creator ID:', user.id);
+        console.log('Feed Type:', feedType);
+
         const response = await axios.get('/my/writing', {
           params: {
             creatorId: user.id,
-            sk: feedType // feedType 추가
+            sk: feedType
+          },
+          data: {
+            pk: user.id,
+            sk: feedType
           }
         });
-        console.log("Fetched creator projects:", response.data);
-        if (response.data) {
-          setProjects(response.data);
-        } else {
-          console.warn("No projects found for the creator");
-          setProjects([]);
-        }
+
+        console.log('=== Response Details ===');
+        console.log('Status:', response.status);
+        console.log('Data:', response.data);
+
+        setProjects(response.data || []);
       } catch (error) {
-        console.error("작성된 프로젝트를 가져오는 중 오류 발생:", error);
+        console.error("API Error Details:", {
+          status: error.response?.status,
+          data: error.response?.data,
+          params: error.config?.params,
+          requestData: error.config?.data
+        });
       }
     }
   };
 
   fetchCreatorProjects();
-}, [selectedList, user, feedType]); // feedType 추가
+}, [selectedList, user, feedType]);
 
 
 // //특정 프로젝트 누를때 

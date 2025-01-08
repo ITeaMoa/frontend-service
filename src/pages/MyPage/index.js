@@ -99,9 +99,11 @@ useEffect(() => {
 
         const params = {
           // creatorId: user.id, // creatorId를 생략하거나
-          creatorId: null, // null로 설정
+          creatorId: 'null', // null로 설정
           sk: feedType
         };
+
+        console.log('Request Params:', { creatorId: user.id, sk: feedType });
 
         const response = await axios.get('/my/writing', { params });
 

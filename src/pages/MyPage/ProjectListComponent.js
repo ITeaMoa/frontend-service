@@ -185,7 +185,7 @@ const ProjectListComponent = ({ selectedList, currentProjects = [], handleProjec
             <ProjectHeader>
               <HeaderItem>
                 <FontAwesomeIcon icon={regularUser} size="15px" />
-                <span>{project.sk}</span>
+                <span>{project.creatorId}</span>
                 <StyledFontAwesomeIcon2 icon={faHeart} />
                 <span>{project.likesCount || 0}</span>
               </HeaderItem>

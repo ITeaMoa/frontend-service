@@ -13,17 +13,17 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('로그인 시도'); // 로그인 시도 로그 추가
+    console.log('로그인 시도');
     console.log('이메일:', email);
     console.log('비밀번호:', password);
     console.log('ID 저장:', rememberMe);
     
-  
     try {
       const response = await login(email, password);
       if (response) {
         console.log('로그인 성공:', response);
-        navigate('/'); // 로그인 성공 시 홈으로 리디렉션
+        console.log('사용자 닉네임:', response.data.nickname);
+        navigate('/');
       }
     } catch (error) {
       console.error('로그인 실패:', error);

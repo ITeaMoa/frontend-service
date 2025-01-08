@@ -74,11 +74,17 @@ export const AuthProvider = ({ children }) => {
         // ID 토큰 디코드하여 사용자 정보 추출
         const decodedToken = parseJwt(idToken);
         const userId = decodedToken.sub; // 'sub' 필드에서 사용자 ID 추출
+        const nickname = decodedToken.nickname; // ID 토큰에서 닉네임 추출
   
-        // 사용자 정보를 상태에 저장
-        const userInfo = { id: userId, email }; // 필요한 정보 저장
-        setUser(userInfo); // 상태에 저장
-        console.log('로그인한 사용자 정보:', userInfo); // 사용자 정보 로그
+        // 사용자 정보를 상태에 저장 (닉네임 포함)
+        const userInfo = { 
+          id: userId, 
+          email,
+          nickname // 닉네임 추가
+        };
+        
+        setUser(userInfo);
+        console.log('로그인한 사용자 정보:', userInfo);
   
         // 사용자 정보를 로컬 스토리지에 저장
         localStorage.setItem('user', JSON.stringify(userInfo)); // 로컬 스토리지에 저장

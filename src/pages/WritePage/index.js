@@ -14,7 +14,7 @@ import { useAuth } from '../../context/AuthContext'
 
 
 const WritePage = ({ feedType: initialFeedType }) => {
-  const [feedType, setFeedType] = useState('project');
+  const [feedType, setFeedType] = useState('PROJECT');
   const [selectedRoles, setSelectedRoles] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [period, setPeriod] = useState('');
@@ -32,6 +32,7 @@ const WritePage = ({ feedType: initialFeedType }) => {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
+  // const nickname = user ? user.nickname : 'Unknown'; //사용자 닉네임 설정
   // const [participants, setParticipants] = useState(0);
   const [deadline, setDeadline] = useState('');
   const [progress, setProgress] = useState('');
@@ -88,7 +89,7 @@ const WritePage = ({ feedType: initialFeedType }) => {
             acc[role.role.toLowerCase()] = role.count;
             return acc;
         }, {}) : {},
-        creatorId: user.email,
+        creatorId: user ? user.nickname : 'Unknown',
     };
 
     console.log('전송할 데이터:', JSON.stringify(dataToSend, null, 2));
@@ -100,11 +101,12 @@ const WritePage = ({ feedType: initialFeedType }) => {
         },
         params: {
             feedType,
-            userId: user.id,
+            userId: user ? user.id : null,
         },
     })
     .then(response => {
         console.log('Success:', response.data);
+        console.log('요청 URL:', response.config.url);
         navigate('/');
     })
     .catch((error) => {

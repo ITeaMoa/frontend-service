@@ -24,29 +24,32 @@ const ProjectListComponent = ({ selectedList, currentProjects = [], handleProjec
     }, 100);
   };
 
- 
 
   const handleCancelApplication = async (userId, feedId) => {
     if (!userId || !feedId) {
-        console.error("userId or feedId is null");
+        console.error("userId 또는 feedId가 null입니다.");
         return;
     }
 
     const requestData = {
         pk: userId,
-        sk: feedId,
-        status: "CANCEL"  // 또는 "CANCELLED" (백엔드 팀과 정확한 enum 값 확인 필요)
+        sk: feedId
     };
 
     try {
-        console.log('Sending request with data:', requestData);
+        console.log('전송할 데이터:', requestData);
         
-        const response = await axios.patch('/api/my/writing/cancel', requestData);
-        console.log('Response:', response.data);
+        // 전체 URL을 사용하여 PATCH 요청
+        const response = await axios.patch('/my/writing/cancel', requestData, {
+            headers: {
+                'Content-Type': 'application/json' // JSON 형식으로 전송
+            }
+        });
+        console.log('응답:', response.data);
         alert('신청이 취소되었습니다.');
         window.location.reload();
     } catch (error) {
-        console.error('Error details:', {
+        console.error('오류 세부정보:', {
             status: error.response?.status,
             data: error.response?.data,
             config: error.config
@@ -54,6 +57,36 @@ const ProjectListComponent = ({ selectedList, currentProjects = [], handleProjec
         alert(`신청 취소 중 오류가 발생했습니다. (${error.response?.data || '알 수 없는 오류'})`);
     }
 }
+ 
+
+//   const handleCancelApplication = async (userId, feedId) => {
+//     if (!userId || !feedId) {
+//         console.error("userId or feedId is null");
+//         return;
+//     }
+
+//     const requestData = {
+//         pk: userId,
+//         sk: feedId,
+//         status: "CANCEL"  // 또는 "CANCELLED" (백엔드 팀과 정확한 enum 값 확인 필요)
+//     };
+
+//     try {
+//         console.log('Sending request with data:', requestData);
+        
+//         const response = await axios.patch('/api/my/writing/cancel', requestData);
+//         console.log('Response:', response.data);
+//         alert('신청이 취소되었습니다.');
+//         window.location.reload();
+//     } catch (error) {
+//         console.error('Error details:', {
+//             status: error.response?.status,
+//             data: error.response?.data,
+//             config: error.config
+//         });
+//         alert(`신청 취소 중 오류가 발생했습니다. (${error.response?.data || '알 수 없는 오류'})`);
+//     }
+// }
 
 //   const handleCloseApplication = (projectId) => {
 //     // 모집 완료 상태를 업데이트
@@ -214,8 +247,7 @@ const ProjectHeader = styled.div`
   align-items: center;
 `;
 
-const HeaderItem = styled.div`
-  display: flex;
+const HeaderItem = styled.div`  display: flex;
   align-items: center; 
   margin-right: 10px; 
 

@@ -32,48 +32,37 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
     }, []);
 
     const handleOptionClick = (option) => {
+        console.log(`Option clicked: ${option.label}`); // 릭된 옵션 로그 추가
         if (!selectedOptions.includes(option.label)) {
-            setSelectedOptions([...selectedOptions, option.label]);
-            incrementCount(option); // 옵션 선택 시 카운트 증가
-            onTagSelect(option, (peopleCounts[option.label] || 0) + 1); // 부모에게 카운트 전달
+            setSelectedOptions(prevSelected => [...prevSelected, option.label]);
+            handleCountChange(option, 1); // 옵션 선택 시 카운트 증가
             console.log(`Selected option: ${option.label}`); // 선택된 옵션을 콘솔에 출력
         } else {
-            decrementCount(option); // 옵션 선택 해제 시 카운트 감소
+            handleCountChange(option, -1); // 옵션 선택 해제 시 카운트 감소
         }
     };
 
     // 카운트 버튼 클릭 핸들러
     const handleCountChange = (option, change) => {
-        if (change > 0) {
-            incrementCount(option);
-            onTagSelect(option, (peopleCounts[option.label] || 0) + change); // 카운트 증가
-        } else {
-            decrementCount(option);
-            onTagSelect(option, (peopleCounts[option.label] || 0) + change); // 카운트 감소
-        }
-    };
-
-    const incrementCount = (option) => {
-        setPeopleCounts(prevCounts => ({
-            ...prevCounts,
-            [option.label]: (prevCounts[option.label] || 0) + 1
-        }));
-    };
-
-    const decrementCount = (option) => {
+        console.log(`Changing count for ${option.label} by ${change}`); // 로그 추가
         setPeopleCounts(prevCounts => {
-            const newCount = (prevCounts[option.label] || 0) - 1;
+            const currentCount = prevCounts[option.label] || 0; // 현재 카운트 가져오기
+            const newCount = currentCount + change; // 새로운 카운트 계산
+
+            console.log(`Current count: ${currentCount}, New count: ${newCount}`); // 현재 및 새로운 카운트 로그
+
             if (newCount > 0) {
+                onTagSelect(option, newCount); // 부에게 새로운 카운트 전달
                 return {
                     ...prevCounts,
-                    [option.label]: newCount
+                    [option.label]: newCount // 새로운 카운트 설정
                 };
             } else {
                 // 카운트가 0이 되면 선택 해제
-                setSelectedOptions(selectedOptions.filter(selected => selected !== option.label));
+                setSelectedOptions(prevSelected => prevSelected.filter(selected => selected !== option.label));
                 return {
                     ...prevCounts,
-                    [option.label]: 0 // 0일 때는 카운트를 0으로 유지
+                    [option.label]: 0 // 카운트를 0으로 유지
                 };
             }
         });
@@ -94,6 +83,18 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
             return `${selectedOptions.slice(0, 8).join(', ')}...`;
         }
         return selectedOptions.join(', ');
+    };
+
+    // 카운트 버튼 렌더링
+    const renderCountButtons = (option) => {
+        const count = peopleCounts[option.label] || 0; // 현재 카운트 가져오기
+        return (
+            <CountContainer>
+                <Button onClick={() => handleCountChange(option, -1)}>-</Button>
+                <Count>{count}</Count>
+                <Button onClick={() => handleCountChange(option, 1)}>+</Button>
+            </CountContainer>
+        );
     };
 
     return (
@@ -125,16 +126,18 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
                             <DropdownItem 
                                 key={option.value} 
                                 isSelected={selectedOptions.includes(option.label)}
-                                onClick={() => handleOptionClick(option)} // 옵션 클릭 시
+                                onClick={() => {
+                                    if (!showCountButtons) {
+                                        handleOptionClick(option); // 옵션 클릭 시
+                                    } else {
+                                        if (!selectedOptions.includes(option.label)) {
+                                            setSelectedOptions(prevSelected => [...prevSelected, option.label]);
+                                        }
+                                    }
+                                }} 
                             >
                                 {option.label}
-                                {showCountButtons && (
-                                    <CountContainer>
-                                        <Button onClick={() => handleCountChange(option, -1)}>-</Button>
-                                        <Count>{peopleCounts[option.label] || 0}</Count>
-                                        <Button onClick={() => handleCountChange(option, 1)}>+</Button>
-                                    </CountContainer>
-                                )}
+                                {showCountButtons && renderCountButtons(option)}
                             </DropdownItem>
                         ))
                     ) : (

@@ -44,9 +44,10 @@ const WritePage = ({ feedType: initialFeedType }) => {
 
   // const [isProject, setIsProject] = useState(true); // 프로젝트 여부 상태 추가
 
-  const handleSave = (isTemporary) => {
-    // 필수 필드 유효성 검사
-    const missingFields = []; // 누락된 필드를 저장할 배열
+  const handleSubmit = async (e, isTemporary) => {
+    e.preventDefault();
+
+    const missingFields = [];
 
     if (!title.trim()) {
         missingFields.push('제목');
@@ -65,15 +66,13 @@ const WritePage = ({ feedType: initialFeedType }) => {
     }
 
     if (missingFields.length > 0) {
-        alert(`다음 필드를 올바르게 입력해주세요: ${missingFields.join(', ')}`); // 누락된 필드에 대한 경고
+        alert(`다음 필드를 올바르게 입력해주세요: ${missingFields.join(', ')}`);
         return;
     }
 
-    // deadline을 ISO 형식으로 변환
     const deadlineISO = new Date(deadline).toISOString();
 
-    // period를 개월 수로 변환
-    const periodValue = parseInt(period, 10); // period를 숫자로 변환
+    const periodValue = parseInt(period, 10);
 
     const dataToSend = {
         title,
@@ -81,14 +80,15 @@ const WritePage = ({ feedType: initialFeedType }) => {
         postStatus: true,
         savedFeed: isTemporary,
         tags: selectedTags,
-        recruitmentNum: recruitmentNum > 0 ? recruitmentNum : 1, // recruitmentNum이 0일 경우 기본값 설정
+        recruitmentNum: recruitmentNum > 0 ? recruitmentNum : 1,
         deadline: deadlineISO,
         place: progress,
-        period: periodValue, // 변환된 숫자만 전송
+        period: periodValue,
         roles: selectedRoles.length > 0 ? selectedRoles.reduce((acc, role) => {
-            acc[role.role.toLowerCase()] = role.count; // 역할을 소문자로 변환
+            acc[role.role.toLowerCase()] = role.count;
             return acc;
-        }, {}) : {}, // roles가 비어있을 경우 빈 객체로 설정
+        }, {}) : {},
+        creatorId: user.email,
     };
 
     console.log('전송할 데이터:', JSON.stringify(dataToSend, null, 2));
@@ -212,14 +212,13 @@ const closeModal = () => {
 };
 
 const handleRoleSelect = (option, count) => {
-    const updatedRoles = selectedRoles.filter(r => r.role !== option.label); // 기존 역할 제거
+    const updatedRoles = selectedRoles.filter(r => r.role !== option.label);
     if (count > 0) {
-        setSelectedRoles([...updatedRoles, { role: option.label, count }]); // 새로운 역할 추가
+        setSelectedRoles([...updatedRoles, { role: option.label, count }]);
     } else {
-        setSelectedRoles(updatedRoles); // 역할이 0이면 제거
+        setSelectedRoles(updatedRoles);
     }
 
-    // recruitmentNum 업데이트
     const newRecruitmentNum = [...updatedRoles, { role: option.label, count }].reduce((total, r) => total + r.count, 0);
     setRecruitmentNum(newRecruitmentNum);
 };
@@ -236,7 +235,7 @@ const handlePeriodSelect = (selectedOption) => {
 
 const handleToggleChange = (newFeedType) => {
     console.log("Feed type changed to:", newFeedType);
-    setFeedType(newFeedType); // feedType 상태 업데이트
+    setFeedType(newFeedType);
 };
 
   return (
@@ -352,8 +351,8 @@ const handleToggleChange = (newFeedType) => {
         </Body>
 
         <Submit>
-        <SaveButton onClick={() => handleSave(true)}>임시저장</SaveButton>
-        <SaveButton onClick={() => handleSave(false)}>저장하기</SaveButton>
+        <SaveButton onClick={(e) => handleSubmit(e, true)}>임시저장</SaveButton>
+        <SaveButton onClick={(e) => handleSubmit(e, false)}>저장하기</SaveButton>
         </Submit>
       </WriteWrapper>
     </>

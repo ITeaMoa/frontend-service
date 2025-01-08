@@ -101,10 +101,6 @@ useEffect(() => {
           params: {
             creatorId: user.id,
             sk: feedType
-          },
-          data: {
-            pk: user.id,
-            sk: feedType
           }
         });
 

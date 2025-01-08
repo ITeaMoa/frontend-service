@@ -61,7 +61,7 @@ function Section1({ feedType }) {
         const isLiked = likedProjects.find(likedProject => likedProject.id === project.id);
         return {
           ...project,
-          creatorId: project.userId,
+          creatorId: project.creatorId || 'Unknown',
           liked: isLiked ? isLiked.liked : false,
           likesCount: project.likesCount || 0,
         };
@@ -135,13 +135,13 @@ const handleProjectClick = (project, feedType) => {
           <ProjectCard key={index} onClick={() => handleProjectClick(project)}>
             <AuthorID>
               <FontAwesomeIcon icon={regularUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
-              {user ? (project.creatorId === user.id ? '나' : project.creatorId) : project.creatorId}
+              {user ? '나' : project.creatorId}
             </AuthorID>
             <LikeButtonWrapper>
               <LikeButton 
                 initialLiked={project.liked} 
                 initialLikesCount={project.likesCount} 
-                onLikeChange={(newLiked, newLikesCount) => handleLikeClick(index, newLiked, newLikesCount)} 
+                onLikeChange={(newLiked, newLikesCount) => handleLikeClick(project.id, newLiked)} 
                 buttonStyle="s1"
                 apiEndpoint="/main/like"
                 sk={project.pk}

@@ -47,6 +47,26 @@ const ProjectListComponent = ({ selectedList, currentProjects = [], handleProjec
         });
         console.log('응답:', response.data);
         alert('신청이 취소되었습니다.');
+
+        // sk에서 숫자 부분 추출
+        const skNumber = feedId.split('#')[1]; // "APPLICATION#6b26a3bc-0f6c-453e-9ef3-3b00d110a8cf"에서 숫자 부분 추출
+
+        // GET 요청을 통해 PROJECT 데이터 가져오기
+        const projectResponse = await axios.get(`/main?feedType=PROJECT`);
+        console.log('프로젝트 데이터:', projectResponse.data); // 응답 데이터 확인
+
+        // pk가 skNumber와 같은 항목 찾기
+        const matchedProject = projectResponse.data.find(project => project.pk === skNumber);
+        
+        if (matchedProject) {
+            // 필요한 데이터 처리 로직 추가
+            console.log('찾은 프로젝트 데이터:', matchedProject);
+            // 예: likesCount, creatorId 등을 UI에 표시
+            alert(`Likes Count: ${matchedProject.likesCount}, Creator ID: ${matchedProject.creatorId}`);
+        } else {
+            console.log('일치하는 프로젝트를 찾을 수 없습니다.'); // 이 로그가 출력되는지 확인
+        }
+
         window.location.reload();
     } catch (error) {
         console.error('오류 세부정보:', {
@@ -170,7 +190,7 @@ const ProjectListComponent = ({ selectedList, currentProjects = [], handleProjec
                 <span>{project.likesCount || 0}</span>
               </HeaderItem>
             </ProjectHeader>
-            {/* <p>{project.part}</p> */}
+          
             <Tags>
               {project.tags && project.tags.map((tag, index) => (
                 <Tag key={index}>{tag}</Tag>
@@ -186,6 +206,7 @@ const ProjectListComponent = ({ selectedList, currentProjects = [], handleProjec
               신청 취소
             </Button2>
             <AdditionalInfo>
+            <span>Part: {project.part}</span>
               <span>상태: Pending</span>
               <span>신청 일자: {new Date(project.timestamp).toLocaleDateString()}</span>
             </AdditionalInfo>
@@ -278,6 +299,7 @@ const Tags = styled.div`
   display: flex;  
   margin: 10px 0;
   align-items: left;
+  min-height: 50px;
 `;
 
 const Tag = styled.span`
@@ -333,5 +355,6 @@ const AdditionalInfo = styled.div`
   color: #666;
   right: 15px;
   bottom: 30px;
+  
   
 `;

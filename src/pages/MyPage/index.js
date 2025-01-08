@@ -97,12 +97,13 @@ useEffect(() => {
         console.log('Creator ID:', user.id);
         console.log('Feed Type:', feedType);
 
-        const response = await axios.get('/my/writing', {
-          params: {
-            creatorId: user.id,
-            sk: feedType
-          }
-        });
+        const params = {
+          // creatorId: user.id, // creatorId를 생략하거나
+          creatorId: null, // null로 설정
+          sk: feedType
+        };
+
+        const response = await axios.get('/my/writing', { params });
 
         console.log('=== Response Details ===');
         console.log('Status:', response.status);

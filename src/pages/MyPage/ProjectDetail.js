@@ -31,12 +31,17 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
 
 
     // 역할 목록 정의
-    const roles = project.role && Array.isArray(project.role) ? 
+    const roles = project?.role && Array.isArray(project.role) ? 
         ['전체', ...project.role.map(role => role.name)] : 
         ['전체'];
 
     useEffect(() => {
         const fetchApplicants = async () => {
+            if (!project || !project.pk) {
+                console.error("유효하지 않은 프로젝트이거나 프로젝트 ID가 누락되었습니다.");
+                return; // 프로젝트가 유효하지 않으면 조기 반환
+            }
+
             try {
                 const params = {
                     feedId: project.pk,
@@ -45,26 +50,27 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
 
                 console.log('Requesting applicants with params:', params);
 
-                // GET 요청으로 변경
                 const response = await axios.get('my/writing/part', { params });
+
+                console.log('Fetched applicants data:', response.data);
 
                 if (response.data) {
                     setApplicants(response.data);
                 } else {
-                    console.warn("No applicants found");
+                    console.warn("신청자가 없습니다.");
                     setApplicants([]);
                 }
             } catch (error) {
-                console.error("Error fetching applicants:", error);
+                console.error("신청자 가져오기 오류:", error);
                 if (error.response) {
-                    console.error("Response data:", error.response.data);
-                    console.error("Response status:", error.response.status);
+                    console.error("응답 데이터:", error.response.data);
+                    console.error("응답 상태:", error.response.status);
                 }
             }
         };
 
         fetchApplicants();
-    }, [project.pk, selectedField]); // feedId 또는 selectedField가 변경될 때 호출
+    }, [project, selectedField]); // project 또는 selectedField가 변경될 때 호출
 
 
     // const applicants = project.applicants || [];
@@ -175,21 +181,23 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
                     <InfoItem>진행 장소 | {project.place}</InfoItem>
                     <InfoItem>모집 현황 | {project.applyNum}명 / {project.recruitmentNum}명</InfoItem>
                     <InfoItem>진행 기간 | {project.period}개월</InfoItem>
-                    <InfoItem>모집 역할 | {project.role && Array.isArray(project.role) ? (
-                  project.role.map((role, index) => (
-                    <span key={index}>{role.name}({role.count})</span>
-                  ))
-                ) : (
-                  <span>역할 정보가 없습니다.</span>
-                )}</InfoItem>
-                
+                    <InfoItem>모집 역할 | {Array.isArray(project.roles) && Object.keys(project.roles).length > 0 ? (
+                        Object.entries(project.roles).map(([roleName, roleData], index) => (
+                            <span key={index}>{roleName}({roleData.count})</span>
+                        ))
+                    ) : (
+                        <span>역할 정보가 없습니다.</span>
+                    )}</InfoItem>
                     <InfoItem>신청자 수 | 백엔드(3), 디자이너(1)</InfoItem>
-                    {/* <InfoItem>신청자 수 | {project.recruitmentRoles</InfoItem> */}
                 </DetailInfo>
                 <Tags>
-                    {project.tags.map((tag, index) => (
-                        <Tag key={index}>{tag}</Tag>
-                    ))}
+                    {Array.isArray(project.tags) && project.tags.length > 0 ? (
+                        project.tags.map((tag, index) => (
+                            <Tag key={index}>{tag}</Tag>
+                        ))
+                    ) : (
+                        <span>태그가 없습니다.</span>
+                    )}
                 </Tags>
                 <ButtonContainerHorizontal>
                     <BackButton onClick={onBack}>목록</BackButton>

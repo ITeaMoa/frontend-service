@@ -64,9 +64,9 @@ const ProjectListComponent = ({ selectedList, currentProjects = [], handleProjec
     <ProjectHeader>
       <HeaderItem>
         <FontAwesomeIcon icon={regularUser} size="15px" />
-        <span>{project.creatorId ? project.creatorId : '정보 없음'}</span>
+        <span>{project.creatorId}</span>
       </HeaderItem>
-      
+      {/* <span>제목: {project.title}</span> */}
       <HeaderItem>
         <StyledFontAwesomeIcon icon={faHeart} />
         <span>{project.likesCount}</span>

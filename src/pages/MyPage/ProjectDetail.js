@@ -40,23 +40,26 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
             try {
                 const params = {
                     feedId: project.pk,
+                    part: selectedField // 'developer'와 같은 역할을 선택할 수 있도록
                 };
 
-                // '전체'일 경우 part를 아예 제거
-                if (selectedField !== '전체') {
-                    params.part = selectedField; // 선택된 역할 설정
-                }
+                console.log('Requesting applicants with params:', params);
 
+                // GET 요청으로 변경
                 const response = await axios.get('my/writing/part', { params });
-                
+
                 if (response.data) {
-                    setApplicants(response.data); // API 응답 데이터 설정
+                    setApplicants(response.data);
                 } else {
                     console.warn("No applicants found");
-                    setApplicants([]); // 데이터가 없을 경우 빈 배열로 초기화
+                    setApplicants([]);
                 }
             } catch (error) {
                 console.error("Error fetching applicants:", error);
+                if (error.response) {
+                    console.error("Response data:", error.response.data);
+                    console.error("Response status:", error.response.status);
+                }
             }
         };
 

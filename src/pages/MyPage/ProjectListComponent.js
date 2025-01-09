@@ -11,9 +11,7 @@ import { useAuth } from '../../context/AuthContext'
 const ProjectListComponent = ({ selectedList, currentProjects = [], handleProjectClick, projectsPerPage, totalProjects, paginate, currentPage }) => {
   const [isFading, setIsFading] = useState(false);
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
-  // const [projects, setProjects] = useState(currentProjects);
-  // const [projects, setProjects] = useState([]); // 초기값을 빈 배열로 설정
-
+  const [projects, setProjects] = useState(currentProjects); // 상태 추가
 
   const handleButtonClick = (project) => {
     setIsFading(true);
@@ -23,7 +21,6 @@ const ProjectListComponent = ({ selectedList, currentProjects = [], handleProjec
       
     }, 100);
   };
-
 
   const handleCancelApplication = async (userId, feedId) => {
     if (!userId || !feedId) {
@@ -36,10 +33,9 @@ const ProjectListComponent = ({ selectedList, currentProjects = [], handleProjec
         sk: feedId
     };
 
+    console.log('전송할 데이터:', requestData);
+
     try {
-        console.log('전송할 데이터:', requestData);
-        
-        // 전체 URL을 사용하여 PATCH 요청
         const response = await axios.patch('/my/writing/cancel', requestData, {
             headers: {
                 'Content-Type': 'application/json' // JSON 형식으로 전송
@@ -48,26 +44,8 @@ const ProjectListComponent = ({ selectedList, currentProjects = [], handleProjec
         console.log('응답:', response.data);
         alert('신청이 취소되었습니다.');
 
-        // sk에서 숫자 부분 추출
-        const skNumber = feedId.split('#')[1]; // "APPLICATION#6b26a3bc-0f6c-453e-9ef3-3b00d110a8cf"에서 숫자 부분 추출
-
-        // GET 요청을 통해 PROJECT 데이터 가져오기
-        const projectResponse = await axios.get(`/main?feedType=PROJECT`);
-        console.log('프로젝트 데이터:', projectResponse.data); // 응답 데이터 확인
-
-        // pk가 skNumber와 같은 항목 찾기
-        const matchedProject = projectResponse.data.find(project => project.pk === skNumber);
-        
-        if (matchedProject) {
-            // 필요한 데이터 처리 로직 추가
-            console.log('찾은 프로젝트 데이터:', matchedProject);
-            // 예: likesCount, creatorId 등을 UI에 표시
-            alert(`Likes Count: ${matchedProject.likesCount}, Creator ID: ${matchedProject.creatorId}`);
-        } else {
-            console.log('일치하는 프로젝트를 찾을 수 없습니다.'); // 이 로그가 출력되는지 확인
-        }
-
-        window.location.reload();
+        // 프로젝트 목록에서 해당 프로젝트 제거
+        setProjects(prevProjects => prevProjects.filter(project => project.pk !== feedId));
     } catch (error) {
         console.error('오류 세부정보:', {
             status: error.response?.status,
@@ -76,67 +54,19 @@ const ProjectListComponent = ({ selectedList, currentProjects = [], handleProjec
         });
         alert(`신청 취소 중 오류가 발생했습니다. (${error.response?.data || '알 수 없는 오류'})`);
     }
-}
- 
-
-//   const handleCancelApplication = async (userId, feedId) => {
-//     if (!userId || !feedId) {
-//         console.error("userId or feedId is null");
-//         return;
-//     }
-
-//     const requestData = {
-//         pk: userId,
-//         sk: feedId,
-//         status: "CANCEL"  // 또는 "CANCELLED" (백엔드 팀과 정확한 enum 값 확인 필요)
-//     };
-
-//     try {
-//         console.log('Sending request with data:', requestData);
-        
-//         const response = await axios.patch('/api/my/writing/cancel', requestData);
-//         console.log('Response:', response.data);
-//         alert('신청이 취소되었습니다.');
-//         window.location.reload();
-//     } catch (error) {
-//         console.error('Error details:', {
-//             status: error.response?.status,
-//             data: error.response?.data,
-//             config: error.config
-//         });
-//         alert(`신청 취소 중 오류가 발생했습니다. (${error.response?.data || '알 수 없는 오류'})`);
-//     }
-// }
-
-//   const handleCloseApplication = (projectId) => {
-//     // 모집 완료 상태를 업데이트
-//     setProjects(prevProjects => 
-//         prevProjects.map(project => 
-//             project.pk === projectId ? { ...project, isCompleted: true } : project
-//         )
-//     );
-// };
-
-
-
-// // onClose 콜백을 props로 받아와서 사용
-// const handleProjectClose = (projectId) => {
-//   handleCloseApplication(projectId);
-// };
-
-
-  //<ProjectItem key={project.pk} isLast={index === currentProjects.length - 1}>
+  };
 
   return (
     <Container>
       <ProjectList isFading={isFading}>
       {selectedList === 'written' && currentProjects && currentProjects.map((project, index) => (
-  <ProjectItem key={project.pk}>
+  <ProjectItem key={`written-${project.pk}`}>
     <ProjectHeader>
       <HeaderItem>
         <FontAwesomeIcon icon={regularUser} size="15px" />
         <span>{project.creatorId}</span>
       </HeaderItem>
+      {/* <span>제목: {project.title}</span> */}
       <HeaderItem>
         <StyledFontAwesomeIcon icon={faHeart} />
         <span>{project.likesCount}</span>
@@ -180,8 +110,8 @@ const ProjectListComponent = ({ selectedList, currentProjects = [], handleProjec
         {selectedList === 'applied' && currentProjects.length === 0 && (
           <p>신청한 프로젝트가 없습니다.</p>
         )}
-        {selectedList === 'applied' && currentProjects.map((project, index) => (
-          <ProjectItem key={project.sk}>
+        {selectedList === 'applied' && projects.map((project, index) => (
+          <ProjectItem key={`applied-${project.sk}`}>
             <ProjectHeader>
               <HeaderItem>
                 <FontAwesomeIcon icon={regularUser} size="15px" />
@@ -190,6 +120,8 @@ const ProjectListComponent = ({ selectedList, currentProjects = [], handleProjec
                 <span>{project.likesCount || 0}</span>
               </HeaderItem>
             </ProjectHeader>
+
+            <p>{project.title}</p>
           
             <Tags>
               {project.tags && project.tags.map((tag, index) => (
@@ -197,8 +129,8 @@ const ProjectListComponent = ({ selectedList, currentProjects = [], handleProjec
               ))}
             </Tags>
             <Button2 onClick={() => {
-              if (user && user.id && project.sk) {
-                handleCancelApplication(user.id, project.sk);
+              if (user && user.id && project.pk) {
+                handleCancelApplication(user.id, project.pk);
               } else {
                 console.error("User or project information is missing");
               }
@@ -206,9 +138,14 @@ const ProjectListComponent = ({ selectedList, currentProjects = [], handleProjec
               신청 취소
             </Button2>
             <AdditionalInfo>
-            <span>Part: {project.part}</span>
+            
+            <span>자원분야: {project.part}</span>
+            <span>모집현황: {project.recruitmentNum}명</span>
+            <span>신청 일자: {new Date(project.timestamp).toLocaleDateString()}</span>
+              <span>마감일자: {new Date(project.deadline).toLocaleDateString()}</span>
+            
               <span>상태: Pending</span>
-              <span>신청 일자: {new Date(project.timestamp).toLocaleDateString()}</span>
+             
             </AdditionalInfo>
           </ProjectItem>
         ))}
@@ -299,7 +236,7 @@ const Tags = styled.div`
   display: flex;  
   margin: 10px 0;
   align-items: left;
-  min-height: 50px;
+  // min-height: 50px;
 `;
 
 const Tag = styled.span`

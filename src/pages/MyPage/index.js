@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Nav from "../../components/Nav";
@@ -119,20 +118,38 @@ useEffect(() => {
 }, [selectedList, user, feedType]);
 
 
+// //특정 프로젝트 누를때 
+//   useEffect(() => {
+//     const fetchProjectDetail = async (feedId) => {
+//       try {
+//         const response = await axios.get(`my/writing/application`, {
+//           params: {
+//             feedId: feedId // 선택된 프로젝트의 feedId를 쿼리 파라미터로 추가
+//           }
+//         });
 
+//         if (response.data) {
+//           setSelectedProject(response.data); // 응답 데이터가 예상 형식이라고 가정
+//         } else {
+//           console.warn("No project detail found");
+//           setSelectedProject(null); // 데이터가 없을 경우 null로 초기화
+//         }
+//       } catch (error) {
+//         console.error("프로젝트 세부정보를 가져오는 중 오류 발생:", error);
+//       }
+//     };
+
+//     if (selectedProject) {
+//       fetchProjectDetail(selectedProject.feedId); // 선택된 프로젝트의 feedId로 API 호출
+//     }
+//   }, [selectedProject]); // selectedProject가 변경될 때마다 실행
 // 특정 프로젝트 누를 때
 useEffect(() => {
-  const fetchProjectDetail = async (projectId) => {
-    if (!projectId) {
-      console.error("Invalid projectId:", projectId);
-      return;
-    }
-
+  const fetchProjectDetail = async (feedId) => {
     try {
-      console.log('Fetching project detail for projectId:', projectId);
       const response = await axios.get(`my/writing/application`, {
         params: {
-          feedId: projectId // projectId를 매개변수로 사용
+          feedId: feedId // 선택된 프로젝트의 feedId를 쿼리 파라미터로 추가
         }
       });
 
@@ -143,16 +160,12 @@ useEffect(() => {
         setSelectedProject(null);
       }
     } catch (error) {
-      console.error("Error fetching project details:", error);
-      console.error("Error response data:", error.response?.data); // 오류 응답 로그
+      console.error("프로젝트 세부정보를 가져오는 중 오류 발생:", error);
     }
   };
 
-  // selectedProject의 pk를 사용하여 projectId 확인
-  if (selectedProject && selectedProject.pk) {
-    fetchProjectDetail(selectedProject.pk); // pk를 사용하여 API 호출
-  } else {
-    console.error("Selected project is invalid or does not have a projectId:", selectedProject);
+  if (selectedProject) {
+    fetchProjectDetail(selectedProject.feedId);
   }
 }, [selectedProject]);
 

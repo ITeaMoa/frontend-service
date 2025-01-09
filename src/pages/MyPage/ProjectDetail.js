@@ -159,11 +159,6 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
             onClose(project.pk); // 프로젝트 ID를 전달
         } catch (error) {
             console.error('Error closing application:', error);
-            if (error.response) {
-                console.error("Response data:", error.response.data);
-                console.error("Response status:", error.response.status);
-                console.error("Request data:", requestData); // 요청 데이터 로그
-            }
         }
     };
     

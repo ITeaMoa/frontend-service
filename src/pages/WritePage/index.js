@@ -373,6 +373,14 @@ const WriteWrapper = styled.div`
   align-items: center;
   // margin-bottom: 100px;
   padding-bottom: 100px;
+
+  
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    width: 200%;
+    margin: 400px auto 30px;
+    transform: none;
+    padding: 15px;
+  }
   
 `;
 
@@ -415,6 +423,11 @@ const TitleInput = styled.div`
   cursor: text;
   width: 60%;
 
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    width: 80%;
+    left: 10%;
+  }
+
   &:focus-within {
     border-bottom: 3px solid #62b9ec;
   }
@@ -433,17 +446,22 @@ const InputField = styled.input`
 `;
 
 const Container = styled.div`
-  // display: flex;
   justify-content: space-between;
   width: calc(100% / 2 + 80px); 
   transform: translateX(16px);
-  margin-top:100px;
+  margin-top: 100px;
   padding: 20px;
-  border: 2px solid #ddd;
-  border-radius: 30px 30px 1px 30px; 
+  border: 2px solid #A0DAFB;
+  border-radius: 30px 30px 1px 30px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   background-color: white;
-  border-color: #A0DAFB;
+
+  // @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+  //   width: 100%;
+  //   margin: 100px auto 0;
+  //   transform: none;
+  //   padding: 15px;
+  // }
 `;
 
 
@@ -458,47 +476,48 @@ const Title = styled.label`
 
 const InputBox = styled.div`
   display: flex;
-  flex-wrap: wrap; /* 여러 행을 가능하게 설정 */
+  flex-wrap: wrap;
   justify-content: center;
-  width: calc(100% - 40px); 
+  width: calc(100% - 40px);
   margin-bottom: 10px;
   margin-top: 35px;
   margin-left: 40px;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    margin-left: 10px;
+    width: calc(100% - 20px);
+  }
 `;
 
 const InputWrapper = styled.div`
-  flex: 1 1 300px; /* 2열로 배치하고 여백 고려 */
-  min-width: 200px; //기본적으로는 300px가자면서 min이 300px가 됨
+  flex: 1 1 45%;
+  min-width: 200px;
   max-width: 400px;
   display: flex;
   align-items: center;
-   margin-bottom: 20px;
-   margin-top:10px;
-   margin-left: 20px;
+  margin-bottom: 20px;
+  margin-top: 10px;
+  margin-left: 20px;
 
-
-
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    flex: 1 1 100%;
+    margin-left: 0;
+  }
 `;
 
 const Input = styled.input`
   padding: 12px;
-  border: 2px solid ;
+  border: 2px solid #A0DAFB;
   border-radius: 15px;
-  border-color: #A0DAFB;
   width: 250px;
   margin-left: 20px;
-  margin-top:10px;
-  
-  &::placeholder {
-    color: grey;
-}
+  margin-top: 10px;
 
-&:focus {
-    border-color: #007BFF;
-    outline: none; 
-}
-
-
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    // width: calc(100% - 30px);
+    width: 250px;
+    margin-left: 5px;
+  }
 `;
 const Body = styled.div`
     width: calc(100% / 2 + 90px); 
@@ -506,10 +525,14 @@ const Body = styled.div`
 `;
 
 const TagsSection = styled.div`
-
   margin-top: 20px;
   margin-left: 50px;
   display: flex;
+  flex-wrap: wrap;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    margin-left: 15px;
+  }
 `;
 
 const TagButton = styled.button`
@@ -573,16 +596,25 @@ const TextArea = styled.textarea`
 const Submit = styled.button`
   position: absolute;
   display: flex;
-  gap:20px;
+  gap: 20px;
   border: none;
   outline: none;
   background: transparent;
   cursor: none;
-  margin-left:780px;
-  margin-top:100px;
+  margin-left: 780px;
+  margin-top: 100px;
   margin-bottom: 20px;
   bottom: 0px;
 
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    position: relative;
+    margin: 20px auto;
+    bottom: auto;
+    left: auto;
+    margin-left: 0;
+    justify-content: center;
+    width: 100%;
+    padding: 0 20px;
   }
 `;
 
@@ -602,6 +634,9 @@ const SaveButton = styled.button`
   &:hover {
     background-color: #a0dafb;
   }
+
+  
+ 
 `;
 
 

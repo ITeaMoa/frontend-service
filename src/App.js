@@ -7,6 +7,8 @@ import LoginPage from "./pages/LoginPage";
 import { Outlet, Route, Routes } from 'react-router-dom';
 import SignupPage from './pages/SignupPage';
 import { AuthProvider } from './context/AuthContext'; // 경로를 맞춰주세요
+import { ThemeProvider } from 'styled-components';
+import theme from './components/Theme';
 
 
 const Layout = () => {
@@ -19,22 +21,23 @@ const Layout = () => {
 
 function App() {
   return (
-    <AuthProvider>
-    <div className="App">
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<MainPage />} />
-          <Route path="WritePage" element={<WritePage />} />
-          <Route path="ApplyPage/:projectId" element={<ApplyPage />} />
-         
-          <Route path="SearchPage" element={<SearchPage />} />
-          <Route path="MyPage" element={<MyPage/>} />
-          <Route path="LoginPage" element={<LoginPage />} />
-          <Route path="SignupPage" element={<SignupPage />} />
-        </Route>
-      </Routes>
-    </div>
-  </AuthProvider>
+    <ThemeProvider theme={theme}>
+      <AuthProvider>
+        <div className="App">
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<MainPage />} />
+              <Route path="WritePage" element={<WritePage />} />
+              <Route path="ApplyPage/:projectId" element={<ApplyPage />} />
+              <Route path="SearchPage" element={<SearchPage />} />
+              <Route path="MyPage" element={<MyPage/>} />
+              <Route path="LoginPage" element={<LoginPage />} />
+              <Route path="SignupPage" element={<SignupPage />} />
+            </Route>
+          </Routes>
+        </div>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

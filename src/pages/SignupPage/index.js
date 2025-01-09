@@ -182,23 +182,16 @@ const handleSignup = async () => {
   const handleCheckNickname = async () => {
     try {
       const response = await axios.post('login/verify/nickname', { nickname });
-  // 서버 응답에서 message 필드를 확인
-      console.log('닉네임 확인 응답:', response.data); // 서버 응답 로그
-      // 서버 응답에서 message 필드를 확인
-      if (response.data.message === "Nickname is available.") {
-        alert('사용 가능한 닉네임입니다.');
-      } else {
-        alert('중복되는 닉네임입니다. 다른 닉네임을 선택하세요.');
-      }
+      // 서버 응답 구조 확인을 위한 상세 로깅
+      console.log('닉네임 확인 응답 전체:', response);
+      console.log('응답 데이터:', response.data);
+      console.log('응답 상태:', response.status);
+      
+      // 여기서 응답 구조를 확인한 후 적절한 조건문을 작성할 수 있습니다
+      alert(response.data.message || '서버 응답을 확인해주세요.');
     } catch (error) {
-      if (error.response) {
-        // 서버가 응답한 오류 메시지를 출력
-        console.error('닉네임 확인 오류:', error.response.data);
-        alert('닉네임 확인에 실패했습니다: ' + error.response.data.message);
-      } else {
-        console.error('닉네임 확인 오류:', error);
-        alert('닉네임 확인에 실패했습니다. 다시 시도하세요.');
-      }
+      console.error('닉네임 확인 오류:', error);
+      alert('닉네임 확인에 실패했습니다. 다시 시도하세요.');
     }
   };
   return (

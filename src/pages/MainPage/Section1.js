@@ -177,6 +177,17 @@ const SectionWrapper = styled.div`
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   background-color: rgba(160, 218, 251, 0.5);
 
+   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    position: relative;
+    margin: 300px auto 0;
+    bottom: auto;
+    left: auto;
+    margin-left: 100px;
+    justify-content: center;
+    width: 150%;
+    padding: 0 20px;
+  }
+
 `;
 
 const SectionTitle = styled.h2`
@@ -190,6 +201,7 @@ const ProjectList = styled.div`
   justify-content: center;
   flex-wrap: wrap;
   gap: 20px;
+  
 `;
 
 const ProjectCard = styled.div`
@@ -217,6 +229,21 @@ const ProjectCard = styled.div`
 
   @media (max-width: 480px) {
     width: 100%; /* 1열로 조정 */
+  }
+
+  //  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+  //   width: calc(33.33% - 15px);
+  //   padding: 12px;
+  // }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    width: calc(25% - 10px);
+    padding: 10px;
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.smobile}) {
+    width: calc(33.33% - 8px);
+    padding: 8px;
   }
 `;
 

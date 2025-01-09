@@ -305,11 +305,9 @@ const SectionWrapper = styled.div`
   width: calc(100% / 2 + 100px);
   justify-content: center;
   max-width: 1200px;
-  // width: 100%; 
   margin: 0 auto;
   margin-top: 50px;
   margin-bottom: 40px;
-
 
   @media (max-width: 1200px) {
     margin-top: 40px;
@@ -329,10 +327,12 @@ const SectionWrapper = styled.div`
     margin-left: 100px;
   }
 
-
-  @media (max-width: 480px) {
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     margin-top: 20px;
     margin-bottom: 10px;
+    align-items: center;
+    justify-content: center;
+    
   }
 `;
 
@@ -344,6 +344,11 @@ const SectionTitle = styled.h2`
 
    @media (max-width: 1200px) {
     margin-left: 200px;
+  }
+
+    @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    min-width: 100%;
+    // margin-left: 200px;
   }
 
 `;
@@ -373,6 +378,14 @@ const ProjectList = styled.div`
 
   @media (max-width: 480px) {
     // max-height: 120vh;
+  }
+
+  
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    // width: calc(50% - 20px);
+    min-width: 50%;
+    margin: 10px 0;
+    
   }
 `;
 
@@ -415,12 +428,12 @@ const ProjectCard = styled.div`
    
   }
 
-  @media (max-width: 480px) {
-
-    margin: 10px 0; 
-    max-height: 300px; 
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    // width: calc(50% - 20px);
+    min-width: 250px;
+    margin: 10px 0;
+    max-height: 300px;
   }
-
 
   &:hover {
     background-color: #A0DAFB;
@@ -431,13 +444,13 @@ const ProjectCard = styled.div`
     
   }
 
-  @media (max-width: 768px) {
-    width: calc(50% - 20px); /* 2열로 조정 */
-  }
+  // @media (max-width: 768px) {
+  //   width: calc(50% - 20px); /* 2열로 조정 */
+  // }
 
-  @media (max-width: 480px) {
-    width: 100%; /* 1열로 조정 */
-  }
+  // @media (max-width: 480px) {
+  //   width: 100%; /* 1열로 조정 */
+  // }
 
 `;
 
@@ -455,8 +468,7 @@ const LikeButtonWrapper = styled.div`
     transform: scale(0.8); 
   }
 
-  @media (max-width: 480px) {
-  
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     transform: scale(0.7);
   }
 `;

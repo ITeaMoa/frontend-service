@@ -144,21 +144,14 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
     // // 모집 완료 요청 함수
 
 
-    const handleCloseApplication = async () => {
-        const requestData = {
-            pk: project.pk, // feedId
-            sk: "PROJECT"   // feedType
-        };
-
+    const handleCloseApplication = () => {
         try {
-            const response = await axios.patch('my/writing/close', requestData);
-            console.log(`Response: ${response.data}`);
-            setIsClosed(true); // 모집 완료 상태 업데이트
-            
-            // 부모 컴포넌트에 상태 업데이트 요청
-            onClose(project.pk); // 프로젝트 ID를 전달
+            // API 호출 대신 부모의 onClose 함수 호출
+            onClose(project.pk);
+            setIsClosed(true);
         } catch (error) {
-            console.error('Error closing application:', error);
+            console.error('Error:', error);
+            alert('모집 완료 처리 중 문제가 발생했습니다.');
         }
     };
     
@@ -498,16 +491,16 @@ const StatusButton = styled.button`
 
 
 const Button = styled.button`
-    background-color: ${({ isClicked }) => isClicked ? 'grey' : '#3563E9'};
-    color: ${({ isClicked }) => isClicked ? 'white' : 'white'};
+    background-color: ${({ isClicked }) => isClicked ? '#808080' : '#3563E9'};
+    color: white;
     border: none;
     padding: 10px 25px;
     border-radius: 5px;
     cursor: pointer;
-    opacity: ${({ isClicked }) => isClicked ? 0.6 : 1}; /* 비활성화된 경우 투명도 조정 */
+    opacity: ${({ isClicked }) => isClicked ? 0.6 : 1};
 
     &:hover {
-        background-color: ${({ isClicked }) => isClicked ? 'grey' : '#2e51a3'}; /* 클릭되지 않았을 때 호버 효과 */
+        background-color: ${({ isClicked }) => isClicked ? '#808080' : '#2e51a3'};
     }
 `;
 

@@ -228,25 +228,30 @@ useEffect(() => {
 //   );
 // };
 
-const handleProjectClose = async (projectId) => {
-  const requestData = {
-      pk: projectId,
-      sk: {feedType}
-  };
+const handleProjectClose = async (projectId, feedType) => {
+    try {
+        // 문제: feedType이 객체 형태로 전달되고 있음
+        const requestData = {
+            pk: projectId,
+            sk: feedType  // 여기서 feedType이 아닌 'PROJECT'가 들어가야 함
+        };
 
-  try {
-      const response = await axios.patch('my/writing/close', requestData);
-      console.log(`Response: ${response.data}`);
+        console.log('요청 데이터:', requestData); // 디버깅용
 
-      // 상태 업데이트
-      setProjects(prevProjects => 
-          prevProjects.map(project => 
-              project.pk === projectId ? { ...project, isCompleted: true } : project
-          )
-      );
-  } catch (error) {
-      console.error('Error closing application:', error);
-  }
+        await axios.patch('my/writing/close', requestData);
+            
+        // 성공 시 상태 업데이트
+        setProjects(prevProjects => 
+            prevProjects.map(project => 
+                project.pk === projectId 
+                    ? { ...project, isCompleted: true } 
+                    : project
+            )
+        );
+    } catch (error) {
+        console.error('Error:', error);
+        alert('모집 완료 처리 중 문제가 발생했습니다.');
+    }
 };
 
 
@@ -282,7 +287,7 @@ const handleProjectClose = async (projectId) => {
                     project={selectedProject}
                     applications={applications}
                     onBack={handleBackToList} 
-                    onClose={handleProjectClose}
+                    onClose={(projectId) => handleProjectClose(projectId, 'PROJECT')}
                 />
          
 

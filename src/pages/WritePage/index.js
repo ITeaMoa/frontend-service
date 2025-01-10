@@ -225,11 +225,15 @@ const handleRoleSelect = (option, count) => {
     setRecruitmentNum(newRecruitmentNum);
 };
 
-const handleTagSelect = (option) => {
-    if (!selectedTags.includes(option.label)) {
+//자식에게 전달할 콜백함수 : 다른함수에 인자로 전달되어 , 나중에 특정 이벤트가 발생햇을때 실행
+const handleTagSelect = (option) => { //option: 드롭다운 컴포넌트에서 선택된 옵션 객체를 받는것 
+    //1. 중복체크
+    if (!selectedTags.includes(option.label)) { //선택된 태그의 텍스트 값
+      //2. 새 태그 추가
         setSelectedTags([...selectedTags, option.label]);
     }
 };
+
 
 const handlePeriodSelect = (selectedOption) => {
     setPeriod(selectedOption.value);

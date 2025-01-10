@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
@@ -6,20 +6,63 @@ import styled from 'styled-components';
 import Pagination from '../../components/Pagination';
 import axios from '../../api/axios'; // Axios import 추가
 // import axios from 'axios';
-import { useAuth } from '../../context/AuthContext'
+import { useAuth, useProject } from '../../context/AuthContext'
+import Modal from '../../components/Modal';  // Modal 컴포넌트 import
 
 const ProjectListComponent = ({ selectedList, currentProjects = [], handleProjectClick, projectsPerPage, totalProjects, paginate, currentPage }) => {
   const [isFading, setIsFading] = useState(false);
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
+  const { completedProjects, markProjectAsCompleted } = useProject(); // ProjectContext 사용
   const [projects, setProjects] = useState(currentProjects); // 상태 추가
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [selectedProjectForCancel, setSelectedProjectForCancel] = useState(null);
 
+  // 컴포넌트 마운트 시 localStorage 데이터 로드
+  useEffect(() => {
+    const loadCompletedProjects = () => {
+      const saved = localStorage.getItem('completedProjects');
+      if (saved) {
+        try {
+          const completedArray = JSON.parse(saved);
+          completedArray.forEach(projectId => {
+            markProjectAsCompleted(projectId);
+          });
+        } catch (error) {
+          console.error('Error loading completed projects:', error);
+        }
+      }
+    };
+
+    loadCompletedProjects();
+  }, [markProjectAsCompleted]);
+
+  // 프로젝트 완료 처리 함수 수정
   const handleButtonClick = (project) => {
     setIsFading(true);
     setTimeout(() => {
       handleProjectClick(project);
       setIsFading(false);
       
+      // localStorage에 직접 저장
+      const saved = localStorage.getItem('completedProjects');
+      const completedArray = saved ? JSON.parse(saved) : [];
+      if (!completedArray.includes(project.pk)) {
+        completedArray.push(project.pk);
+        localStorage.setItem('completedProjects', JSON.stringify(completedArray));
+      }
+      
+      markProjectAsCompleted(project.pk);
     }, 100);
+  };
+
+  // 프로젝트 상태 확인 함수 추가
+  const isProjectCompleted = (projectId) => {
+    const saved = localStorage.getItem('completedProjects');
+    if (saved) {
+      const completedArray = JSON.parse(saved);
+      return completedArray.includes(projectId);
+    }
+    return false;
   };
 
   const handleCancelApplication = async (userId, feedId) => {
@@ -28,32 +71,33 @@ const ProjectListComponent = ({ selectedList, currentProjects = [], handleProjec
         return;
     }
 
-    const requestData = {
-        pk: userId,
-        sk: feedId
-    };
+    // 취소할 프로젝트 정보 저장하고 모달 열기
+    setSelectedProjectForCancel({ userId, feedId });
+    setIsConfirmModalOpen(true);
+  };
 
-    console.log('전송할 데이터:', requestData);
-
+  const handleConfirmCancel = async () => {
+    const { userId, feedId } = selectedProjectForCancel;
+    
     try {
-        const response = await axios.patch('/my/writing/cancel', requestData, {
+        const response = await axios.patch('/my/writing/cancel', {
+            pk: userId,
+            sk: feedId
+        }, {
             headers: {
-                'Content-Type': 'application/json' // JSON 형식으로 전송
+                'Content-Type': 'application/json'
             }
         });
         console.log('응답:', response.data);
-        alert('신청이 취소되었습니다.');
-
-        // 프로젝트 목록에서 해당 프로젝트 제거
         setProjects(prevProjects => prevProjects.filter(project => project.pk !== feedId));
+        setPopupMessage('신청이 취소되었습니다.');
     } catch (error) {
-        console.error('오류 세부정보:', {
-            status: error.response?.status,
-            data: error.response?.data,
-            config: error.config
-        });
-        alert(`신청 취소 중 오류가 발생했습니다. (${error.response?.data || '알 수 없는 오류'})`);
+        console.error('오류 세부정보:', error);
+        setPopupMessage(`신청 취소 중 오류가 발생했습니다. (${error.response?.data || '알 수 없는 오류'})`);
     }
+    
+    // 모달 닫기
+    setIsConfirmModalOpen(false);
   };
 
   return (
@@ -84,26 +128,10 @@ const ProjectListComponent = ({ selectedList, currentProjects = [], handleProjec
     </Tags>
     <Button 
       onClick={() => handleButtonClick(project)}
-      disabled={project.isCompleted} // 모집 완료 시 버튼 비활성화
+      disabled={isProjectCompleted(project.pk)}
     >
-      {project.isCompleted ? '모집완료' : '모집 현황'}
-            </Button> 
-            {/* <Button 
-                onClick={() => handleCloseApplication(project.pk)}
-                disabled={project.isCompleted} // 모집 완료 시 버튼 비활성화
-            >
-                모집완료
-            </Button> */}
-            {/* <Button onClick={() => handleButtonClick(project)}>
-            {project.isCompleted ? '모집완료' : '모집 현황'}
-            </Button> */}
-
-<Button 
-    onClick={() => handleButtonClick(project)}
-    disabled={project.isCompleted} // 모집 완료 시 버튼 비활성화
->
-    {project.isCompleted ? '모집완료' : '모집 현황'}
-</Button>
+      {isProjectCompleted(project.pk) ? '모집완료' : '모집 현황'}
+    </Button>
           </ProjectItem>
         ))}
 
@@ -158,6 +186,15 @@ const ProjectListComponent = ({ selectedList, currentProjects = [], handleProjec
         totalProjects={totalProjects} 
         onPageChange={paginate} 
       />
+
+      {/* 취소 확인 모달 */}
+      <Modal isOpen={isConfirmModalOpen} onClose={() => setIsConfirmModalOpen(false)}>
+        <h3 style={{ textAlign: 'center' }}>정말로 신청을 취소하시겠습니까?</h3>
+        <ButtonContainer>
+          <ModalButton onClick={handleConfirmCancel}>확인</ModalButton>
+          <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton>
+        </ButtonContainer>
+      </Modal>
     </Container>
   );
 };
@@ -252,7 +289,7 @@ const Tag = styled.span`
 
 const Button = styled.button`
   position: absolute;
-  background-color: #3563E9;
+  background-color: ${props => props.disabled ? '#808080' : '#3563E9'};
   color: white;
   border: none;
   padding: 10px 20px;
@@ -260,9 +297,10 @@ const Button = styled.button`
   cursor: pointer;
   right: 15px;
   bottom: 30px;
+  opacity: ${props => props.disabled ? 0.6 : 1};
 
   &:hover {
-    background-color: #a0dafb;
+    background-color: ${props => props.disabled ? '#808080' : '#a0dafb'};
   }
 `;
 
@@ -294,4 +332,24 @@ const AdditionalInfo = styled.div`
   bottom: 30px;
   
   
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+`;
+
+const ModalButton = styled.button`
+  background-color: #3563E9;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #a0dafb;
+  }
 `;

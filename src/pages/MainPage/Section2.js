@@ -255,34 +255,31 @@ const handleCloseSubmissionPopup = () => {
       
      
       <Modal isOpen={isRoleModalOpen} onClose={() => setIsRoleModalOpen(false)} modalType="apply">
-       
         <RoleButtonContainer>
-        <h3>지원할 역할을 선택하세요</h3>
-          {project && project.role ? (
-            project.role.map((role, index) => (
+          <h3>지원할 역할을 선택하세요</h3>
+          {project && project.roles ? (
+            Object.entries(project.roles).map(([role, count], index) => (
               <RoleButton
                 key={index}
                 onClick={() => handleRoleSelect(role)}
                 isSelected={selectedRole === role}
               >
-                {role.name}
+                {role} ({count})
               </RoleButton>
             ))
           ) : (
-            <>
-              <p>역할 정보가 없습니다.</p>
-              <RoleButton
-                onClick={() => {
-                  if (selectedRole !== '무관') { // 현재 선택된 역할과 다를 때만 업데이트
-                    handleRoleSelect('무관'); // '무관' 역할 선택
-                  }
-                }}
-                isSelected={selectedRole === '무관'}
-              >
-                무관
-              </RoleButton>
-            </>
+            <p>역할 정보가 없습니다.</p>
           )}
+          <RoleButton
+            onClick={() => {
+              if (selectedRole !== '무관') {
+                handleRoleSelect('무관');
+              }
+            }}
+            isSelected={selectedRole === '무관'}
+          >
+            무관
+          </RoleButton>
         </RoleButtonContainer>
         <SubmitButton onClick={handleApplySubmit}>제출</SubmitButton>
       </Modal>

@@ -26,7 +26,7 @@ const ApplyPage = ({ feedType }) => {
   // const [liked, setLiked] = useState(initialLiked || false); // 초기 좋아요 상태 설정
   // const [likesCount, setLikesCount] = useState(initialLikesCount || 0); // 초기 좋아요 수 설정
   // // const isLoggedIn = true; // 또는 false로 설정하여 로그인 상태를 나타냄
-  const showSearch = true;
+  const showSearch = false;
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -408,17 +408,16 @@ const handleToggleChange = (newFeedType) => {
       </Container>
 
       <Modal isOpen={isRoleModalOpen} onClose={() => setIsRoleModalOpen(false)} modalType="apply">
-       
         <RoleButtonContainer>
-        <h3>지원할 역할을 선택하세요</h3>
-          {project && project.role ? (
-            project.role.map((role, index) => (
+          <h3>지원할 역할을 선택하세요</h3>
+          {project && project.roles ? (
+            Object.entries(project.roles).map(([role, count], index) => (
               <RoleButton
                 key={index}
                 onClick={() => handleRoleSelect(role)}
                 isSelected={selectedRole === role}
               >
-                {role.name}
+                {role} ({count})
               </RoleButton>
             ))
           ) : (
@@ -436,7 +435,6 @@ const handleToggleChange = (newFeedType) => {
           </RoleButton>
         </RoleButtonContainer>
         <SubmitButton onClick={handleApplySubmit}>제출</SubmitButton>
-       
       </Modal>
 
       {/* 제출 결과 팝업 */}

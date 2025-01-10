@@ -38,10 +38,14 @@ const parseJwt = (token) => {
 // Context 생성
 export const AuthContext = createContext();
 
-// Provider 컴포넌트
+// Project Context 추가
+export const ProjectContext = createContext();
+
+// AuthProvider를 수정하여 Project 상태도 함께 관리
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(!!getToken());
+  const [completedProjects, setCompletedProjects] = useState(new Set());
 
   // 로컬 스토리지에서 사용자 정보와 JWT 토큰 가져오기
   useEffect(() => {
@@ -203,9 +207,16 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Project 관련 함수 추가
+  const markProjectAsCompleted = (projectId) => {
+    setCompletedProjects(prev => new Set([...prev, projectId]));
+  };
+
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn, login, logout, socialLogin, getAccessToken}}>
-      {children}
+    <AuthContext.Provider value={{ user, isLoggedIn, login, logout, socialLogin, getAccessToken }}>
+      <ProjectContext.Provider value={{ completedProjects, markProjectAsCompleted }}>
+        {children}
+      </ProjectContext.Provider>
     </AuthContext.Provider>
   );
 };
@@ -213,7 +224,12 @@ export const AuthProvider = ({ children }) => {
 
 
 
-// Context 사용을 위한 커스텀 훅
+// Project Context 사용을 위한 커스텀 훅
+export const useProject = () => {
+  return useContext(ProjectContext);
+};
+
+// 기존 Auth Context 사용을 위한 커스텀 훅
 export const useAuth = () => {
   return useContext(AuthContext);
 }; 

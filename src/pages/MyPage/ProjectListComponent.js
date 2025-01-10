@@ -172,10 +172,10 @@ const ProjectListComponent = ({
                     신청 취소
                   </Button2>
                   <AdditionalInfo>
-                    <span>자원분야: {project.part}</span>
+                    <span>지원분야: {project.part}</span>
                     <span>모집현황: {project.recruitmentNum}명</span>
-                    <span>신청 일자: {new Date(project.timestamp).toLocaleDateString()}</span>
                     <span>마감일자: {new Date(project.deadline).toLocaleDateString()}</span>
+                    <span>진행기간: {project.period ? `${project.period}개월` : '정보없음'}</span>
                     <span>상태: Pending</span>
                   </AdditionalInfo>
                 </ProjectItem>

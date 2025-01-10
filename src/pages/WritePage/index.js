@@ -225,15 +225,50 @@ const handleRoleSelect = (option, count) => {
     setRecruitmentNum(newRecruitmentNum);
 };
 
-//자식에게 전달할 콜백함수 : 다른함수에 인자로 전달되어 , 나중에 특정 이벤트가 발생햇을때 실행
-const handleTagSelect = (option) => { //option: 드롭다운 컴포넌트에서 선택된 옵션 객체를 받는것 
-    //1. 중복체크
-    if (!selectedTags.includes(option.label)) { //선택된 태그의 텍스트 값
-      //2. 새 태그 추가
-        setSelectedTags([...selectedTags, option.label]);
-    }
+// Modal 내부의 Dropdown을 별도의 컴포넌트로 분리
+// 2. TagDropdown 컴포넌트는 이 handleTagSelect를 받아서
+// Dropdown 컴포넌트에 전달하며, 선택된 옵션에 대한 로깅도 추가
+const TagDropdown = ({ onTagSelect }) => {
+    return (
+        <Dropdown 
+            options={option3} 
+            placeholder={"태그를 선택하시오"}
+            onTagSelect={(option) => {
+                onTagSelect(option);
+                console.log('Tag selected:', option.label); // 디버깅용
+            }}
+        />
+    );
 };
 
+// // 1. TagDropdown이 받은 onTagSelect는 WritePage의 handleTagSelect 함수
+const handleTagSelect = (option) => {
+    if (!option || !option.label) {
+        return;
+    }
+    
+    const MAX_TAGS = 10;
+    if (selectedTags.length >= MAX_TAGS) {
+        alert('최대 10개의 태그만 선택할 수 있습니다.');
+        return;
+    }
+
+    setSelectedTags(prevTags => {
+        // 중복 체크를 더 엄격하게 수행
+        if (prevTags.includes(option.label)) {
+            console.log('Duplicate tag:', option.label);
+            return prevTags;
+        }
+        return [...prevTags, option.label];
+    });
+    
+    // 모달 닫기 코드 제거 - 사용자가 X를 누를 때까지 유지
+};
+
+// 태그 삭제 함수 추가
+const handleTagDelete = (tagToDelete) => {
+    setSelectedTags(prevTags => prevTags.filter(tag => tag !== tagToDelete));
+};
 
 const handlePeriodSelect = (selectedOption) => {
     setPeriod(selectedOption.value);
@@ -243,6 +278,10 @@ const handleToggleChange = (newFeedType) => {
     console.log("Feed type changed to:", newFeedType);
     setFeedType(newFeedType);
 };
+
+useEffect(() => {
+    console.log('Current selectedTags:', selectedTags);
+}, [selectedTags]);
 
   return (
     <>
@@ -327,20 +366,25 @@ const handleToggleChange = (newFeedType) => {
         </Form>
 
         <TagsSection>
-           {/* 선택된 태그 버튼 표시 */}
-           {selectedTags.map((tag, index) => (
-                <TagButton key={`${tag}-${index}`}>{tag}</TagButton>
+            {selectedTags.map((tag, index) => (
+                <TagButton key={tag}>
+                    {tag}
+                    <span 
+                        className="delete-icon" 
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleTagDelete(tag);
+                        }}
+                    >
+                        ×
+                    </span>
+                </TagButton>
             ))}
-            <TagAdd onClick={handleAddTagClick}> + 태그 추가하기</TagAdd>
-           
+            <TagAdd onClick={handleAddTagClick}>+ 태그 추가하기</TagAdd>
             <Modal isOpen={isModalOpen} onClose={closeModal}>
-                <Dropdown 
-                    options={option3} 
-                    placeholder={"태그를 선택하시오"}
-                    onTagSelect={handleTagSelect} // 태그 선택을 처리하기 위해 이 prop을 전달
-                />
+                <TagDropdown onTagSelect={handleTagSelect} />
             </Modal>
-          </TagsSection>
+        </TagsSection>
 
         </Container>
 
@@ -540,17 +584,31 @@ const TagsSection = styled.div`
 `;
 
 const TagButton = styled.button`
+    position: relative;
+    border-radius: 5px;
+    padding: 5px 35px 5px 20px; // 오른쪽 패딩 증가
+    margin-right: 20px;
+    border: 1px solid;
+    border-radius: 15px 15px 1px 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-color: rgba(160, 218, 251);
+    background-color: white;
+    color: #0A8ED9;
 
-  border-radius: 5px;
-  padding: 5px 20px;
-  margin-right:20px;
-  border: 1px solid ;
-  border-radius: 15px 15px 1px 15px; //반시계 ㅔ방향
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  border-color: rgba(160, 218, 251);
-  background-color: white;
-  color: #0A8ED9 ;
-
+    // X 버튼 스타일
+    .delete-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        font-size: 14px;
+        color: #666;
+        
+        &:hover {
+            color: #ff4444;
+        }
+    }
 `;
 
 const TagAdd = styled.button`

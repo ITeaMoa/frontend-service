@@ -52,7 +52,7 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
             console.log(`Current count: ${currentCount}, New count: ${newCount}`); // 현재 및 새로운 카운트 로그
 
             if (newCount > 0) {
-                onTagSelect(option, newCount); // 부에게 새로운 카운트 전달
+                onTagSelect(option, newCount); // 부모에게 새로운 카운트 전달
                 return {
                     ...prevCounts,
                     [option.label]: newCount // 새로운 카운트 설정

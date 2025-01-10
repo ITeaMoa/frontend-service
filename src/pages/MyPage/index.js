@@ -18,6 +18,7 @@ const MyPage = () => {
   const showSearch = false;
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
   const [feedType, setFeedType] = useState('PROJECT'); // feedType 상태 추가
+  const [applications, setApplications] = useState([]); // 지원자 정보를 위한 새로운 state
 
   // user.id를 콘솔에 출력
 useEffect(() => {
@@ -79,7 +80,9 @@ const handleToggleChange = (newFeedType) => {
 
 
 
-//written
+//written === Response Details ===
+//index.js:102 Status: 200
+//index.js:103 Data: (10) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
 useEffect(() => {
   const fetchCreatorProjects = async () => {
     if (selectedList === 'written' && user) {
@@ -118,56 +121,40 @@ useEffect(() => {
 }, [selectedList, user, feedType]);
 
 
-// //특정 프로젝트 누를때 
-//   useEffect(() => {
-//     const fetchProjectDetail = async (feedId) => {
-//       try {
-//         const response = await axios.get(`my/writing/application`, {
-//           params: {
-//             feedId: feedId // 선택된 프로젝트의 feedId를 쿼리 파라미터로 추가
-//           }
-//         });
+// //특정 프로젝트 누를때 실행 되는거 // 툭종 프로젝트의 지원자 정보 가져오는?? 
+//     {
+//   "pk": "f448fd8c-5061-702c-8c22-3636be5d18c9",
+//   "sk": "6b26a3bc-0f6c-453e-9ef3-3b00d110a8cf",
+//   "entityType": "APPLICATION",
+//   "part": "developer",
+//   "status": "REJECTED",
+//   "feedType": "PROJECT",
+//   "timestamp": "2024-12-06T10:07:23.249026"
+// }
+  useEffect(() => {
+    const fetchApplications = async (feedId) => {
+      try {
+        const response = await axios.get(`my/writing/application`, {
+          params: {
+            feedId: feedId
+          }
+        });
 
-//         if (response.data) {
-//           setSelectedProject(response.data); // 응답 데이터가 예상 형식이라고 가정
-//         } else {
-//           console.warn("No project detail found");
-//           setSelectedProject(null); // 데이터가 없을 경우 null로 초기화
-//         }
-//       } catch (error) {
-//         console.error("프로젝트 세부정보를 가져오는 중 오류 발생:", error);
-//       }
-//     };
-
-//     if (selectedProject) {
-//       fetchProjectDetail(selectedProject.feedId); // 선택된 프로젝트의 feedId로 API 호출
-//     }
-//   }, [selectedProject]); // selectedProject가 변경될 때마다 실행
-// 특정 프로젝트 누를 때
-useEffect(() => {
-  const fetchProjectDetail = async (feedId) => {
-    try {
-      const response = await axios.get(`my/writing/application`, {
-        params: {
-          feedId: feedId // 선택된 프로젝트의 feedId를 쿼리 파라미터로 추가
+        if (response.data) {
+          setApplications(response.data); // 지원자 정보는 별도의 state에 저장
+        } else {
+          setApplications([]);
         }
-      });
-
-      if (response.data) {
-        setSelectedProject(response.data);
-      } else {
-        console.warn("No project detail found");
-        setSelectedProject(null);
+      } catch (error) {
+        console.error("지원자 정보를 가져오는 중 오류 발생:", error);
+        setApplications([]);
       }
-    } catch (error) {
-      console.error("프로젝트 세부정보를 가져오는 중 오류 발생:", error);
-    }
-  };
+    };
 
-  if (selectedProject) {
-    fetchProjectDetail(selectedProject.feedId);
-  }
-}, [selectedProject]);
+    if (selectedProject?.pk) {
+      fetchApplications(selectedProject.pk);
+    }
+  }, [selectedProject]);
 
 
 
@@ -218,6 +205,10 @@ useEffect(() => {
   };
 
 
+  //특정 프로젝트 클릭했을때 실행 
+  // 클릭된 프로젝트의 데이터는 ProjectListComponent로부터 전달받은 currentProjects 배열에서 가져옴
+  //currentProjects는 신청 목록일 때: /feed/applications
+//작성 목록일 때: /my/writing 에서 가져온 데 이터 
   const handleProjectClick = (project) => {
     setSelectedProject(project);
     console.log("Selected project:", project);
@@ -287,11 +278,11 @@ const handleProjectClose = async (projectId) => {
             {/* 선택된 프로젝트가 있을 때 세부정보 보여줌 */}
       {selectedProject ? (
         <>
-         {/* <ProjectDetail project={selectedProject} onBack={handleBackToList} /> */}
          <ProjectDetail 
-                    project={selectedProject} 
+                    project={selectedProject}
+                    applications={applications}
                     onBack={handleBackToList} 
-                    onClose={handleProjectClose} // 상태 변경 요청
+                    onClose={handleProjectClose}
                 />
          
 

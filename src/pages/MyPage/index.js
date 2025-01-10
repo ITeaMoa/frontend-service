@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
 import Nav from "../../components/Nav";
 // import axios from 'axios';
@@ -34,103 +34,41 @@ const handleToggleChange = (newFeedType) => {
   console.log("현재 feedType:", newFeedType); // 콘솔에 현재 feedType 출력
 };
 
+// useCallback을 사용하여 함수 메모이제이션
+const refreshProjects = useCallback(async () => {
+  if (!user) return; // 사용자가 없으면 실행하지 않음
 
-  // useEffect(() => {
-  //   const fetchProjects = async () => {
-  //     try {
-  //       const response = await axios.get('data.json'); 
-  //       if (response.data && response.data.length > 0) {
-  //         setProjects(response.data);
-  //       } else {
-  //         console.warn("No projects found in data.json");
-  //         setProjects([]); // 데이터가 없을 경우 빈 배열로 초기화
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching the projects:", error);
-  //     }
-  //   };
+  try {
+    if (selectedList === 'applied') {
+      const response = await axios.get('/feed/applications', {
+        params: {
+          userId: user.id,
+        }
+      });
+      console.log("Fetched applied projects:", response.data);
+      setProjects(response.data || []);
+    } else if (selectedList === 'written') {
+      const params = {
+        creatorId: 'null',
+        sk: feedType
+      };
+      const response = await axios.get('/my/writing', { params });
+      setProjects(response.data || []);
+    }
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    setProjects([]);
+  }
+}, [user, selectedList, feedType]); // 필요한 의존성만 포함
 
-  //   fetchProjects();
-  // }, []);
+// 초기 데이터 로드를 위한 useEffect
+useEffect(() => {
+  refreshProjects();
+}, [selectedList, user?.id, feedType]); // refreshProjects 제거
 
   // 선택된 목록이 변경될 때 신청 프로젝트를 가져오는 새로운 useEffect
  
 //신청목록
-  useEffect(() => {
-    const fetchAppliedProjects = async () => {
-      if (selectedList === 'applied' && user) {
-        try {
-          const response = await axios.get('/feed/applications', {
-            params: {
-              userId: user.id,
-            }
-          });
-          console.log("Fetched applied projects:", response.data);
-      
-         
-        } catch (error) {
-          console.error("신청 프로젝트를 가져오는 중 오류 발생:", error);
-          setProjects([]); // 오류 발생 시에도 빈 배열로 초기화
-        }
-      }
-    };
-
-    fetchAppliedProjects();
-  }, [selectedList, user, feedType]); // feedType 추가
-
-
-
-//written === Response Details ===
-//index.js:102 Status: 200
-//index.js:103 Data: (10) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
-useEffect(() => {
-  const fetchCreatorProjects = async () => {
-    if (selectedList === 'written' && user) {
-      try {
-        console.log('=== Request Details ===');
-        console.log('Creator Nickname:', user.nickname);
-        console.log('Feed Type:', feedType);
-
-        const params = {
-          // creatorId: user.nickname,
-          creatorId: 'null',
-          sk: feedType
-        };
-
-        console.log('Request Params:', { creatorId: user.nickname, sk: feedType });
-
-        const response = await axios.get('/my/writing', { params });
-
-        console.log('=== Response Details ===');
-        console.log('Status:', response.status);
-        console.log('Data:', response.data);
-
-        setProjects(response.data || []);
-      } catch (error) {
-        console.error("API Error Details:", {
-          status: error.response?.status,
-          data: error.response?.data,
-          params: error.config?.params,
-          requestData: error.config?.data
-        });
-      }
-    }
-  };
-
-  fetchCreatorProjects();
-}, [selectedList, user, feedType]);
-
-
-// //특정 프로젝트 누를때 실행 되는거 // 툭종 프로젝트의 지원자 정보 가져오는?? 
-//     {
-//   "pk": "f448fd8c-5061-702c-8c22-3636be5d18c9",
-//   "sk": "6b26a3bc-0f6c-453e-9ef3-3b00d110a8cf",
-//   "entityType": "APPLICATION",
-//   "part": "developer",
-//   "status": "REJECTED",
-//   "feedType": "PROJECT",
-//   "timestamp": "2024-12-06T10:07:23.249026"
-// }
   useEffect(() => {
     const fetchApplications = async (feedId) => {
       try {
@@ -160,9 +98,13 @@ useEffect(() => {
 
   const indexOfLastProject = currentPage * projectsPerPage;
   const indexOfFirstProject = indexOfLastProject - projectsPerPage;
-  const currentProjects = projects.slice(indexOfFirstProject, indexOfLastProject) || [];
+  const currentProjects = projects.slice(indexOfFirstProject, indexOfLastProject);
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    console.log('Page changed to:', pageNumber);
+    console.log('Showing projects:', indexOfFirstProject, 'to', indexOfLastProject);
+  };
 
 
   //    // 선택된 프로젝트의 세부정보 가져오기
@@ -300,6 +242,8 @@ const handleProjectClose = async (projectId, feedType) => {
           projectsPerPage={projectsPerPage}
           totalProjects={projects.length}
           paginate={paginate}
+          currentPage={currentPage}
+          refreshProjects={refreshProjects}
         />
       )}
     </Container>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment } from '@fortawesome/free-solid-svg-icons';
@@ -35,11 +35,6 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
         ['전체', ...project.role.map(role => role.name)] : 
         ['전체'];
 
-    const refreshProjects = useCallback(() => {
-        // 프로젝트를 새로 고치는 로직
-        console.log("Projects refreshed");
-    }, []);
-
     useEffect(() => {
         const fetchApplicants = async () => {
             try {
@@ -69,8 +64,7 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
         };
 
         fetchApplicants();
-        refreshProjects();
-    }, [project.pk, selectedField, refreshProjects]); // feedId 또는 selectedField가 변경될 때 호출
+    }, [project.pk, selectedField]); // feedId 또는 selectedField가 변경될 때 호출
 
 
     // const applicants = project.applicants || [];

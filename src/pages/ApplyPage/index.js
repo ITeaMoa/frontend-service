@@ -771,7 +771,7 @@ const SubmitButton = styled.button`
   font-weight: bold;
   cursor: pointer;
   padding: 10px 20px;
-  margin-top: 70px;
+  // margin-top: 70px;
 
 
   &:hover {

@@ -207,7 +207,7 @@ const handleCloseSubmissionPopup = () => {
           <ProjectCard key={index}  onClick={() => handleProjectClick(project)}>
             <ProjectOwner>
               <FontAwesomeIcon icon={regularUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
-              {user && user.nickname === project.creatorId ? '나' : project.creatorId}
+              {project.nickname}
             </ProjectOwner>
             <LikeButtonWrapper>
               <LikeButton 

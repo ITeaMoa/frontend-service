@@ -94,7 +94,12 @@ const WritePage = ({ feedType: initialFeedType }) => {
 
     console.log('전송할 데이터:', JSON.stringify(dataToSend, null, 2));
 
-    // API 요청
+    // API 요청 전에 params 출력
+    console.log('전송할 params:', {
+        feedType,
+        userId: user ? user.id : null,
+    });
+
     axios.post(`/feed/create`, dataToSend, {
         headers: {
             'Content-Type': 'application/json',
@@ -277,6 +282,8 @@ const handlePeriodSelect = (selectedOption) => {
 const handleToggleChange = (newFeedType) => {
     console.log("Feed type changed to:", newFeedType);
     setFeedType(newFeedType);
+    // handleSubmit을 호출하여 전송을 시도할 수 있습니다.
+    // handleSubmit(newFeedType)와 같이 인자를 전달합니다.
 };
 
 useEffect(() => {

@@ -76,6 +76,7 @@ const ProjectListComponent = ({
   }, [selectedList, refreshProjects]);
 
   useEffect(() => {
+    console.log('Current projects data:', currentProjects);
     console.log('Current state:', {
       selectedList,
       projectsCount: currentProjects?.length,
@@ -213,7 +214,7 @@ const ProjectListComponent = ({
               <ProjectHeader>
                 <HeaderItem>
                   <FontAwesomeIcon icon={regularUser} size="15px" />
-                  <span>{project.creatorId}</span>
+                  <span>{project.nickname}</span>
                 </HeaderItem>
                 <HeaderItem>
                   <StyledFontAwesomeIcon icon={faHeart} />

@@ -49,7 +49,7 @@ const refreshProjects = useCallback(async () => {
       setProjects(response.data || []);
     } else if (selectedList === 'written') {
       const params = {
-        creatorId: 'null',
+        creatorId: user.id,
         sk: feedType
       };
       const response = await axios.get('/my/writing', { params });

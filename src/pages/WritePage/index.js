@@ -89,7 +89,7 @@ const WritePage = ({ feedType: initialFeedType }) => {
             acc[role.role.toLowerCase()] = role.count;
             return acc;
         }, {}) : {},
-        creatorId: user ? user.nickname : 'Unknown',
+        creatorId: user ? user.id : 'Unknown',
     };
 
     console.log('전송할 데이터:', JSON.stringify(dataToSend, null, 2));

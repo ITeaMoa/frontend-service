@@ -36,7 +36,7 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
         ['전체'];
 
     useEffect(() => {
-        const fetchApplications = async (feedId) => {
+        const fetchApplications = async (feedId, part) => {
             if (!feedId) {
                 console.error('feedId is undefined. Cannot fetch applications.');
                 return; // feedId가 없으면 요청을 보내지 않음
@@ -44,14 +44,14 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
 
             console.log("Fetching applications with feedId:", feedId, {
                 feedId: feedId,
-                part: 'developer'
+                part: part
             }); // params를 콘솔에 출력
 
             try {
                 const response = await axios.get(`my/writing/application`, {
                     params: {
                         feedId: feedId,
-                        part: 'developer'
+                        part: part // project의 part 속성을 사용
                     }
                 });
 
@@ -70,7 +70,7 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
 
         // selectedProject가 유효한 경우에만 fetchApplications 호출
         if (project?.pk) {
-            fetchApplications(project.pk); // selectedProject.pk를 feedId로 사용
+            fetchApplications(project.pk, project.part); // selectedProject.pk를 feedId로 사용
         } else {
             console.error('selectedProject is not valid:', project);
         }

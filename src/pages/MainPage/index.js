@@ -167,14 +167,17 @@ const updateUserProfile = async () => {
   try {
       const response = await axios.put(`my/profile/${nickname}`, data);
       console.log(response.data);
+
+      // 프로필 정보를 localStorage에 저장
+      localStorage.setItem('userProfile', JSON.stringify(profileData)); // 프로필 정보 저장
   } catch (error) {
       console.error(error);
   }
 };
 
-  const handleModalClose = () => {
-    setIsRoleModalOpen(false);
-    updateUserProfile(); 
+  const handleModalClose = async () => {
+    await updateUserProfile(); // 프로필 업데이트 후
+    setIsRoleModalOpen(false); // 모달 닫기
   };
 
   useEffect(() => {
@@ -184,7 +187,7 @@ const updateUserProfile = async () => {
     setIsRoleModalOpen(showModal);
 
     // 사용자가 로그인했는지 확인하고 프로필이 불완전한지 체크
-    if (user && (!userProfile.headLine || userProfile.tags.length === 0)) {
+    if (user && (!userProfile.headLine || userProfile.tags.length === 0 || !userProfile.educations.length || !userProfile.personalUrl.length || !userProfile.experiences.length)) {
       setIsRoleModalOpen(true); // 프로필이 불완전하면 모달 열기
     }
   }, [location.search, user, userProfile]); // 의존성 배열에 userProfile 추가
@@ -233,7 +236,7 @@ const handleImageUpload = (e) => {
       {showModal && (
         <Modal isOpen={isRoleModalOpen} onClose={handleModalClose} modalType="mypage">
           <StyledModalTitle>프로필 설정</StyledModalTitle>
-          <StyledForm onSubmit={(e) => { e.preventDefault(); updateUserProfile(); }}>
+          <StyledForm onSubmit={(e) => { e.preventDefault(); handleModalClose(); }}>
             
             
             <Label>

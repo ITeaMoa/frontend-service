@@ -114,6 +114,7 @@ const SignUpPage = () => {
         );
         console.log('인증 응답:', response.data);
         alert('이메일 인증이 완료되었습니다.');
+        setIsResendDisabled(false);
     } catch (error) {
         console.error('이메일 인증 오류:', error);
         alert('이메일 인증에 실패했습니다. 인증번호를 확인하세요.');

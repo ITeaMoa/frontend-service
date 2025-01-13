@@ -176,20 +176,22 @@ const handleLikeClick = (newLiked, newLikesCount) => {
       return;
     }
 
-    // 역할 선택 모달 닫기
+    console.log('제출된 역할:', selectedRole); // 선택된 역할 로깅
+    console.log('프로젝트 ID:', projectId); // 프로젝트 ID 로깅
+    console.log('사용자 ID:', user?.id); // 사용자 ID 로깅
+
     setIsRoleModalOpen(false);
 
     try {
       // 선택한 역할을 서버에 전송
-      await postSelectedRole(selectedRole);
+      const response = await postSelectedRole(selectedRole);
+      console.log('서버 응답:', response); // 서버 응답 로깅
 
       setPopupMessage("제출되었습니다.");
-      // 제출 확인 팝업 표시
       setIsSubmitted(true);
     } catch (error) {
       console.error("Submission failed:", error);
       setPopupMessage("제출에 실패했습니다. 다시 시도하세요.");
-      // 제출 확인 팝업 표시
       setIsSubmitted(true);
     }
   };

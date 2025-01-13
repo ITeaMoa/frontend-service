@@ -135,7 +135,7 @@ const handleProjectClick = (project, feedType) => {
           <ProjectCard key={index} onClick={() => handleProjectClick(project)}>
             <AuthorID>
               <FontAwesomeIcon icon={regularUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
-              {user ? '나' : project.creatorId}
+              {user && user.nickname === project.creatorId ? '나' : project.creatorId}
             </AuthorID>
             <LikeButtonWrapper>
               <LikeButton 

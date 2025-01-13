@@ -65,7 +65,7 @@ const ProjectListComponent = ({
     };
 
     loadCompletedProjects();
-  }, [completedProjects]); // markProjectAsCompleted 제거
+  }, [completedProjects, markProjectAsCompleted]); // markProjectAsCompleted 추가
 
   // selectedList 변경 시 데이터를 새로 불러오는 useEffect
   useEffect(() => {

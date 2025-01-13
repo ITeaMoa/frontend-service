@@ -48,6 +48,12 @@ const WritePage = ({ feedType: initialFeedType }) => {
   const handleSubmit = async (e, isTemporary) => {
     e.preventDefault();
 
+    // user가 존재하는지 확인
+    if (!user || !user.id) {
+        alert('로그인 상태가 아닙니다. 로그인 후 다시 시도해주세요.');
+        return; // 로그인 상태가 아닐 경우 함수 종료
+    }
+
     const missingFields = [];
 
     if (!title.trim()) {

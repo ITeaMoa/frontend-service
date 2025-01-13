@@ -166,7 +166,7 @@ const ProjectListComponent = ({
                   <ProjectHeader>
                     <HeaderItem>
                       <FontAwesomeIcon icon={regularUser} size="15px" />
-                      <span>{project.creatorId}</span>
+                      <span>{project.nickname}</span>
                       <StyledFontAwesomeIcon2 icon={faHeart} />
                       <span>{project.likesCount || 0}</span>
                     </HeaderItem>

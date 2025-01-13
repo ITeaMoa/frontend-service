@@ -75,7 +75,7 @@ function Section1({ feedType }) {
 
   useEffect(() => {
     fetchPopularProjects();
-  }, [fetchPopularProjects]);
+  }, [fetchPopularProjects, feedType]);
 
   useEffect(() => {
     fetchUserLikes();

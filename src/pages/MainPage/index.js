@@ -187,8 +187,10 @@ const updateUserProfile = async () => {
     setIsRoleModalOpen(showModal);
 
     // 사용자가 로그인했는지 확인하고 프로필이 불완전한지 체크
-    if (user && (!userProfile.headLine || userProfile.tags.length === 0 || !userProfile.educations.length || !userProfile.personalUrl.length || !userProfile.experiences.length)) {
+    if (user && userProfile && (!userProfile.headLine || userProfile.tags.length === 0 || !userProfile.educations.length || !userProfile.personalUrl.length || !userProfile.experiences.length)) {
       setIsRoleModalOpen(true); // 프로필이 불완전하면 모달 열기
+    } else {
+      setIsRoleModalOpen(false); // 사용자가 로그인하지 않았거나 프로필이 완전하면 모달 닫기
     }
   }, [location.search, user, userProfile]); // 의존성 배열에 userProfile 추가
 

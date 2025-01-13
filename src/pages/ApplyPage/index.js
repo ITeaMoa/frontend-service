@@ -167,6 +167,7 @@ const handleLikeClick = (newLiked, newLikesCount) => {
   };
 
   const handleRoleSelect = (role) => {
+    console.log(`선택된 역할: ${role}`); // 선택된 역할을 콘솔에 출력
     setSelectedRole(role);
   };
 
@@ -222,11 +223,14 @@ const postSelectedRole = async (role) => {
     part: role, // 선택한 역할
   };
 
+  console.log('Sending application data:', applicationData); // 전송할 데이터 콘솔 출력
+
   try {
     const response = await axios.post(
       `/feed/apply?feedType=PROJECT&projectId=${projectId}`, // projectId를 쿼리 파라미터로 추가
       applicationData
     );
+    console.log('서버 응답:', response.data); // 서버 응답을 콘솔에 출력
     return response.data; // 서버로부터의 응답 데이터 반환
   } catch (error) {
     console.error('서버 요청 실패:', error);

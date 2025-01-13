@@ -17,42 +17,55 @@ const ProjectListComponent = ({
   totalProjects, 
   paginate, 
   currentPage,
-  refreshProjects  // 새로 추가된 prop
+  refreshProjects,  // 새로 추가된 prop
+  setPopupMessage
 }) => {
   const [isFading, setIsFading] = useState(false);
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
   const { completedProjects = [], markProjectAsCompleted } = useProject(); // 기본값을 빈 배열로 설정
-  const [projects, setProjects] = useState(currentProjects); // 상태 추가
+  // eslint-disable-next-line no-unused-vars
+  const [projects, setProjects] = useState(currentProjects);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [selectedProjectForCancel, setSelectedProjectForCancel] = useState(null);
 
   // localStorage 데이터 로드를 위한 useEffect 수정
   useEffect(() => {
     const loadCompletedProjects = () => {
-      const saved = localStorage.getItem('completedProjects');
-      if (saved) {
-        try {
-          const completedArray = JSON.parse(saved);
-          const savedProjects = new Set(completedArray);
-          
-          // 현재 완료된 프로젝트 배열 확인
-          const currentCompleted = Array.isArray(completedProjects) 
-            ? completedProjects 
-            : [];
-          
-          savedProjects.forEach(projectId => {
-            if (!currentCompleted.includes(projectId)) {
-              markProjectAsCompleted(projectId);
+        const saved = localStorage.getItem('completedProjects');
+        if (saved) {
+            try {
+                const completedArray = JSON.parse(saved);
+                const savedProjects = new Set(completedArray);
+                
+                // 현재 완료된 프로젝트 배열 확인
+                const currentCompleted = Array.isArray(completedProjects) 
+                    ? completedProjects 
+                    : [];
+                
+                // 완료된 프로젝트를 업데이트할 필요가 있는지 확인
+                const projectsToMark = [...savedProjects].filter(projectId => 
+                    !currentCompleted.includes(projectId)
+                );
+
+                // 상태 업데이트를 최소화
+                if (projectsToMark.length > 0) {
+                    projectsToMark.forEach(projectId => {
+                        markProjectAsCompleted(projectId);
+                    });
+                }
+            } catch (error) {
+                console.error('완료된 프로젝트 로드 중 오류:', error);
             }
-          });
-        } catch (error) {
-          console.error('Error loading completed projects:', error);
+        } else {
+            // localStorage가 비어있을 경우, 모든 프로젝트 완료 상태 초기화
+            completedProjects.forEach(projectId => {
+                markProjectAsCompleted(projectId); // 모든 프로젝트 완료 상태 초기화
+            });
         }
-      }
     };
 
     loadCompletedProjects();
-  }, []); // 마운트 시에만 실행
+  }, [completedProjects]); // markProjectAsCompleted 제거
 
   // selectedList 변경 시 데이터를 새로 불러오는 useEffect
   useEffect(() => {
@@ -72,21 +85,24 @@ const ProjectListComponent = ({
 
   // 프로젝트 완료 처리 함수 수정
   const handleButtonClick = (project) => {
-    setIsFading(true);
-    setTimeout(() => {
-      handleProjectClick(project);
-      setIsFading(false);
-      
-      // localStorage에 직접 저장
-      const saved = localStorage.getItem('completedProjects');
-      const completedArray = saved ? JSON.parse(saved) : [];
-      if (!completedArray.includes(project.pk)) {
-        completedArray.push(project.pk);
-        localStorage.setItem('completedProjects', JSON.stringify(completedArray));
-      }
-      
-      markProjectAsCompleted(project.pk);
-    }, 100);
+    // 프로젝트가 완료되지 않은 경우에만 완료 처리
+    if (!isProjectCompleted(project.pk)) {
+        setIsFading(true);
+        setTimeout(() => {
+            handleProjectClick(project);
+            setIsFading(false);
+            
+            // localStorage에서 완료된 프로젝트 목록 초기화
+            localStorage.removeItem('completedProjects'); // 완료된 프로젝트 목록 삭제
+            
+            // 모든 프로젝트의 완료 상태를 초기화
+            setProjects(prevProjects => 
+                prevProjects.map(p => ({ ...p, completed: false })) // 모든 프로젝트의 completed 상태를 false로 설정
+            );
+        }, 100);
+    } else {
+        console.log("이미 완료된 프로젝트입니다."); // 디버깅용 로그
+    }
   };
 
   // 프로젝트 상태 확인 함수 추가
@@ -163,10 +179,16 @@ const ProjectListComponent = ({
                     ))}
                   </Tags>
                   <Button2 onClick={() => {
-                    if (user && user.id && project.pk) {
-                      handleCancelApplication(user.id, project.pk);
+                    if (user && user.id && project.feedId) {
+                      console.log("User ID:", user.id);
+                      console.log("Project Feed ID:", project.feedId);
+                      handleCancelApplication(user.id, project.feedId);
                     } else {
                       console.error("User or project information is missing");
+                      console.log("User:", user);
+                      console.log("User ID:", user ? user.id : "없음");
+                      console.log("Project:", project);
+                      console.log("Project Feed ID:", project ? project.feedId : "없음");
                     }
                   }}>
                     신청 취소
@@ -238,7 +260,6 @@ const ProjectListComponent = ({
   );
 };
 export default ProjectListComponent;
-
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -392,3 +413,4 @@ const ModalButton = styled.button`
     background-color: #a0dafb;
   }
 `;
+

@@ -36,35 +36,45 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
         ['전체'];
 
     useEffect(() => {
-        const fetchApplicants = async () => {
+        const fetchApplications = async (feedId) => {
+            if (!feedId) {
+                console.error('feedId is undefined. Cannot fetch applications.');
+                return; // feedId가 없으면 요청을 보내지 않음
+            }
+
+            console.log("Fetching applications with feedId:", feedId, {
+                feedId: feedId,
+                part: 'developer'
+            }); // params를 콘솔에 출력
+
             try {
-                const params = {
-                    feedId: project.pk,
-                    part: selectedField // 'developer'와 같은 역할을 선택할 수 있도록
-                };
+                const response = await axios.get(`my/writing/application`, {
+                    params: {
+                        feedId: feedId,
+                        part: 'developer'
+                    }
+                });
 
-                console.log('Requesting applicants with params:', params);
-
-                // GET 요청으로 변경
-                const response = await axios.get('my/writing/part', { params });
+                console.log("Fetched applicants data:", response.data); // 추가된 콘솔 로그
 
                 if (response.data) {
-                    setApplicants(response.data);
+                    setApplicants(response.data); // 지원자 정보는 별도의 state에 저장
                 } else {
-                    console.warn("No applicants found");
                     setApplicants([]);
                 }
             } catch (error) {
-                console.error("Error fetching applicants:", error);
-                if (error.response) {
-                    console.error("Response data:", error.response.data);
-                    console.error("Response status:", error.response.status);
-                }
+                console.error("지원자 정보를 가져오는 중 오류 발생:", error);
+                setApplicants([]);
             }
         };
 
-        fetchApplicants();
-    }, [project.pk, selectedField]); // feedId 또는 selectedField가 변경될 때 호출
+        // selectedProject가 유효한 경우에만 fetchApplications 호출
+        if (project?.pk) {
+            fetchApplications(project.pk); // selectedProject.pk를 feedId로 사용
+        } else {
+            console.error('selectedProject is not valid:', project);
+        }
+    }, [project]);
 
 
     // const applicants = project.applicants || [];

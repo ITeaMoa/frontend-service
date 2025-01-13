@@ -64,13 +64,18 @@ const refreshProjects = useCallback(async () => {
 // 초기 데이터 로드를 위한 useEffect
 useEffect(() => {
   refreshProjects();
-}, [selectedList, user?.id, feedType]); // refreshProjects 제거
+}, [selectedList, user?.id, feedType, refreshProjects]); // refreshProjects 추가
 
   // 선택된 목록이 변경될 때 신청 프로젝트를 가져오는 새로운 useEffect
  
 //신청목록
   useEffect(() => {
     const fetchApplications = async (feedId) => {
+      if (!feedId) {
+        console.error('feedId is undefined. Cannot fetch applications.');
+        return; // feedId가 없으면 요청을 보내지 않음
+      }
+
       try {
         const response = await axios.get(`my/writing/application`, {
           params: {

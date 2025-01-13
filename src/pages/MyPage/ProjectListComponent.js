@@ -6,97 +6,29 @@ import styled from 'styled-components';
 import Pagination from '../../components/Pagination';
 import axios from '../../api/axios'; // Axios import 추가
 // import axios from 'axios';
-import { useAuth, useProject } from '../../context/AuthContext'
-import Modal from '../../components/Modal';  // Modal 컴포넌트 import
+import { useAuth } from '../../context/AuthContext'
 
-const ProjectListComponent = ({ 
-  selectedList, 
-  currentProjects = [], 
-  handleProjectClick, 
-  projectsPerPage, 
-  totalProjects, 
-  paginate, 
-  currentPage,
-  refreshProjects  // 새로 추가된 prop
-}) => {
+const ProjectListComponent = ({ selectedList, currentProjects = [], handleProjectClick, projectsPerPage, totalProjects, paginate, currentPage }) => {
   const [isFading, setIsFading] = useState(false);
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
-  const { completedProjects = [], markProjectAsCompleted } = useProject(); // 기본값을 빈 배열로 설정
   const [projects, setProjects] = useState(currentProjects); // 상태 추가
-  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [selectedProjectForCancel, setSelectedProjectForCancel] = useState(null);
 
-  // localStorage 데이터 로드를 위한 useEffect 수정
+  // selectedList가 변경될 때마다 projects 상태 업데이트
   useEffect(() => {
-    const loadCompletedProjects = () => {
-      const saved = localStorage.getItem('completedProjects');
-      if (saved) {
-        try {
-          const completedArray = JSON.parse(saved);
-          const savedProjects = new Set(completedArray);
-          
-          // 현재 완료된 프로젝트 배열 확인
-          const currentCompleted = Array.isArray(completedProjects) 
-            ? completedProjects 
-            : [];
-          
-          savedProjects.forEach(projectId => {
-            if (!currentCompleted.includes(projectId)) {
-              markProjectAsCompleted(projectId);
-            }
-          });
-        } catch (error) {
-          console.error('Error loading completed projects:', error);
-        }
-      }
-    };
-
-    loadCompletedProjects();
-  }, []); // 마운트 시에만 실행
-
-  // selectedList 변경 시 데이터를 새로 불러오는 useEffect
-  useEffect(() => {
-    if (selectedList === 'applied' && refreshProjects) {
-      refreshProjects();
-      console.log('Refreshing applied projects data...');
+    if (selectedList === 'applied') {
+      setProjects(currentProjects); // 신청 목록일 때 currentProjects로 설정
+    } else {
+      setProjects([]); // 작성 목록일 때는 빈 배열로 초기화
     }
-  }, [selectedList, refreshProjects]);
-
-  useEffect(() => {
-    console.log('Current state:', {
-      selectedList,
-      projectsCount: currentProjects?.length,
-      projects: currentProjects
-    });
   }, [selectedList, currentProjects]);
 
-  // 프로젝트 완료 처리 함수 수정
   const handleButtonClick = (project) => {
     setIsFading(true);
     setTimeout(() => {
       handleProjectClick(project);
       setIsFading(false);
       
-      // localStorage에 직접 저장
-      const saved = localStorage.getItem('completedProjects');
-      const completedArray = saved ? JSON.parse(saved) : [];
-      if (!completedArray.includes(project.pk)) {
-        completedArray.push(project.pk);
-        localStorage.setItem('completedProjects', JSON.stringify(completedArray));
-      }
-      
-      markProjectAsCompleted(project.pk);
     }, 100);
-  };
-
-  // 프로젝트 상태 확인 함수 추가
-  const isProjectCompleted = (projectId) => {
-    const saved = localStorage.getItem('completedProjects');
-    if (saved) {
-      const completedArray = JSON.parse(saved);
-      return completedArray.includes(projectId);
-    }
-    return false;
   };
 
   const handleCancelApplication = async (userId, feedId) => {
@@ -105,119 +37,127 @@ const ProjectListComponent = ({
         return;
     }
 
-    // 취소할 프로젝트 정보 저장하고 모달 열기
-    setSelectedProjectForCancel({ userId, feedId });
-    setIsConfirmModalOpen(true);
-  };
+    const requestData = {
+        pk: userId,
+        sk: feedId
+    };
 
-  const handleConfirmCancel = async () => {
-    const { userId, feedId } = selectedProjectForCancel;
-    
+    console.log('전송할 데이터:', requestData);
+
     try {
-        const response = await axios.patch('/my/writing/cancel', {
-            pk: userId,
-            sk: feedId
-        }, {
+        const response = await axios.patch('/my/writing/cancel', requestData, {
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json' // JSON 형식으로 전송
             }
         });
         console.log('응답:', response.data);
+        alert('신청이 취소되었습니다.');
+
+        // 프로젝트 목록에서 해당 프로젝트 제거
         setProjects(prevProjects => prevProjects.filter(project => project.pk !== feedId));
-        setPopupMessage('신청이 취소되었습니다.');
     } catch (error) {
-        console.error('오류 세부정보:', error);
-        setPopupMessage(`신청 취소 중 오류가 발생했습니다. (${error.response?.data || '알 수 없는 오류'})`);
+        console.error('오류 세부정보:', {
+            status: error.response?.status,
+            data: error.response?.data,
+            config: error.config
+        });
+        alert(`신청 취소 중 오류가 발생했습니다. (${error.response?.data || '알 수 없는 오류'})`);
     }
-    
-    // 모달 닫기
-    setIsConfirmModalOpen(false);
   };
 
   return (
     <Container>
       <ProjectList isFading={isFading}>
-        {selectedList === 'applied' ? (
-          <>
-            {currentProjects.length === 0 ? (
-              <p>신청한 프로젝트가 없습니다.</p>
-            ) : (
-              currentProjects.map((project, index) => (
-                <ProjectItem 
-                  key={`applied-${project.pk || project.sk || index}`}
-                >
-                  <ProjectHeader>
-                    <HeaderItem>
-                      <FontAwesomeIcon icon={regularUser} size="15px" />
-                      <span>{project.creatorId}</span>
-                      <StyledFontAwesomeIcon2 icon={faHeart} />
-                      <span>{project.likesCount || 0}</span>
-                    </HeaderItem>
-                  </ProjectHeader>
-
-                  <p>{project.title}</p>
-                
-                  <Tags>
-                    {project.tags && project.tags.map((tag, index) => (
-                      <Tag key={index}>{tag}</Tag>
-                    ))}
-                  </Tags>
-                  <Button2 onClick={() => {
-                    if (user && user.id && project.pk) {
-                      handleCancelApplication(user.id, project.pk);
-                    } else {
-                      console.error("User or project information is missing");
-                    }
-                  }}>
-                    신청 취소
-                  </Button2>
-                  <AdditionalInfo>
-                    <span>지원분야: {project.part}</span>
-                    <span>모집현황: {project.recruitmentNum}명</span>
-                    <span>마감일자: {new Date(project.deadline).toLocaleDateString()}</span>
-                    <span>진행기간: {project.period ? `${project.period}개월` : '정보없음'}</span>
-                    <span>상태: Pending</span>
-                  </AdditionalInfo>
-                </ProjectItem>
-              ))
-            )}
-          </>
-        ) : (
-          // written 목록 렌더링 부분은 그대로 유지
-          currentProjects && currentProjects.map((project, index) => (
-            <ProjectItem 
-              key={`written-${project.pk || project.sk || index}`}
+      {selectedList === 'written' && currentProjects && currentProjects.map((project, index) => (
+  <ProjectItem key={`written-${project.pk}`}>
+    <ProjectHeader>
+      <HeaderItem>
+        <FontAwesomeIcon icon={regularUser} size="15px" />
+        <span>{project.creatorId}</span>
+      </HeaderItem>
+      {/* <span>제목: {project.title}</span> */}
+      <HeaderItem>
+        <StyledFontAwesomeIcon icon={faHeart} />
+        <span>{project.likesCount}</span>
+      </HeaderItem>
+    </ProjectHeader>
+    <p>{project.title}</p>
+    <Tags>
+      {Array.isArray(project.tags) && project.tags.length > 0 ? (
+        project.tags.map((tag, index) => (
+          <Tag key={index}>{tag}</Tag>
+        ))
+      ) : (
+        <span>태그가 없습니다.</span> // 태그가 없을 때 표시할 메시지
+      )}
+    </Tags>
+    <Button 
+      onClick={() => handleButtonClick(project)}
+      disabled={project.isCompleted} // 모집 완료 시 버튼 비활성화
+    >
+      {project.isCompleted ? '모집완료' : '모집 현황'}
+            </Button> 
+            {/* <Button 
+                onClick={() => handleCloseApplication(project.pk)}
+                disabled={project.isCompleted} // 모집 완료 시 버튼 비활성화
             >
-              <ProjectHeader>
-                <HeaderItem>
-                  <FontAwesomeIcon icon={regularUser} size="15px" />
-                  <span>{project.creatorId}</span>
-                </HeaderItem>
-                <HeaderItem>
-                  <StyledFontAwesomeIcon icon={faHeart} />
-                  <span>{project.likesCount}</span>
-                </HeaderItem>
-              </ProjectHeader>
-              <p>{project.title}</p>
-              <Tags>
-                {Array.isArray(project.tags) && project.tags.length > 0 ? (
-                  project.tags.map((tag, tagIndex) => (
-                    <Tag key={`${project.pk}-tag-${tagIndex}`}>{tag}</Tag>
-                  ))
-                ) : (
-                  <span>태그가 없습니다.</span>
-                )}
-              </Tags>
-              <Button 
-                onClick={() => handleButtonClick(project)}
-                disabled={isProjectCompleted(project.pk)}
-              >
-                {isProjectCompleted(project.pk) ? '모집완료' : '모집 현황'}
-              </Button>
-            </ProjectItem>
-          ))
+                모집완료
+            </Button> */}
+            {/* <Button onClick={() => handleButtonClick(project)}>
+            {project.isCompleted ? '모집완료' : '모집 현황'}
+            </Button> */}
+
+<Button 
+    onClick={() => handleButtonClick(project)}
+    disabled={project.isCompleted} // 모집 완료 시 버튼 비활성화
+>
+    {project.isCompleted ? '모집완료' : '모집 현황'}
+</Button>
+          </ProjectItem>
+        ))}
+
+        {selectedList === 'applied' && projects.length === 0 && (
+          <p>신청한 프로젝트가 없습니다.</p>
         )}
+        {selectedList === 'applied' && projects.map((project) => (
+          <ProjectItem key={`applied-${project.feedId}`}>
+            <ProjectHeader>
+              <HeaderItem>
+                <FontAwesomeIcon icon={regularUser} size="15px" />
+                <span>{project.creatorId || 'Unknown'}</span>
+              </HeaderItem>
+              <StyledFontAwesomeIcon2 icon={faHeart} />
+              <span>{project.likesCount || 0}</span>
+            </ProjectHeader>
+            <p>{project.title}</p>
+            <Tags>
+              {project.tags && project.tags.map((tag, index) => (
+                <Tag key={index}>{tag}</Tag>
+              ))}
+            </Tags>
+            <Button2 onClick={() => {
+              if (user && user.id && project.feedId) {
+                handleCancelApplication(user.id, project.feedId);
+              } else {
+                console.error("User or project information is missing", { user, project });
+              }
+            }}>
+              신청 취소
+            </Button2>
+            <AdditionalInfo>
+            
+            <span>자원분야: {project.part}</span>
+            <span>모집현황: {project.recruitmentNum}명</span>
+            <span>신청 일자: {new Date(project.timestamp).toLocaleDateString()}</span>
+              <span>마감일자: {new Date(project.deadline).toLocaleDateString()}</span>
+            
+              <span>상태: Pending</span>
+             
+            </AdditionalInfo>
+          </ProjectItem>
+        ))}
       </ProjectList>
+
 
       <Pagination 
         currentPage={currentPage}
@@ -225,15 +165,6 @@ const ProjectListComponent = ({
         totalProjects={totalProjects} 
         onPageChange={paginate} 
       />
-
-      {/* 취소 확인 모달 */}
-      <Modal isOpen={isConfirmModalOpen} onClose={() => setIsConfirmModalOpen(false)}>
-        <h3 style={{ textAlign: 'center' }}>정말로 신청을 취소하시겠습니까?</h3>
-        <ButtonContainer>
-          <ModalButton onClick={handleConfirmCancel}>확인</ModalButton>
-          <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton>
-        </ButtonContainer>
-      </Modal>
     </Container>
   );
 };
@@ -328,7 +259,7 @@ const Tag = styled.span`
 
 const Button = styled.button`
   position: absolute;
-  background-color: ${props => props.disabled ? '#808080' : '#3563E9'};
+  background-color: #3563E9;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -336,10 +267,9 @@ const Button = styled.button`
   cursor: pointer;
   right: 15px;
   bottom: 30px;
-  opacity: ${props => props.disabled ? 0.6 : 1};
 
   &:hover {
-    background-color: ${props => props.disabled ? '#808080' : '#a0dafb'};
+    background-color: #a0dafb;
   }
 `;
 
@@ -371,24 +301,4 @@ const AdditionalInfo = styled.div`
   bottom: 30px;
   
   
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 20px;
-`;
-
-const ModalButton = styled.button`
-  background-color: #3563E9;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #a0dafb;
-  }
 `;

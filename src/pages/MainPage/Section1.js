@@ -61,7 +61,7 @@ function Section1({ feedType }) {
         const isLiked = likedProjects.find(likedProject => likedProject.id === project.id);
         return {
           ...project,
-          creatorId: project.creatorId || 'Unknown',
+          creatorId: project.creatorId,
           liked: isLiked ? isLiked.liked : false,
           likesCount: project.likesCount || 0,
         };

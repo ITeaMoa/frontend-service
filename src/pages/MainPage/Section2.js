@@ -88,6 +88,7 @@ const Section2 = ({ feedType }) => {
       });
   
       setAllProjects(projectsWithLikes);
+      console.log(projectsWithLikes); // 프로젝트 목록을 콘솔에 출력
     } catch (error) {
       console.error('인기 프로젝트 가져오기 실패:', error);
     }

@@ -80,18 +80,18 @@ const option3 = [
 
   useEffect(() => {
     // 로컬 스토리지에서 토글 상태 가져오기
-    const storedToggleState = localStorage.getItem('toggleActive');
-    if (storedToggleState !== null) {
-      setToggleActive(JSON.parse(storedToggleState));
-    } else {
-      // 로컬 스토리지에 값이 없을 경우 기본값 설정
-      localStorage.setItem('toggleActive', JSON.stringify(false));
-    }
+    // const storedToggleState = localStorage.getItem('toggleActive');
+    // if (storedToggleState !== null) {
+    //   setToggleActive(JSON.parse(storedToggleState));
+    // } else {
+    //   // 로컬 스토리지에 값이 없을 경우 기본값 설정
+    //   localStorage.setItem('toggleActive', JSON.stringify(false));
+    // }
   }, []);
 
   useEffect(() => {
-   //토글 상태가 변경될 때마다 로컬 스토리지에 저장
-    localStorage.setItem('toggleActive', JSON.stringify(toggleActive));
+    // 토글 상태가 변경될 때마다 로컬 스토리지에 저장
+    // localStorage.setItem('toggleActive', JSON.stringify(toggleActive));
   }, [toggleActive]);
 
 
@@ -100,8 +100,8 @@ const option3 = [
     const newToggleState = !toggleActive;
     setToggleActive(newToggleState);
     
-    // 상태 변경 시 로컬 스토리지에 저장
-    localStorage.setItem('toggleActive', JSON.stringify(newToggleState));
+    // // 상태 변경 시 로컬 스토리지에 저장
+    // localStorage.setItem('toggleActive', JSON.stringify(newToggleState));
 
     if (onToggleChange) { // onToggleChange가 함수인지 확인
       onToggleChange(newToggleState ? 'STUDY' : 'PROJECT'); // 상태에 따라 feedType 변경

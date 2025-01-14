@@ -32,7 +32,7 @@ const WritePage = ({ feedType: initialFeedType }) => {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
-  // const nickname = user ? user.nickname : 'Unknown'; //사용자 닉네임 설정
+  const nickname = user ? user.nickname : 'Unknown'; //사용자 닉네임 설정
   // const [participants, setParticipants] = useState(0);
   const [deadline, setDeadline] = useState('');
   const [progress, setProgress] = useState('');
@@ -71,6 +71,10 @@ const WritePage = ({ feedType: initialFeedType }) => {
     if (selectedRoles.length === 0) {
         missingFields.push('모집 역할');
     }
+    // 태그가 선택되지 않은 경우 추가
+    if (selectedTags.length === 0) {
+        missingFields.push('태그');
+    }
 
     if (missingFields.length > 0) {
         alert(`다음 필드를 올바르게 입력해주세요: ${missingFields.join(', ')}`);
@@ -95,7 +99,8 @@ const WritePage = ({ feedType: initialFeedType }) => {
             acc[role.role.toLowerCase()] = role.count;
             return acc;
         }, {}) : {},
-        creatorId: user ? user.id : 'Unknown',
+        creatorId: user ? user.id : null,
+        nickname
     };
 
     console.log('전송할 데이터:', JSON.stringify(dataToSend, null, 2));
@@ -239,7 +244,7 @@ const handleRoleSelect = (option, count) => {
 // Modal 내부의 Dropdown을 별도의 컴포넌트로 분리
 // 2. TagDropdown 컴포넌트는 이 handleTagSelect를 받아서
 // Dropdown 컴포넌트에 전달하며, 선택된 옵션에 대한 로깅도 추가
-const TagDropdown = ({ onTagSelect }) => {
+const TagDropdown = ({ onTagSelect, setIsOpen }) => {
     return (
         <Dropdown 
             options={option3} 
@@ -247,6 +252,8 @@ const TagDropdown = ({ onTagSelect }) => {
             onTagSelect={(option) => {
                 onTagSelect(option);
                 console.log('Tag selected:', option.label); // 디버깅용
+                // 드롭다운이 닫히지 않도록 상태 변경
+                // setIsOpen(true); // 이 줄을 제거합니다.
             }}
         />
     );
@@ -257,23 +264,20 @@ const handleTagSelect = (option) => {
     if (!option || !option.label) {
         return;
     }
-    
+
     const MAX_TAGS = 10;
     if (selectedTags.length >= MAX_TAGS) {
         alert('최대 10개의 태그만 선택할 수 있습니다.');
         return;
     }
 
-    setSelectedTags(prevTags => {
-        // 중복 체크를 더 엄격하게 수행
-        if (prevTags.includes(option.label)) {
-            console.log('Duplicate tag:', option.label);
-            return prevTags;
-        }
-        return [...prevTags, option.label];
-    });
-    
-    // 모달 닫기 코드 제거 - 사용자가 X를 누를 때까지 유지
+    // 중복 체크
+    if (selectedTags.includes(option.label)) {
+        console.log('Duplicate tag:', option.label);
+        return; // 중복된 태그가 있을 경우 함수 종료
+    }
+
+    setSelectedTags(prevTags => [...prevTags, option.label]);
 };
 
 // 태그 삭제 함수 추가
@@ -292,9 +296,9 @@ const handleToggleChange = (newFeedType) => {
     // handleSubmit(newFeedType)와 같이 인자를 전달합니다.
 };
 
-useEffect(() => {
-    console.log('Current selectedTags:', selectedTags);
-}, [selectedTags]);
+// useEffect(() => {
+//     console.log('Current selectedTags:', selectedTags);
+// }, [selectedTags]);
 
   return (
     <>
@@ -380,7 +384,7 @@ useEffect(() => {
 
         <TagsSection>
             {selectedTags.map((tag, index) => (
-                <TagButton key={tag}>
+                <TagButton key={`${tag}-${index}`}>
                     {tag}
                     <span 
                         className="delete-icon" 
@@ -395,7 +399,7 @@ useEffect(() => {
             ))}
             <TagAdd onClick={handleAddTagClick}>+ 태그 추가하기</TagAdd>
             <Modal isOpen={isModalOpen} onClose={closeModal}>
-                <TagDropdown onTagSelect={handleTagSelect} />
+                <TagDropdown onTagSelect={handleTagSelect}  />
             </Modal>
         </TagsSection>
 

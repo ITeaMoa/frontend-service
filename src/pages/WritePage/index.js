@@ -32,7 +32,7 @@ const WritePage = ({ feedType: initialFeedType }) => {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
-  // const nickname = user ? user.nickname : 'Unknown'; //사용자 닉네임 설정
+  const nickname = user ? user.nickname : 'Unknown'; //사용자 닉네임 설정
   // const [participants, setParticipants] = useState(0);
   const [deadline, setDeadline] = useState('');
   const [progress, setProgress] = useState('');
@@ -71,6 +71,9 @@ const WritePage = ({ feedType: initialFeedType }) => {
     if (selectedRoles.length === 0) {
         missingFields.push('모집 역할');
     }
+    if (selectedTags.length === 0) {
+        missingFields.push('태그');
+    }
 
     if (missingFields.length > 0) {
         alert(`다음 필드를 올바르게 입력해주세요: ${missingFields.join(', ')}`);
@@ -96,6 +99,7 @@ const WritePage = ({ feedType: initialFeedType }) => {
             return acc;
         }, {}) : {},
         creatorId: user ? user.id : 'Unknown',
+        nickname
     };
 
     console.log('전송할 데이터:', JSON.stringify(dataToSend, null, 2));

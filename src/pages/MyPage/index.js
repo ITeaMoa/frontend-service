@@ -52,8 +52,17 @@ const refreshProjects = useCallback(async () => {
         creatorId: user.id,
         sk: feedType
       };
-      const response = await axios.get('/my/writing', { params });
-      setProjects(response.data || []);
+
+      console.log("Request parameters:", params); // Log the parameters being sent
+
+      try {
+        const response = await axios.get('/my/writing', { params });
+        console.log("API Response:", response.data); // Log the response data
+        setProjects(response.data || []);
+      } catch (error) {
+        console.error("Error fetching written projects:", error); // Log any errors
+        setProjects([]);
+      }
     }
   } catch (error) {
     console.error("Error fetching projects:", error);

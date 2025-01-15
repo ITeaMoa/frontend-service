@@ -6,6 +6,7 @@ import Pagination from '../../components/Pagination';
 import axios from '../../api/axios'
 // import axios from 'axios';
 // import { useAuth } from '../../context/AuthContext'
+import Modal from '../../components/Modal';
 
 const ProjectDetail = ({ project, onBack, onClose}) => {
     const [applicants, setApplicants] = useState([]);
@@ -13,6 +14,9 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
     const [visibleButtons, setVisibleButtons] = useState({});
     const [clickedButtons, setClickedButtons] = useState({});
     const [selectedField, setSelectedField] = useState('전체');
+
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // Add state for modal visibility
+
     const [currentPage, setCurrentPage] = useState(1);
     const applicantsPerPage = 5;
 
@@ -76,6 +80,15 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
         }
     }, [project]);
 
+    useEffect(() => {
+        // 로컬 스토리지에서 초기 상태를 가져오는 함수
+        const initialStatus = localStorage.getItem(`projectStatus_${project.pk}`);
+        if (initialStatus) {
+            const parsedStatus = JSON.parse(initialStatus);
+            setVisibleButtons(parsedStatus); // 로컬 스토리지에서 상태 설정
+            setIsClosed(parsedStatus[project.pk] === 'completed'); // 모집 완료 상태 설정
+        }
+    }, [project.pk]); // project.pk에 의존
 
     // const applicants = project.applicants || [];
     // const filteredApplicants = selectedField === '전체'
@@ -155,16 +168,33 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
 
 
     const handleCloseApplication = () => {
+        setIsConfirmModalOpen(true); // Show the confirmation modal
+    };
+
+    const handleConfirmClose = () => {
         try {
-            // API 호출 대신 부모의 onClose 함수 호출
-            onClose(project.pk);
-            setIsClosed(true);
+            onClose(project.pk, 'completed'); // 새로운 상태를 전달
+            const updatedStatus = { ...visibleButtons, [project.pk]: 'completed' }; // 상태 업데이트
+            setVisibleButtons(updatedStatus); // 상태 업데이트
+            localStorage.setItem(`projectStatus_${project.pk}`, JSON.stringify(updatedStatus)); // 로컬 스토리지에 저장
+            setIsClosed(true); // 모집 완료 상태 설정
         } catch (error) {
-            console.error('Error:', error);
+            console.error('오류:', error);
             alert('모집 완료 처리 중 문제가 발생했습니다.');
+        } finally {
+            setIsConfirmModalOpen(false); // 확인 후 모달 닫기
         }
     };
-    
+
+    // 페이지가 로드될 때 상태를 확인하는 함수
+    useEffect(() => {
+        const checkStatus = () => {
+            const status = localStorage.getItem(`projectStatus_${project.pk}`);
+            console.log('현재 상태:', status); // 현재 상태를 콘솔에 출력
+        };
+        checkStatus(); // 상태 확인 함수 호출
+    }, [project.pk]); // project.pk에 의존
+
     return (
         <DetailContainer>
             <LeftSection>
@@ -319,6 +349,14 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
                     </Popup>
                 </PopupOverlay>
             )}
+
+<Modal isOpen={isConfirmModalOpen} onClose={() => setIsConfirmModalOpen(false)}>
+                <h3 style={{ textAlign: 'center' }}>정말로 모집완료 하시겠습니까?</h3>
+                <ButtonContainer>
+                    <ModalButton onClick={handleConfirmClose}>확인</ModalButton>
+                    <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton>
+                </ButtonContainer>
+            </Modal>
         </DetailContainer>
     );
 };
@@ -456,11 +494,11 @@ const Applicant = styled.div`
     text-align: left;
 `;
 
-const ButtonContainer = styled.div`
-    margin-left: auto; 
-    display: flex;
-    gap: 5px; 
-`;
+// const ButtonContainer = styled.div`
+//     margin-left: auto; 
+//     display: flex;
+//     gap: 5px; 
+// `;
 
 const ApplicantName = styled.span`
     font-weight: bold;
@@ -638,6 +676,27 @@ const PopupButton = styled.button`
         background-color: #2851E3;
     }
 `;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+`;
+
+const ModalButton = styled.button`
+  background-color: #3563E9;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #a0dafb;
+  }
+`;
+
 
 
 export default ProjectDetail;

@@ -24,6 +24,7 @@ const LoginPage = () => {
         console.log('로그인 성공:', response);
         console.log('사용자 닉네임:', response.data.nickname);
         navigate('/');
+        // navigate('/?showModal=true');
       }
     } catch (error) {
       console.error('로그인 실패:', error);

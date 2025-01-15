@@ -47,15 +47,28 @@ export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(!!getToken());
   const [completedProjects, setCompletedProjects] = useState(new Set());
 
-  // 로컬 스토리지에서 사용자 정보와 JWT 토큰 가져오기
+  //로컬 스토리지에서 사용자 정보와 JWT 토큰 가져오기
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    const token = getToken(); // JWT 토큰 가져오기
-    if (storedUser && token) {
-      setUser(JSON.parse(storedUser)); // 사용자 정보 설정
-      setIsLoggedIn(true); // 로그인 상태 업데이트
-    }
-  }, []);
+    const loadUserData = () => {
+        const userData = localStorage.getItem('user');
+        if (userData) {
+            const parsedUser = JSON.parse(userData);
+            setUser(parsedUser);
+            setIsLoggedIn(true);
+        }
+    };
+
+    loadUserData();
+  }, []); // 빈 배열을 사용하여 컴포넌트가 마운트될 때만 실행
+
+  // useEffect(() => {
+  //   const storedUser = localStorage.getItem('user');
+  //   const token = getToken(); // JWT 토큰 가져오기
+  //   if (storedUser && token) {
+  //     setUser(JSON.parse(storedUser)); // 사용자 정보 설정
+  //     setIsLoggedIn(true); // 로그인 상태 업데이트
+  //   }
+  // }, []);
 
   const login = async (email, password) => {
     try {
@@ -221,7 +234,6 @@ export const AuthProvider = ({ children }) => {
   );
 };
 //이거 이용하므로 export const으로 함수 export 할 필요 없음
-
 
 
 // Project Context 사용을 위한 커스텀 훅

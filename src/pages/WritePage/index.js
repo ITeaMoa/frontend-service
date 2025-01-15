@@ -74,6 +74,9 @@ const WritePage = ({ feedType: initialFeedType }) => {
     if (selectedTags.length === 0) {
         missingFields.push('태그');
     }
+    if (!period) {
+        missingFields.push('진행기간');
+    }
 
     if (missingFields.length > 0) {
         alert(`다음 필드를 올바르게 입력해주세요: ${missingFields.join(', ')}`);
@@ -300,6 +303,18 @@ useEffect(() => {
     console.log('Current selectedTags:', selectedTags);
 }, [selectedTags]);
 
+const handleDeadlineChange = (e) => {
+    const selectedDate = new Date(e.target.value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set time to midnight for comparison
+
+    if (selectedDate < today) {
+        alert('마감일자는 오늘 이후의 날짜만 선택할 수 있습니다.');
+        return;
+    }
+    setDeadline(e.target.value);
+};
+
   return (
     <>
       <Nav showSearch={showSearch} onToggleChange={handleToggleChange} />
@@ -340,7 +355,7 @@ useEffect(() => {
           <Input
             type="date"
             value={deadline}
-            onChange={(e) => setDeadline(e.target.value)}
+            onChange={handleDeadlineChange}
           />
           </InputWrapper>
 

@@ -23,7 +23,7 @@ const MainPage = () => {
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false); // 모달 상태 추가
   const fileInputRef = useRef(null); // 파일 입력을 위한 ref
   const [selectedFile, setSelectedFile] = useState(null); // 선택된 파일 상태
-  const { nickname } = location.state || {}; // 닉네임 받기
+  // const { nickname } = location.state || {}; // 닉네임 받기
   const [userProfile, setUserProfile] = useState({
 
     tags: [],
@@ -141,13 +141,6 @@ const MainPage = () => {
 const updateUserProfile = async () => {
   const data = new FormData(); // 파일과 JSON 데이터를 함께 전송하기 위해서
 
-  // 닉네임이 있는지 확인
-  if (!nickname) {
-      console.error("Nickname is required");
-      alert("회원가입 및 로그인해주세요");
-      return; // 닉네임이 없으면 종료
-  }
-
   // 파일 추가
   if (selectedFile) {
       data.append('file', selectedFile); // 선택된 파일 추가
@@ -157,7 +150,7 @@ const updateUserProfile = async () => {
   const profileData = {
       tags: userProfile.tags.length > 0 ? userProfile.tags : [],
       experiences: userProfile.experiences.length > 0 ? userProfile.experiences : [],
-      headLine: userProfile.headLine, // 여기서는 headLine로 수정
+      headLine: userProfile.headLine,
       educations: userProfile.educations.length > 0 ? userProfile.educations : [],
       personalUrl: userProfile.personalUrl.length > 0 ? userProfile.personalUrl : []
   };
@@ -165,7 +158,11 @@ const updateUserProfile = async () => {
   data.append('profile', JSON.stringify(profileData)); // JSON 문자열로 추가
 
   try {
-      const response = await axios.put(`my/profile/${nickname}`, data);
+      const response = await axios.put(`my/profile/${user.id}`, data, {
+          headers: {
+              'Content-Type': 'multipart/form-data' // Content-Type 설정
+          }
+      });
       console.log(response.data);
 
       // 프로필 정보를 localStorage에 저장
@@ -181,18 +178,35 @@ const updateUserProfile = async () => {
   };
 
   useEffect(() => {
+    // 프로필이 완성되었는지 확인하는 함수 (기술 스택과 자기소개만 필수)
+    const isProfileComplete = () => {
+      return (
+        userProfile.headLine && // 자기소개가 있는지
+        userProfile.tags.length > 0 // 기술 스택이 있는지
+      );
+    };
+
     // URL 쿼리 파라미터를 확인하여 모달 상태 업데이트
     const query = new URLSearchParams(location.search);
     const showModal = query.get('showModal') === 'true';
     setIsRoleModalOpen(showModal);
 
     // 사용자가 로그인했는지 확인하고 프로필이 불완전한지 체크
-    if (user && userProfile && (!userProfile.headLine || userProfile.tags.length === 0 || !userProfile.educations.length || !userProfile.personalUrl.length || !userProfile.experiences.length)) {
+    if (user && !isProfileComplete()) {
       setIsRoleModalOpen(true); // 프로필이 불완전하면 모달 열기
     } else {
-      setIsRoleModalOpen(false); // 사용자가 로그인하지 않았거나 프로필이 완전하면 모달 닫기
+      setIsRoleModalOpen(false); // 프로필이 완전하면 모달 닫기
     }
-  }, [location.search, user, userProfile]); // 의존성 배열에 userProfile 추가
+  }, [location.search, user, userProfile]); // isProfileComplete 제거
+
+  // useEffect(() => {
+  //   // 프로필 업데이트를 메인 페이지 로드 시 호출
+  //   const updateProfileOnLoad = async () => {
+  //     await updateUserProfile(); // 프로필 업데이트 호출
+  //   };
+
+  //   updateProfileOnLoad(); // 메인 페이지 로드 시 프로필 업데이트 호출
+  // }, []); // 빈 배열로 의존성 설정하여 컴포넌트 마운트 시 한 번만 실행
 
   
 

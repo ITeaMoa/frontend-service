@@ -246,18 +246,18 @@ const handleRoleSelect = (option, count) => {
 // Modal 내부의 Dropdown을 별도의 컴포넌트로 분리
 // 2. TagDropdown 컴포넌트는 이 handleTagSelect를 받아서
 // Dropdown 컴포넌트에 전달하며, 선택된 옵션에 대한 로깅도 추가
-const TagDropdown = ({ onTagSelect }) => {
-    return (
-        <Dropdown 
-            options={option3} 
-            placeholder={"태그를 선택하시오"}
-            onTagSelect={(option) => {
-                onTagSelect(option);
-                console.log('Tag selected:', option.label); // 디버깅용
-            }}
-        />
-    );
-};
+// const TagDropdown = ({ onTagSelect }) => {
+//     return (
+//         <Dropdown 
+//             options={option3} 
+//             placeholder={"태그를 선택하시오"}
+//             onTagSelect={(option) => {
+//                 onTagSelect(option);
+//                 console.log('Tag selected:', option.label); // 디버깅용
+//             }}
+//         />
+//     );
+// };
 
 // // 1. TagDropdown이 받은 onTagSelect는 WritePage의 handleTagSelect 함수
 const handleTagSelect = (option) => {
@@ -413,8 +413,31 @@ const handleDeadlineChange = (e) => {
                 </TagButton>
             ))}
             <TagAdd onClick={handleAddTagClick}>+ 태그 추가하기</TagAdd>
+
+{/*              
+            <Dropdown 
+                options={option3} 
+                placeholder={"태그를 선택하시오"}
+                dropdownType = "main"
+                onTagSelect={(selectedTags) => setUserProfile(prevState => ({
+                  ...prevState,
+                  tags: selectedTags 
+                }))}
+              
+            /> */}
+            
             <Modal isOpen={isModalOpen} onClose={closeModal}>
-                <TagDropdown onTagSelect={handleTagSelect} />
+                {/* <TagDropdown onTagSelect={handleTagSelect} /> */}
+                <Dropdown 
+        options={option3} 
+        placeholder={"태그를 선택하시오"}
+        // dropdownType="ㄴ"
+        onTagSelect={(selectedTags) => {
+            handleTagSelect(selectedTags);
+            console.log('Tag selected:', selectedTags.label); // 디버깅용
+        }}
+        // customInputStyle={{ border: ' 2px solid #A0DAFB;', borderRadius: '5px' }} // Example custom styles
+    />
             </Modal>
         </TagsSection>
 

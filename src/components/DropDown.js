@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 
-const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => {}, dropdownType }) => {
+const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => {}, dropdownType, customInputStyle }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -113,6 +113,7 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
                     onChange={handleInputChange}
                     onFocus={() => setIsOpen(true)}
                     isSelected={selectedOptions.length > 0}
+                    style={customInputStyle}
                 />
                 <FontAwesomeIcon
                     icon={isOpen ? faChevronUp : faChevronDown} 
@@ -194,7 +195,7 @@ const DropdownList = styled.div`
     width: 92%;
     max-height: 250px;
     overflow-y: auto;
-    z-index: 1000;
+    z-index: 2000;
     margin-top: 3px;
     margin-left: 20px;
 
@@ -207,6 +208,7 @@ const SearchInput = styled.input`
     width: 100%;
     box-sizing: border-box;
     outline: none;
+    z-index: 1000;
 
     &::placeholder {
         color: ${({ isSelected }) => (isSelected ? 'black' : 'grey')};

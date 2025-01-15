@@ -140,15 +140,14 @@ const ProjectListComponent = ({
             }
         });
         console.log('응답:', response.data);
-        setProjects(prevProjects => prevProjects.filter(project => project.pk !== feedId));
-        setPopupMessage('신청이 취소되었습니다.');
+        // setProjects(prevProjects => prevProjects.filter(project => project.pk !== feedId));
+        setIsConfirmModalOpen(false);
+        // setPopupMessage('신청이 취소되었습니다.');
     } catch (error) {
         console.error('오류 세부정보:', error);
         setPopupMessage(`신청 취소 중 오류가 발생했습니다. (${error.response?.data || '알 수 없는 오류'})`);
     }
-    
-    // 모달 닫기
-    setIsConfirmModalOpen(false);
+    // setIsConfirmModalOpen(false);
   };
 
   return (

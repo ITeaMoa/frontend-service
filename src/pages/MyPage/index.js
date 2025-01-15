@@ -50,19 +50,11 @@ const refreshProjects = useCallback(async () => {
     } else if (selectedList === 'written') {
       const params = {
         creatorId: user.id,
+        // creatorId:'null',
         sk: feedType
       };
-
-      console.log("Request parameters:", params); // Log the parameters being sent
-
-      try {
-        const response = await axios.get('/my/writing', { params });
-        console.log("API Response:", response.data); // Log the response data
-        setProjects(response.data || []);
-      } catch (error) {
-        console.error("Error fetching written projects:", error); // Log any errors
-        setProjects([]);
-      }
+      const response = await axios.get('/my/writing', { params });
+      setProjects(response.data || []);
     }
   } catch (error) {
     console.error("Error fetching projects:", error);
@@ -258,6 +250,8 @@ const handleProjectClose = async (projectId, feedType) => {
           paginate={paginate}
           currentPage={currentPage}
           refreshProjects={refreshProjects}
+          // setPopupMessage={setPopupMessage}
+          // project={selectedProject}
         />
       )}
     </Container>

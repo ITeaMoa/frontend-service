@@ -82,7 +82,11 @@ const MainPage = () => {
   
 
   const handleAddButtonClick = () => {
-      navigate('/WritePage'); 
+    if (!user) { // Check if user is logged in
+      alert("로그인 후에 피드를 작성할 수 있습니다."); // Alert for login
+      return; // Exit the function if not logged in
+    }
+    navigate('/WritePage'); 
   };
 
   // 로컬 스토리지에서 feedType을 가져와 초기값으로 설정
@@ -321,7 +325,7 @@ const handleImageUpload = (e) => {
         </Modal>
       )}
 
-    <AddButton onClick={handleAddButtonClick}> 피드 작성하기 </AddButton>
+    <AddButton onClick={handleAddButtonClick} disabled={!user}> 피드 작성하기 </AddButton>
     </MainWrapper>
     </>
   );

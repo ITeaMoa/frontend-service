@@ -66,7 +66,7 @@ const refreshProjects = useCallback(async () => {
 // 초기 데이터 로드를 위한 useEffect
 useEffect(() => {
   refreshProjects();
-}, [ user?.id, feedType, refreshProjects]); // refreshProjects 추가
+}, [ selectedList, user?.id, feedType, refreshProjects]); // refreshProjects 추가
 
   // 선택된 목록이 변경될 때 신청 프로젝트를 가져오는 새로운 useEffect
  

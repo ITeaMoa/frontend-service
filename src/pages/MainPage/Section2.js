@@ -151,6 +151,10 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
 // };
 
 const handleApplyClick = (project) => {
+  if (!user) { // Check if user is logged in
+    alert("로그인 후에 신청할 수 있습니다."); // Alert for login
+    return; // Exit the function if not logged in
+  }
   setProject(project); // 선택한 프로젝트 상태 저장
   setIsRoleModalOpen(true); // 역할 선택 모달 열기
 };

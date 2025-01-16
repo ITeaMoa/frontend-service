@@ -146,23 +146,33 @@ const ProjectListComponent = ({
                 'Content-Type': 'application/json'
             }
         });
+        
         console.log('응답:', response.data);
+        console.log('응답 상태 코드:', response.status); // 응답 상태 코드 로그
         
         if (response.status === 204) { // 204 No Content 처리
-            // 신청 목록에서 해당 프로젝트만 삭제
-            setProjects(prevProjects => {
-                console.log('이전 프로젝트 목록:', prevProjects); // 이전 프로젝트 목록 로그
-                const updatedProjects = prevProjects.filter(project => project.feedId !== feedId);
-                console.log('업데이트된 프로젝트 목록:', updatedProjects); // 상태 업데이트 확인
-                return updatedProjects;
+            // 취소한 프로젝트의 정보를 출력
+            console.log('취소한 프로젝트 정보:', {
+                userId,
+                feedId
             });
+
+            // 프로젝트 목록에서 해당 프로젝트 제거 (중복 제거)
+            setProjects(prevProjects => 
+                prevProjects.filter(project => project.feedId !== feedId) // feedId로 필터링
+            );
+
+            // currentProjects를 새로 고침
+            if (refreshProjects) {
+                await refreshProjects(); // 프로젝트 목록을 새로 고침
+            }
+
             alert('신청이 취소되었습니다.'); // 사용자에게 피드백 제공
         } else {
+            console.log('신청 취소 실패, 상태 코드:', response.status); // 실패 시 상태 코드 로그
             alert('신청 취소에 실패했습니다.'); // 실패 시 피드백
         }
-        
-        // 현재 프로젝트 목록 로그
-        console.log('현재 프로젝트 목록:', projects); // 상태 업데이트 후 현재 목록 확인
+
         setIsConfirmModalOpen(false);
     } catch (error) {
         console.error('오류 세부정보:', error);
@@ -172,6 +182,11 @@ const ProjectListComponent = ({
             alert(`신청 취소 중 오류가 발생했습니다. (${error.message})`);
         }
     }
+  };
+
+  const isProjectCanceled = (projectId) => {
+    const project = currentProjects.find(p => p.feedId === projectId);
+    return project ? project.canceled : false; // canceled 상태 확인
   };
 
   return (
@@ -202,19 +217,22 @@ const ProjectListComponent = ({
                       <Tag key={index}>{tag}</Tag>
                     ))}
                   </Tags>
-                  <Button2 onClick={() => {
-                    if (user && user.id && project.feedId) {
-                      console.log("User ID:", user.id);
-                      console.log("Project Feed ID:", project.feedId);
-                      handleCancelApplication(user.id, project.feedId);
-                    } else {
-                      console.error("User or project information is missing");
-                      console.log("User:", user);
-                      console.log("User ID:", user ? user.id : "없음");
-                      console.log("Project:", project);
-                      console.log("Project Feed ID:", project ? project.feedId : "없음");
-                    }
-                  }}>
+                  <Button2 
+                    onClick={() => {
+                      if (user && user.id && project.feedId) {
+                        console.log("User ID:", user.id);
+                        console.log("Project Feed ID:", project.feedId);
+                        handleCancelApplication(user.id, project.feedId);
+                      } else {
+                        console.error("User or project information is missing");
+                        console.log("User:", user);
+                        console.log("User ID:", user ? user.id : "없음");
+                        console.log("Project:", project);
+                        console.log("Project Feed ID:", project ? project.feedId : "없음");
+                      }
+                    }}
+                    disabled={isProjectCanceled(project.feedId)}
+                  >
                     신청 취소
                   </Button2>
                   <AdditionalInfo>
@@ -257,8 +275,13 @@ const ProjectListComponent = ({
               <Button 
                 onClick={() => handleButtonClick(project)}
                 disabled={isProjectCompleted(project.pk)}
+                style={{ 
+                  backgroundColor: (!project.postStatus && !project.savedFeed) ? '#808080' : '#3563E9',
+         
+                  opacity:  (!project.postStatus && !project.savedFeed)? 0.6 : 1
+                }}
               >
-                {isProjectCompleted(project.pk) ? '모집완료' : '모집 현황'}
+                {isProjectCompleted(project.pk) || (!project.postStatus && !project.savedFeed) ? '모집완료' : '모집 현황'}
               </Button>
             </ProjectItem>
           ))

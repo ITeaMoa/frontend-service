@@ -206,7 +206,9 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
                     <InfoItem>게시 일자 | {new Date(project.timestamp).toLocaleDateString()}</InfoItem>
                     <InfoItem>마감 일자  | {new Date(project.deadline).toLocaleDateString()}</InfoItem>
                     <InfoItem>진행 장소 | {project.place}</InfoItem>
-                    <InfoItem>모집 현황 | {project.applyNum}명 / {project.recruitmentNum}명</InfoItem>
+                    <InfoItem>모집 현황 | {project.recruitmentRoles && Object.entries(project.recruitmentRoles).length > 0 ? (
+                        Object.entries(project.recruitmentRoles).reduce((total, [, count]) => total + count, 0)
+                    ) : 0}명 / {project.recruitmentNum}명</InfoItem>
                     <InfoItem>진행 기간 | {project.period}개월</InfoItem>
                     <InfoItem>모집 역할 | {project.role && Array.isArray(project.role) ? (
                   project.role.map((role, index) => (
@@ -216,8 +218,13 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
                   <span>역할 정보가 없습니다.</span>
                 )}</InfoItem>
                 
-                    <InfoItem>신청자 수 | 백엔드(3), 디자이너(1)</InfoItem>
-                    {/* <InfoItem>신청자 수 | {project.recruitmentRoles</InfoItem> */}
+                    <InfoItem>신청자 수 | {project.recruitmentRoles && Object.entries(project.recruitmentRoles).length > 0 ? (
+                  Object.entries(project.recruitmentRoles).map(([role, count], index) => (
+                    <span key={index}>{role}({count}){index < Object.entries(project.recruitmentRoles).length - 1 ? ', ' : ''}</span>
+                  ))
+                ) : (
+                  <span>신청자가 없습니다.</span>
+                )}</InfoItem>
                 </DetailInfo>
                 <Tags>
                     {project.tags.map((tag, index) => (
@@ -227,12 +234,12 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
                 <ButtonContainerHorizontal>
                     <BackButton onClick={onBack}>목록</BackButton>
                     <Button 
-                    onClick={handleCloseApplication}
-                    isClicked={isClosed} // 클릭 상태 전달
-                    disabled={isClosed} 
-                >
-                    모집완료
-                </Button>
+                        onClick={handleCloseApplication}
+                        isClicked={isClosed}
+                        disabled={isClosed} 
+                    >
+                        모집완료
+                    </Button>
                 </ButtonContainerHorizontal>
             </LeftSection>
             <RightSection>

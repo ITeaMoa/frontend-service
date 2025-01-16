@@ -115,6 +115,8 @@ const handleProjectClick = (project, feedType) => {
         return project;
       })
     );
+
+    
   
     // likedProjects 상태 업데이트
     setLikedProjects(prev => {
@@ -141,7 +143,8 @@ const handleProjectClick = (project, feedType) => {
               <LikeButton 
                 initialLiked={project.liked} 
                 initialLikesCount={project.likesCount} 
-                onLikeChange={(newLiked, newLikesCount) => handleLikeClick(project.id, newLiked)} 
+                // onLikeChange={(newLiked, newLikesCount) => handleLikeClick(project.id, newLiked)}
+                onLikeChange={(newLiked, newLikesCount) => handleLikeClick(index, newLiked, newLikesCount)} 
                 buttonStyle="s1"
                 apiEndpoint="/main/like"
                 sk={project.pk}

@@ -85,13 +85,22 @@ const MainPage = () => {
       navigate('/WritePage'); 
   };
 
+  // 로컬 스토리지에서 feedType을 가져와 초기값으로 설정
+  const initialFeedType = localStorage.getItem('feedType') || 'PROJECT'; // 기본값 'PROJECT'
+  const [feedType, setFeedType] = useState(initialFeedType); // 초기값 설정
 
-  const [feedType, setFeedType] = useState('PROJECT'); // 초기값 설정
+  // useEffect를 추가하여 페이지가 새로 고침될 때와 feedType이 변경될 때마다 실행
+  useEffect(() => {
+    // feedType을 섹션에 전달하는 로직
+    console.log("현재 feedType:", feedType);
+    // 여기서 feedType을 Section1과 Section2에 전달하는 로직을 추가할 수 있습니다.
+  }, [feedType]); // feedType이 변경될 때마다 실행
 
   const handleToggleChange = (newFeedType) => {
     setFeedType(newFeedType); // feedType 업데이트
+    localStorage.setItem('feedType', newFeedType); // 로컬 스토리지에 feedType 저장
     console.log("현재 feedType:", newFeedType); // 콘솔에 현재 feedType 출력
-};
+  };
 
 //   const updateUserProfile = async () => {
 //     const data = new FormData();// 파일과 JSON 데이터를 함께 전송하기 위해서
@@ -247,8 +256,8 @@ const handleImageUpload = (e) => {
     <>
     <Nav showSearch={showSearch} onToggleChange={handleToggleChange} /> 
     <MainWrapper>
-      <Section1 feedType={feedType}/>
-      <Section2 feedType={feedType}/>
+      <Section1 feedType={feedType} />
+      <Section2 feedType={feedType} />
       {showModal && (
         <Modal isOpen={isRoleModalOpen} onClose={handleModalClose} modalType="mypage">
           <StyledModalTitle>프로필 설정</StyledModalTitle>

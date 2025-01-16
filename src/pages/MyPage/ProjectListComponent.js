@@ -84,6 +84,10 @@ const ProjectListComponent = ({
     });
   }, [selectedList, currentProjects]);
 
+  useEffect(() => {
+    console.log('현재 프로젝트 목록:', projects); // 현재 프로젝트 목록 로그
+  }, [projects]);
+
   // 프로젝트 완료 처리 함수 수정
   const handleButtonClick = (project) => {
     // 프로젝트가 완료되지 않은 경우에만 완료 처리
@@ -130,6 +134,9 @@ const ProjectListComponent = ({
   const handleConfirmCancel = async () => {
     const { userId, feedId } = selectedProjectForCancel;
     
+    console.log('선택된 프로젝트 정보:', selectedProjectForCancel); // 선택된 프로젝트 정보 로그
+    console.log('선택된 프로젝트의 feedId:', feedId); // feedId 로그
+
     try {
         const response = await axios.patch('/my/writing/cancel', {
             pk: userId,
@@ -140,14 +147,31 @@ const ProjectListComponent = ({
             }
         });
         console.log('응답:', response.data);
-        // setProjects(prevProjects => prevProjects.filter(project => project.pk !== feedId));
+        
+        if (response.status === 204) { // 204 No Content 처리
+            // 신청 목록에서 해당 프로젝트만 삭제
+            setProjects(prevProjects => {
+                console.log('이전 프로젝트 목록:', prevProjects); // 이전 프로젝트 목록 로그
+                const updatedProjects = prevProjects.filter(project => project.feedId !== feedId);
+                console.log('업데이트된 프로젝트 목록:', updatedProjects); // 상태 업데이트 확인
+                return updatedProjects;
+            });
+            alert('신청이 취소되었습니다.'); // 사용자에게 피드백 제공
+        } else {
+            alert('신청 취소에 실패했습니다.'); // 실패 시 피드백
+        }
+        
+        // 현재 프로젝트 목록 로그
+        console.log('현재 프로젝트 목록:', projects); // 상태 업데이트 후 현재 목록 확인
         setIsConfirmModalOpen(false);
-        // setPopupMessage('신청이 취소되었습니다.');
     } catch (error) {
         console.error('오류 세부정보:', error);
-        setPopupMessage(`신청 취소 중 오류가 발생했습니다. (${error.response?.data || '알 수 없는 오류'})`);
+        if (error.response) {
+            alert(`신청 취소 중 오류가 발생했습니다. (${error.response.data})`);
+        } else {
+            alert(`신청 취소 중 오류가 발생했습니다. (${error.message})`);
+        }
     }
-    // setIsConfirmModalOpen(false);
   };
 
   return (

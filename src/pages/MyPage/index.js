@@ -58,14 +58,15 @@ const refreshProjects = useCallback(async () => {
     }
   } catch (error) {
     console.error("Error fetching projects:", error);
-    setProjects([]);
+    // setProjects([]); // 이전 상태를 유지하는 것이 더 나은 사용자 경험일 수 있음
+    // setProjects(prevProjects => prevProjects); // 이전 상태 유지
   }
 }, [user, selectedList, feedType]); // 필요한 의존성만 포함
 
 // 초기 데이터 로드를 위한 useEffect
 useEffect(() => {
   refreshProjects();
-}, [selectedList, user?.id, feedType, refreshProjects]); // refreshProjects 추가
+}, [ user?.id, feedType, refreshProjects]); // refreshProjects 추가
 
   // 선택된 목록이 변경될 때 신청 프로젝트를 가져오는 새로운 useEffect
  
@@ -149,7 +150,11 @@ useEffect(() => {
   const handleListClick = (listType) => {
     setSelectedList(listType);
     setCurrentPage(1); 
-    setSelectedProject(null);
+
+    // 특정 리스트 타입에 대해 프로젝트를 빈 배열로 설정
+    if (listType === 'saved' || listType === 'closed' || listType === 'interested') {
+      setProjects([]); // 프로젝트를 빈 배열로 설정
+    }
   };
 
 
@@ -167,21 +172,12 @@ useEffect(() => {
     setSelectedProject(null);
   };
 
-
-// const handleProjectClose = (projectId) => {
-//   setProjects(prevProjects => 
-//       prevProjects.map(project => 
-//           project.pk === projectId ? { ...project, isCompleted: true } : project
-//       )
-//   );
-// };
-
 const handleProjectClose = async (projectId, feedType) => {
     try {
         // 문제: feedType이 객체 형태로 전달되고 있음
         const requestData = {
             pk: projectId,
-            sk: feedType  // 여기서 feedType이 아닌 'PROJECT'가 들어가야 함
+            sk: feedType  
         };
 
         console.log('요청 데이터:', requestData); // 디버깅용

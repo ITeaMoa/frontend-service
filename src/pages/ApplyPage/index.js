@@ -163,11 +163,35 @@ const handleLikeClick = (newLiked, newLikesCount) => {
     return <Container>Loading project...</Container>;
   }
 
-  const handleApplyClick = () => {
+  const handleApplyClick = async () => {
     if (!user) { // 로그인 여부 확인
       alert("로그인 후 신청할 수 있습니다."); // 로그인하지 않은 경우 알림
       return; // 함수 종료
     }
+
+    // 이미 신청한 프로젝트 확인
+    try {
+      const response = await axios.get('/feed/applications', {
+        params: {
+          userId: user.id,
+        }
+      });
+      console.log('이미 신청한 프로젝트:', response.data); // 응답 데이터 출력
+
+      const appliedProjects = response.data.map(app => app.feedId); // 신청한 프로젝트의 feedId 목록
+      console.log('신청한 프로젝트 feedId 목록:', appliedProjects); // 신청한 프로젝트 feedId 출력
+
+      // 선택한 프로젝트의 pk와 비교
+      const isAlreadyApplied = appliedProjects.includes(project.pk);
+      if (isAlreadyApplied) {
+        setPopupMessage("이미 신청한 프로젝트입니다."); // 이미 신청한 경우 메시지 설정
+        setIsSubmitted(true); // 제출 확인 팝업 표시
+        return; // Exit the function if already applied
+      }
+    } catch (error) {
+      console.error("신청한 프로젝트를 가져오는 중 오류 발생:", error);
+    }
+
     setIsRoleModalOpen(true); // 역할 선택 모달 열기
   };
 

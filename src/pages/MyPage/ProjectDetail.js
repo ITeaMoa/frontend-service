@@ -42,47 +42,46 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
     // roles 정보를 콘솔에 출력
     console.log("Roles 정보:", roles);
 
-    useEffect(() => {
-        const fetchApplications = async (feedId, part) => {
-            if (!feedId) {
-                console.error('feedId is undefined. Cannot fetch applications.');
-                return; // feedId가 없으면 요청을 보내지 않음
-            }
+    const fetchApplications = async (feedId, part) => {
+        if (!feedId) {
+            console.error('feedId is undefined. Cannot fetch applications.');
+            return; // feedId가 없으면 요청을 보내지 않음
+        }
 
-            console.log("Fetching applications with feedId:", feedId, {
-                feedId: feedId,
-                part: part
-            }); // params를 콘솔에 출력
+        console.log("Fetching applications with feedId:", feedId, {
+            feedId: feedId,
+            part: part
+        }); // params를 콘솔에 출력
 
-            try {
-                const response = await axios.get(`my/writing/application`, {
-                    params: {
-                        feedId: feedId,
-                        // part: part // project의 part 속성을 사용
-                    }
-                });
-
-                console.log("Fetched applicants data:", response.data); // 추가된 콘솔 로그
-
-                if (response.data) {
-                    setApplicants(response.data); // 지원자 정보는 별도의 state에 저장
-                } else {
-                    setApplicants([]);
+        try {
+            const response = await axios.get(`my/writing/application`, {
+                params: {
+                    feedId: feedId,
+                    // part: part // project의 part 속성을 사용
                 }
-            } catch (error) {
-                console.error("지원자 정보를 가져오는 중 오류 발생:", error);
+            });
+
+            console.log("Fetched applicants data:", response.data); // 추가된 콘솔 로그
+
+            if (response.data) {
+                setApplicants(response.data); // 지원자 정보는 별도의 state에 저장
+            } else {
                 setApplicants([]);
             }
-        };
+        } catch (error) {
+            console.error("지원자 정보를 가져오는 중 오류 발생:", error);
+            setApplicants([]);
+        }
+    };
 
-      // project가 정의되어 있고, pk가 유효한 경우에만 fetchApplications 호출
-    if (project && project.pk) {
-        const part = Object.keys(project.roles).find(role => project.roles[role] > 0) || '무관'; // 역할에서 part 결정
-        fetchApplications(project.pk, part); // project.pk를 feedId로 사용
-    } else {
-        console.error('selectedProject is not valid:', project);
-    }
-}, [project]);
+    useEffect(() => {
+        // project가 정의되어 있고, pk가 유효한 경우에 fetchApplications 호출
+        if (project && project.pk) {
+            fetchApplications(project.pk, '무관'); // '무관'을 사용하여 모든 지원자 불러오기
+        } else {
+            console.error('selectedProject is not valid:', project);
+        }
+    }, [project]); // project가 변경될 때마다 실행
 
     useEffect(() => {
         // 로컬 스토리지에서 초기 상태를 가져오는 함수
@@ -115,9 +114,12 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
 
 
      // Pagination 로직
-     const indexOfLastApplicant = currentPage * applicantsPerPage;
-     const indexOfFirstApplicant = indexOfLastApplicant - applicantsPerPage;
-     const currentApplicants = applicants.slice(indexOfFirstApplicant, indexOfLastApplicant);
+    //  const indexOfLastApplicant = currentPage * applicantsPerPage;
+    //  const indexOfFirstApplicant = indexOfLastApplicant - applicantsPerPage;
+     const currentApplicants = applicants.filter(applicant => {
+        const applicantPart = applicant.part; // 지원자에 'part' 속성이 있다고 가정
+        return applicantPart === selectedField; // selectedField에 따라 필터링
+    });
      
      const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -164,9 +166,33 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
         setIsPopupVisible(false);
     };
 
-    const handleFieldClick = (field) => {
-        if (!isPopupVisible) {
-            setSelectedField(field);
+    const handleFieldClick = async (field) => {
+        setSelectedField(field);
+        if (project && project.pk) {
+            const requestData = {
+                pk: project.pk,
+                sk: "PROJECT"
+            };
+            console.log("요청 데이터:", requestData); // 요청 데이터를 콘솔에 출력
+            try {
+                if (field === '전체') {
+                    // "전체"가 클릭되었을 때 모든 지원자 불러오기
+                    await fetchApplications(project.pk, '무관'); // '무관'을 사용하여 모든 지원자 불러오기
+                } else {
+                    // 다른 역할이 클릭되었을 때 해당 역할의 지원자 불러오기
+                    const response = await axios.get(`my/writing/part`, {
+                        params: {
+                            feedId: project.pk, // project.pk를 feedId로 사용
+                            part: field // 선택한 필드를 part로 사용
+                        },
+                        data: requestData // 필요한 경우 본문 포함
+                    });
+                    console.log("응답 데이터:", response.data); // 응답 데이터를 콘솔에 출력
+                    setApplicants(response.data); // 응답 데이터로 지원자 설정
+                }
+            } catch (error) {
+                console.error("역할에 따른 지원서 가져오는 중 오류 발생:", error);
+            }
         }
     };
 
@@ -256,7 +282,7 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
                     <Button 
                         onClick={handleCloseApplication}
                         isClicked={isClosed}
-                        disabled={isClosed} 
+                        disabled={isClosed || (project.postStatus === false && project.savedFeed === false)} 
                     >
                         모집완료
                     </Button>
@@ -268,21 +294,26 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
                         <h3>신청현황</h3>
                         <FieldButtons>
                             {Array.isArray(roles) && roles.length > 0 ? (
-                                roles.map((field, index) => (
-                                    <FieldButton 
-                                        key={index} 
-                                        onClick={() => handleFieldClick(field)} 
-                                        $isSelected={selectedField === field} 
-                                    >
-                                        {typeof field === 'string' ? field : `${field.name} (${field.count})`}
-                                    </FieldButton>
-                                ))
+                                roles.map((field, index) => {
+                                    const fieldName = typeof field === 'string' ? field : field.name;
+                                    return (
+                                        <FieldButton 
+                                            key={index} 
+                                            onClick={() => handleFieldClick(fieldName)}
+                                            $isSelected={selectedField === fieldName}
+                                        >
+                                            {fieldName}
+                                        </FieldButton>
+                                    );
+                                })
                             ) : (
                                 <span>역할 정보가 없습니다.</span>
                             )}
                         </FieldButtons>
                     </HeaderContainer>
-                    {currentApplicants.length > 0 ? (
+                    {currentApplicants.length === 0 ? (
+                        <p>신청자가 없습니다.</p>
+                    ) : (
                         currentApplicants.map((applicant, index) => (
                             <StyledApplicantWrapper key={index}>
                                 <Applicant>
@@ -332,8 +363,6 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
                                 </Applicant>
                             </StyledApplicantWrapper>
                         ))
-                    ) : (
-                        <p>신청자가 없습니다.</p>
                     )}
                 </ApplicationStatus>
                 <StyledPaginationContainer>
@@ -619,21 +648,19 @@ const FieldButtons = styled.div`
 
 const FieldButton = styled.span`
     cursor: pointer;
-    border: 2px solid ;
-    background-color: ${(props) => (props.$isSelected ?  '#a0dafb' : ' white')};
-    border-radius: 30px 30px 1px 30px; //반시계 ㅔ방향
+    border: 2px solid;
+    background-color: ${(props) => (props.$isSelected ? '#a0dafb' : 'white')};
+    border-radius: 30px 30px 1px 30px; // 반시계 방향
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-color: rgba(160, 218, 251);
-    color: ${(props) => (props.$isSelected ?  'white' : '  #0A8ED9')};
-    font-weight: ${(props) => (props.$isSelected ?  'bold' : 'normal')};
+    color: ${(props) => (props.$isSelected ? 'white' : '#0A8ED9')};
+    font-weight: ${(props) => (props.$isSelected ? 'bold' : 'normal')};
     font-size: 16px;
     padding: 5px 20px; 
     white-space: nowrap; /* 텍스트가 줄 바꿈되지 않도록 설정 */
-
 `;
 
-const StyledPaginationContainer = styled.div`
-    position: absolute;
+const StyledPaginationContainer = styled.div`    position: absolute;
     margin-top: 500px;
     display: flex;
     justify-content: center;
@@ -720,3 +747,4 @@ const ModalButton = styled.button`
 
 
 export default ProjectDetail;
+

@@ -89,6 +89,8 @@ const Section2 = ({ feedType }) => {
   
       setAllProjects(projectsWithLikes);
       console.log(projectsWithLikes); // 프로젝트 목록을 콘솔에 출력
+
+      return projectsWithLikes; // Return the projectsWithLikes for use in handleApplyClick
     } catch (error) {
       console.error('인기 프로젝트 가져오기 실패:', error);
     }
@@ -150,11 +152,36 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
 //   setIsRoleModalOpen(true); // 역할 선택 모달 열기
 // };
 
-const handleApplyClick = (project) => {
+const handleApplyClick = async (project) => {
   if (!user) { // Check if user is logged in
     alert("로그인 후에 신청할 수 있습니다."); // Alert for login
     return; // Exit the function if not logged in
   }
+
+  // const projectsWithLikes = await fetchAllProjects(); // Get projectsWithLikes from fetchAllProjects
+
+  try {
+    const response = await axios.get('/feed/applications', {
+      params: {
+        userId: user.id,
+      }
+    });
+    console.log('이미신청한 프로젝트:', response.data); // 응답 데이터 출력
+
+    const appliedProjects = response.data.map(app => app.feedId); // 신청한 프로젝트의 feedId 목록
+    console.log('신청한 프로젝트 feedId 목록:', appliedProjects); // 신청한 프로젝트 feedId 출력
+
+    // 선택한 프로젝트의 pk와 비교
+    const isAlreadyApplied = appliedProjects.includes(project.pk);
+    if (isAlreadyApplied) {
+      setPopupMessage("이미 신청한 프로젝트입니다."); // 이미 신청한 경우 메시지 설정
+      setIsSubmitted(true); // 제출 확인 팝업 표시
+      return; // Exit the function if already applied
+    }
+  } catch (error) {
+    console.error("신청 여부 확인 실패:", error);
+  }
+
   setProject(project); // 선택한 프로젝트 상태 저장
   setIsRoleModalOpen(true); // 역할 선택 모달 열기
 };

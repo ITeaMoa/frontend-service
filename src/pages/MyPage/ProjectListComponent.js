@@ -138,12 +138,10 @@ const ProjectListComponent = ({
     console.log('선택된 프로젝트의 feedId:', feedId); // feedId 로그
 
     try {
-        const response = await axios.patch('/my/writing/cancel', {
-            pk: userId,
-            sk: feedId
-        }, {
+        const response = await axios.delete(`feed/cancel?userId=${userId}&feedId=${feedId}`, {
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+
             }
         });
         

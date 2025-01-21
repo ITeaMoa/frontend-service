@@ -11,6 +11,7 @@ import { ThemeProvider } from 'styled-components';
 import theme from './components/Theme';
 
 
+
 const Layout = () => {
   return (
     <div>
@@ -33,6 +34,7 @@ function App() {
               <Route path="MyPage" element={<MyPage/>} />
               <Route path="LoginPage" element={<LoginPage />} />
               <Route path="SignupPage" element={<SignupPage />} />
+
             </Route>
           </Routes>
         </div>

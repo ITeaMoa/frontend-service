@@ -86,6 +86,7 @@ const ApplyPage = ({ feedType }) => {
       const selectedProject = response.data.find(item => item.pk === projectId); // 특정 프로젝트 찾기
       
       if (selectedProject) {
+        console.log("Selected Project:", selectedProject); // 프로젝트 정보 콘솔로 출력
         setProject(selectedProject);
       } else {
         console.error("Project not found for projectId:", projectId);
@@ -289,10 +290,9 @@ const handleToggleChange = (newFeedType) => {
                 initialLikesCount={project.likesCount} 
                 onLikeChange={handleLikeClick}
                 buttonStyle="apply"
-                apiEndpoint="/main/like"
                 sk={project.pk}
                 userId={user ? user.id : null} // user가 null인 경우 처리
-                
+                feedType={project.sk} // Use project.sk as feedType
               />
         
         <Post>

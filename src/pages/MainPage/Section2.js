@@ -77,8 +77,8 @@ const Section2 = ({ feedType }) => {
       }
   
       const projectsWithLikes = response.data.map((project) => {
-        const liked = user ? localStorage.getItem(`liked_${user.id}_${project.pk}`) === 'true' : false;
-        const likesCount = user ? parseInt(localStorage.getItem(`likesCount_${user.id}_${project.pk}`), 10) || project.likesCount || 0 : project.likesCount || 0;
+        const liked = user ? false : false; // 로컬 스토리지 대신 초기값 false
+        const likesCount = project.likesCount || 0; // API 응답에서 likesCount 가져오기
   
         return {
           ...project,
@@ -218,9 +218,9 @@ const handleCloseSubmissionPopup = () => {
                 initialLiked={project.liked} 
                 initialLikesCount={project.likesCount} 
                 onLikeChange={(newLiked, newLikesCount) => handleLikeClick(index, newLiked, newLikesCount)} // 내부 상태 업데이트
-                apiEndpoint="/main/like" // MainPage API 엔드포인트
                 sk={project.pk}
                 userId={user ? user.id : null} // user가 null인 경우 처리
+                feedType={feedType}
               />
             </LikeButtonWrapper>
             <ProjectTitle>{project.title}</ProjectTitle>

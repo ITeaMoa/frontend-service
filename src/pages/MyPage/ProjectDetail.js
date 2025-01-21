@@ -35,9 +35,12 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
 
 
     // 역할 목록 정의
-    const roles = project.role && Array.isArray(project.role) ? 
-        ['전체', ...project.role.map(role => role.name)] : 
-        ['전체'];
+    const roles = project && project.roles ? 
+        ['전체', ...Object.entries(project.roles).map(([roleName, count]) => ({ name: roleName, count }))] : 
+        []; // roles가 정의되지 않았을 경우 빈 배열로 초기화
+
+    // roles 정보를 콘솔에 출력
+    console.log("Roles 정보:", roles);
 
     useEffect(() => {
         const fetchApplications = async (feedId, part) => {
@@ -55,7 +58,7 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
                 const response = await axios.get(`my/writing/application`, {
                     params: {
                         feedId: feedId,
-                        part: part // project의 part 속성을 사용
+                        // part: part // project의 part 속성을 사용
                     }
                 });
 
@@ -72,13 +75,14 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
             }
         };
 
-        // selectedProject가 유효한 경우에만 fetchApplications 호출
-        if (project?.pk) {
-            fetchApplications(project.pk, project.part); // selectedProject.pk를 feedId로 사용
-        } else {
-            console.error('selectedProject is not valid:', project);
-        }
-    }, [project]);
+      // project가 정의되어 있고, pk가 유효한 경우에만 fetchApplications 호출
+    if (project && project.pk) {
+        const part = Object.keys(project.roles).find(role => project.roles[role] > 0) || '무관'; // 역할에서 part 결정
+        fetchApplications(project.pk, part); // project.pk를 feedId로 사용
+    } else {
+        console.error('selectedProject is not valid:', project);
+    }
+}, [project]);
 
     useEffect(() => {
         // 로컬 스토리지에서 초기 상태를 가져오는 함수
@@ -89,6 +93,14 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
             setIsClosed(parsedStatus[project.pk] === 'completed'); // 모집 완료 상태 설정
         }
     }, [project.pk]); // project.pk에 의존
+
+    useEffect(() => {
+        console.log("Project 정보:", project); // project 정보를 콘솔에 출력
+    }, [project]); // project가 변경될 때마다 실행
+
+    useEffect(() => {
+        console.log("Current project:", project); // project의 현재 상태를 로그로 출력
+    }, [project]);
 
     // const applicants = project.applicants || [];
     // const filteredApplicants = selectedField === '전체'
@@ -210,13 +222,17 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
                         Object.entries(project.recruitmentRoles).reduce((total, [, count]) => total + count, 0)
                     ) : 0}명 / {project.recruitmentNum}명</InfoItem>
                     <InfoItem>진행 기간 | {project.period}개월</InfoItem>
-                    <InfoItem>모집 역할 | {project.role && Array.isArray(project.role) ? (
-                  project.role.map((role, index) => (
-                    <span key={index}>{role.name}({role.count})</span>
-                  ))
-                ) : (
-                  <span>역할 정보가 없습니다.</span>
-                )}</InfoItem>
+                    <InfoItem>모집 역할 | {roles && roles.length > 0 ? (
+                        roles.filter(role => role !== '전체').map((role, index) => ( // 전체를 제외한 역할만 필터링
+                            typeof role === 'string' ? (
+                                <span key={index}>{role}</span>
+                            ) : (
+                                <span key={index}>{role.name}({role.count})</span>
+                            )
+                        ))
+                    ) : (
+                        <span>역할 정보가 없습니다.</span>
+                    )}</InfoItem>
                 
                     <InfoItem>신청자 수 | {project.recruitmentRoles && Object.entries(project.recruitmentRoles).length > 0 ? (
                   Object.entries(project.recruitmentRoles).map(([role, count], index) => (
@@ -227,9 +243,13 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
                 )}</InfoItem>
                 </DetailInfo>
                 <Tags>
-                    {project.tags.map((tag, index) => (
-                        <Tag key={index}>{tag}</Tag>
-                    ))}
+                    {project.tags && Array.isArray(project.tags) && project.tags.length > 0 ? (
+                        project.tags.map((tag, index) => (
+                            <Tag key={index}>{tag}</Tag>
+                        ))
+                    ) : (
+                        <span>태그가 없습니다.</span>
+                    )}
                 </Tags>
                 <ButtonContainerHorizontal>
                     <BackButton onClick={onBack}>목록</BackButton>
@@ -247,27 +267,20 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
                     <HeaderContainer>
                         <h3>신청현황</h3>
                         <FieldButtons>
-                            {/* {['전체', '백엔드', '프론트', '디자이너', '데이터분석가'].map(field => (
-                                <FieldButton 
-                                    key={field} 
-                                    onClick={() => handleFieldClick(field)}
-                                    $isSelected={selectedField === field}
-                                >
-                                    {field}
-                                </FieldButton>
-                            ))} */}
-                           {roles.map((field, index) => (
-                        <FieldButton 
-                            key={index} 
-                            onClick={() => handleFieldClick(field)} 
-                            $isSelected={selectedField === field} 
-                        >
-                            {field}
-                        </FieldButton>
-                    ))}
-                </FieldButtons>
-            
-    
+                            {Array.isArray(roles) && roles.length > 0 ? (
+                                roles.map((field, index) => (
+                                    <FieldButton 
+                                        key={index} 
+                                        onClick={() => handleFieldClick(field)} 
+                                        $isSelected={selectedField === field} 
+                                    >
+                                        {typeof field === 'string' ? field : `${field.name} (${field.count})`}
+                                    </FieldButton>
+                                ))
+                            ) : (
+                                <span>역할 정보가 없습니다.</span>
+                            )}
+                        </FieldButtons>
                     </HeaderContainer>
                     {currentApplicants.length > 0 ? (
                         currentApplicants.map((applicant, index) => (
@@ -707,7 +720,3 @@ const ModalButton = styled.button`
 
 
 export default ProjectDetail;
-
-
-
-

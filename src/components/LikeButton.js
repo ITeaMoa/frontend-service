@@ -10,7 +10,7 @@ import styled from 'styled-components';
 import axios from '../api/axios'
 
 
-const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle, apiEndpoint, userId, sk }) => {
+const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle, userId, sk, feedType }) => {
   const [liked, setLiked] = useState(() => {
     const storedLiked = localStorage.getItem(`liked_${userId}_${sk}`);
     return storedLiked === 'true' ? true : initialLiked; // 올바른 초기화 보장
@@ -36,17 +36,17 @@ const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle
     const likeData = {
         pk: userId,
         sk: sk,
-        feedType: "PROJECT"
+        feedType: feedType
     };
 
     try {
         if (newLiked) {
             // 좋아요 추가
-            const response = await axios.post(apiEndpoint, likeData);
+            const response = await axios.post(`/main/like`, likeData);
             console.log('좋아요 추가 성공:', response.data); // API 응답 로그
         } else {
             // 좋아요 제거
-            const response = await axios.delete(apiEndpoint, { data: likeData });
+            const response = await axios.delete(`/main/like`, { data: likeData });
             console.log('좋아요 제거 성공:', response.data); // API 응답 로그
         }
 

@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 import LikeButton from '../../components/LikeButton';
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
-
 //각 섹션의 데이터를 상태로 관리합니다: useState를 사용하여 데이터를 저장하고, 
 //useEffect를 통해 컴포넌트가 마운트될 때 데이터를 Fetch
 
@@ -144,11 +143,11 @@ const handleProjectClick = (project, feedType) => {
                 initialLiked={project.liked} 
                 initialLikesCount={project.likesCount} 
                 // onLikeChange={(newLiked, newLikesCount) => handleLikeClick(project.id, newLiked)}
-                onLikeChange={(newLiked, newLikesCount) => handleLikeClick(index, newLiked, newLikesCount)} 
+                onLikeChange={(newLiked, newLikesCount) => handleLikeClick(index, newLiked, newLikesCount)} // 내부 상태 업데이트
                 buttonStyle="s1"
-                apiEndpoint="/main/like"
                 sk={project.pk}
                 userId={user ? user.id : null} // user가 null인 경우 처리
+                feedType={feedType}
               />
             </LikeButtonWrapper>
             <ProjectTitle>{project.title}</ProjectTitle>

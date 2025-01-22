@@ -111,13 +111,12 @@ useEffect(() => {
       }
   
       const projectsWithLikes = response.data.map((project) => {
-        const liked = user ? false : false; // 로컬 스토리지 대신 초기값 false
-        const likesCount = project.likesCount || 0; // API 응답에서 likesCount 가져오기
-  
+        const isLiked = likedProjects.find(likedProject => likedProject.id === project.id);
         return {
           ...project,
-          liked,
-          likesCount: Math.max(likesCount, 0)
+          creatorId: project.creatorId,
+          liked: isLiked ? isLiked.liked : false,
+          likesCount: project.likesCount || 0,
         };
       });
   
@@ -128,7 +127,7 @@ useEffect(() => {
     } catch (error) {
       console.error('인기 프로젝트 가져오기 실패:', error);
     }
-  }, [feedType, user]); // feedType을 의존성 배열에 추가
+  }, [feedType, likedProjects]); // user를 의존성 배열에서 제거
 
   useEffect(() => {
     fetchAllProjects();

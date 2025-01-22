@@ -24,15 +24,26 @@ function Section1({ feedType }) {
   // 사용자 좋아요 상태 가져오기
   //fetchUserLikes는 사용자의 좋아요 상태를 가져오고, 이를 통해 likedProjects와 popularProjects를 업데이트
   const fetchUserLikes = useCallback(async () => {
-    if (!user) return; // 사용자 정보가 없으면 종료
+    if (!user) {
+      console.log('사용자 정보가 없습니다.'); // 사용자 정보가 없을 때 로그
+      return; // 사용자 정보가 없으면 종료
+    }
     try {
       const response = await axios.get(`/main/like?userId=${user.id}`);
+      console.log('API 응답:', response); // API 응답 로그 추가
       if (response.data) {
-        console.log('사용자가 좋아요를 눌렀던 피드:', response.data);
-        setLikedProjects(prevLiked => [
-          ...prevLiked,
-          { id: user.id, liked: response.data.liked || false, likesCount: response.data.likesCount || 0 }
-        ]);
+        console.log('사용자가 좋아요를 눌렀던 피드ㅓㅓㅓㅓㅓ:', response.data);
+        setLikedProjects(prevLiked => {
+          const existingLike = prevLiked.find(p => p.id === user.id);
+          if (existingLike) {
+            return prevLiked.map(p => p.id === user.id ? { ...p, liked: response.data.liked || false, likesCount: response.data.likesCount || 0 } : p);
+          } else {
+            return [
+              ...prevLiked,
+              { id: user.id, liked: response.data.liked || false, likesCount: response.data.likesCount || 0 }
+            ];
+          }
+        });
         setPopularProjects(prevProjects => 
           prevProjects.map(project => ({
             ...project,
@@ -41,7 +52,7 @@ function Section1({ feedType }) {
         );
       }
     } catch (error) {
-      console.error('Error fetching user likes:', error);
+      console.error('Error fetching user likes:', error); // 에러 로그 추가
     }
   }, [user]);
 
@@ -120,8 +131,6 @@ const handleProjectClick = (project, feedType) => {
       })
     );
 
-    
-  
     // likedProjects 상태 업데이트
     setLikedProjects(prev => {
       const existingLike = prev.find(p => p.id === projectId);

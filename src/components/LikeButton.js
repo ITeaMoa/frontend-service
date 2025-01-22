@@ -1,7 +1,7 @@
 //사용자 좋아요 ui와 이벤트 처리
 
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons'; 
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
@@ -11,67 +11,64 @@ import axios from '../api/axios'
 
 
 const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle, userId, sk, feedType }) => {
-  const [liked, setLiked] = useState(() => {
-    const storedLiked = localStorage.getItem(`liked_${userId}_${sk}`);
-    return storedLiked === 'true' ? true : initialLiked; // 올바른 초기화 보장
-  });
-  const [likesCount, setLikesCount] = useState(() => {
-    const storedLikesCount = localStorage.getItem(`likesCount_${userId}_${sk}`);
-    return storedLikesCount ? parseInt(storedLikesCount, 10) : initialLikesCount; // 음수일 경우 초기값 사용
-  });
+  const [liked, setLiked] = useState(initialLiked);
+  const [likesCount, setLikesCount] = useState(initialLikesCount);
 
-  // props가 변경될 때 상태 업데이트
+  // 사용자 좋아요 상태를 API 호출로 가져오기
+  const fetchUserLikeStatus = useCallback(async () => {
+    if (!userId || !sk) return; // userId와 sk가 없으면 종료
+    try {
+      const response = await axios.get(`/main/like?userId=${userId}`);
+      if (response.data) {
+        console.log('사용자 좋아요 상태ㅇㅇㅇㅇㅇ:', response.data); // API 응답을 콘솔에 출력
+        
+        // 사용자가 좋아요를 눌렀던 피드의 sk가 현재 버튼의 sk와 일치하는지 확인
+        const userLiked = response.data.some(like => like.sk === sk);
+        setLiked(userLiked); // liked 상태 설정
+        // setLikesCount(response.data.length); // 총 좋아요 수 설정 (여기서는 단순히 길이로 설정)
+      }
+    } catch (error) {
+      console.error('Error fetching user like status:', error);
+    }
+  }, [userId, sk]);
+
+  // 컴포넌트가 마운트될 때 사용자 좋아요 상태를 가져옴
   useEffect(() => {
-    const storedLiked = localStorage.getItem(`liked_${userId}_${sk}`);
-    setLiked(storedLiked === 'true' ? true : initialLiked);
-    setLikesCount(initialLikesCount);
-  }, [initialLiked, initialLikesCount, userId, sk]);
+    fetchUserLikeStatus();
+  }, [fetchUserLikeStatus]);
 
   const handleClick = async (e) => {
     e.stopPropagation(); // 이벤트 전파 방지
     const newLiked = !liked;
     const newLikesCount = newLiked ? likesCount + 1 : Math.max(likesCount - 1, 0);
 
-    // API 호출 및 로컬 스토리지 업데이트
+    // API 호출 및 상태 업데이트
     const likeData = {
-        pk: userId,
-        sk: sk,
-        feedType: feedType
+      pk: userId,
+      sk: sk,
+      feedType: feedType
     };
 
     try {
-        if (newLiked) {
-            // 좋아요 추가
-            const response = await axios.post(`/main/like`, likeData);
-            console.log('좋아요 추가 성공:', response.data); // API 응답 로그
-        } else {
-            // 좋아요 제거
-            const response = await axios.delete(`/main/like`, { data: likeData });
-            console.log('좋아요 제거 성공:', response.data); // API 응답 로그
-        }
+      if (newLiked) {
+        // 좋아요 추가
+        await axios.post(`/main/like`, likeData);
+        console.log('좋아요 추가 성공');
+      } else {
+        // 좋아요 제거
+        await axios.delete(`/main/like`, { data: likeData });
+        console.log('좋아요 제거 성공');
+      }
 
-        // // 상태 업데이트
-        // setLiked(newLiked);
-        // setLikesCount(newLikesCount < 0 ? 0 : newLikesCount);
-        // if (onLikeChange) {
-        //     onLikeChange(newLiked, newLikesCount);
-        // }
-
-         // 상태 업데이트
+      // 상태 업데이트
       setLiked(newLiked);
       setLikesCount(newLikesCount);
+      console.log('현재 liked:', newLiked, '현재 likesCount:', newLikesCount); // 상태 확인
       if (onLikeChange) {
         onLikeChange(newLiked, newLikesCount);
       }
-
-        // 상태를 로컬 스토리지에 저장
-        localStorage.setItem(`liked_${userId}_${sk}`, newLiked);
-        localStorage.setItem(`likesCount_${userId}_${sk}`, newLikesCount);
     } catch (error) {
-        console.error('Error updating like status:', error);
-        // 상태를 원래대로 되돌리기
-        setLiked(liked); // 원래 상태로 복원
-        setLikesCount(likesCount); // 원래 likesCount로 복원
+      console.error('Error updating like status:', error);
     }
   };
 

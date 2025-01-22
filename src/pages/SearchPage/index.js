@@ -32,6 +32,7 @@ const SearchPage = () => {
                     return !tags || (item.tags && item.tags.some(tag => tags.split(',').includes(tag)));
                 });
                 setSearchResults(filteredResults); // 필터링된 결과 설정
+                console.log("Filtered search results set:", filteredResults);
             } catch (error) {
                 console.error("Error fetching search items:", error);
             }

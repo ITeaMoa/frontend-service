@@ -20,22 +20,15 @@ const ApplyPage = ({ feedType }) => {
   //usestate : 컴포넌트 상태 관리에 씀
   //첫번째 요소: 현재 상태 값, 두번째 요소 : 상태를 없데이트하는 값 
   const [commentInput, setCommentInput] = useState('');
-  // const location = useLocation(); // 경로 상태 가져오기
-  // const { liked: initialLiked, likesCount: initialLikesCount } = location.state || {}; // 좋아요 상태와 수 가져오기
-
+  
   const [project, setProject] = useState(null);
-  // const [liked, setLiked] = useState(false);
-  // const [liked, setLiked] = useState(initialLiked || false); // 초기 좋아요 상태 설정
-  // const [likesCount, setLikesCount] = useState(initialLikesCount || 0); // 초기 좋아요 수 설정
-  // // const isLoggedIn = true; // 또는 false로 설정하여 로그인 상태를 나타냄
   const showSearch = false;
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [popupMessage, setPopupMessage] = useState(''); // 팝업 메시지 상태
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
-  // const [likedProjects, setLikedProjects] = useState([]); // 좋아요 상태를 배열로 관리
-  // const [likesCount, setLikesCount] = useState(0); // likesCount 상태 추가
+
 
   const [currentFeedType, setCurrentFeedType] = useState(feedType || "PROJECT"); // Add state for feedType
 
@@ -122,14 +115,6 @@ const ApplyPage = ({ feedType }) => {
   }, [fetchProjectDetails]);
 
 
-
-  
-//  //좋아요 상태 업데이트 함수//아마 최종서버 연결
-//  const handleLikeChange = (newLiked, newLikesCount) => {
-//   setLiked(newLiked);
-//   setLikesCount(newLikesCount);
-// };
-
 const handleLikeClick = (newLiked, newLikesCount) => {
   console.log(`Liked: ${newLiked}, Likes Count: ${newLikesCount}`);
 };
@@ -158,7 +143,6 @@ const handleLikeClick = (newLiked, newLikesCount) => {
       }
     }
   };
-
 
   // 프로젝트가 로딩 중일 때
   if (!project) {
@@ -394,7 +378,7 @@ const handleToggleChange = (newFeedType) => {
 
           <AuthorID>
             <FontAwesomeIcon icon={faUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
-            작성자: {project.creatorId}
+            작성자: {project.nickname}
           </AuthorID>
           </AuthorSection>
         

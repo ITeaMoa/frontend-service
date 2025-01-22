@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment } from '@fortawesome/free-solid-svg-icons';
@@ -7,9 +7,11 @@ import axios from '../../api/axios'
 // import axios from 'axios';
 // import { useAuth } from '../../context/AuthContext'
 import Modal from '../../components/Modal';
+import { useAtom } from 'jotai';
+import { currentApplicantsAtom } from '../../Atoms.jsx/AtomStates';
 
 const ProjectDetail = ({ project, onBack, onClose}) => {
-    const [applicants, setApplicants] = useState([]);
+    const [applicants, setApplicants] = useAtom(currentApplicantsAtom);
 
     const [visibleButtons, setVisibleButtons] = useState({});
     const [clickedButtons, setClickedButtons] = useState({});
@@ -42,46 +44,35 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
     // roles 정보를 콘솔에 출력
     console.log("Roles 정보:", roles);
 
-    const fetchApplications = async (feedId, part) => {
+    const fetchApplications = useCallback(async (feedId) => {
         if (!feedId) {
-            console.error('feedId is undefined. Cannot fetch applications.');
-            return; // feedId가 없으면 요청을 보내지 않음
+            console.error('feedId가 정의되지 않았습니다. 지원자를 가져올 수 없습니다.');
+            return;
         }
-
-        console.log("Fetching applications with feedId:", feedId, {
-            feedId: feedId,
-            part: part
-        }); // params를 콘솔에 출력
 
         try {
             const response = await axios.get(`my/writing/application`, {
-                params: {
-                    feedId: feedId,
-                    // part: part // project의 part 속성을 사용
-                }
+                params: { feedId: feedId },
             });
 
-            console.log("Fetched applicants data:", response.data); // 추가된 콘솔 로그
+            console.log("가져온 지원자 데이터:", response.data); // 응답 데이터 확인
 
             if (response.data) {
-                setApplicants(response.data); // 지원자 정보는 별도의 state에 저장
+                setApplicants(response.data); // 아톰 상태를 가져온 지원자로 업데이트
             } else {
-                setApplicants([]);
+                setApplicants([]); // 데이터가 없으면 아톰 상태를 비움
             }
         } catch (error) {
             console.error("지원자 정보를 가져오는 중 오류 발생:", error);
-            setApplicants([]);
+            setApplicants([]); // 오류 발생 시 아톰 상태를 비움
         }
-    };
+    }, [setApplicants]);
 
     useEffect(() => {
-        // project가 정의되어 있고, pk가 유효한 경우에 fetchApplications 호출
-        if (project && project.pk) {
-            fetchApplications(project.pk, '무관'); // '무관'을 사용하여 모든 지원자 불러오기
-        } else {
-            console.error('selectedProject is not valid:', project);
+        if (project?.pk) {
+            fetchApplications(project.pk); // 프로젝트 pk로 fetchApplications 호출
         }
-    }, [project]); // project가 변경될 때마다 실행
+    }, [fetchApplications, project]); // fetchApplications를 의존성 배열에 추가
 
     useEffect(() => {
         // 로컬 스토리지에서 초기 상태를 가져오는 함수
@@ -116,12 +107,18 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
      // Pagination 로직
     //  const indexOfLastApplicant = currentPage * applicantsPerPage;
     //  const indexOfFirstApplicant = indexOfLastApplicant - applicantsPerPage;
-     const currentApplicants = applicants.filter(applicant => {
-        const applicantPart = applicant.part; // 지원자에 'part' 속성이 있다고 가정
-        return applicantPart === selectedField; // selectedField에 따라 필터링
-    });
+     console.log("Applicants:", applicants); // applicants 상태 확인
+     const currentApplicants = selectedField === '전체' 
+        ? applicants || [] 
+        : applicants.filter(applicant => applicant.part === selectedField);
      
+     console.log("Current Applicants:", currentApplicants);
+     console.log("Is Current Applicants an array?", Array.isArray(currentApplicants)); // 배열인지 확인
      const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+    currentApplicants.forEach((applicant, index) => {
+        console.log(`Applicant ${index}:`, applicant);
+    });
 
     const handleStatusChange = (applicant, status) => {
         if (disabledButtons[applicant.name]) return; // 비활성화된 버튼이면 함수 종료
@@ -141,21 +138,26 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
 
     const confirmStatusChange = async () => {
         const requestData = {
-            pk: selectedApplicant.userid, // 신청자의 userId
+            pk: selectedApplicant.pk, // 선택한 지원자의 pk
             sk: project.pk // feedId
         };
 
+        console.log("Request Data:", requestData); // 요청 데이터 콘솔 출력
         const url = newStatus === "반려" ? 'my/writing/reject' : 'my/writing/accept';
 
         try {
             const response = await axios.patch(url, requestData);
             console.log(`Response: ${response.data}`);
 
-            setVisibleButtons(prevState => ({ ...prevState, [selectedApplicant.name]: newStatus }));
-            setClickedButtons(prevState => ({ ...prevState, [selectedApplicant.name]: newStatus }));
-            setDisabledButtons(prevState => ({ ...prevState, [selectedApplicant.name]: true }));
+            // 상태 업데이트: 승인 또는 반려에 따라 버튼 상태 변경
+            setVisibleButtons(prevState => ({ ...prevState, [selectedApplicant.nickname]: newStatus }));
+            setClickedButtons(prevState => ({ ...prevState, [selectedApplicant.nickname]: newStatus }));
+            setDisabledButtons(prevState => ({ ...prevState, [selectedApplicant.nickname]: true }));
+
+            // ... 추가된 코드: 반려 또는 승인 성공 시 알림 표시
+            alert(newStatus === "반려" ? "지원자가 반려되었습니다." : "지원자가 승인되었습니다.");
         } catch (error) {
-            console.error(`Error changing status for ${selectedApplicant.name}:`, error);
+            console.error(`Error changing status for ${selectedApplicant.nickname}:`, error);
         } finally {
             setIsPopupVisible(false);
         }
@@ -169,23 +171,18 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
     const handleFieldClick = async (field) => {
         setSelectedField(field);
         if (project && project.pk) {
-            const requestData = {
-                pk: project.pk,
-                sk: "PROJECT"
-            };
-            console.log("요청 데이터:", requestData); // 요청 데이터를 콘솔에 출력
             try {
                 if (field === '전체') {
                     // "전체"가 클릭되었을 때 모든 지원자 불러오기
-                    await fetchApplications(project.pk, '무관'); // '무관'을 사용하여 모든 지원자 불러오기
+                    await fetchApplications(project.pk); // '무관'을 사용하여 모든 지원자 불러오기
+                    // const allApplicants = applicants; 
                 } else {
                     // 다른 역할이 클릭되었을 때 해당 역할의 지원자 불러오기
                     const response = await axios.get(`my/writing/part`, {
                         params: {
                             feedId: project.pk, // project.pk를 feedId로 사용
                             part: field // 선택한 필드를 part로 사용
-                        },
-                        data: requestData // 필요한 경우 본문 포함
+                        }
                     });
                     console.log("응답 데이터:", response.data); // 응답 데이터를 콘솔에 출력
                     setApplicants(response.data); // 응답 데이터로 지원자 설정
@@ -312,58 +309,77 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
                             )}
                         </FieldButtons>
                     </HeaderContainer>
-                    {currentApplicants.length === 0 ? (
+                    { currentApplicants.length === 0 ? (
                         <p>신청자가 없습니다.</p>
                     ) : (
-                        currentApplicants.map((applicant, index) => (
-                            <StyledApplicantWrapper key={index}>
-                                <Applicant>
-                                    <FontAwesomeIcon icon={faComment} style={{ color: '#62b9ec', fontSize: '24px' }} />
-                                    <ApplicantName>{applicant.name}</ApplicantName>
+                        currentApplicants.map((applicant, index) => {
+                            console.log(`Applicant ${index}:`, applicant); // 각 지원자 출력
+                            return (
+                                <StyledApplicantWrapper key={index}>
+                                    <Applicant>
+                                    <FontAwesomeIcon icon={faComment} style={{ color: '#62b9ec', fontSize: '24px', marginLeft: '20px' }} />
+                                    <ApplicantName>{applicant.nickname}</ApplicantName>
                                     <Tags2>
-                                        {applicant.skills.map((skill, idx) => (
-                                            <Tag key={idx}>{skill}</Tag>
-                                        ))}
-                                    </Tags2>
-                                    <ButtonContainer>
-                                        {visibleButtons[applicant.name] === "승인" ? (
-                                            <StatusButton 
-                                                onClick={() => handleStatusChange(applicant, "승인")}
-                                                isClicked={clickedButtons[applicant.name] === "승인"}
-                                                disabled={disabledButtons[applicant.name]} // 버튼 비활성화 상태 적용
-                                            >
-                                                승인
-                                            </StatusButton>
-                                        ) : visibleButtons[applicant.name] === "반려" ? (
-                                            <StatusButton 
-                                                onClick={() => handleStatusChange(applicant, "반려")}
-                                                isClicked={clickedButtons[applicant.name] === "반려"}
-                                                disabled={disabledButtons[applicant.name]} // 버튼 비활성화 상태 적용
-                                            >
-                                                반려
-                                            </StatusButton>
-                                        ) : (
-                                            <>
-                                                <StatusButton 
-                                                    onClick={() => handleStatusChange(applicant, "승인")}
-                                                    isClicked={clickedButtons[applicant.name] === "승인"}
-                                                    disabled={disabledButtons[applicant.name]} // 버튼 비활성화 상태 적용
-                                                >
-                                                    승인
-                                                </StatusButton>
+                                
+                                            {/* 태그가 있을 경우 추가 */}
+                                            {applicant.tags && applicant.tags.length > 0 ? (
+                                                applicant.tags.map((tag, idx) => (
+                                                    <Tag key={idx}>{tag}</Tag>
+                                                ))
+                                            ) : (
+                                                <Tag>none</Tag> // tags가 없을 경우 "none" 표시
+                                            )}
+                                        </Tags2>
+
+                                    
+                                       
+                                         {/* <Tags>
+                                            <Tag>{applicant.part}</Tag>
+                                            {/* 태그가 있을 경우 추가 */}
+                                            {/* {applicant.tags && applicant.tags.map((tag, idx) => (
+                                                <Tag key={idx}>{tag}</Tag>
+                                            ))}</Tags> */}
+
+                                        <ButtonContainer singleButton={currentApplicants.length === 1}>
+                                            {applicant.status === "REJECTED" ? (
                                                 <StatusButton 
                                                     onClick={() => handleStatusChange(applicant, "반려")}
-                                                    isClicked={clickedButtons[applicant.name] === "반려"}
-                                                    disabled={disabledButtons[applicant.name]} // 버튼 비활성화 상태 적용
+                                                    isClicked={true}
+                                                    disabled={disabledButtons[applicant.nickname]}
                                                 >
                                                     반려
                                                 </StatusButton>
-                                            </>
-                                        )}
-                                    </ButtonContainer>
-                                </Applicant>
-                            </StyledApplicantWrapper>
-                        ))
+                                            ) : applicant.status === "ACCEPTED" ? (
+                                                <StatusButton 
+                                                    onClick={() => handleStatusChange(applicant, "승인")}
+                                                    isClicked={true}
+                                                    disabled={disabledButtons[applicant.nickname]}
+                                                >
+                                                    승인
+                                                </StatusButton>
+                                            ) : (
+                                                <>
+                                                    <StatusButton 
+                                                        onClick={() => handleStatusChange(applicant, "승인")}
+                                                        isClicked={clickedButtons[applicant.nickname] === "승인"}
+                                                        disabled={disabledButtons[applicant.nickname]}
+                                                    >
+                                                        승인
+                                                    </StatusButton>
+                                                    <StatusButton 
+                                                        onClick={() => handleStatusChange(applicant, "반려")}
+                                                        isClicked={clickedButtons[applicant.nickname] === "반려"}
+                                                        disabled={disabledButtons[applicant.nickname]}
+                                                    >
+                                                        반려
+                                                    </StatusButton>
+                                                </>
+                                            )}
+                                        </ButtonContainer>
+                                    </Applicant>
+                                </StyledApplicantWrapper>
+                            );
+                        })
                     )}
                 </ApplicationStatus>
                 <StyledPaginationContainer>
@@ -495,7 +511,10 @@ const Tags2 = styled.div`
     margin-top:1px;
     display: flex;
     flex-wrap: wrap;
-    margin-left: 36px;
+    // margin-left: 36px;
+    // min-height: 20px;
+    margin-left:-120px;
+    
     
 `;
 
@@ -535,7 +554,7 @@ const Applicant = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    padding:5px;
     border-bottom: 2px solid #A0DAFB;
     border-radius: 1px;
     min-width: 600px;
@@ -552,8 +571,11 @@ const Applicant = styled.div`
 
 const ApplicantName = styled.span`
     font-weight: bold;
-    margin-left: 20px;
+    // margin-left: px;
     font-size: 18px;
+    margin-left: -120px;
+    min-width: 100px;
+    
 `;
 
 const StatusButton = styled.button`
@@ -567,14 +589,21 @@ const StatusButton = styled.button`
         children === "승인" ? "white" : "#3563E9"};
     border: ${({ children, isClicked }) => 
         isClicked && children === "승인" ? "none" : 
-    isClicked && children === "반려" ? "none" : 
+        isClicked && children === "반려" ? "none" : 
         children === "승인" ? "none" : "1px solid #3563E9"};
-    padding: 5px 15px;
+    padding: ${({ isClicked, children }) => 
+        isClicked ? 
+        (children === "승인" ? '10px 25px' : 
+        children === "반려" ? '10px 25px' : '6px 18px') : 
+        '6px 18px'}; // 클릭 상태일 때만 다르게 설정
+    margin: ${({ isClicked, children }) => 
+        isClicked ? 
+        (children === "승인" ? '0px 0px 0px 30px' : 
+        children === "반려" ? '0px 0px 0px 30px' : '0') : 
+        '0'}; // 클릭 상태일 때만 다르게 설정
     border-radius: 5px;
-    margin-left: 5px;
     cursor: pointer;
     opacity: 1;
-
 `;
 
 // const Button = styled.button`
@@ -727,9 +756,13 @@ const PopupButton = styled.button`
 
 const ButtonContainer = styled.div`
   display: flex;
-  justify-content: center;
+//   justify-content: ${({ singleButton }) => (singleButton ? 'center' : 'space-between')}; // 버튼이 하나일 때 중앙 정렬
   gap: 20px;
-  margin-top: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+//   margin-right: 10px;
+margin-left: 10px;
+  min-width: 150px;
 `;
 
 const ModalButton = styled.button`

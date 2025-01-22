@@ -8,6 +8,7 @@ import Pagination from '../../components/Pagination';
 import Modal from '../../components/Modal';
 // import { useAuth } from '../../context/AuthContext'; // AuthContext 경로를 맞춰주세요
 import { useAuth } from '../../context/AuthContext'
+import axios from '../../api/axios'
 
 
 //searchpage에서 itemslist 가져오기
@@ -24,23 +25,27 @@ const SearchFeed = ({ itemList, setSearchResults }) => {
 
 
 
+ 
   const handleProjectClick = (project) => {
-    if (project) { // project가 null이 아닐 때만 navigate 호출
-        navigate(`/ApplyPage/${project.pk}`);
-    }
+    navigate(`/ApplyPage/${project.pk}`, { 
+      state: { 
+        sk: project.sk // sk 값을 상태로 전달
+      } 
+    });
   };
 
- 
 
-  const handleLikeClick = (index, newLiked, newLikesCount) => {
-    setSearchResults((prevProjects) => {
+  const handleLikeClick = (index, newLiked) => {
+    setSearchResults(prevProjects => {
       const newProjects = [...prevProjects];
       const project = newProjects[index];
+      const newLikesCount = newLiked ? project.likesCount + 1 : Math.max(project.likesCount - 1, 0);
       project.liked = newLiked;
       project.likesCount = newLikesCount;
       return newProjects;
     });
   };
+
 
   // 페이지네이션 관련
 const indexOfLastProject = currentPage * projectsPerPage;
@@ -49,7 +54,36 @@ const currentProjects = itemList.slice(indexOfFirstProject, indexOfLastProject);
 const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
 
-const handleApplyClick = (project) => {
+const handleApplyClick = async (project) => {
+  if (!user) { // Check if user is logged in
+    alert("로그인 후에 신청할 수 있습니다."); // Alert for login
+    return; // Exit the function if not logged in
+  }
+
+  // const projectsWithLikes = await fetchAllProjects(); // Get projectsWithLikes from fetchAllProjects
+
+  try {
+    const response = await axios.get('/feed/applications', {
+      params: {
+        userId: user.id,
+      }
+    });
+    console.log('이미신청한 프로젝트:', response.data); // 응답 데이터 출력
+
+    const appliedProjects = response.data.map(app => app.feedId); // 신청한 프로젝트의 feedId 목록
+    console.log('신청한 프로젝트 feedId 목록:', appliedProjects); // 신청한 프로젝트 feedId 출력
+
+    // 선택한 프로젝트의 pk와 비교
+    const isAlreadyApplied = appliedProjects.includes(project.pk);
+    if (isAlreadyApplied) {
+      setPopupMessage("이미 신청한 프로젝트입니다."); // 이미 신청한 경우 메시지 설정
+      setIsSubmitted(true); // 제출 확인 팝업 표시
+      return; // Exit the function if already applied
+    }
+  } catch (error) {
+    console.error("신청 여부 확인 실패:", error);
+  }
+
   setProject(project); // 선택한 프로젝트 상태 저장
   setIsRoleModalOpen(true); // 역할 선택 모달 열기
 };
@@ -58,36 +92,35 @@ const handleRoleSelect = (role) => {
   setSelectedRole(role);
 };
 
-// 역할 신청 제출
 const handleApplySubmit = async () => {
   if (!selectedRole) {
     alert("역할을 선택하세요.");
     return;
   }
 
-  if (!project) {
-    alert("프로젝트를 선택하세요.");
-    return;
-  }
-
+  // 역할 선택 모달 닫기
   setIsRoleModalOpen(false);
 
-  // try {
-  //   const applicationData = {
-  //     pk: project.pk,
-  //     sk: user.id, // 실제 사용자 ID로 대체
-  //     part: selectedRole,
-  //     feedType: "PROJECT"
-  //   };
+  try {
+    // 선택한 역할을 서버에 전송
+    const applicationData = {
+      pk: user.id, // 프로젝트의 pk를 사용
+      sk: project.pk, 
+      part: selectedRole, // 선택한 역할
+      feedType: "PROJECT" // 고정된 값
+    };
 
-  //   const response = await axios.post('/main/application', applicationData);
-  //   setPopupMessage("제출되었습니다.");
-  //   setIsSubmitted(true);
-  // } catch (error) {
-  //   console.error("Submission failed:", error);
-  //   setPopupMessage("제출에 실패했습니다. 다시 시도하세요.");
-  //   setIsSubmitted(true);
-  // }
+    await axios.post('/main/application', applicationData); // API 호출
+
+    setPopupMessage("신청이 완료되었습니다.");
+    // 제출 확인 팝업 표시
+    setIsSubmitted(true);
+  } catch (error) {
+    console.error("Submission failed:", error);
+    setPopupMessage("제출에 실패했습니다. 다시 시도하세요.");
+    // 제출 확인 팝업 표시
+    setIsSubmitted(true);
+  }
 };
 
 // 제출 확인 팝업 닫기 함수
@@ -95,6 +128,8 @@ const handleCloseSubmissionPopup = () => {
   setIsSubmitted(false);
   setPopupMessage(''); // 메시지 초기화
 };
+
+
 
 
   return (
@@ -105,7 +140,7 @@ const handleCloseSubmissionPopup = () => {
             <ProjectCard onClick={() => handleProjectClick(itemList[0])}>
               <ProjectOwner>
                 <FontAwesomeIcon icon={regularUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
-                {itemList[0].creatorId || 'Unknown'}
+                {itemList[0].nickname || 'Unknown'}
               </ProjectOwner>
 
             <LikeButtonWrapper>
@@ -113,10 +148,22 @@ const handleCloseSubmissionPopup = () => {
                 initialLiked={itemList[0].liked} // itemList[0]의 liked 속성 사용
                 initialLikesCount={itemList[0].likesCount} // itemList[0]의 likesCount 사용
                 onLikeChange={(newLiked, newLikesCount) => handleLikeClick(0, newLiked, newLikesCount)} // index 0 사용
-                apiEndpoint="/main/like" // MainPage API 엔드포인트
-                pk={itemList[0].pk} 
-                sk={itemList[0].sk}
+                // onLikeChange={handleLikeClick}
+                userId={user ? user.id : null} // user가 null인 경우 처리
+                feedType={itemList[0].sk} // Use project.sk as feedType
+                sk={itemList[0].pk}
               />
+
+{/* <LikeButton 
+                initialLiked={project.liked} 
+                initialLikesCount={project.likesCount} 
+                onLikeChange={handleLikeClick}
+                buttonStyle="apply"
+                sk={project.pk}
+                userId={user ? user.id : null} // user가 null인 경우 처리
+                feedType={project.sk} // Use project.sk as feedType
+              /> */}
+        
             </LikeButtonWrapper>
 
               <ProjectTitle>{itemList[0].title}</ProjectTitle>
@@ -146,7 +193,7 @@ const handleCloseSubmissionPopup = () => {
             <ProjectCard key={index} onClick={() => handleProjectClick(project)} >
               <ProjectOwner>
               <FontAwesomeIcon icon={regularUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
-              {user ? '나' : project.creatorId}
+              {user ? '나' : project.nickname}
               </ProjectOwner>
            
               <LikeButtonWrapper>
@@ -156,10 +203,11 @@ const handleCloseSubmissionPopup = () => {
                 initialLikesCount={project.likesCount} 
                 onLikeChange={(newLiked, newLikesCount) => handleLikeClick(index, newLiked, newLikesCount)} 
                 buttonStyle="s1"
-                apiEndpoint="/main/like"
                 sk={project.pk}
                 userId={user ? user.id : null} // user가 null인 경우 처리
+                feedType={project.sk} // Use project.sk as feedType
               />
+ 
               </LikeButtonWrapper>
               <ProjectTitle>{project.title}</ProjectTitle>
               <Content>{project.content}</Content>
@@ -195,26 +243,37 @@ const handleCloseSubmissionPopup = () => {
       />
       
      
+     
       <Modal isOpen={isRoleModalOpen} onClose={() => setIsRoleModalOpen(false)} modalType="apply">
-       
         <RoleButtonContainer>
-        <h3>지원할 역할을 선택하세요</h3>
-          {project && project.role ? (
-            project.role.map((role, index) => (
+          <h3>지원할 역할을 선택하세요</h3>
+          {project && project.roles ? (
+            Object.entries(project.roles).map(([role, count], index) => (
               <RoleButton
                 key={index}
                 onClick={() => handleRoleSelect(role)}
                 isSelected={selectedRole === role}
               >
-                {role.name}
+                {role} ({count})
               </RoleButton>
             ))
           ) : (
-            <p>역할 정보를 불러오는 중입니다...</p>
+            <p>역할 정보가 없습니다.</p>
           )}
+          <RoleButton
+            onClick={() => {
+              if (selectedRole !== '무관') {
+                handleRoleSelect('무관');
+              }
+            }}
+            isSelected={selectedRole === '무관'}
+          >
+            무관
+          </RoleButton>
         </RoleButtonContainer>
         <SubmitButton onClick={handleApplySubmit}>제출</SubmitButton>
       </Modal>
+
 
       {/* 제출 결과 팝업 */}
       {isSubmitted && (

@@ -138,17 +138,17 @@ const ProjectListComponent = ({
     console.log('선택된 프로젝트의 feedId:', feedId); // feedId 로그
 
     try {
-        const response = await axios.delete(`feed/cancel?userId=${userId}&feedId=${feedId}`, {
+        const response = await axios.delete(`feed/apply-cancel?userId=${userId}&feedId=${feedId}`, {
             headers: {
                 'Content-Type': 'application/json',
-
             }
         });
         
         console.log('응답:', response.data);
         console.log('응답 상태 코드:', response.status); // 응답 상태 코드 로그
         
-        if (response.status === 204) { // 204 No Content 처리
+        // 200 상태 코드도 성공으로 처리
+        if (response.status === 200 || response.status === 204) { // 200 또는 204 처리
             // 취소한 프로젝트의 정보를 출력
             console.log('취소한 프로젝트 정보:', {
                 userId,

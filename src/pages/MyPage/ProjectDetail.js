@@ -283,6 +283,7 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
                         onClick={handleCloseApplication}
                         isClicked={isClosed}
                         disabled={isClosed || (project.postStatus === false && project.savedFeed === false)} 
+                        style={{ backgroundColor: (project.postStatus === false && project.savedFeed === false) ? '#808080' : undefined, opacity: (project.postStatus === false && project.savedFeed === false) ? 0.6 : 1 }} // 버튼 색상 및 불투명도 변경
                     >
                         모집완료
                     </Button>

@@ -23,6 +23,7 @@ const Section2 = ({ feedType }) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [popupMessage, setPopupMessage] = useState(''); // 팝업 메시지 상태
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
+  const [likedProjects, setLikedProjects] = useState([]);
 
 
 
@@ -65,6 +66,39 @@ const Section2 = ({ feedType }) => {
 
   //   setAllProjects(projectsWithLikes);
   // };
+
+  // 사용자 좋아요 상태 가져오기
+const fetchUserLikes = useCallback(async () => {
+  if (!user) return; // 사용자 정보가 없으면 종료
+  try {
+    const response = await axios.get(`/main/like?userId=${user.id}`);
+    if (response.data) {
+      console.log('사용자가 좋아요를 눌렀던 프로젝트:', response.data);
+      
+      // likedProjects 상태 업데이트
+      setLikedProjects(prevLiked => [
+        ...prevLiked,
+        { id: user.id, liked: response.data.liked || false, likesCount: response.data.likesCount || 0 }
+      ]);
+
+      // allProjects 상태 업데이트
+      setAllProjects(prevProjects => 
+        prevProjects.map(project => ({
+          ...project,
+          liked: response.data.some(like => like.projectId === project.pk) || false, // 사용자가 좋아요를 눌렀는지 확인
+          likesCount: project.likesCount // likesCount 유지
+        }))
+      );
+    }
+  } catch (error) {
+    console.error('Error fetching user likes:', error);
+  }
+}, [user]);
+
+// useEffect를 사용하여 컴포넌트가 마운트될 때 사용자 좋아요 상태를 가져옵니다.
+useEffect(() => {
+  fetchUserLikes();
+}, [fetchUserLikes]);
 
   const fetchAllProjects = useCallback(async () => {
     try {
@@ -110,10 +144,9 @@ const Section2 = ({ feedType }) => {
 
   const handleProjectClick = (project) => {
     navigate(`/ApplyPage/${project.pk}`, { 
-      // state: { 
-      //   liked: project.liked, 
-      //   likesCount: project.likesCount // likesCount도 함께 전달
-      // } 
+      state: { 
+        sk: project.sk // sk 값을 상태로 전달
+      } 
     });
   };
   
@@ -226,7 +259,6 @@ const handleCloseSubmissionPopup = () => {
   setIsSubmitted(false);
   setPopupMessage(''); // 메시지 초기화
 };
-
 
 
 

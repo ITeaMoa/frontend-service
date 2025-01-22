@@ -1,7 +1,7 @@
 import React, { useState, useEffect,useCallback  } from 'react';
 import styled from 'styled-components';
 import Nav from '../../components/Nav';
-import { useNavigate , useParams } from 'react-router-dom';
+import { useNavigate , useParams, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft,faComment } from '@fortawesome/free-solid-svg-icons';
 import { faUser } from '@fortawesome/free-regular-svg-icons';
@@ -15,6 +15,8 @@ import { useAuth } from '../../context/AuthContext'
 const ApplyPage = ({ feedType }) => {
   const navigate = useNavigate(); 
   const {projectId } = useParams(); // URL에서 projectId 가져오기
+  const location = useLocation(); // 경로 상태 가져오기
+  const { sk } = location.state || {}; // 전달된 sk 값 가져오기
   //usestate : 컴포넌트 상태 관리에 씀
   //첫번째 요소: 현재 상태 값, 두번째 요소 : 상태를 없데이트하는 값 
   const [commentInput, setCommentInput] = useState('');
@@ -82,7 +84,7 @@ const ApplyPage = ({ feedType }) => {
 
   const fetchProjectDetails = useCallback(async () => {
     try {
-      const response = await axios.get(`/main?feedType=${currentFeedType}`); // Use currentFeedType
+      const response = await axios.get(`/main?feedType=${sk}`); // sk 값을 사용
       const selectedProject = response.data.find(item => item.pk === projectId); // 특정 프로젝트 찾기
       
       if (selectedProject) {
@@ -96,7 +98,7 @@ const ApplyPage = ({ feedType }) => {
       console.error("Error fetching project details:", error);
       setProject(null); // 오류 발생 시 상태를 null로 설정
     }
-  }, [projectId, currentFeedType]); // Add currentFeedType to dependencies
+  }, [projectId, sk]); // sk를 의존성 배열에 추가
 
   // const fetchProjectDetails = useCallback(async () => {
   //   try {

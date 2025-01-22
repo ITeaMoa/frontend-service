@@ -22,6 +22,7 @@ function Section1({ feedType }) {
 
 
   // 사용자 좋아요 상태 가져오기
+  //fetchUserLikes는 사용자의 좋아요 상태를 가져오고, 이를 통해 likedProjects와 popularProjects를 업데이트
   const fetchUserLikes = useCallback(async () => {
     if (!user) return; // 사용자 정보가 없으면 종료
     try {
@@ -44,6 +45,9 @@ function Section1({ feedType }) {
     }
   }, [user]);
 
+  //이 함수는 인기 있는 프로젝트를 가져오는 역할을 합니다. 
+  //API 호출을 통해 인기 프로젝트의 데이터를 가져오고, 이 데이터는 popularProjects 상태에 저장됩니다.
+  //fetchPopularProjects는 인기 프로젝트를 가져오고, 이때 likedProjects를 참조하여 각 프로젝트의 좋아요 상태를 설정
   const fetchPopularProjects = useCallback(async () => {
     try {
       const response = await axios.get(`/main/liked?feedType=${feedType}`);
@@ -87,10 +91,11 @@ const handleProjectClick = (project, feedType) => {
     state: { 
       liked: project.liked, 
       likesCount: project.likesCount, // likesCount도 함께 전달
-      feedType // 현재 feedType 전달
+      sk:project.sk,
     } 
   });
 };
+
   
   // const handleLikeClick = (index, newLiked, newLikesCount) => {
   //   // Ensure likesCount is not negative

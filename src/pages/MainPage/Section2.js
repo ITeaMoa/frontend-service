@@ -168,7 +168,10 @@ useEffect(() => {
       const newLikesCount = newLiked ? project.likesCount + 1 : Math.max(project.likesCount - 1, 0);
       project.liked = newLiked;
       project.likesCount = newLikesCount;
-      return newProjects;
+
+      // // 배열을 timestamp를 기준으로 정렬
+      // return newProjects.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      return newProjects; // 원래 자리 유지
     });
   };
 
@@ -361,12 +364,14 @@ const SectionWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: calc(100% / 2 + 100px);
+  // width: calc(100% / 2 + 100px);
+  // width: 100%;
   justify-content: center;
   max-width: 1200px;
   margin: 0 auto;
   margin-top: 50px;
   margin-bottom: 40px;
+  // flex-wrap: no-wrap;
 
   @media (max-width: 1200px) {
     margin-top: 40px;
@@ -413,35 +418,33 @@ const SectionTitle = styled.h2`
 `;
 
 const ProjectList = styled.div`
+  // display: flex;
+  // // flex-direction: column;
+  // flex-wrap: no-wrap;
+  // max-height: 1200px;
+  // min-width: 100%;
+  // align-items: center;
+  // max-width: 100%;
+
+  //  display: flex; // Flexbox를 사용하여 수평으로 나열
+  // flex-wrap: wrap; // 줄 바꿈을 허용
+  // max-height: 800px;
+  // min-width: 100%;
+  // margin: 0; // 기본 마진 제거
+
+
   display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  max-height: 1200px;
+  flex-direction: row; // 가로 방향으로 정렬
+  flex-wrap: wrap; // 줄 바꿈을 허용
+  max-height: 1200px; // 최대 높이를 설정하여 세로로 늘어나는 것을 방지
+  // overflow-y: auto; // 내용이 넘칠 경우 스크롤이 생기도록 설정
   min-width: 100%;
-  align-items: center;
-  
-  @media (max-width: 1600px) {
-
-    // max-height: 180vh;
-  
-  }
-
-  @media (max-width: 1200px) {
-    // max-height: 160vh;
-  
-  }
-
-  @media (max-width: 768px) {
-    // max-height: 140vh;
-  }
-
-  @media (max-width: 480px) {
-    // max-height: 120vh;
-  }
-
+  align-items: flex-start; // 상단 정렬
+  max-width: 100%; // 최대 너비를 100%로 유지
+  gap: 30px;
+  margin-left: 20px;
   
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    // width: calc(50% - 20px);
     min-width: 50%;
     margin: 10px 0;
     
@@ -458,13 +461,16 @@ const ProjectCard = styled.div`
   padding: 15px;
   margin-top: 10px;
   margin-bottom: 10px;
-  margin-right: 30px;
+  // margin-right: 30px;
   width: calc(100%/2 - 50px);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   background-color: white;
   min-height: 200px;
   max-height: 800px;
-  // min-width: 400px; 
+  min-width: 550px; 
+
+
+  
  
  @media (max-width: 1400px) {
     

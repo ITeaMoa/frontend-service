@@ -67,6 +67,15 @@ const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle
       if (onLikeChange) {
         onLikeChange(newLiked, newLikesCount);
       }
+
+      // 현재 URL 확인
+      const currentPath = window.location.pathname;
+      const excludedPaths = ['/ApplyPage']; // 새로고침을 방지할 페이지 목록
+
+      // 특정 페이지가 아닐 경우에만 새로고침
+      if (!excludedPaths.includes(currentPath)) {
+        window.location.reload(); // 좋아요 클릭 후 페이지 새로고침
+      }
     } catch (error) {
       console.error('Error updating like status:', error);
     }

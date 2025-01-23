@@ -220,7 +220,17 @@ const ProjectListComponent = ({
                       if (user && user.id && project.feedId) {
                         console.log("User ID:", user.id);
                         console.log("Project Feed ID:", project.feedId);
-                        handleCancelApplication(user.id, project.feedId);
+                        if (project.status === "REJECTED") {
+                          // 반려 버튼 클릭 시 처리 로직 추가
+                          console.log("반려 버튼 클릭");
+                          // 반려 처리 로직을 여기에 추가
+                        } else if (project.status === "ACCEPT") {
+                          // 승인 완료 처리 로직 추가
+                          console.log("승인 완료");
+                          // 승인 완료 처리 로직을 여기에 추가
+                        } else {
+                          handleCancelApplication(user.id, project.feedId);
+                        }
                       } else {
                         console.error("User or project information is missing");
                         console.log("User:", user);
@@ -229,9 +239,10 @@ const ProjectListComponent = ({
                         console.log("Project Feed ID:", project ? project.feedId : "없음");
                       }
                     }}
-                    disabled={isProjectCanceled(project.feedId)}
+                    disabled={isProjectCanceled(project.feedId) || project.status === "REJECTED" || project.status === "ACCEPTED"}
+                    status={project.status}
                   >
-                    신청 취소
+                    {project.status === "REJECTED" ? "반려" : project.status === "ACCEPTED" ? "승인 완료" : "신청 취소"}
                   </Button2>
                   <AdditionalInfo>
                     <span>지원분야| {project.part}</span>
@@ -322,6 +333,7 @@ const ProjectList = styled.div`
   overflow-x: auto;
   transition: transform 0.5s ease;
   transform: ${(props) => (props.isFading ? 'translateX(100%)' : 'translateX(0)')};
+  min-height: 700px;
 `;
 
 
@@ -409,24 +421,32 @@ const Button = styled.button`
   }
 `;
 
+
 const Button2 = styled.button`
   position: absolute;
-  background-color: #3563E9;
+  background-color: ${({ status }) => 
+    status === "REJECTED" ? '#C1C1C1' : 
+    status === "ACCEPTED" ? '#4ECF42' : 
+    '#3563E9'};
   color: white;
   border: none;
   padding: 10px 20px;
   border-radius: 5px;
-  cursor: pointer;
+  cursor: ${({ status }) => (status === "REJECTED" || status === "ACCEPTED" || status === "CANCELLED" ? 'not-allowed' : 'pointer')};
   right: 15px;
-  top:20px;
+  top: 20px;
+  min-width: 100px;
 
   &:hover {
-    background-color: #a0dafb;
+    background-color: ${({ status }) => 
+      status === "REJECTED" ? '#C1C1C1' : 
+      status === "ACCEPTED" ? '#4ECF42' : 
+      '#a0dafb'};
   }
 `;
 
-const AdditionalInfo = styled.div`
-  position: absolute;
+
+const AdditionalInfo = styled.div`  position: absolute;
   text-align: left;
   display: flex;
   flex-direction: column;
@@ -458,4 +478,5 @@ const ModalButton = styled.button`
     background-color: #a0dafb;
   }
 `;
+
 

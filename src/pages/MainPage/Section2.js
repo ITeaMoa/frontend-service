@@ -442,7 +442,7 @@ const ProjectList = styled.div`
   align-items: flex-start; // 상단 정렬
   max-width: 100%; // 최대 너비를 100%로 유지
   gap: 30px;
-  margin-left: 20px;
+  margin-left: 200px;
   
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     min-width: 50%;
@@ -462,20 +462,20 @@ const ProjectCard = styled.div`
   margin-top: 10px;
   margin-bottom: 10px;
   // margin-right: 30px;
-  width: calc(100%/2 - 50px);
+  width: calc(100%/2 - 150px);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   background-color: white;
   min-height: 200px;
   max-height: 800px;
-  min-width: 550px; 
-
+  min-width: 450px; 
+  // min-width: calc(100%/2 - 50px);
 
   
  
  @media (max-width: 1400px) {
     
     max-height: 400px;
-     min-width: 350px;
+     min-width: 300px;
   }
 
 

@@ -245,17 +245,17 @@ const handleApplySubmit = async () => {
       pk: user.id, // 프로젝트의 pk를 사용
       sk: project.pk, 
       part: selectedRole, // 선택한 역할
-      feedType: "PROJECT" // 고정된 값
+      feedType: feedType // 고정된 값
     };
 
     await axios.post('/main/application', applicationData); // API 호출
 
-    setPopupMessage("신청이 완료되었습니다.");
+    alert("신청이 완료되었습니다."); // 신청 완료 알림
     // 제출 확인 팝업 표시
     setIsSubmitted(true);
   } catch (error) {
     console.error("Submission failed:", error);
-    setPopupMessage("제출에 실패했습니다. 다시 시도하세요.");
+    alert("제출에 실패했습니다. 다시 시도하세요."); // 제출 실패 알림
     // 제출 확인 팝업 표시
     setIsSubmitted(true);
   }

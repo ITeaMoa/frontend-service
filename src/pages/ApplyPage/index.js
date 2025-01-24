@@ -28,6 +28,7 @@ const ApplyPage = ({ feedType }) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [popupMessage, setPopupMessage] = useState(''); // 팝업 메시지 상태
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
+   const nickname = user ? user.nickname : 'Unknown'; //사용자 닉네임 설정
 
 
   const [currentFeedType, setCurrentFeedType] = useState(feedType || "PROJECT"); // Add state for feedType
@@ -104,7 +105,7 @@ const ApplyPage = ({ feedType }) => {
   //       console.error("Project not found for projectId:", projectId);
   //       setProject(null);
   //     }
-  //   } catch (error) {
+  //   } catch (error) 
   //     console.error("Error fetching project details:", error);
   //     setProject(null); // 오류 발생 시 상태를 null로 설정
   //   }
@@ -121,28 +122,39 @@ const handleLikeClick = (newLiked, newLikesCount) => {
 
 
 
-  const handleCommentSubmit = async () => {
-    if (commentInput.trim() && project) {
+const handleCommentSubmit = async () => {
+  if (commentInput.trim() && project) {
       const newComment = {
-        userId: user ? user.id : null, // user가 null인 경우 처리
-        comment: commentInput,
+          userId: user ? user.id : null, // user가 null인 경우 처리
+          comment: commentInput,
       };
 
+      // comment 부분 콘솔로 출력
+      console.log("댓글 내용:", newComment.comment);
+
       try {
-        await axios.post(`/feed/${projectId}/comments`, newComment, {
-          params: { feedType: currentFeedType } // Use currentFeedType
-        });
-        setProject(prevProject => ({
-          ...prevProject,
-          comments: [...prevProject.comments, newComment] 
-        }));
-        setCommentInput(''); 
+          await axios.post(`/feed/${projectId}/comments`, newComment, {
+              params: { feedType: currentFeedType } // Use currentFeedType
+          });
+          setProject(prevProject => {
+              const updatedProject = {
+                  ...prevProject,
+                  comments: [...prevProject.comments, newComment] 
+              };
+              // 새로고침을 위해 프로젝트 상태를 업데이트
+              fetchProjectDetails(); // 댓글 추가 후 프로젝트 세부정보를 다시 가져옵니다.
+              console.log("Updated project stateㄴㄴㄴㄴ:", updatedProject); // 추가된 콘솔 로그
+              console.log("댓글이 성공적으로 추가되었습니다:", newComment);
+              return updatedProject;
+          });
+          setCommentInput(''); 
       } catch (error) {
-        console.error("댓글 제출 중 오류 발생:", error);
-        alert("댓글 제출에 실패했습니다."); 
+          console.error("댓글 제출 중 오류 발생:", error);
+          alert("댓글 제출에 실패했습니다."); 
       }
-    }
-  };
+  }
+};
+
 
   // 프로젝트가 로딩 중일 때
   if (!project) {
@@ -152,6 +164,12 @@ const handleLikeClick = (newLiked, newLikesCount) => {
   const handleApplyClick = async () => {
     if (!user) { // 로그인 여부 확인
       alert("로그인 후 신청할 수 있습니다."); // 로그인하지 않은 경우 알림
+      return; // 함수 종료
+    }
+
+    // 자신이 작성한 게시글인지 확인
+    if (project && project.creatorId === user.id) {
+      alert("자신이 작성한 게시글에는 신청할 수 없습니다."); // 자신이 작성한 경우 알림
       return; // 함수 종료
     }
 
@@ -411,7 +429,7 @@ const handleToggleChange = (newFeedType) => {
                       <Timestamp>
                         <strong>{comment.userID}</strong>
                         <span style={{ fontSize: 'small', color: '#aaa' }}>
-                          {formattedDate} {formattedTime}
+                          {comment.timestamp ? new Date(comment.timestamp).toLocaleDateString() : '날짜 정보 없음'} {comment.timestamp ? new Date(comment.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
                         </span>
                       </Timestamp>
                     </Users>
@@ -428,31 +446,33 @@ const handleToggleChange = (newFeedType) => {
       </Container>
 
       <Modal isOpen={isRoleModalOpen} onClose={() => setIsRoleModalOpen(false)} modalType="apply">
-        <RoleButtonContainer>
+      <RoleButtonContainer>
           <h3>지원할 역할을 선택하세요</h3>
           {project && project.roles ? (
-            Object.entries(project.roles).map(([role, count], index) => (
+            <RoleButtonContainerStyled>
+              {Object.entries(project.roles).map(([role, count], index) => (
+                <RoleButton
+                  key={index}
+                  onClick={() => handleRoleSelect(role)}
+                  isSelected={selectedRole === role}
+                >
+                  {role} ({count})
+                </RoleButton>
+              ))}
               <RoleButton
-                key={index}
-                onClick={() => handleRoleSelect(role)}
-                isSelected={selectedRole === role}
+                onClick={() => {
+                  if (selectedRole !== '무관') {
+                    handleRoleSelect('무관');
+                  }
+                }}
+                isSelected={selectedRole === '무관'}
               >
-                {role} ({count})
+                무관
               </RoleButton>
-            ))
+            </RoleButtonContainerStyled>
           ) : (
             <p>역할 정보가 없습니다.</p>
           )}
-          <RoleButton
-            onClick={() => {
-              if (selectedRole !== '무관') {
-                handleRoleSelect('무관');
-              }
-            }}
-            isSelected={selectedRole === '무관'}
-          >
-            무관
-          </RoleButton>
         </RoleButtonContainer>
         <SubmitButton onClick={handleApplySubmit}>제출</SubmitButton>
       </Modal>
@@ -582,16 +602,22 @@ const PostDescription = styled.p`
 `;
 
 const TagsSection = styled.div`
- position: absolute;
- 
-  bottom: 10%;
-  left: 10%;
+  // position: absolute;
+  // bottom: 10%;
+  // left: %;
   flex-wrap: wrap;
+  display: flex;
+  width: 800px;
+  // padding-top: 30px;
+  margin-left:-50px;
+  gap:20px;
 `;
 
 const TagButton = styled.button`
   padding: 4px 25px;
-  margin-right: 20px;
+  // margin-right: 20px;
+
+  margin-bottom: 10px;
   border: 1px solid;
   border-radius: 14px 14px 1px 14px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -769,11 +795,20 @@ const RoleButtonContainer = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  justify-content:center;
+  justify-content: space-between;
+  max-height: 400px; // 최대 높이 설정
+  overflow-y: auto; // 세로 스크롤 가능
 
-  h3{
+  position: relative; // 위치 고정을 위한 설정
+
+  h3 {
     font-size: 24px;
     margin-bottom: 40px;
+    position: sticky; // 스크롤 시 고정
+    top: 0; // 상단에 고정
+    background-color: white; // 배경색 설정 (필요시)
+    z-index: 1; // 다른 요소 위에 표시되도록 설정
+    //  padding: 20px;
   }
 `;
 
@@ -785,7 +820,7 @@ const SubmitButton = styled.button`
   font-weight: bold;
   cursor: pointer;
   padding: 10px 20px;
-  // margin-top: 70px;
+  margin-top: 70px;
 
 
   &:hover {
@@ -798,6 +833,21 @@ const CloseButton = styled(SubmitButton)`
   margin-top: 20px; 
 
 `;
+
+const RoleButtonContainerStyled = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+  max-height: 400px; // 최대 높이 설정
+  overflow-y: auto; // 세로 스크롤 가능
+  // height: 800px;
+
+  position: relative; // 위치 고정을 위한 설정
+
+`;
+
 
 
 

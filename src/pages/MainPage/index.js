@@ -9,6 +9,7 @@ import Modal from '../../components/Modal';
 import Dropdown from '../../components/DropDown'
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
+import ProfileModal from '../../components/ProfileModal'; // ProfileModal 컴포넌트 추가
 
 
 
@@ -38,52 +39,6 @@ const MainPage = () => {
   const [popupMessage, setPopupMessage] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const option3 = [
-    { value: '웹', label: '웹' },
-    { value: '모바일', label: '모바일' },
-    { value: '정보보안', label: '정보보안' },
-    { value: 'AWS', label: 'AWS' },
-    { value: 'Git', label: 'Git' },
-    { value: 'Github', label: 'Github' },
-    { value: '클라우드', label: '클라우드' },
-    { value: '블록체인', label: '블록체인' },
-    { value: '인공지능', label: '인공지능' },
-    { value: '빅데이터', label: '빅데이터' },
-    { value: 'Spring Boot', label: 'Spring Boot' },
-    { value: 'React', label: 'React' },
-    { value: 'Vue', label: 'Vue' },
-    { value: 'Python', label: 'Python' },
-    { value: 'Node.js', label: 'Node.js' },
-    { value: 'TypeScript', label: 'TypeScript' },
-    { value: '게임', label: '게임' },
-    { value: 'UI/UX', label: 'UI/UX' },
-    { value: '알고리즘', label: '알고리즘' },
-    { value: '자료구조', label: '자료구조' },
-    { value: 'C/C++', label: 'C/C++' },
-    { value: 'C#', label: 'C#' },
-    { value: 'SQL', label: 'SQL' },
-    { value: 'NoSQL', label: 'NoSQL' },
-    { value: 'Django', label: 'Django' },
-    { value: 'Figma', label: 'Figma' },
-    { value: 'Swift', label: 'Swift' },
-    { value: 'Kotlin', label: 'Kotlin' },
-    { value: 'React Native', label: 'React Native' },
-    { value: 'Android', label: 'Android' },
-    { value: 'iOS', label: 'iOS' },
-    { value: 'GCP', label: 'GCP' },
-    { value: 'Kubernetes', label: 'Kubernetes' },
-    { value: 'Docker', label: 'Docker' },
-    { value: 'Ruby', label: 'Ruby' },
-    { value: 'R', label: 'R' },
-    { value: 'Go', label: 'Go' },
-    { value: 'Next.js', label: 'Next.js' },
-    { value: 'Express', label: 'Express' },
-    { value: 'Firebase', label: 'Firebase' },
-    { value: 'Linux/Unix', label: 'Linux/Unix' },
-    { value: '데이터마이닝', label: '데이터마이닝' },
-    { value: 'Solidity', label: 'Solidity' },
-  ];
-  
 
   const handleAddButtonClick = () => {
     if (!user) { // Check if user is logged in
@@ -158,43 +113,46 @@ const MainPage = () => {
 //     }
 // };
 
-const updateUserProfile = async () => {
-  const data = new FormData(); // 파일과 JSON 데이터를 함께 전송하기 위해서
+// const updateUserProfile = async () => {
+//   const data = new FormData(); // 파일과 JSON 데이터를 함께 전송하기 위해서
 
-  // 파일 추가
-  if (selectedFile) {
-      data.append('file', selectedFile); // 선택된 파일 추가
-  }
+//   // 파일 추가
+//   if (selectedFile) {
+//       data.append('file', selectedFile); // 선택된 파일 추가
+//   }
 
-  // 프로필 정보 추가
-  const profileData = {
-      tags: userProfile.tags.length > 0 ? userProfile.tags : [],
-      experiences: userProfile.experiences.length > 0 ? userProfile.experiences : [],
-      headLine: userProfile.headLine,
-      educations: userProfile.educations.length > 0 ? userProfile.educations : [],
-      personalUrl: userProfile.personalUrl.length > 0 ? userProfile.personalUrl : []
-  };
+//   // 프로필 정보 추가
+//   const profileData = {
+//       tags: userProfile.tags.length > 0 ? userProfile.tags : [],
+//       experiences: userProfile.experiences.length > 0 ? userProfile.experiences : [],
+//       headLine: userProfile.headLine,
+//       educations: userProfile.educations.length > 0 ? userProfile.educations : [],
+//       personalUrl: userProfile.personalUrl.length > 0 ? userProfile.personalUrl : []
+//   };
 
-  data.append('profile', JSON.stringify(profileData)); // JSON 문자열로 추가
+//   data.append('profile', JSON.stringify(profileData)); // JSON 문자열로 추가
 
-  try {
-      const response = await axios.put(`my/profile/${user.id}`, data, {
-          headers: {
-              'Content-Type': 'multipart/form-data' // Content-Type 설정
-          }
-      });
-      console.log(response.data);
+//   try {
+//       const response = await axios.put(`my/profile/${user.id}`, data, {
+//           headers: {
+//               'Content-Type': 'multipart/form-data' // Content-Type 설정
+//           }
+//       });
+//       console.log(response.data);
 
-      // 프로필 정보를 localStorage에 저장
-      localStorage.setItem('userProfile', JSON.stringify(profileData)); // 프로필 정보 저장
-  } catch (error) {
-      console.error(error);
-  }
-};
+//       // 프로필 정보를 localStorage에 저장
+//       localStorage.setItem('userProfile', JSON.stringify(profileData)); // 프로필 정보 저장
+//       // 성공적으로 프로필이 업데이트되었음을 알림
+//       alert("프로필이 성공적으로 업데이트되었습니다."); // 알림 추가
+//   } catch (error) {
+//       console.error(error);
+//   }
+// };
 
   const handleModalClose = async () => {
     await updateUserProfile(); // 프로필 업데이트 후
-    setIsRoleModalOpen(false); // 모달 닫기
+    setIsRoleModalOpen(false); // 기존 모달 닫기
+    setIsProfileModalOpen(true); // 프로필 모달 열기
   };
 
   useEffect(() => {
@@ -248,8 +206,21 @@ const handleImageUpload = (e) => {
   }
 };
 
+const [isProfileModalOpen, setIsProfileModalOpen] = useState(false); // 프로필 모달 상태 추가
 
+// useEffect(() => {
+//   const queryParams = new URLSearchParams(location.search);
+//   if (queryParams.get('showModal') === 'true') {
+//     setIsSubmitted(true); // 쿼리 파라미터에 따라 모달 열기
+//     setPopupMessage('모달이 열렸습니다!'); // 메시지 설정
+//   }
+// }, [location.search]); // location.search가 변경될 때마다 실행
 
+useEffect(() => {
+  if (showModal) {
+    setIsProfileModalOpen(true); // 쿼리 파라미터에 따라 프로필 모달 열기
+  }
+}, [showModal]); // showModal이 변경될 때마다 실행
 
   return (
     <>
@@ -257,67 +228,17 @@ const handleImageUpload = (e) => {
     <MainWrapper>
       <Section1 feedType={feedType} />
       <Section2 feedType={feedType} />
+      {/* ProfileModal 사용 */}
       {showModal && (
-        <Modal isOpen={isRoleModalOpen} onClose={handleModalClose} modalType="mypage">
-          <StyledModalTitle>프로필 설정</StyledModalTitle>
-          <StyledForm onSubmit={(e) => { e.preventDefault(); handleModalClose(); }}>
-            
-            
-            <Label>
-                프로필 사진
-            </Label>
-            <FileInput 
-                type="file" 
-                name="avatar" 
-                accept="image/*" 
-                // onChange={handleFileChange} 
-                onChange={handleImageUpload}
-                ref={fileInputRef} // 참조 연결
-            />
-            {selectedFile && <ImagePreview src={URL.createObjectURL(selectedFile)} alt="미리보기" />}
-            <CustomButton type="button"onClick={handleLabelClick}>업로드</CustomButton>
-
-            
-            
-            <Label>
-              자기소개 <span>*</span>
-            </Label>
-            <StyledTextArea name="headLine" placeholder="" onChange={handleInputChange} required />
-            
-            <Label>
-              기술 스택 <span>*</span>
-            </Label>
-           
-            <Dropdown 
-                options={option3} 
-                placeholder={"태그를 선택하시오"}
-                dropdownType = "main"
-                onTagSelect={(selectedTags) => setUserProfile(prevState => ({
-                  ...prevState,
-                  tags: selectedTags 
-                }))}
-              
-            />
-            
-        
-            <Label>
-              학교/전공
-            </Label>
-            <input type="text" name="educations" placeholder="" onChange={handleInputChange} />
-            
-            <Label>
-              개인 링크
-            </Label>
-            <input type="text" name="personalUrl" placeholder="" onChange={handleInputChange} />
-
-            <Label>
-              수상 경력
-            </Label>
-            <input type="text" name="experiences" placeholder="" onChange={handleInputChange} />
-            
-            <StyledButton type="submit">제출</StyledButton>
-          </StyledForm>
-        </Modal>
+        <ProfileModal 
+          isOpen={isProfileModalOpen} 
+          onClose={handleModalClose} // 모달 닫기 함수 연결
+          userProfile={userProfile} 
+          setUserProfile={setUserProfile} 
+          selectedFile={selectedFile} 
+          setSelectedFile={setSelectedFile} 
+          // userId={user.id} 
+        />
       )}
 
     <AddButton onClick={handleAddButtonClick} disabled={!user}> 피드 작성하기 </AddButton>

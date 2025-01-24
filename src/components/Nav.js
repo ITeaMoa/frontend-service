@@ -100,8 +100,8 @@ const option3 = [
     const newToggleState = !toggleActive;
     setToggleActive(newToggleState);
     
-    // // 상태 변경 시 로컬 스토리지에 저장
-    // localStorage.setItem('toggleActive', JSON.stringify(newToggleState));
+    // 페이지 새로고침
+    window.location.reload();
 
     if (onToggleChange) { // onToggleChange가 함수인지 확인
       onToggleChange(newToggleState ? 'STUDY' : 'PROJECT'); // 상태에 따라 feedType 변경

@@ -71,6 +71,7 @@ const ModalContent = styled.div`
     border-radius: 30px 30px 5px 30px;
     width: 310px;
     border: 2px solid #62B9EC;
+    
 
     ${({ modalType }) => modalType === 'nav' && `
         width: 600px;

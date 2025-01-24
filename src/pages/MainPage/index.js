@@ -34,6 +34,10 @@ const MainPage = () => {
     personalUrl: []
   });
 
+  // New state for popup message and submission status
+  const [popupMessage, setPopupMessage] = useState('');
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
   const option3 = [
     { value: '웹', label: '웹' },
     { value: '모바일', label: '모바일' },
@@ -83,10 +87,11 @@ const MainPage = () => {
 
   const handleAddButtonClick = () => {
     if (!user) { // Check if user is logged in
-      alert("로그인 후에 피드를 작성할 수 있습니다."); // Alert for login
+      setPopupMessage("로그인 후에 이용할 수 있습니다."); // Set popup message for login
+      setIsSubmitted(true); // Show submission confirmation popup
       return; // Exit the function if not logged in
     }
-    navigate('/WritePage'); 
+    navigate(`/WritePage?feedType=${feedType}`); // feedType 전달
   };
 
   // 로컬 스토리지에서 feedType을 가져와 초기값으로 설정
@@ -104,9 +109,11 @@ const MainPage = () => {
     setFeedType(newFeedType); // feedType 업데이트
     localStorage.setItem('feedType', newFeedType); // 로컬 스토리지에 feedType 저장
     console.log("현재 feedType:", newFeedType); // 콘솔에 현재 feedType 출력
+    navigate(location.pathname); // 현재 경로로 새로 고침
   };
 
-//   const updateUserProfile = async () => {
+
+  //   const updateUserProfile = async () => {
 //     const data = new FormData();// 파일과 JSON 데이터를 함께 전송하기 위해서
   
 //     // 닉네임이 있는지 확인
@@ -212,18 +219,6 @@ const updateUserProfile = async () => {
     }
   }, [location.search, user, userProfile]); // isProfileComplete 제거
 
-  // useEffect(() => {
-  //   // 프로필 업데이트를 메인 페이지 로드 시 호출
-  //   const updateProfileOnLoad = async () => {
-  //     await updateUserProfile(); // 프로필 업데이트 호출
-  //   };
-
-  //   updateProfileOnLoad(); // 메인 페이지 로드 시 프로필 업데이트 호출
-  // }, []); // 빈 배열로 의존성 설정하여 컴포넌트 마운트 시 한 번만 실행
-
-  
-
-
 const handleInputChange = (event) => {
   const { name, value } = event.target;
   setUserProfile(prevState => ({
@@ -327,6 +322,15 @@ const handleImageUpload = (e) => {
 
     <AddButton onClick={handleAddButtonClick} disabled={!user}> 피드 작성하기 </AddButton>
     </MainWrapper>
+    {isSubmitted && (
+      <Modal isOpen={isSubmitted} onClose={() => setIsSubmitted(false)}>
+        <h3 style={{ textAlign: 'center' }}>{popupMessage}</h3>
+        <ButtonContainer>
+          <ActionButton onClick={() => navigate('/signup')}>회원가입하기</ActionButton>
+          <ActionButton onClick={() => navigate('/login')}>로그인하기</ActionButton>
+        </ButtonContainer>
+      </Modal>
+    )}
     </>
   );
 }
@@ -453,5 +457,28 @@ const ImagePreview = styled.img`
     height: auto; // 비율 유지
     border-radius: 10px; // 모서리 둥글게
 `;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 80px;
+`;
+
+const ActionButton = styled.button`
+  border: none;
+  border-radius: 15px;
+  background-color: #62b9ec;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 10px 20px;
+  margin-left: 10px;
+
+  &:hover {
+    background-color: #a0dafb;
+  }
+`;
+
+
 
 

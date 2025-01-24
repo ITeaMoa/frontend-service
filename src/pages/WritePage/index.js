@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Nav from '../../components/Nav';
 import Dropdown from '../../components/DropDown';
 import Modal from '../../components/Modal';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 // import axios from 'axios';
@@ -14,7 +14,11 @@ import { useAuth } from '../../context/AuthContext'
 
 
 const WritePage = ({ feedType: initialFeedType }) => {
-  const [feedType, setFeedType] = useState('PROJECT');
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  const feedTypeFromQuery = query.get('feedType'); // 쿼리 파라미터에서 feedType 가져오기
+
+  const [feedType, setFeedType] = useState(feedTypeFromQuery || initialFeedType || 'PROJECT'); // 쿼리 파라미터가 없으면 초기값 사용
   const [selectedRoles, setSelectedRoles] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [period, setPeriod] = useState('');

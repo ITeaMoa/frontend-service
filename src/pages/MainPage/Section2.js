@@ -189,7 +189,8 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
 const handleApplyClick = async (project) => {
   if (!user) { // Check if user is logged in
-    alert("로그인 후에 신청할 수 있습니다."); // Alert for login
+    setPopupMessage("로그인 후에 신청할 수 있습니다."); // Set popup message for login
+    setIsSubmitted(true); // Show submission confirmation popup
     return; // Exit the function if not logged in
   }
 
@@ -353,7 +354,10 @@ const handleCloseSubmissionPopup = () => {
       {isSubmitted && (
         <Modal isOpen={isSubmitted} onClose={handleCloseSubmissionPopup}>
           <h3 style={{ textAlign: 'center' }}>{popupMessage}</h3>
-          <CloseButton onClick={handleCloseSubmissionPopup}>Close</CloseButton>
+          <ButtonContainer>
+            <ActionButton onClick={() => navigate('/SignupPage')}>회원가입하기</ActionButton>
+            <ActionButton onClick={() => navigate('/LoginPage')}>로그인하기</ActionButton>
+          </ButtonContainer>
         </Modal>
       )}
     </SectionWrapper>
@@ -442,7 +446,7 @@ const ProjectList = styled.div`
   align-items: flex-start; // 상단 정렬
   max-width: 100%; // 최대 너비를 100%로 유지
   gap: 30px;
-  margin-left: 200px;
+  // margin-left: 200px;
   
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     min-width: 50%;
@@ -462,7 +466,7 @@ const ProjectCard = styled.div`
   margin-top: 10px;
   margin-bottom: 10px;
   // margin-right: 30px;
-  width: calc(100%/2 - 150px);
+  width: calc(100%/2 - 50px);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   background-color: white;
   min-height: 200px;
@@ -668,6 +672,27 @@ const SubmitButton = styled.button`
 const CloseButton = styled(SubmitButton)`
   margin-top: 20px; 
   margin-left: 120px;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 80px;
+`;
+
+const ActionButton = styled.button`
+  border: none;
+  border-radius: 15px;
+  background-color: #62b9ec;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 10px 20px;
+  margin-left: 10px;
+
+  &:hover {
+    background-color: #a0dafb;
+  }
 `;
 
 

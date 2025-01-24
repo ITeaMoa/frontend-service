@@ -719,7 +719,7 @@ const RoleButtonContainerStyled = styled.div`
   justify-content: space-between;
   max-height: 400px; // 최대 높이 설정
   overflow-y: auto; // 세로 스크롤 가능
-  height: 800px;
+  // height: 800px;
 
   position: relative; // 위치 고정을 위한 설정
 

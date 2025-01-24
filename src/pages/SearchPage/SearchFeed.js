@@ -245,31 +245,33 @@ const handleCloseSubmissionPopup = () => {
      
      
       <Modal isOpen={isRoleModalOpen} onClose={() => setIsRoleModalOpen(false)} modalType="apply">
-        <RoleButtonContainer>
+      <RoleButtonContainer>
           <h3>지원할 역할을 선택하세요</h3>
           {project && project.roles ? (
-            Object.entries(project.roles).map(([role, count], index) => (
+            <RoleButtonContainerStyled>
+              {Object.entries(project.roles).map(([role, count], index) => (
+                <RoleButton
+                  key={index}
+                  onClick={() => handleRoleSelect(role)}
+                  isSelected={selectedRole === role}
+                >
+                  {role} ({count})
+                </RoleButton>
+              ))}
               <RoleButton
-                key={index}
-                onClick={() => handleRoleSelect(role)}
-                isSelected={selectedRole === role}
+                onClick={() => {
+                  if (selectedRole !== '무관') {
+                    handleRoleSelect('무관');
+                  }
+                }}
+                isSelected={selectedRole === '무관'}
               >
-                {role} ({count})
+                무관
               </RoleButton>
-            ))
+            </RoleButtonContainerStyled>
           ) : (
             <p>역할 정보가 없습니다.</p>
           )}
-          <RoleButton
-            onClick={() => {
-              if (selectedRole !== '무관') {
-                handleRoleSelect('무관');
-              }
-            }}
-            isSelected={selectedRole === '무관'}
-          >
-            무관
-          </RoleButton>
         </RoleButtonContainer>
         <SubmitButton onClick={handleApplySubmit}>제출</SubmitButton>
       </Modal>
@@ -413,9 +415,11 @@ const ProjectInfo = styled.div`
 
 const Tags = styled.div`
   display: flex;
+  flex-wrap: wrap; // 줄 바꿈을 허용
   padding-top: 10px;
   margin-bottom: 5px;
-  align-items: space-between;
+  align-items: flex-start; // 상단 정렬
+  white-space: nowrap;
 `;
 
 const Tag = styled.div`
@@ -503,12 +507,22 @@ const RoleButtonContainer = styled.div`
   align-items: center;
   width: 100%;
   justify-content: space-between;
+  max-height: 400px; // 최대 높이 설정
+  overflow-y: auto; // 세로 스크롤 가능
 
-  h3{
+  position: relative; // 위치 고정을 위한 설정
+
+  h3 {
     font-size: 24px;
     margin-bottom: 40px;
+    position: sticky; // 스크롤 시 고정
+    top: 0; // 상단에 고정
+    background-color: white; // 배경색 설정 (필요시)
+    z-index: 1; // 다른 요소 위에 표시되도록 설정
+    //  padding: 20px;
   }
 `;
+
 
 const SubmitButton = styled.button`
   border: none;
@@ -530,6 +544,21 @@ const SubmitButton = styled.button`
 const CloseButton = styled(SubmitButton)`
   margin-top: 20px; 
   margin-left: 120px;
+`;
+
+
+const RoleButtonContainerStyled = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+  max-height: 400px; // 최대 높이 설정
+  overflow-y: auto; // 세로 스크롤 가능
+  // height: 800px;
+
+  position: relative; // 위치 고정을 위한 설정
+
 `;
 
 export default SearchFeed;

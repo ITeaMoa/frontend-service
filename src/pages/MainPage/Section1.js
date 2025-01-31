@@ -235,27 +235,22 @@ const ProjectCard = styled.div`
     background-color: #A0DAFB;
   }
 
-  @media (max-width: 1200px) {
-    width: calc(33.33% - 20px); /* 3열로 조정 */
+  @media (max-width: ${({ theme }) => theme.breakpoints.desktop}) {
+    width: calc(100% / 3); /* 3열로 조정 */
   }
 
-  @media (max-width: 768px) {
-    width: calc(50% - 20px); /* 2열로 조정 */
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    width: calc(100% / 3); /* 3열로 조정 */
   }
 
-  @media (max-width: 480px) {
-    width: 100%; /* 1열로 조정 */
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    width: calc(33.33% - 8px); /* 3열로 조정, 다음 줄로 넘어가지 않도록 */
   }
 
   //  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
   //   width: calc(33.33% - 15px);
   //   padding: 12px;
   // }
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    width: calc(25% - 10px);
-    padding: 10px;
-  }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.smobile}) {
     width: calc(33.33% - 8px);
@@ -333,18 +328,15 @@ const LikeButtonWrapper = styled.div`
   top: 13px;
   right: 25px;
 
-  @media (max-width: 1200px) {
-   
+  @media (max-width: ${({ theme }) => theme.breakpoints.desktop}) {
     transform: scale(0.9); // Adjust the scale as needed
   }
 
-  @media (max-width: 768px) {
-    
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     transform: scale(0.8); // Adjust the scale as needed
   }
 
-  @media (max-width: 480px) {
-   
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     transform: scale(0.7); // Adjust the scale as needed
   }
 `;

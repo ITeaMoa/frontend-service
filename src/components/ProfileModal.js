@@ -80,11 +80,13 @@ const ProfileModal = ({ isOpen, onClose, userProfile, setUserProfile, selectedFi
     const fetchUserProfile = async () => {
       try {
         const response = await axios.get(`/my/profile/${user.id}`);
+        console.log('사용자 프로필:', response.data); // 응답받은 데이터 콘솔에 출력
         if (response.data) { // 데이터가 있는 경우
           setUserProfile(response.data); // 응답받은 데이터로 상태 업데이트
         } else {
           // 데이터가 없을 경우, 기본값 설정 (필요에 따라 수정 가능)
           setUserProfile({
+            avatarUrl: '',
             headLine: '',
             tags: [],
             experiences: [],
@@ -113,7 +115,9 @@ const ProfileModal = ({ isOpen, onClose, userProfile, setUserProfile, selectedFi
     // 프로필 정보 추가
     console.log('현재 userProfile:', userProfile); // 현재 userProfile 상태를 콘솔에 출력
     const profileData = {
-      tags: userProfile.tags && userProfile.tags.length > 0 ? userProfile.tags.filter(tag => tag && tag.value).map(tag => tag.value) : [], // null 체크 추가
+      avatarUrl: userProfile.avatarUrl || null, // avatarUrl 추가
+      // tags: userProfile.tags.filter(tag => tag), // null 체크 추가
+      tags: userProfile.tags && userProfile.tags.length > 0 ? userProfile.tags.filter(tag => tag && tag.value).map(tag => tag.value) : [],
       experiences: userProfile.experiences.length > 0 ? userProfile.experiences : [],
       headLine: userProfile.headLine,
       educations: userProfile.educations.length > 0 ? userProfile.educations : [],
@@ -136,8 +140,18 @@ const ProfileModal = ({ isOpen, onClose, userProfile, setUserProfile, selectedFi
       });
       console.log(response.data);
 
+      // avatarUrl을 응답에서 가져와서 userProfile에 추가
+      const avatarUrl = response.data.avatarUrl; // 응답에서 avatarUrl 가져오기
+      setUserProfile(prevState => ({
+        ...prevState,
+        avatarUrl: avatarUrl // avatarUrl 업데이트
+      }));
+
       // 프로필 정보를 localStorage에 저장
-      localStorage.setItem('userProfile', JSON.stringify(profileData)); // 프로필 정보 저장
+      localStorage.setItem('userProfile', JSON.stringify({
+        ...profileData,
+        avatarUrl: avatarUrl // avatarUrl 포함
+      })); // 프로필 정보 저장
 
       // 성공적으로 프로필이 업데이트되었음을 알림
       alert("프로필이 성공적으로 업데이트되었습니다."); // 알림 추가
@@ -173,7 +187,8 @@ const ProfileModal = ({ isOpen, onClose, userProfile, setUserProfile, selectedFi
         <Label>기술 스택 <span>*</span></Label>
         <Dropdown 
           options={option3} 
-          placeholder={"태그를 선택하시오"}
+          value={userProfile.tags.map(tag => ({ value: tag, label: tag }))}
+          placeholder={userProfile.tags.length > 0 ? userProfile.tags.join(', ') : "태그를 선택하시오"}
           dropdownType="main"
           onTagSelect={(selectedTags) => {
             console.log('선택된 태그:', selectedTags); // 선택된 태그를 콘솔에 출력

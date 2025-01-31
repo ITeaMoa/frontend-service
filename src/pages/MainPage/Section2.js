@@ -392,21 +392,21 @@ const SectionWrapper = styled.div`
   // flex-wrap: no-wrap;
 
   @media (max-width: 1200px) {
-    margin-top: 40px;
-    margin-bottom: 30px;
-    margin-left: 180px;
+    // margin-top: 40px;
+    // margin-bottom: 30px;
+    // margin-left: 180px;
   }
 
   @media (max-width: 1100px) {
-    margin-top: 30px;
-    margin-bottom: 20px;
-    margin-left: 150px;
+    // margin-top: 30px;
+    // margin-bottom: 20px;
+    // margin-left: 150px;
   }
 
    @media (max-width: 1000px) {
-    margin-top: 30px;
-    margin-bottom: 20px;
-    margin-left: 100px;
+    // margin-top: 30px;
+    // margin-bottom: 20px;
+    // margin-left: 100px;
   }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {

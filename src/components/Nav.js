@@ -131,7 +131,8 @@ const option3 = [
   // };
   const handleAddButtonClick = () => {
     const tagsQuery = selectedTags.length > 0 ? `&tags=${selectedTags.join(',')}` : '';
-    navigate(`/SearchPage?q=${searchValue}${tagsQuery}`); // 검색어와 선택된 태그를 URL로 전달
+    const feedType = toggleActive ? 'PROJECT' : 'STUDY'; // 현재의 토글 값에 따라 feedType 설정
+    navigate(`/SearchPage?q=${searchValue}${tagsQuery}&feedType=${feedType}`); // 검색어, 선택된 태그, feedType을 URL로 전달
   };
 
 

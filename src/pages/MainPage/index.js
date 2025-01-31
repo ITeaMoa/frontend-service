@@ -113,42 +113,6 @@ const MainPage = () => {
 //     }
 // };
 
-// const updateUserProfile = async () => {
-//   const data = new FormData(); // 파일과 JSON 데이터를 함께 전송하기 위해서
-
-//   // 파일 추가
-//   if (selectedFile) {
-//       data.append('file', selectedFile); // 선택된 파일 추가
-//   }
-
-//   // 프로필 정보 추가
-//   const profileData = {
-//       tags: userProfile.tags.length > 0 ? userProfile.tags : [],
-//       experiences: userProfile.experiences.length > 0 ? userProfile.experiences : [],
-//       headLine: userProfile.headLine,
-//       educations: userProfile.educations.length > 0 ? userProfile.educations : [],
-//       personalUrl: userProfile.personalUrl.length > 0 ? userProfile.personalUrl : []
-//   };
-
-//   data.append('profile', JSON.stringify(profileData)); // JSON 문자열로 추가
-
-//   try {
-//       const response = await axios.put(`my/profile/${user.id}`, data, {
-//           headers: {
-//               'Content-Type': 'multipart/form-data' // Content-Type 설정
-//           }
-//       });
-//       console.log(response.data);
-
-//       // 프로필 정보를 localStorage에 저장
-//       localStorage.setItem('userProfile', JSON.stringify(profileData)); // 프로필 정보 저장
-//       // 성공적으로 프로필이 업데이트되었음을 알림
-//       alert("프로필이 성공적으로 업데이트되었습니다."); // 알림 추가
-//   } catch (error) {
-//       console.error(error);
-//   }
-// };
-
   const handleModalClose = async () => {
     // await updateUserProfile(); // 프로필 업데이트 후
     setIsRoleModalOpen(false); // 기존 모달 닫기
@@ -156,6 +120,23 @@ const MainPage = () => {
   };
 
   useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (user) {
+        try {
+          const response = await axios.get(`/my/profile/${user.id}`);
+          console.log('사용자 프로필:', response.data); // 응답받은 데이터 콘솔에 출력
+          setUserProfile(response.data); // 응답받은 데이터로 상태 업데이트
+        } catch (error) {
+          console.error('사용자 프로필 조회 중 오류 발생:', error);
+        }
+      }
+    };
+
+    fetchUserProfile(); // 사용자 정보가 있을 때 프로필을 가져옴
+  }, [user]); // user가 변경될 때마다 실행
+
+  useEffect(() => {
+    console.log('현재 userProfile:', userProfile); // 현재 userProfile 상태를 콘솔에 출력
     // 프로필이 완성되었는지 확인하는 함수 (기술 스택과 자기소개만 필수)
     const isProfileComplete = () => {
       return (
@@ -164,11 +145,11 @@ const MainPage = () => {
       );
     };
 
-    // URL 쿼리 파라미터를 확인하여 모달 상태 업데이트
+    //URL 쿼리 파라미터를 확인하여 모달 상태 업데이트
     const query = new URLSearchParams(location.search);
     const showModal = query.get('showModal') === 'true';
     setIsRoleModalOpen(showModal);
-    // setIsProfileModalOpen(false); // 프로필 모달 상태를 false로 설정
+    setIsProfileModalOpen(false); // 프로필 모달 상태를 false로 설정
 
     // 사용자가 로그인했는지 확인하고 프로필이 불완전한지 체크
     if (user && !isProfileComplete()) {

@@ -6,6 +6,7 @@ import styled from 'styled-components';
 // import axios from 'axios';
 import axios from '../../api/axios';
 
+
 const SearchPage = () => {
     const [searchResults, setSearchResults] = useState([]);
     const showSearch = true;
@@ -18,13 +19,25 @@ const SearchPage = () => {
     const searchTerm = query.get("q");
     const tags = query.get("tags");
 
+     // 로컬 스토리지에서 feedType을 가져와 초기값으로 설정
+  const initialFeedType = localStorage.getItem('feedType') || 'PROJECT'; // 기본값 'PROJECT'
+  const [feedType, setFeedType] = useState(initialFeedType); // 초기값 설정
+    // const feedType = query.get("feedType") || 'PROJECT';
+
+
+     useEffect(() => {
+    // feedType을 섹션에 전달하는 로직
+    console.log("현재 feedType:", feedType);
+    // 여기서 feedType을 Section1과 Section2에 전달하는 로직을 추가할 수 있습니다.
+  }, [feedType])
+
     useEffect(() => {
         const fetchSearchItems = async () => {
             try {
                 // 태그가 있을 경우, search-tags API 호출
                 const apiUrl = tags 
-                    ? `/main/search-tags?feedType=PROJECT&tags=${encodeURIComponent(tags)}`
-                    : `/main/search-keyword?feedType=PROJECT&keyword=${encodeURIComponent(searchTerm)}`;
+                    ? `/main/search-tags?feedType=${feedType}&tags=${encodeURIComponent(tags)}`
+                    : `/main/search-keyword?feedType=${feedType}&keyword=${encodeURIComponent(searchTerm)}`;
                 
                 const response = await axios.get(apiUrl);
                 const filteredResults = response.data.filter(item => {
@@ -39,7 +52,7 @@ const SearchPage = () => {
         };
 
         fetchSearchItems();
-    }, [searchTerm, tags]); // 검색어와 태그가 변경될 때마다 호출
+    }, [searchTerm, tags, feedType]); // 검색어와 태그가 변경될 때마다 호출
 
     return (
         <Container>

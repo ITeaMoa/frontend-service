@@ -388,7 +388,7 @@ const SectionWrapper = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   margin-top: 50px;
-  margin-bottom: 40px;
+  margin-bottom: 50px;
   // flex-wrap: no-wrap;
 
   @media (max-width: 1200px) {

@@ -285,10 +285,14 @@ const ProjectInfo = styled.div`
   color: #777;
 `;
 
+
 const Tags = styled.div`
   display: flex;
   margin-bottom: 5px;
-  align-items: space-between;
+  // align-items: space-between;
+  flex-wrap: wrap; // 줄 바꿈을 허용
+  align-items: flex-start; // 상단 정렬
+  white-space: nowrap;
 `;
 
 const Tag = styled.div`

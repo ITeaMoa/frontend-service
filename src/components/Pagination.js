@@ -23,6 +23,7 @@ export default Pagination;
 const StyledPagination = styled(MuiPagination)`
   & .MuiPaginationItem-root {
     margin: 40px 5px;
+    margin-top: 80px;
     background-color: transparent; 
     color: #495057; 
 

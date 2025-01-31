@@ -150,9 +150,9 @@ const MainPage = () => {
 // };
 
   const handleModalClose = async () => {
-    await updateUserProfile(); // 프로필 업데이트 후
+    // await updateUserProfile(); // 프로필 업데이트 후
     setIsRoleModalOpen(false); // 기존 모달 닫기
-    setIsProfileModalOpen(true); // 프로필 모달 열기
+    setIsProfileModalOpen(false); // 프로필 모달 닫기
   };
 
   useEffect(() => {
@@ -168,6 +168,7 @@ const MainPage = () => {
     const query = new URLSearchParams(location.search);
     const showModal = query.get('showModal') === 'true';
     setIsRoleModalOpen(showModal);
+    // setIsProfileModalOpen(false); // 프로필 모달 상태를 false로 설정
 
     // 사용자가 로그인했는지 확인하고 프로필이 불완전한지 체크
     if (user && !isProfileComplete()) {
@@ -232,7 +233,7 @@ useEffect(() => {
       {showModal && (
         <ProfileModal 
           isOpen={isProfileModalOpen} 
-          onClose={handleModalClose} // 모달 닫기 함수 연결
+          onClose={handleModalClose} // handleModalClose가 onClose로 전달됨
           userProfile={userProfile} 
           setUserProfile={setUserProfile} 
           selectedFile={selectedFile} 

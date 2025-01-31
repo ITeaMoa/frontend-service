@@ -80,9 +80,20 @@ const ProfileModal = ({ isOpen, onClose, userProfile, setUserProfile, selectedFi
     const fetchUserProfile = async () => {
       try {
         const response = await axios.get(`/my/profile/${user.id}`);
-        setUserProfile(response.data); // 응답받은 데이터로 상태 업데이트
+        if (response.data) { // 데이터가 있는 경우
+          setUserProfile(response.data); // 응답받은 데이터로 상태 업데이트
+        } else {
+          // 데이터가 없을 경우, 기본값 설정 (필요에 따라 수정 가능)
+          setUserProfile({
+            headLine: '',
+            tags: [],
+            experiences: [],
+            educations: [],
+            personalUrl: ''
+          });
+        }
       } catch (error) {
-        console.error('Error fetching user profile:', error);
+        console.error('사용자 프로필 조회 중 오류 발생:', error);
       }
     };
 
@@ -100,8 +111,9 @@ const ProfileModal = ({ isOpen, onClose, userProfile, setUserProfile, selectedFi
     }
 
     // 프로필 정보 추가
+    console.log('현재 userProfile:', userProfile); // 현재 userProfile 상태를 콘솔에 출력
     const profileData = {
-      tags: userProfile.tags.length > 0 ? userProfile.tags : [],
+      tags: userProfile.tags && userProfile.tags.length > 0 ? userProfile.tags.filter(tag => tag && tag.value).map(tag => tag.value) : [], // null 체크 추가
       experiences: userProfile.experiences.length > 0 ? userProfile.experiences : [],
       headLine: userProfile.headLine,
       educations: userProfile.educations.length > 0 ? userProfile.educations : [],
@@ -110,10 +122,16 @@ const ProfileModal = ({ isOpen, onClose, userProfile, setUserProfile, selectedFi
 
     data.append('profile', JSON.stringify(profileData)); // JSON 문자열로 추가
 
+    // 전송할 데이터 콘솔에 출력
+    console.log('전송할 데이터:', {
+      file: selectedFile,
+      profile: profileData
+    });
+
     try {
       const response = await axios.put(`my/profile/${user.id}`, data, {
         headers: {
-          'Content-Type': 'multipart/form-data' // Content-Type 설정
+          'Content-Type': 'multipart/form-data', // Content-Type 설정
         }
       });
       console.log(response.data);
@@ -150,27 +168,39 @@ const ProfileModal = ({ isOpen, onClose, userProfile, setUserProfile, selectedFi
         <CustomButton type="button" onClick={() => handleLabelClick(fileInputRef)}>업로드</CustomButton>
 
         <Label>자기소개 <span>*</span></Label>
-        <StyledTextArea name="headLine" placeholder="" onChange={handleInputChange} required />
+        <StyledTextArea name="headLine" placeholder="" value={userProfile.headLine || ''} onChange={handleInputChange} required />
 
         <Label>기술 스택 <span>*</span></Label>
         <Dropdown 
           options={option3} 
           placeholder={"태그를 선택하시오"}
           dropdownType="main"
-          onTagSelect={(selectedTags) => setUserProfile(prevState => ({
-            ...prevState,
-            tags: selectedTags 
-          }))}
+          onTagSelect={(selectedTags) => {
+            console.log('선택된 태그:', selectedTags); // 선택된 태그를 콘솔에 출력
+            // selectedTags가 배열인지 확인 후 처리
+            const tagsArray = Array.isArray(selectedTags) ? selectedTags : [selectedTags];
+            const newTags = tagsArray.map(tag => ({ value: tag.value, label: tag.label }));
+
+            setUserProfile(prevState => ({
+              ...prevState,
+              tags: [
+                ...prevState.tags,
+                ...newTags.filter(newTag => 
+                  newTag && !prevState.tags.some(existingTag => existingTag && existingTag.value === newTag.value) // null 체크 추가
+                ) // 중복된 태그를 추가하지 않도록 필터링
+              ]
+            }));
+          }}
         />
 
         <Label>학교/전공</Label>
-        <input type="text" name="educations" placeholder="" onChange={handleInputChange} />
+        <input type="text" name="educations" placeholder="" value={userProfile.educations.join(', ') || ''} onChange={handleInputChange} />
 
         <Label>개인 링크</Label>
-        <input type="text" name="personalUrl" placeholder="" onChange={handleInputChange} />
+        <input type="text" name="personalUrl" placeholder="" value={userProfile.personalUrl || ''} onChange={handleInputChange} />
 
         <Label>수상 경력</Label>
-        <input type="text" name="experiences" placeholder="" onChange={handleInputChange} />
+        <input type="text" name="experiences" placeholder="" value={userProfile.experiences.join(', ') || ''} onChange={handleInputChange} />
 
         <StyledButton type="submit">제출</StyledButton>
       </StyledForm>

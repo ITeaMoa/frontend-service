@@ -221,7 +221,7 @@ const option3 = [
             <UserIcon onClick={() => navigate('/MyPage')} className="user">
               <FontAwesomeIcon  icon={regularUser} size="15px" />
             </UserIcon>
-            <LogoutButton onClick={handleLogout}>로그아웃</LogoutButton>
+            <LogoutButton onClick={() => { handleLogout(); window.location.reload(); }}>로그아웃</LogoutButton>
           </>
         ) : (
           <>

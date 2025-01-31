@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -10,6 +10,15 @@ const LoginPage = () => {
   
   const navigate = useNavigate();
   const { login } = useAuth();
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('savedEmail');
+    const savedPassword = localStorage.getItem('savedPassword');
+    if (rememberMe || (savedEmail && savedPassword)) {
+      setEmail(savedEmail);
+      setPassword(savedPassword);
+    }
+  }, [rememberMe]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,6 +34,10 @@ const LoginPage = () => {
         console.log('사용자 닉네임:', response.data.nickname);
         navigate('/');
         // navigate('/?showModal=true');
+        if (rememberMe) {
+          localStorage.setItem('savedEmail', email);
+          localStorage.setItem('savedPassword', password);
+        }
       }
     } catch (error) {
       console.error('로그인 실패:', error);

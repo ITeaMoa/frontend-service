@@ -357,14 +357,14 @@ const handleToggleChange = (newFeedType) => {
                 <Label>모집 역할 |</Label>
                 {project.roles ? (
                     Object.entries(project.roles).map(([role, count], index) => (
-                        <span key={index}>{role}({count})</span>
+                        <span key={index}> &nbsp; {role}({count})  </span>
                     ))
                 ) : (
                     <span>역할 정보가 없습니다.</span>
                 )}
             </Detail>
             <Detail>
-                <Label>모집 현황 |</Label>모집 현황 | {project.recruitmentRoles && Object.entries(project.recruitmentRoles).length > 0 ? (
+                <Label>모집 현황 |</Label>{project.recruitmentRoles && Object.entries(project.recruitmentRoles).length > 0 ? (
                         Object.entries(project.recruitmentRoles).reduce((total, [, count]) => total + count, 0)
                     ) : 0}명 / {project.recruitmentNum}명
             </Detail>
@@ -372,7 +372,7 @@ const handleToggleChange = (newFeedType) => {
                 <Label>신청자 수 |</Label>
                 {project.recruitmentRoles ? (
                     Object.entries(project.recruitmentRoles).map(([role, count], index) => (
-                        <span key={index}>{role}({count})</span>
+                        <span key={index}> &nbsp;{role}({count})  </span>
                     ))
                 ) : (
                     <span>역할 정보가 없습니다.</span>

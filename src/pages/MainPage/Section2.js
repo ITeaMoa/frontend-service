@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 // import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate, useLocation } from 'react-router-dom'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons'; 
 //import axios from 'axios';
@@ -13,8 +13,12 @@ import axios from '../../api/axios';
 
 
 const Section2 = ({ feedType }) => {
+  const location = useLocation(); // 현재 위치 가져오기
+  const query = new URLSearchParams(location.search); // 쿼리 파라미터 파싱
+  const initialPage = parseInt(query.get('page')) || 1; // 쿼리에서 페이지 가져오기, 없으면 1로 설정
+
+  const [currentPage, setCurrentPage] = useState(initialPage); // 초기 페이지 설정
   const [allProjects, setAllProjects] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [projectsPerPage] = useState(6); 
   const navigate = useNavigate();
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false); // 모달 상태 추가
@@ -180,7 +184,10 @@ const indexOfLastProject = currentPage * projectsPerPage;
 const indexOfFirstProject = indexOfLastProject - projectsPerPage;
 const currentProjects = allProjects.slice(indexOfFirstProject, indexOfLastProject); // allProjects에서 가져오기
 
-const paginate = (pageNumber) => setCurrentPage(pageNumber);
+const paginate = (pageNumber) => {
+  setCurrentPage(pageNumber);
+  navigate(`?page=${pageNumber}`); // 페이지 변경 시 쿼리 파라미터 업데이트
+};
 
 // const handleApplyClick = (selectedProject) => {
 //   setProject(selectedProject); // 선택된 프로젝트 저장
@@ -214,8 +221,9 @@ const handleApplyClick = async (project) => {
     // 선택한 프로젝트의 pk와 비교
     const isAlreadyApplied = appliedProjects.includes(project.pk);
     if (isAlreadyApplied) {
-      setPopupMessage("이미 신청한 프로젝트입니다."); // 이미 신청한 경우 메시지 설정
-      setIsSubmitted(true); // 제출 확인 팝업 표시
+      alert("이미 신청한 프로젝트입니다."); 
+      // setPopupMessage("이미 신청한 프로젝트입니다."); // 이미 신청한 경우 메시지 설정
+      // setIsSubmitted(true); // 제출 확인 팝업 표시
       return; // Exit the function if already applied
     }
   } catch (error) {
@@ -252,12 +260,12 @@ const handleApplySubmit = async () => {
 
     alert("신청이 완료되었습니다."); // 신청 완료 알림
     // 제출 확인 팝업 표시
-    setIsSubmitted(true);
+    // setIsSubmitted(true);
   } catch (error) {
     console.error("Submission failed:", error);
     alert("제출에 실패했습니다. 다시 시도하세요."); // 제출 실패 알림
     // 제출 확인 팝업 표시
-    setIsSubmitted(true);
+    // setIsSubmitted(true);
   }
 };
 

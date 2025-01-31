@@ -167,11 +167,11 @@ const handleCommentSubmit = async () => {
       return; // 함수 종료
     }
 
-    // 자신이 작성한 게시글인지 확인
-    if (project && project.creatorId === user.id) {
-      alert("자신이 작성한 게시글에는 신청할 수 없습니다."); // 자신이 작성한 경우 알림
-      return; // 함수 종료
-    }
+    // // 자신이 작성한 게시글인지 확인
+    // if (project && project.creatorId === user.id) {
+    //   alert("자신이 작성한 게시글에는 신청할 수 없습니다."); // 자신이 작성한 경우 알림
+    //   return; // 함수 종료
+    // }
 
     // 이미 신청한 프로젝트 확인
     try {
@@ -221,6 +221,18 @@ const handleCommentSubmit = async () => {
       const response = await postSelectedRole(selectedRole);
       console.log('서버 응답:', response); // 서버 응답 로깅
 
+      // 제출 후 프로젝트 상태를 즉시 업데이트
+      setProject(prevProject => {
+        const updatedRecruitmentRoles = {
+          ...prevProject.recruitmentRoles,
+          [selectedRole]: (prevProject.recruitmentRoles[selectedRole] || 0) + 1 // 선택한 역할의 수를 증가
+        };
+        return {
+          ...prevProject,
+          recruitmentRoles: updatedRecruitmentRoles // recruitmentRoles 업데이트
+        };
+      });
+
       setPopupMessage("제출되었습니다.");
       setIsSubmitted(true);
     } catch (error) {
@@ -260,7 +272,7 @@ const postSelectedRole = async (role) => {
 
   try {
     const response = await axios.post(
-      `/feed/apply?feedType=PROJECT&projectId=${projectId}`, // projectId를 쿼리 파라미터로 추가
+      `/feed/apply?feedType=${sk}&projectId=${projectId}`, // projectId를 쿼리 파라미터로 추가
       applicationData
     );
     console.log('서버 응답:', response.data); // 서버 응답을 콘솔에 출력
@@ -352,7 +364,9 @@ const handleToggleChange = (newFeedType) => {
                 )}
             </Detail>
             <Detail>
-                <Label>모집 현황 |</Label> {project.recruitmentNum ? `${project.applyNum}명 / ${project.recruitmentNum}명` : '정보 없음'}
+                <Label>모집 현황 |</Label>모집 현황 | {project.recruitmentRoles && Object.entries(project.recruitmentRoles).length > 0 ? (
+                        Object.entries(project.recruitmentRoles).reduce((total, [, count]) => total + count, 0)
+                    ) : 0}명 / {project.recruitmentNum}명
             </Detail>
             <Detail>
                 <Label>신청자 수 |</Label>
@@ -455,6 +469,7 @@ const handleToggleChange = (newFeedType) => {
                   key={index}
                   onClick={() => handleRoleSelect(role)}
                   isSelected={selectedRole === role}
+                  style={{ cursor: 'pointer' }}
                 >
                   {role} ({count})
                 </RoleButton>
@@ -466,6 +481,7 @@ const handleToggleChange = (newFeedType) => {
                   }
                 }}
                 isSelected={selectedRole === '무관'}
+                style={{ cursor: 'pointer' }}
               >
                 무관
               </RoleButton>
@@ -474,7 +490,7 @@ const handleToggleChange = (newFeedType) => {
             <p>역할 정보가 없습니다.</p>
           )}
         </RoleButtonContainer>
-        <SubmitButton onClick={handleApplySubmit}>제출</SubmitButton>
+        <SubmitButton onClick={handleApplySubmit} style={{ cursor: 'pointer' }}>제출</SubmitButton>
       </Modal>
 
       {/* 제출 결과 팝업 */}

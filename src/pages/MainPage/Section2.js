@@ -694,10 +694,10 @@ const SubmitButton = styled.button`  border: none;
 `;
 
 
-const CloseButton = styled(SubmitButton)`
-  margin-top: 20px; 
-  margin-left: 120px;
-`;
+// const CloseButton = styled(SubmitButton)`
+//   margin-top: 20px; 
+//   margin-left: 120px;
+// `;
 
 const ButtonContainer = styled.div`
   display: flex;

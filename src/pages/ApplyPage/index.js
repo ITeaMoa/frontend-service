@@ -466,7 +466,7 @@ const handleToggleChange = (newFeedType) => {
                     <Users>
                       <FontAwesomeIcon icon={faUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
                       <Timestamp>
-                        <strong>{comment.userID}</strong>
+                        <strong>{comment.nickname}</strong>
                         <span style={{ fontSize: 'small', color: '#aaa' }}>
                           {comment.timestamp ? new Date(comment.timestamp).toLocaleDateString() : '날짜 정보 없음'} {comment.timestamp ? new Date(comment.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
                         </span>

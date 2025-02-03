@@ -235,8 +235,8 @@ useEffect(() => {
       <Modal isOpen={isSubmitted} onClose={() => setIsSubmitted(false)}>
         <h3 style={{ textAlign: 'center' }}>{popupMessage}</h3>
         <ButtonContainer>
-          <ActionButton onClick={() => navigate('/signup')}>회원가입하기</ActionButton>
-          <ActionButton onClick={() => navigate('/login')}>로그인하기</ActionButton>
+          <ActionButton onClick={() => navigate('/SignupPage')}>회원가입하기</ActionButton>
+          <ActionButton onClick={() => navigate('/LoginPage')}>로그인하기</ActionButton>
         </ButtonContainer>
       </Modal>
     )}

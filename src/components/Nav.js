@@ -221,7 +221,7 @@ const option3 = [
             <UserIcon onClick={() => navigate('/MyPage')} className="user">
               <FontAwesomeIcon  icon={regularUser} size="15px" />
             </UserIcon>
-            <LogoutButton onClick={() => { handleLogout(); window.location.reload(); }}>로그아웃</LogoutButton>
+            <LogoutButton onClick={() => { handleLogout(); window.location.reload(); }}>Logout</LogoutButton>
           </>
         ) : (
           <>
@@ -499,22 +499,35 @@ const Login = styled.div`
 
 
 const LogoutButton = styled.div`
-  border: 1px none;
-  background-color: #62b9ec;
-  margin: 0 10px;
-  padding: 8px 16px;
-  border-radius: 15px 15px 1px 15px; //반시계 ㅔ방향
-  font-size: 16px;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
+  // border: 1px none;
+  // background-color: #62b9ec;
+  // margin: 0 10px;
+  // padding: 8px 16px;
+  // border-radius: 15px 15px 1px 15px; //반시계 ㅔ방향
+  // font-size: 16px;
+  // color: white;
+  // font-weight: bold;
+  // cursor: pointer;
+
+  // // &:hover {
+  // //   color: #0080ff; // 글씨가 파란
+  // // }
 
   // &:hover {
-  //   color: #0080ff; // 글씨가 파란
+  //   background-color: #a0dafb;
   // }
 
+    border: 1px none #0080ff;
+  background-color: #3563E9;  
+  margin: 0 10px;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
+
   &:hover {
-    background-color: #a0dafb;
+    color: #0080ff;
   }
 `;
 

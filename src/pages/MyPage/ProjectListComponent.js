@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart } from '@fortawesome/free-solid-svg-icons';
+import { faHeart, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 import styled from 'styled-components';
 import Pagination from '../../components/Pagination';
@@ -8,6 +8,9 @@ import axios from '../../api/axios'; // Axios import 추가
 // import axios from 'axios';
 import { useAuth, useProject } from '../../context/AuthContext'
 import Modal from '../../components/Modal';  // Modal 컴포넌트 import
+// import {  faUser as regularUser } from '@fortawesome/free-regular-svg-icons'; 
+// import { useAtom } from 'jotai'; // jotai import 추가
+// import { userProfileAtom } from '../../atoms/userProfileAtom'; // userProfileAtom import 추가
 
 const ProjectListComponent = ({ 
   selectedList, 
@@ -27,6 +30,8 @@ const ProjectListComponent = ({
   const [projects, setProjects] = useState(currentProjects);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [selectedProjectForCancel, setSelectedProjectForCancel] = useState(null);
+  const [isProfileVisible, setIsProfileVisible] = useState(false); // 프로필 내용 표시 상태 추가
+  const [userProfile, setUserProfile] = useState({}); // 초기 상태를 빈 객체로 설정
 
   // localStorage 데이터 로드를 위한 useEffect 수정
   useEffect(() => {
@@ -87,6 +92,14 @@ const ProjectListComponent = ({
   useEffect(() => {
     console.log('현재 프로젝트 목록:', projects); // 현재 프로젝트 목록 로그
   }, [projects]);
+
+  // 로컬 스토리지에서 userProfile 불러오기
+  useEffect(() => {
+    const savedProfile = localStorage.getItem('userProfile');
+    if (savedProfile) {
+      setUserProfile(JSON.parse(savedProfile)); // 로컬 스토리지에서 가져온 데이터로 상태 업데이트
+    }
+  }, [setUserProfile]); // setUserProfile이 변경될 때마다 호출
 
   // 프로젝트 완료 처리 함수 수정
   const handleButtonClick = (project) => {
@@ -221,22 +234,14 @@ const ProjectListComponent = ({
                         console.log("User ID:", user.id);
                         console.log("Project Feed ID:", project.feedId);
                         if (project.status === "REJECTED") {
-                          // 반려 버튼 클릭 시 처리 로직 추가
                           console.log("반려 버튼 클릭");
-                          // 반려 처리 로직을 여기에 추가
                         } else if (project.status === "ACCEPT") {
-                          // 승인 완료 처리 로직 추가
                           console.log("승인 완료");
-                          // 승인 완료 처리 로직을 여기에 추가
                         } else {
                           handleCancelApplication(user.id, project.feedId);
                         }
                       } else {
                         console.error("User or project information is missing");
-                        console.log("User:", user);
-                        console.log("User ID:", user ? user.id : "없음");
-                        console.log("Project:", project);
-                        console.log("Project Feed ID:", project ? project.feedId : "없음");
                       }
                     }}
                     disabled={isProjectCanceled(project.feedId) || project.status === "REJECTED" || project.status === "ACCEPTED"}
@@ -245,18 +250,73 @@ const ProjectListComponent = ({
                     {project.status === "REJECTED" ? "반려" : project.status === "ACCEPTED" ? "승인 완료" : "신청 취소"}
                   </Button2>
                   <AdditionalInfo>
-                    <span>지원분야| {project.part}</span>
-                    <span>모집현황| {project.recruitmentNum}명</span>
-                    <span>마감일자| {new Date(project.deadline).toLocaleDateString()}</span>
-                    <span>진행기간| {project.period ? `${project.period}개월` : '정보없음'}</span>
-                    <span>상태   | {project.status === 'completed' ? '완료' : '진행 중'}</span>
+                    <span>지원분야&nbsp;| {project.part}</span>
+                    <span>모집현황&nbsp;| {project.recruitmentNum}명</span>
+                    <span>마감일자&nbsp;| {new Date(project.deadline).toLocaleDateString()}</span>
+                    <span>진행기간&nbsp;| {project.period ? `${project.period}개월` : '정보없음'}</span>
+                    <span>상태&nbsp; &nbsp; &nbsp;| {project.status === 'completed' ? '완료' : '진행 중'}</span>
                   </AdditionalInfo>
                 </ProjectItem>
               ))
             )}
           </>
+        ) : selectedList === 'profile' ? ( // selectedList가 'profile'일 때 사용자 정보 표시
+          <ProfileContainer>
+            <ProfileImageSection>
+            <ProfileImage>
+                <FontAwesomeIcon icon={regularUser} size="50px" />
+              </ProfileImage>
+              <h3>{user.nickname || '닉네임이 없습니다.'}</h3>
+              {/* <FontAwesomeIcon icon={faEdit} /> */}
+            </ProfileImageSection>
+            <ProfileContent>
+              <h2>프로필 설정</h2>
+              <ProfileField>
+                <ProfileTitle>
+                  <Label>Phone</Label> <FontAwesomeIcon icon={faEdit} />
+                </ProfileTitle>
+                <p>{userProfile.phone || '정보가 없습니다.'}</p>
+              </ProfileField>
+              <ProfileField>
+                <ProfileTitle>
+                  <Label>E-mail</Label> <FontAwesomeIcon icon={faEdit} />
+                </ProfileTitle>
+                <p>{user.email || '정보가 없습니다.'}</p>
+              </ProfileField>
+              <ProfileField>
+                <ProfileTitle>
+                  <Label>Password</Label> <FontAwesomeIcon icon={faEdit} />
+                </ProfileTitle>
+                <p>********</p>
+              </ProfileField>
+              <ProfileField>
+                <ProfileTitle>
+                  <Label>자기소개</Label> <FontAwesomeIcon icon={faEdit} />
+                </ProfileTitle>
+                <p>{userProfile.headLine || '정보가 없습니다.'}</p>
+              </ProfileField>
+              <ProfileField>
+                <ProfileTitle>
+                  <Label>기술 스택</Label> <FontAwesomeIcon icon={faEdit} />
+                </ProfileTitle>
+                <p>{userProfile.tags && userProfile.tags.length > 0 ? userProfile.tags.join(', ') : '정보가 없습니다.'}</p>
+              </ProfileField>
+              <ProfileField>
+                <ProfileTitle>
+                  <Label>학교/전공</Label> <FontAwesomeIcon icon={faEdit} />
+                </ProfileTitle>
+                <p>{userProfile.experiences && userProfile.experiences.length > 0 ? userProfile.experiences : '정보가 없습니다.'}</p>
+              </ProfileField>
+              <ProfileField>
+                <ProfileTitle>
+                  <Label>개인 링크</Label> <FontAwesomeIcon icon={faEdit} />
+                </ProfileTitle>
+                <p>{typeof userProfile.personalUrl === 'string' && userProfile.personalUrl.trim() !== '' ? userProfile.personalUrl : '정보가 없습니다.'}</p>
+              </ProfileField>
+              <CloseButton onClick={() => setIsProfileVisible(false)}>회원탈퇴</CloseButton>
+            </ProfileContent>
+          </ProfileContainer>
         ) : (
-          // written 목록 렌더링 부분은 그대로 유지
           currentProjects && currentProjects.map((project, index) => (
             <ProjectItem 
               key={`written-${project.pk || project.sk || index}`}
@@ -286,7 +346,6 @@ const ProjectListComponent = ({
                 disabled={isProjectCompleted(project.pk)}
                 style={{ 
                   backgroundColor: (!project.postStatus && !project.savedFeed) ? '#808080' : '#3563E9',
-         
                   opacity:  (!project.postStatus && !project.savedFeed)? 0.6 : 1
                 }}
               >
@@ -315,7 +374,7 @@ const ProjectListComponent = ({
     </Container>
   );
 };
-export default ProjectListComponent;
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -335,8 +394,6 @@ const ProjectList = styled.div`
   transform: ${(props) => (props.isFading ? 'translateX(100%)' : 'translateX(0)')};
   min-height: 700px;
 `;
-
-
 
 const ProjectItem = styled.div`
   border-bottom: ${(props) => (props.isLast ? 'none' : '2px solid #A0DAFB')};
@@ -421,7 +478,6 @@ const Button = styled.button`
   }
 `;
 
-
 const Button2 = styled.button`
   position: absolute;
   background-color: ${({ status }) => 
@@ -444,7 +500,6 @@ const Button2 = styled.button`
       '#a0dafb'};
   }
 `;
-
 
 const AdditionalInfo = styled.div`  position: absolute;
   text-align: left;
@@ -478,5 +533,87 @@ const ModalButton = styled.button`
     background-color: #a0dafb;
   }
 `;
+
+const ProfileContainer = styled.div`
+  display: flex;
+  align-items: flex-start;
+  margin: 20px;
+`;
+
+const ProfileImage = styled.div`
+  // background-color: gray; // 배경 색상을 회색으로 설정
+  border: 1px solid gray;
+  opacity: 0.3;
+
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  display: flex; // 아이콘을 중앙에 배치하기 위해 flex 사용
+  align-items: center; // 수직 중앙 정렬
+  // min-width: 200px;
+  justify-content: center; // 수평 중앙 정렬
+`;
+
+const ProfileImageSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 200px;
+
+  h3{
+    margin-top: 20px;
+    font-weight: bold;
+    color:black;
+  }
+`;
+
+const ProfileContent = styled.div`  // background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 30px 30px 1px 30px;
+  border: 3px solid #A0DAFB;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  flex: 1;
+
+  h2{
+    text-align: center;
+    color: #1489CE;
+    font-weight: bold;
+  }
+`;
+
+const ProfileField = styled.div`
+  margin-bottom: 15px;
+  min-height: 50px;
+  border-bottom: 1px solid #A0DAFB;
+`;
+
+const ProfileTitle = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #1489CE;
+`;
+
+const Label = styled.label`
+  font-weight: bold;
+  color: #1489CE;
+`;
+
+const CloseButton = styled.button`
+  background-color: grey;
+  opacity: 0.5;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #a0dafb;
+  }
+`;
+
+export default ProjectListComponent;
+
 
 

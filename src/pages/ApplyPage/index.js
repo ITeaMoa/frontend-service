@@ -543,7 +543,7 @@ const Container = styled.div`
   padding: 20px;
   // margin-top: calc(100vh - 640px);
   margin-top: 300px;
-  min-height: calc(100vh - 250px);
+  // min-height: calc(100vh - 250px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -626,6 +626,7 @@ const Detail = styled.div`
   align-items: center;
   font-size: 17px;
   font-weight: bold;
+   flex-wrap: wrap;
 
   & > span:first-child {
     width: 100px;
@@ -655,9 +656,9 @@ const TagsSection = styled.div`
   // left: %;
   flex-wrap: wrap;
   display: flex;
-  width: 800px;
+  width: 700px;
   // padding-top: 30px;
-  margin-left:-50px;
+  margin-left:-100px;
   gap:20px;
 `;
 

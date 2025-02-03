@@ -202,6 +202,20 @@ export const AuthProvider = ({ children }) => {
     navigate("/"); // 홈으로 리디렉션
   };
 
+  // 브라우저를 닫을 때는 토큰을 제거하지 않음
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      // removeToken(); // 이 줄을 주석 처리하여 브라우저 닫을 때 토큰을 제거하지 않음
+      // localStorage.removeItem('user'); // 이 줄도 주석 처리
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []); // 빈 배열을 사용하여 컴포넌트가 마운트될 때만 실행
+
   // Access Token 발급 요청 함수
   const getAccessToken = async (email, refreshToken) => {
     try {
@@ -224,6 +238,19 @@ export const AuthProvider = ({ children }) => {
   const markProjectAsCompleted = (projectId) => {
     setCompletedProjects(prev => new Set([...prev, projectId]));
   };
+
+  // useEffect(() => {
+  //   const handleBeforeUnload = () => {
+  //     removeToken(); // 로컬 스토리지에서 JWT 제거
+  //     localStorage.removeItem('user'); // 사용자 정보 제거
+  //   };
+
+  //   window.addEventListener('beforeunload', handleBeforeUnload);
+
+  //   return () => {
+  //     window.removeEventListener('beforeunload', handleBeforeUnload);
+  //   };
+  // }, []); // 빈 배열을 사용하여 컴포넌트가 마운트될 때만 실행
 
   return (
     <AuthContext.Provider value={{ user, isLoggedIn, login, logout, socialLogin, getAccessToken }}>

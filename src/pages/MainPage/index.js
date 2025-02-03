@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState} from 'react';
 import styled from 'styled-components';
 import Nav from "../../components/Nav";
 import Section1 from "./Section1";
@@ -6,7 +6,7 @@ import Section2 from "./Section2";
 import {useLocation, useNavigate } from 'react-router-dom';
 // import axios from 'axios';
 import Modal from '../../components/Modal';
-import Dropdown from '../../components/DropDown'
+// import Dropdown from '../../components/DropDown'
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 import ProfileModal from '../../components/ProfileModal'; // ProfileModal 컴포넌트 추가
@@ -21,8 +21,8 @@ const MainPage = () => {
   //URL이 http://example.com/?showModal=true라면 location.search는 "?showModal=true"가 됨
   const showModal = query.get('showModal') === 'true'; // 쿼리 파라미터 확인
   const { user } = useAuth(); // AuthContext에서 사용자 정보 가져오기
-  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false); // 모달 상태 추가
-  const fileInputRef = useRef(null); // 파일 입력을 위한 ref
+  // const [isRoleModalOpen, setIsRoleModalOpen] = useState(false); // 모달 상태 추가
+  // const fileInputRef = useRef(null); // 파일 입력을 위한 ref
   const [selectedFile, setSelectedFile] = useState(null); // 선택된 파일 상태
   // const { nickname } = location.state || {}; // 닉네임 받기
   const [userProfile, setUserProfile] = useState({
@@ -115,7 +115,7 @@ const MainPage = () => {
 
   const handleModalClose = async () => {
     // await updateUserProfile(); // 프로필 업데이트 후
-    setIsRoleModalOpen(false); // 기존 모달 닫기
+    // setIsRoleModalOpen(false); // 기존 모달 닫기
     setIsProfileModalOpen(false); // 프로필 모달 닫기
   };
 
@@ -137,42 +137,35 @@ const MainPage = () => {
 
   useEffect(() => {
     console.log('현재 userProfile:', userProfile); // 현재 userProfile 상태를 콘솔에 출력
-    // 프로필이 완성되었는지 확인하는 함수 (기술 스택과 자기소개만 필수)
+    // 프로필이 완성되었는지 확인하는 함수 (자기소개 또는 기술 스택 중 하나라도 없으면 불완전)
     const isProfileComplete = () => {
-      return (
-        userProfile.headLine && // 자기소개가 있는지
-        userProfile.tags.length > 0 // 기술 스택이 있는지
-      );
+      const hasHeadLine = !!userProfile.headLine; // 자기소개가 있는지 확인
+      const hasTags = userProfile.tags && userProfile.tags.length > 0; // 기술 스택이 있는지 확인
+
+      console.log("자기소개 존재 여부:", hasHeadLine); // 자기소개 존재 여부 출력
+      console.log("기술 스택 존재 여부:", hasTags); // 기술 스택 존재 여부 출력
+
+      return hasHeadLine || hasTags; // 둘 중 하나라도 있으면 true 반환
     };
 
-    //URL 쿼리 파라미터를 확인하여 모달 상태 업데이트
-    const query = new URLSearchParams(location.search);
-    const showModal = query.get('showModal') === 'true';
-    setIsRoleModalOpen(showModal);
-    setIsProfileModalOpen(false); // 프로필 모달 상태를 false로 설정
+    // URL 쿼리 파라미터를 확인하여 모달 상태 업데이트
+    setIsProfileModalOpen(user && !isProfileComplete()); // 프로필이 불완전하면 모달 열기
+  }, [location.search, user, userProfile]); // userProfile 추가
 
-    // 사용자가 로그인했는지 확인하고 프로필이 불완전한지 체크
-    if (user && !isProfileComplete()) {
-      setIsRoleModalOpen(true); // 프로필이 불완전하면 모달 열기
-    } else {
-      setIsRoleModalOpen(false); // 프로필이 완전하면 모달 닫기
-    }
-  }, [location.search, user, userProfile]); // isProfileComplete 제거
-
-const handleInputChange = (event) => {
-  const { name, value } = event.target;
-  setUserProfile(prevState => ({
-      ...prevState,
-      [name]: value
-  }));
-};
+// const handleInputChange = (event) => {
+//   const { name, value } = event.target;
+//   setUserProfile(prevState => ({
+//       ...prevState,
+//       [name]: value
+//   }));
+// };
 
 
 
-const handleLabelClick = () => {
-  // 파일 입력 클릭
-  fileInputRef.current.click();
-};
+// const handleLabelClick = () => {
+//   // 파일 입력 클릭
+//   fileInputRef.current.click();
+// };
 
 //다중파일
 // const handleImageUpload = (e) => {
@@ -181,12 +174,12 @@ const handleLabelClick = () => {
 // };
 
 //단일 파일
-const handleImageUpload = (e) => {
-  const file = e.target.files[0]; // 첫 번째 파일만 선택
-  if (file) {
-      setSelectedFile(file); // 상태에 파일 저장
-  }
-};
+// const handleImageUpload = (e) => {
+//   const file = e.target.files[0]; // 첫 번째 파일만 선택
+//   if (file) {
+//       setSelectedFile(file); // 상태에 파일 저장
+//   }
+// };
 
 const [isProfileModalOpen, setIsProfileModalOpen] = useState(false); // 프로필 모달 상태 추가
 
@@ -198,11 +191,25 @@ const [isProfileModalOpen, setIsProfileModalOpen] = useState(false); // 프로�
 //   }
 // }, [location.search]); // location.search가 변경될 때마다 실행
 
+const isProfileComplete = () => {
+  const hasHeadLine = !!userProfile.headLine; // 자기소개가 있는지 확인
+  const hasTags = userProfile.tags && userProfile.tags.length > 0; // 기술 스택이 있는지 확인
+
+  console.log("자기소개 존재 여부:", hasHeadLine); // 자기소개 존재 여부 출력
+  console.log("기술 스택 존재 여부:", hasTags); // 기술 스택 존재 여부 출력
+
+  return hasHeadLine || hasTags; // 둘 중 하나라도 있으면 true 반환
+};
+
+
 useEffect(() => {
-  if (showModal) {
-    setIsProfileModalOpen(true); // 쿼리 파라미터에 따라 프로필 모달 열기
+  // showModal이 true일 때만 프로필 모달을 엽니다.
+  if (!isProfileComplete()) {
+    setIsProfileModalOpen(!isProfileComplete()); // 프로필이 불완전하면 모달 열기
+  } else {
+    setIsProfileModalOpen(false); // showModal이 false일 때 모달 닫기
   }
-}, [showModal]); // showModal이 변경될 때마다 실행
+}, [showModal, userProfile]); // userProfile을 포함하여 의존성 설정
 
   return (
     <>
@@ -211,15 +218,14 @@ useEffect(() => {
       <Section1 feedType={feedType} />
       <Section2 feedType={feedType} />
       {/* ProfileModal 사용 */}
-      {showModal && (
+      {showModal || (!isProfileComplete() && user) && (
         <ProfileModal 
           isOpen={isProfileModalOpen} 
-          onClose={handleModalClose} // handleModalClose가 onClose로 전달됨
+          onClose={handleModalClose} 
           userProfile={userProfile} 
           setUserProfile={setUserProfile} 
           selectedFile={selectedFile} 
           setSelectedFile={setSelectedFile} 
-          // userId={user.id} 
         />
       )}
 
@@ -269,97 +275,97 @@ font-weight: bold;
   
 `;
 
-const StyledForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 15px; 
-  padding: 10px;
-  border: none;
-  text-align: left;
+// const StyledForm = styled.form`
+//   display: flex;
+//   flex-direction: column;
+//   gap: 15px; 
+//   padding: 10px;
+//   border: none;
+//   text-align: left;
 
-  input {
-    border: none;
-    outline: none; 
-    border-bottom: 2px solid #A2D8F5; 
+//   input {
+//     border: none;
+//     outline: none; 
+//     border-bottom: 2px solid #A2D8F5; 
     
 
-  }
-`;
+//   }
+// `;
 
-const Label = styled.label`
-  display: inline-block;
-  // flex-direction: column;
-  font-weight: bold; 
-  // margin-bottom: 5px; 
-  margin-top:-10px;
-  color: #1489CE;
+// const Label = styled.label`
+//   display: inline-block;
+//   // flex-direction: column;
+//   font-weight: bold; 
+//   // margin-bottom: 5px; 
+//   margin-top:-10px;
+//   color: #1489CE;
   
-`;
+// `;
 
-const StyledButton = styled.button`
-  background-color: #62B9EC;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 10px 15px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s;
-
-
-  &:hover {
-    background-color: #A0DAFB;
-  }
-`;
-
-const StyledModalTitle = styled.h2`
-  font-size: 24px;
-  color: #1489CE;
-  margin-bottom: 20px;
-  text-align: center;
-`;
-
-const StyledTextArea = styled.textarea`
-  border: none;
-  outline: none; 
-  border-bottom: 2px solid #A2D8F5; 
-  resize: vertical;
-  // min-height: 100px;
-  max-height: 200px;
-  overflow-y: auto;
-`;
+// const StyledButton = styled.button`
+//   background-color: #62B9EC;
+//   color: white;
+//   border: none;
+//   border-radius: 5px;
+//   padding: 10px 15px;
+//   font-weight: bold;
+//   cursor: pointer;
+//   transition: background-color 0.3s;
 
 
-const FileInput = styled.input`
-    display: none; // 기본 파일 입력 숨기기
-`;
+//   &:hover {
+//     background-color: #A0DAFB;
+//   }
+// `;
 
-const CustomButton = styled.label`
-    text-align: center;
-    background-color:  #62B9EC; 
-    color: white; 
-    font-weight: bold;
-    padding: 10px;
-    border: none; 
-    border-radius: 5px; 
-    cursor: pointer; 
-    font-size: 12px; 
-    transition: background-color 0.3s; 
-    width: 20%;
+// const StyledModalTitle = styled.h2`
+//   font-size: 24px;
+//   color: #1489CE;
+//   margin-bottom: 20px;
+//   text-align: center;
+// `;
+
+// const StyledTextArea = styled.textarea`
+//   border: none;
+//   outline: none; 
+//   border-bottom: 2px solid #A2D8F5; 
+//   resize: vertical;
+//   // min-height: 100px;
+//   max-height: 200px;
+//   overflow-y: auto;
+// `;
 
 
-    &:hover {
-        background-color: #0056b3; // 호버 시 배경색 변화
-    }
-`;
+// const FileInput = styled.input`
+//     display: none; // 기본 파일 입력 숨기기
+// `;
+
+// const CustomButton = styled.label`
+//     text-align: center;
+//     background-color:  #62B9EC; 
+//     color: white; 
+//     font-weight: bold;
+//     padding: 10px;
+//     border: none; 
+//     border-radius: 5px; 
+//     cursor: pointer; 
+//     font-size: 12px; 
+//     transition: background-color 0.3s; 
+//     width: 20%;
 
 
-const ImagePreview = styled.img`
-    margin-top: 5px;
-    max-width: 50%; // 최대 너비 100%로 설정
-    height: auto; // 비율 유지
-    border-radius: 10px; // 모서리 둥글게
-`;
+//     &:hover {
+//         background-color: #0056b3; // 호버 시 배경색 변화
+//     }
+// `;
+
+
+// const ImagePreview = styled.img`
+//     margin-top: 5px;
+//     max-width: 50%; // 최대 너비 100%로 설정
+//     height: auto; // 비율 유지
+//     border-radius: 10px; // 모서리 둥글게
+// `;
 
 const ButtonContainer = styled.div`
   display: flex;

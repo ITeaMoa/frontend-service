@@ -186,12 +186,11 @@ const ProfileModal = ({ isOpen, onClose, userProfile, setUserProfile, selectedFi
         <Label>기술 스택 <span>*</span></Label>
         <Dropdown 
           options={option3} 
-          value={userProfile.tags.map(tag => ({ value: tag, label: tag }))}
-          placeholder={userProfile.tags.length > 0 ? userProfile.tags.join(', ') : "태그를 선택하시오"}
+          value={userProfile.tags?.map(tag => ({ value: tag, label: tag })) || []}
+          placeholder={userProfile.tags?.length > 0 ? userProfile.tags.join(', ') : "태그를 선택하시오"}
           dropdownType="main"
           onTagSelect={(selectedTags) => {
             console.log('선택된 태그:', selectedTags); // 선택된 태그를 콘솔에 출력
-            // selectedTags가 배열인지 확인 후 처리
             const tagsArray = Array.isArray(selectedTags) ? selectedTags : [selectedTags];
             const newTags = tagsArray.map(tag => ({ value: tag.value, label: tag.label }));
 
@@ -200,21 +199,39 @@ const ProfileModal = ({ isOpen, onClose, userProfile, setUserProfile, selectedFi
               tags: [
                 ...prevState.tags,
                 ...newTags.filter(newTag => 
-                  newTag && !prevState.tags.some(existingTag => existingTag && existingTag.value === newTag.value) // null 체크 추가
-                ) // 중복된 태그를 추가하지 않도록 필터링
+                  newTag && !prevState.tags.some(existingTag => existingTag && existingTag.value === newTag.value)
+                )
               ]
             }));
           }}
         />
 
         <Label>학교/전공</Label>
-        <input type="text" name="educations" placeholder="" value={userProfile.educations.join(', ') || ''} onChange={handleInputChange} />
+        <input 
+          type="text" 
+          name="educations" 
+          placeholder="" 
+          value={userProfile.educations?.join(', ') || ''}
+          onChange={handleInputChange} 
+        />
 
         <Label>개인 링크</Label>
-        <input type="text" name="personalUrl" placeholder="" value={userProfile.personalUrl || ''} onChange={handleInputChange} />
+        <input 
+          type="text" 
+          name="personalUrl" 
+          placeholder="" 
+          value={userProfile.personalUrl?.join(', ') || ''}
+          onChange={handleInputChange} 
+        />
 
         <Label>수상 경력</Label>
-        <input type="text" name="experiences" placeholder="" value={userProfile.experiences.join(', ') || ''} onChange={handleInputChange} />
+        <input 
+          type="text" 
+          name="experiences" 
+          placeholder="" 
+          value={userProfile.experiences?.join(', ') || ''}
+          onChange={handleInputChange} 
+        />
 
         <StyledButton type="submit">제출</StyledButton>
       </StyledForm>

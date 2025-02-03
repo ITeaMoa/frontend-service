@@ -25,7 +25,7 @@ const ApplyPage = ({ feedType }) => {
   const showSearch = false;
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [popupMessage, setPopupMessage] = useState(''); // 팝업 메시지 상태
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
    const nickname = user ? user.nickname : 'Unknown'; //사용자 닉네임 설정
@@ -162,9 +162,15 @@ const handleCommentSubmit = async () => {
   }
 
   const handleApplyClick = async () => {
-    if (!user) { // 로그인 여부 확인
-      alert("로그인 후 신청할 수 있습니다."); // 로그인하지 않은 경우 알림
-      return; // 함수 종료
+    // if (!user) { // 로그인 여부 확인
+    //   alert("로그인 후 신청할 수 있습니다."); // 로그인하지 않은 경우 알림
+    //   return; // 함수 종료
+    // }
+
+    if (!user) { // Check if user is logged in
+      setPopupMessage("로그인 후에 신청할 수 있습니다."); // Set popup message for login
+      setIsAuthModalOpen(true); // Show submission confirmation popup
+      return; // Exit the function if not logged in
     }
 
     // // 자신이 작성한 게시글인지 확인
@@ -189,7 +195,7 @@ const handleCommentSubmit = async () => {
       const isAlreadyApplied = appliedProjects.includes(project.pk);
       if (isAlreadyApplied) {
         setPopupMessage("이미 신청한 프로젝트입니다."); // 이미 신청한 경우 메시지 설정
-        setIsSubmitted(true); // 제출 확인 팝업 표시
+        setIsAuthModalOpen(true); // 제출 확인 팝업 표시
         return; // Exit the function if already applied
       }
     } catch (error) {
@@ -234,18 +240,37 @@ const handleCommentSubmit = async () => {
       });
 
       setPopupMessage("제출되었습니다.");
-      setIsSubmitted(true);
+      setIsAuthModalOpen(false);
     } catch (error) {
       console.error("Submission failed:", error);
       setPopupMessage("제출에 실패했습니다. 다시 시도하세요.");
-      setIsSubmitted(true);
+      setIsAuthModalOpen(true);
     }
   };
 
-  // 제출 확인 팝업 닫기 함수
-  const handleCloseSubmissionPopup = () => {
-    setIsSubmitted(false);
-    setPopupMessage(''); // 메시지 초기화
+  // 인증 팝업 닫기 핸들러
+  const handleCloseAuthModal = () => {
+    setIsAuthModalOpen(false);
+  };
+
+  // 회원가입 페이지로 이동
+  const handleSignUp = () => {
+    navigate('/SignupPage');
+  };
+
+  // 로그인 페이지로 이동
+  const handleLogin = () => {
+    navigate('/LoginPage');
+  };
+
+  // 예시용 함수: 사용자가 제출하려고 할 때 로그인 여부를 확인
+  const handleSubmissionOrAuth = () => {
+    if (!user) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+    // 로그인이 된 경우 제출 관련 추가 로직을 처리합니다.
+    // ...
   };
 
   // // 선택한 역할을 서버에 전송하는 모의 함수
@@ -493,11 +518,18 @@ const handleToggleChange = (newFeedType) => {
         <SubmitButton onClick={handleApplySubmit} style={{ cursor: 'pointer' }}>제출</SubmitButton>
       </Modal>
 
-      {/* 제출 결과 팝업 */}
-      {isSubmitted && (
-        <Modal isOpen={isSubmitted} onClose={handleCloseSubmissionPopup}  modalType="close">
-          <h3>{popupMessage}</h3>
-          <CloseButton onClick={handleCloseSubmissionPopup}>Close</CloseButton>
+      {/* 로그인/회원가입 안내 팝업 */}
+      {isAuthModalOpen && (
+        <Modal
+          isOpen={isAuthModalOpen}
+          onClose={handleCloseAuthModal}
+          modalType="auth" // modalType은 필요에 따라 props를 수정하세요.
+        >
+          <h3 style={{ textAlign: 'center' }}>로그인 후에 신청할 수 있습니다.</h3>
+          <AuthButtonContainer>
+            <AuthButton onClick={handleSignUp}>회원가입하기</AuthButton>
+            <AuthButton onClick={handleLogin}>로그인하기</AuthButton>
+          </AuthButtonContainer>
         </Modal>
       )}
     </>
@@ -864,7 +896,26 @@ const RoleButtonContainerStyled = styled.div`
 
 `;
 
+const AuthButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 80px;
+`;
 
+const AuthButton = styled.button`
+    border: none;
+  border-radius: 15px;
+  background-color: #62b9ec;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 10px 20px;
+  margin-left: 10px;
+
+  &:hover {
+    background-color: #a0dafb;
+  }
+`;
 
 
 

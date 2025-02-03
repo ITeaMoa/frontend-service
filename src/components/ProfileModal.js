@@ -79,10 +79,11 @@ const ProfileModal = ({ isOpen, onClose, userProfile, setUserProfile, selectedFi
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await axios.get(`/my/profile/${user.id}`);
+        const response = await axios.get(`/my/profile/${userId}`);
         console.log('사용자 프로필:', response.data); // 응답받은 데이터 콘솔에 출력
         if (response.data) { // 데이터가 있는 경우
           setUserProfile(response.data); // 응답받은 데이터로 상태 업데이트
+          localStorage.setItem('userProfile', JSON.stringify(response.data)); // localStorage에 저장
         } else {
           // 데이터가 없을 경우, 기본값 설정 (필요에 따라 수정 가능)
           setUserProfile({
@@ -99,10 +100,8 @@ const ProfileModal = ({ isOpen, onClose, userProfile, setUserProfile, selectedFi
       }
     };
 
-    if (isOpen) {
-      fetchUserProfile(); // 모달이 열릴 때 API 호출
-    }
-  }, [isOpen, setUserProfile, userId]);
+    fetchUserProfile(); // API 호출
+  }, [isOpen, setUserProfile, userId]); // isOpen, setUserProfile, userId가 변경될 때마다 호출
 
   const updateUserProfile = async () => {
     const data = new FormData(); // 파일과 JSON 데이터를 함께 전송하기 위해서

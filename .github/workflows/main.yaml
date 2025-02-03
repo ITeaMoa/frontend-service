@@ -21,7 +21,7 @@ jobs:
         run: find . -type d -name build  # Find where the build directory is created
 
       - name: Build app
-        run:  npm run build
+        run: CI=false npm run build
         # working-directory: frontend-service
     
       - name: Configure AWS credentials

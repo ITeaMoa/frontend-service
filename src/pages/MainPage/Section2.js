@@ -464,7 +464,7 @@ const ProjectList = styled.div`
   margin-left:8px;
   
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    min-width: 50%;
+    min-width: 60%;
     margin: 10px 0;
     
   }
@@ -494,7 +494,7 @@ const ProjectCard = styled.div`
  @media (max-width: 1400px) {
     
     max-height: 400px;
-     min-width: 350px;
+     min-width: 300px;
   }
 
 

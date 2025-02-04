@@ -132,6 +132,7 @@ const handleCommentSubmit = async () => {
       // comment 부분 콘솔로 출력
       console.log("댓글 내용:", newComment.comment);
 
+      console.log("Current feedType:", currentFeedType); // feedType 콘솔 출력
       try {
           await axios.post(`/feed/${projectId}/comments`, newComment, {
               params: { feedType: currentFeedType } // Use currentFeedType

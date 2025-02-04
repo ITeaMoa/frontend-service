@@ -214,7 +214,11 @@ const ProfileModal = ({ isOpen, onClose, userProfile, setUserProfile, selectedFi
           type="text"
           name="educations"
           placeholder=""
-          value={(userProfile.educations ?? []).join(', ') || ''}
+          value={
+            Array.isArray(userProfile.educations)
+              ? userProfile.educations.join(', ')
+              : userProfile.educations || ''
+          }
           onChange={handleInputChange}
         />
 
@@ -232,7 +236,13 @@ const ProfileModal = ({ isOpen, onClose, userProfile, setUserProfile, selectedFi
           type="text"
           name="experiences"
           placeholder=""
-          value={(userProfile.experiences ?? []).join(', ') || ''}
+          value={
+            Array.isArray(userProfile.experiences)
+              ? userProfile.experiences.join(', ')
+              : typeof userProfile.experiences === 'string'
+              ? userProfile.experiences
+              : ''
+          }
           onChange={handleInputChange}
         />
 

@@ -204,8 +204,11 @@ export const AuthProvider = ({ children }) => {
 //     }
 //   };
 
-  // 로그아웃 함수
   const logout = (navigate) => {
+    if (user) {
+      sessionStorage.removeItem(`profileModalDismissed_${user.id}`);
+    }
+    
     setUser(null);
     removeToken(); // 로컬 스토리지에서 JWT 제거
     sessionStorage.removeItem('user'); // 사용자 정보 제거

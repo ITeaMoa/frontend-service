@@ -39,6 +39,9 @@ const MainPage = () => {
   const [popupMessage, setPopupMessage] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  // 모달 관련 상태
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [hasFinalizedProfile, setHasFinalizedProfile] = useState(false); // 프로필 제출 여부
 
   const handleAddButtonClick = () => {
     if (!user) { // Check if user is logged in
@@ -114,44 +117,54 @@ const MainPage = () => {
 // };
 
   const handleModalClose = async () => {
-    // await updateUserProfile(); // 프로필 업데이트 후
-    setIsRoleModalOpen(false); // 기존 모달 닫기
-    setIsProfileModalOpen(false); // 프로필 모달 닫기
+    setHasFinalizedProfile(true);
+    setIsProfileModalOpen(false);
   };
-
+  //  userProfile 불러오기
   useEffect(() => {
     const fetchUserProfile = async () => {
-      if (user) {
-        try {
+      try {
+        if (user && user.id) {
           const response = await axios.get(`/my/profile/${user.id}`);
-          console.log('사용자 프로필:', response.data); // 응답받은 데이터 콘솔에 출력
-          setUserProfile(response.data); // 응답받은 데이터로 상태 업데이트
-        } catch (error) {
-          console.error('사용자 프로필 조회 중 오류 발생:', error);
+          console.log('사용자 프로필:', response.data);
+          if (response.data) {
+            setUserProfile(response.data);
+          } else {
+            setUserProfile({
+              avatarUrl: '',
+              headLine: '',
+              tags: [],
+              experiences: [],
+              educations: [],
+              personalUrl: ''
+            });
+          }
         }
+      } catch (error) {
+        console.error('사용자 프로필 조회 중 오류 발생:', error);
       }
-    };
+    }
 
     fetchUserProfile(); // 사용자 정보가 있을 때 프로필을 가져옴
   }, [user]); // user가 변경될 때마다 실행
 
+  // 모달 자동 열기: 
+  // - 사용자가 로그인되어 있고, 아직 제출하지 않았으며
+  // - 모달이 열려있지 않고, 프로필이 완성(특히 태그가 입력)되지 않았다면 모달을 열어둔다.
+  // 단, 한 번 모달이 열렸다면 이후 userProfile이 완성되더라도 자동으로 닫지 않는다.
   useEffect(() => {
-    console.log('현재 userProfile:', userProfile);
-
     const isProfileComplete = () => {
-      // userProfile의 headLine이 null이면 빈 문자열, tags가 null이면 빈 배열로 대체하여 안전하게 길이 체크
-      const headLine = userProfile.headLine ?? "";
-      const tags = userProfile.tags ?? [];
-      return headLine.trim().length > 0 && tags.length > 0;
+      const headLine = userProfile.headLine ? userProfile.headLine.trim() : "";
+      const tags = userProfile.tags || [];
+      return headLine.length > 0 && tags.length > 0;
     };
 
-    // 사용자가 로그인 상태이고, 프로필이 완성되지 않았다면 모달을 열도록 설정
-    if (user && !isProfileComplete()) {
-      setIsRoleModalOpen(true);
-    } else {
-      setIsRoleModalOpen(false);
+    if (user && !hasFinalizedProfile && !isProfileModalOpen && !isProfileComplete()) {
+      setIsProfileModalOpen(true);
     }
-  }, [location.search, user, userProfile]);
+    // 여기서는 모달이 이미 열려 있는 경우나 사용자가 제출한 경우(isProfileComplete()가 true여도)
+    // 자동으로 모달을 닫는 로직을 제거하여, 사용자의 명시적 액션으로만 닫히게 함.
+  }, [user, hasFinalizedProfile, userProfile, isProfileModalOpen]);
 
 const handleInputChange = (event) => {
   const { name, value } = event.target;
@@ -182,8 +195,6 @@ const handleImageUpload = (e) => {
   }
 };
 
-const [isProfileModalOpen, setIsProfileModalOpen] = useState(false); // 프로필 모달 상태 추가
-
 // useEffect(() => {
 //   const queryParams = new URLSearchParams(location.search);
 //   if (queryParams.get('showModal') === 'true') {
@@ -205,9 +216,20 @@ useEffect(() => {
       <Section1 feedType={feedType} />
       <Section2 feedType={feedType} />
       {/* ProfileModal 사용 */}
-      {showModal && (
+      {/* {showModal && (
         <ProfileModal 
           isOpen={isProfileModalOpen} 
+          onClose={handleModalClose} 
+          userProfile={userProfile} 
+          setUserProfile={setUserProfile} 
+          selectedFile={selectedFile} 
+          setSelectedFile={setSelectedFile}
+        />
+      )} */}
+
+{(showModal || isProfileModalOpen) && (
+        <ProfileModal 
+          isOpen={showModal || isProfileModalOpen}
           onClose={handleModalClose} 
           userProfile={userProfile} 
           setUserProfile={setUserProfile} 

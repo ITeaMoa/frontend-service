@@ -93,7 +93,7 @@ const ProjectListComponent = ({
     console.log('현재 프로젝트 목록:', projects); // 현재 프로젝트 목록 로그
   }, [projects]);
 
-  // 로컬 스토리지에서 userProfile 불러오기
+  //  userProfile 불러오기
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {

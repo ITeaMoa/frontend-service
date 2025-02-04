@@ -32,8 +32,8 @@ const LoginPage = () => {
       if (response) {
         console.log('로그인 성공:', response);
         console.log('사용자 닉네임:', response.data.nickname);
-        // navigate('/');
-        navigate('/?showModal=true');
+        navigate('/');
+        // navigate('/?showModal=true');
         if (rememberMe) {
           // localStorage.setItem('savedEmail', email);
           // localStorage.setItem('savedPassword', password);

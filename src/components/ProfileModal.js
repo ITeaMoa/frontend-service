@@ -76,27 +76,31 @@ const ProfileModal = ({ isOpen, onClose, userProfile, setUserProfile, selectedFi
 
   const fileInputRef = React.useRef(null); // 파일 입력을 위한 ref
 
+
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await axios.get(`/my/profile/${userId}`);
-        console.log('사용자 프로필:', response.data);
-        if (response.data) {
-          setUserProfile(response.data);
-        } else {
-          setUserProfile({
-            avatarUrl: '',
-            headLine: '',
-            tags: [],         // 초기값을 빈 배열로 지정
-            experiences: [],  // 초기값을 빈 배열로 지정
-            educations: [],   // 초기값을 빈 배열로 지정
-            personalUrl: ''
-          });
+        if (user && user.id) {
+          const response = await axios.get(`/my/profile/${user.id}`);
+          console.log('사용자 프로필:', response.data);
+          if (response.data) {
+            setUserProfile(response.data);
+          } else {
+            setUserProfile({
+              avatarUrl: '',
+              headLine: '',
+              tags: [],
+              experiences: [],
+              educations: [],
+              personalUrl: ''
+            });
+          }
         }
       } catch (error) {
         console.error('사용자 프로필 조회 중 오류 발생:', error);
       }
     };
+
 
     fetchUserProfile();
   }, [isOpen, setUserProfile, userId]);

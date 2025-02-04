@@ -6,18 +6,28 @@ import axios from '../api/axios'
 
 // JWT 토큰을 Local Storage에 저장
 const saveToken = (token) => {
-  localStorage.setItem('jwtToken', token);
+  sessionStorage.setItem('jwtToken', token);
 };
 
-// Local Storage에서 JWT 토큰을 읽기
+// // Local Storage에서 JWT 토큰을 읽기
+// const getToken = () => {
+//   return localStorage.getItem('jwtToken');
+// };
+
 const getToken = () => {
-  return localStorage.getItem('jwtToken');
+  return sessionStorage.getItem('jwtToken');
 };
+
 
 // Local Storage에서 JWT 토큰 제거
+// const removeToken = () => {
+//   localStorage.removeItem('jwtToken');
+// };
+
 const removeToken = () => {
-  localStorage.removeItem('jwtToken');
+  sessionStorage.removeItem('jwtToken');
 };
+
 
 // JWT 디코드 함수
 const parseJwt = (token) => {
@@ -50,13 +60,14 @@ export const AuthProvider = ({ children }) => {
   //로컬 스토리지에서 사용자 정보와 JWT 토큰 가져오기
   useEffect(() => {
     const loadUserData = () => {
-        const userData = localStorage.getItem('user');
+        const userData = sessionStorage.getItem('user');
         if (userData) {
             const parsedUser = JSON.parse(userData);
             setUser(parsedUser);
             setIsLoggedIn(true);
         }
     };
+
 
     loadUserData();
   }, []); // 빈 배열을 사용하여 컴포넌트가 마운트될 때만 실행
@@ -104,7 +115,7 @@ export const AuthProvider = ({ children }) => {
         console.log('로그인한 사용자 정보:', userInfo);
   
         // 사용자 정보를 로컬 스토리지에 저장
-        localStorage.setItem('user', JSON.stringify(userInfo)); // 로컬 스토리지에 저장
+        sessionStorage.setItem('user', JSON.stringify(userInfo)); // 로컬 스토리지에 저장
   
         return response;
       }
@@ -197,9 +208,10 @@ export const AuthProvider = ({ children }) => {
   const logout = (navigate) => {
     setUser(null);
     removeToken(); // 로컬 스토리지에서 JWT 제거
-    localStorage.removeItem('user'); // 사용자 정보 제거
+    sessionStorage.removeItem('user'); // 사용자 정보 제거
     setIsLoggedIn(false); // 로그인 상태 업데이트
     navigate("/"); // 홈으로 리디렉션
+
   };
 
   // Access Token 발급 요청 함수

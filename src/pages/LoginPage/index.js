@@ -12,8 +12,8 @@ const LoginPage = () => {
   const { login } = useAuth();
 
   useEffect(() => {
-    const savedEmail = localStorage.getItem('savedEmail');
-    const savedPassword = localStorage.getItem('savedPassword');
+    const savedEmail = sessionStorage.getItem('savedEmail');
+    const savedPassword = sessionStorage.getItem('savedPassword');
     if (rememberMe || (savedEmail && savedPassword)) {
       setEmail(savedEmail);
       setPassword(savedPassword);
@@ -32,11 +32,13 @@ const LoginPage = () => {
       if (response) {
         console.log('로그인 성공:', response);
         console.log('사용자 닉네임:', response.data.nickname);
-        navigate('/');
-        // navigate('/?showModal=true');
+        // navigate('/');
+        navigate('/?showModal=true');
         if (rememberMe) {
-          localStorage.setItem('savedEmail', email);
-          localStorage.setItem('savedPassword', password);
+          // localStorage.setItem('savedEmail', email);
+          // localStorage.setItem('savedPassword', password);
+          sessionStorage.setItem('savedEmail', email);
+          sessionStorage.setItem('savedPassword', password);
         }
       }
     } catch (error) {

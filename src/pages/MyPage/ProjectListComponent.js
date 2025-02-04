@@ -95,11 +95,31 @@ const ProjectListComponent = ({
 
   // 로컬 스토리지에서 userProfile 불러오기
   useEffect(() => {
-    const savedProfile = localStorage.getItem('userProfile');
-    if (savedProfile) {
-      setUserProfile(JSON.parse(savedProfile)); // 로컬 스토리지에서 가져온 데이터로 상태 업데이트
-    }
-  }, [setUserProfile]); // setUserProfile이 변경될 때마다 호출
+    const fetchUserProfile = async () => {
+      try {
+        if (user && user.id) {
+          const response = await axios.get(`/my/profile/${user.id}`);
+          console.log('사용자 프로필:', response.data);
+          if (response.data) {
+            setUserProfile(response.data);
+          } else {
+            setUserProfile({
+              avatarUrl: '',
+              headLine: '',
+              tags: [],
+              experiences: [],
+              educations: [],
+              personalUrl: ''
+            });
+          }
+        }
+      } catch (error) {
+        console.error('사용자 프로필 조회 중 오류 발생:', error);
+      }
+    };
+
+    fetchUserProfile();
+  }, [user, setUserProfile]);
 
   // 프로젝트 완료 처리 함수 수정
   const handleButtonClick = (project) => {

@@ -32,7 +32,7 @@ const MainPage = () => {
     avatarUrl: null,
     headLine: "",
     educations: [],
-    personalUrl: []
+    personalUrl: ""
   });
 
   // New state for popup message and submission status
@@ -136,28 +136,22 @@ const MainPage = () => {
   }, [user]); // user가 변경될 때마다 실행
 
   useEffect(() => {
-    console.log('현재 userProfile:', userProfile); // 현재 userProfile 상태를 콘솔에 출력
-    // 프로필이 완성되었는지 확인하는 함수 (기술 스택과 자기소개만 필수)
+    console.log('현재 userProfile:', userProfile);
+
     const isProfileComplete = () => {
-      return (
-        userProfile.headLine && // 자기소개가 있는지
-        userProfile.tags.length > 0 // 기술 스택이 있는지
-      );
+      // userProfile의 headLine이 null이면 빈 문자열, tags가 null이면 빈 배열로 대체하여 안전하게 길이 체크
+      const headLine = userProfile.headLine ?? "";
+      const tags = userProfile.tags ?? [];
+      return headLine.trim().length > 0 && tags.length > 0;
     };
 
-    //URL 쿼리 파라미터를 확인하여 모달 상태 업데이트
-    const query = new URLSearchParams(location.search);
-    const showModal = query.get('showModal') === 'true';
-    setIsRoleModalOpen(showModal);
-    setIsProfileModalOpen(false); // 프로필 모달 상태를 false로 설정
-
-    // 사용자가 로그인했는지 확인하고 프로필이 불완전한지 체크
+    // 사용자가 로그인 상태이고, 프로필이 완성되지 않았다면 모달을 열도록 설정
     if (user && !isProfileComplete()) {
-      setIsRoleModalOpen(true); // 프로필이 불완전하면 모달 열기
+      setIsRoleModalOpen(true);
     } else {
-      setIsRoleModalOpen(false); // 프로필이 완전하면 모달 닫기
+      setIsRoleModalOpen(false);
     }
-  }, [location.search, user, userProfile]); // isProfileComplete 제거
+  }, [location.search, user, userProfile]);
 
 const handleInputChange = (event) => {
   const { name, value } = event.target;
@@ -214,12 +208,11 @@ useEffect(() => {
       {showModal && (
         <ProfileModal 
           isOpen={isProfileModalOpen} 
-          onClose={handleModalClose} // handleModalClose가 onClose로 전달됨
+          onClose={handleModalClose} 
           userProfile={userProfile} 
           setUserProfile={setUserProfile} 
           selectedFile={selectedFile} 
-          setSelectedFile={setSelectedFile} 
-          // userId={user.id} 
+          setSelectedFile={setSelectedFile}
         />
       )}
 

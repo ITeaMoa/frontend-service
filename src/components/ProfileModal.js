@@ -80,18 +80,16 @@ const ProfileModal = ({ isOpen, onClose, userProfile, setUserProfile, selectedFi
     const fetchUserProfile = async () => {
       try {
         const response = await axios.get(`/my/profile/${userId}`);
-        console.log('사용자 프로필:', response.data); // 응답받은 데이터 콘솔에 출력
-        if (response.data) { // 데이터가 있는 경우
-          setUserProfile(response.data); // 응답받은 데이터로 상태 업데이트
-          localStorage.setItem('userProfile', JSON.stringify(response.data)); // localStorage에 저장
+        console.log('사용자 프로필:', response.data);
+        if (response.data) {
+          setUserProfile(response.data);
         } else {
-          // 데이터가 없을 경우, 기본값 설정 (필요에 따라 수정 가능)
           setUserProfile({
             avatarUrl: '',
             headLine: '',
-            tags: [],
-            experiences: [],
-            educations: [],
+            tags: [],         // 초기값을 빈 배열로 지정
+            experiences: [],  // 초기값을 빈 배열로 지정
+            educations: [],   // 초기값을 빈 배열로 지정
             personalUrl: ''
           });
         }
@@ -100,32 +98,43 @@ const ProfileModal = ({ isOpen, onClose, userProfile, setUserProfile, selectedFi
       }
     };
 
-    fetchUserProfile(); // API 호출
-  }, [isOpen, setUserProfile, userId]); // isOpen, setUserProfile, userId가 변경될 때마다 호출
+    fetchUserProfile();
+  }, [isOpen, setUserProfile, userId]);
 
   const updateUserProfile = async () => {
-    const data = new FormData(); // 파일과 JSON 데이터를 함께 전송하기 위해서
+    const data = new FormData();
 
-    // 파일 추가
+    // 파일이 선택된 경우에만 'file' 필드 추가 (파일이 없는 경우엔 추가하지 않음)
     if (selectedFile) {
-      data.append('file', selectedFile); // 선택된 파일 추가
+      data.append('file', selectedFile);
     }
 
-    // 프로필 정보 추가
-    console.log('현재 userProfile:', userProfile); // 현재 userProfile 상태를 콘솔에 출력
+    // 백엔드가 요구하는 구조로 프로필 데이터를 구성합니다.
     const profileData = {
-      avatarUrl: userProfile.avatarUrl || null, // avatarUrl 추가
-      // tags: userProfile.tags.filter(tag => tag), // null 체크 추가
-      tags: userProfile.tags && userProfile.tags.length > 0 ? userProfile.tags.filter(tag => tag && tag.value).map(tag => tag.value) : [],
-      experiences: userProfile.experiences.length > 0 ? userProfile.experiences : [],
-      headLine: userProfile.headLine,
-      educations: userProfile.educations.length > 0 ? userProfile.educations : [],
-      personalUrl: userProfile.personalUrl.length > 0 ? userProfile.personalUrl : []
+      pk: `USER#${user.id}`, // 사용자 id를 이용하여 pk 구성
+      sk: "PROFILE#",
+      entityType: "USER",
+      timestamp: new Date().toISOString(), // 현재 시간을 ISO 형식으로
+      avatarUrl: userProfile.avatarUrl ? userProfile.avatarUrl : null,
+      headLine: userProfile.headLine || '',
+      tags: Array.isArray(userProfile.tags)
+        ? userProfile.tags.map(tag => (tag.value ? tag.value : tag))
+        : [],
+      educations: Array.isArray(userProfile.educations)
+        ? userProfile.educations
+        : [],
+      // personalUrl는 배열 형태로 처리 (기본값은 빈 배열)
+      personalUrl: Array.isArray(userProfile.personalUrl)
+        ? userProfile.personalUrl
+        : [],
+      experiences: Array.isArray(userProfile.experiences)
+        ? userProfile.experiences
+        : []
     };
 
-    data.append('profile', JSON.stringify(profileData)); // JSON 문자열로 추가
+    // JSON 문자열로 변환 후 FormData에 프로필 데이터를 추가합니다.
+    data.append('profile', JSON.stringify(profileData));
 
-    // 전송할 데이터 콘솔에 출력
     console.log('전송할 데이터:', {
       file: selectedFile,
       profile: profileData
@@ -134,35 +143,19 @@ const ProfileModal = ({ isOpen, onClose, userProfile, setUserProfile, selectedFi
     try {
       const response = await axios.put(`my/profile/${user.id}`, data, {
         headers: {
-          'Content-Type': 'multipart/form-data', // Content-Type 설정
+          'Content-Type': 'multipart/form-data'
         }
       });
-      console.log(response.data);
-
-      // avatarUrl을 응답에서 가져와서 userProfile에 추가
-      const avatarUrl = response.data.avatarUrl; // 응답에서 avatarUrl 가져오기
-      setUserProfile(prevState => ({
-        ...prevState,
-        avatarUrl: avatarUrl // avatarUrl 업데이트
-      }));
-
-      // 프로필 정보를 localStorage에 저장
-      localStorage.setItem('userProfile', JSON.stringify({
-        ...profileData,
-        avatarUrl: avatarUrl // avatarUrl 포함
-      })); // 프로필 정보 저장
-
-      // 성공적으로 프로필이 업데이트되었음을 알림
-      alert("프로필이 성공적으로 업데이트되었습니다."); // 알림 추가
+      console.log('사용자 프로필 업데이트 응답:', response.data);
     } catch (error) {
-      console.error(error);
+      console.error('프로필 업데이트 에러:', error.response?.data || error.message);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await updateUserProfile(); // 프로필 업데이트 호출
-    onClose(); // 모달 닫기
+    await updateUserProfile();
+    onClose();
   };
 
   return (
@@ -175,46 +168,69 @@ const ProfileModal = ({ isOpen, onClose, userProfile, setUserProfile, selectedFi
           name="avatar" 
           accept="image/*" 
           onChange={handleImageUpload}
-          ref={fileInputRef} // 참조 연결
+          ref={fileInputRef}
         />
         {selectedFile && <ImagePreview src={URL.createObjectURL(selectedFile)} alt="미리보기" />}
         <CustomButton type="button" onClick={() => handleLabelClick(fileInputRef)}>업로드</CustomButton>
 
         <Label>자기소개 <span>*</span></Label>
-        <StyledTextArea name="headLine" placeholder="" value={userProfile.headLine || ''} onChange={handleInputChange} required />
+        <StyledTextArea
+          name="headLine"
+          placeholder=""
+          value={userProfile.headLine || ''}
+          onChange={handleInputChange}
+          required
+        />
 
         <Label>기술 스택 <span>*</span></Label>
         <Dropdown 
           options={option3} 
-          value={userProfile.tags.map(tag => ({ value: tag, label: tag }))}
-          placeholder={userProfile.tags.length > 0 ? userProfile.tags.join(', ') : "태그를 선택하시오"}
+          value={(userProfile.tags ?? []).map(tag => ({ value: tag, label: tag }))}
+          placeholder={(userProfile.tags?.length ?? 0) > 0 ? userProfile.tags.join(', ') : "태그를 선택하시오"}
           dropdownType="main"
           onTagSelect={(selectedTags) => {
-            console.log('선택된 태그:', selectedTags); // 선택된 태그를 콘솔에 출력
-            // selectedTags가 배열인지 확인 후 처리
+            console.log('선택된 태그:', selectedTags);
             const tagsArray = Array.isArray(selectedTags) ? selectedTags : [selectedTags];
             const newTags = tagsArray.map(tag => ({ value: tag.value, label: tag.label }));
 
             setUserProfile(prevState => ({
               ...prevState,
               tags: [
-                ...prevState.tags,
+                ...((prevState?.tags ?? [])),
                 ...newTags.filter(newTag => 
-                  newTag && !prevState.tags.some(existingTag => existingTag && existingTag.value === newTag.value) // null 체크 추가
-                ) // 중복된 태그를 추가하지 않도록 필터링
+                  newTag && !prevState?.tags?.some(existingTag => existingTag && existingTag.value === newTag.value)
+                )
               ]
             }));
           }}
         />
 
         <Label>학교/전공</Label>
-        <input type="text" name="educations" placeholder="" value={userProfile.educations.join(', ') || ''} onChange={handleInputChange} />
+        <input
+          type="text"
+          name="educations"
+          placeholder=""
+          value={(userProfile.educations ?? []).join(', ') || ''}
+          onChange={handleInputChange}
+        />
 
         <Label>개인 링크</Label>
-        <input type="text" name="personalUrl" placeholder="" value={userProfile.personalUrl || ''} onChange={handleInputChange} />
+        <input
+          type="text"
+          name="personalUrl"
+          placeholder=""
+          value={userProfile.personalUrl || ''}
+          onChange={handleInputChange}
+        />
 
         <Label>수상 경력</Label>
-        <input type="text" name="experiences" placeholder="" value={userProfile.experiences.join(', ') || ''} onChange={handleInputChange} />
+        <input
+          type="text"
+          name="experiences"
+          placeholder=""
+          value={(userProfile.experiences ?? []).join(', ') || ''}
+          onChange={handleInputChange}
+        />
 
         <StyledButton type="submit">제출</StyledButton>
       </StyledForm>
@@ -258,8 +274,8 @@ const StyledTextArea = styled.textarea`
   border: none;
   outline: none; 
   border-bottom: 2px solid #A2D8F5; 
-  resize: none; // 크기 조절 비활성화
-  min-height: 100px; // 최소 높이 설정
+  resize: none;
+  min-height: 100px;
 `;
 
 const StyledButton = styled.button`
@@ -278,7 +294,7 @@ const StyledButton = styled.button`
 `;
 
 const FileInput = styled.input`
-  display: none; // 기본 파일 입력 숨기기
+  display: none;
 `;
 
 const CustomButton = styled.label`
@@ -295,13 +311,13 @@ const CustomButton = styled.label`
   width: 20%;
 
   &:hover {
-    background-color: #0056b3; // 호버 시 배경색 변화
+    background-color: #0056b3;
   }
 `;
 
 const ImagePreview = styled.img`
   margin-top: 5px;
-  max-width: 50%; // 최대 너비 100%로 설정
-  height: auto; // 비율 유지
-  border-radius: 10px; // 모서리 둥글게
+  max-width: 50%;
+  height: auto;
+  border-radius: 10px;
 `;

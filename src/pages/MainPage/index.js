@@ -153,27 +153,18 @@ const MainPage = () => {
   // - 모달이 열려있지 않고, 프로필이 완성(특히 태그가 입력)되지 않았다면 모달을 열어둔다.
   // 단, 한 번 모달이 열렸다면 이후 userProfile이 완성되더라도 자동으로 닫지 않는다.
   useEffect(() => {
-    // Helper to determine whether the profile is complete.
-    // In this example, we require that headLine is non-empty and that there is at least one tag.
     const isProfileComplete = () => {
       const headLine = userProfile.headLine ? userProfile.headLine.trim() : "";
       const tags = userProfile.tags || [];
       return headLine.length > 0 && tags.length > 0;
     };
 
-    // Check if the modal has already been shown in this session.
-    const modalShown = sessionStorage.getItem("modalShown");
-
-    // Only auto-open the modal if:
-    // 1. It has not been shown yet,
-    // 2. The user is logged in,
-    // 3. The profile is not complete,
-    // 4. And the user has not already finalized (submitted) their profile.
-    if (!modalShown && user && !hasFinalizedProfile && !isProfileComplete()) {
+    if (user && !hasFinalizedProfile && !isProfileModalOpen && !isProfileComplete()) {
       setIsProfileModalOpen(true);
-      sessionStorage.setItem("modalShown", "true");
     }
-  }, [user, hasFinalizedProfile, userProfile]);
+    // 여기서는 모달이 이미 열려 있는 경우나 사용자가 제출한 경우(isProfileComplete()가 true여도)
+    // 자동으로 모달을 닫는 로직을 제거하여, 사용자의 명시적 액션으로만 닫히게 함.
+  }, [user, hasFinalizedProfile, userProfile, isProfileModalOpen]);
 
 const handleInputChange = (event) => {
   const { name, value } = event.target;

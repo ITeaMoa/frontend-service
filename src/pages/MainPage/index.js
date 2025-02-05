@@ -40,6 +40,9 @@ const MainPage = () => {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [hasFinalizedProfile, setHasFinalizedProfile] = useState(false); // 프로필 제출 여부
 
+  // 예시: userProfile 로딩 상태를 나타내는 플래그를 확인합니다.
+  const [isUserProfileLoaded, setIsUserProfileLoaded] = useState(false);
+
   const handleAddButtonClick = () => {
     if (!user) { // Check if user is logged in
       setPopupMessage("로그인 후에 이용할 수 있습니다."); // Set popup message for login
@@ -81,6 +84,7 @@ const MainPage = () => {
           console.log('사용자 프로필:', response.data);
           if (response.data) {
             setUserProfile(response.data);
+            setIsUserProfileLoaded(true);
           } else {
             setUserProfile({
               avatarUrl: '',
@@ -90,6 +94,7 @@ const MainPage = () => {
               educations: [],
               personalUrl: ''
             });
+            setIsUserProfileLoaded(true);
           }
         }
       } catch (error) {
@@ -100,93 +105,36 @@ const MainPage = () => {
     fetchUserProfile(); // 사용자 정보가 있을 때 프로필을 가져옴
   }, [user]); // user가 변경될 때마다 실행
 
-  // 모달 자동 열기: 
-  // - 사용자가 로그인되어 있고, 아직 제출하지 않았으며
-  // - 모달이 열려있지 않고, 프로필이 완성(특히 태그가 입력)되지 않았다면 모달을 열어둔다.
-  // 단, 한 번 모달이 열렸다면 이후 userProfile이 완성되더라도 자동으로 닫지 않는다.
-  // useEffect(() => {
-  //   const isProfileComplete = () => {
-  //     const headLine = userProfile.headLine ? userProfile.headLine.trim() : "";
-  //     const tags = userProfile.tags || [];
-  //     return headLine.length > 0 && tags.length > 0;
-  //   };
-
-  //   if (user && !hasFinalizedProfile && !isProfileModalOpen && !isProfileComplete()) {
-  //     setIsProfileModalOpen(true);
-  //   }
-  //   // 여기서는 모달이 이미 열려 있는 경우나 사용자가 제출한 경우(isProfileComplete()가 true여도)
-  //   // 자동으로 모달을 닫는 로직을 제거하여, 사용자의 명시적 액션으로만 닫히게 함.
-  // }, [user, hasFinalizedProfile, userProfile, isProfileModalOpen]);
-
-
   const isProfileComplete = () => {
     const headLine = userProfile.headLine ? userProfile.headLine.trim() : "";
     const tags = userProfile.tags || [];
     return headLine.length > 0 && tags.length > 0;
   };
   
-  // 수정된 부분: 프로필이 완성되지 않은 경우 모달을 닫지 않도록 설정
+  // 프로필이 완성된 경우 모달을 닫도록 수정
   useEffect(() => {
+    if (!isUserProfileLoaded) return; // 프로필 데이터가 완전히 로딩되지 않았다면 아래 로직 실행하지 않음
+
     if (user && !hasFinalizedProfile) {
-      if (!isProfileComplete()) {
+      // 프로필이 완성된 경우 먼저 체크
+      if (isProfileComplete()) {
+        console.log("프로필이 완성되었습니다. 모달을 닫습니다.");
+        setIsProfileModalOpen(false);
+      } else {
+        // 프로필이 완성되지 않은 경우 모달을 열기(이미 열려있지 않다면)
         if (!isProfileModalOpen) {
-          console.log("모달을 열어야 합니다."); // 모달을 열어야 하는 경우
+          console.log("모달을 열어야 합니다.");
           setIsProfileModalOpen(true);
         }
-      } else {
-        console.log("프로필이 완성되었습니다. 모달을 열지 않습니다."); // 프로필이 완성된 경우
-        // setIsProfileModalOpen(false); // 모달을 닫지 않도록 주석 처리
       }
     }
-  }, [user, hasFinalizedProfile, userProfile, isProfileModalOpen]);
-  // ... existing code ...
+  }, [user, hasFinalizedProfile, userProfile, isProfileModalOpen, isUserProfileLoaded]);
 
-  // useEffect(() => {
-  //   console.log("userProfile 상태:", userProfile); // userProfile 상태 확인
-  //   console.log("headline:", userProfile.headLine);
-  //   console.log("tags:", userProfile.tags);
-
-  //   const isProfileComplete = () => {
-  //     const headLine = userProfile.headLine ? userProfile.headLine.trim() : "";
-  //     const tags = userProfile.tags || [];
-  //     console.log("headLine:", headLine); // headLine 값 출력
-  //     console.log("tags:", tags); // tags 값 출력
-  //     return headLine.length > 0 && tags.length > 0;
-  //   };
-
-  //   // 조건 확인을 위한 로그 추가
-  //   console.log("user:", user);
-  //   console.log("hasFinalizedProfile:", hasFinalizedProfile);
-  //   console.log("isProfileModalOpen:", isProfileModalOpen);
-
-  //   // 프로필이 완성된 경우 모달을 열지 않도록 수정
-  //   if (user && !hasFinalizedProfile) {
-  //     if (!isProfileComplete()) {
-  //       if (!isProfileModalOpen) {
-  //         console.log("모달을 열어야 합니다."); // 모달을 열어야 하는 경우
-  //         setIsProfileModalOpen(true);
-  //       }
-  //     } else {
-  //       console.log("프로필이 완성되었습니다. 모달을 열지 않습니다."); // 프로필이 완성된 경우
-  //       setIsProfileModalOpen(false); // 모달을 닫습니다.
-  //     }
-  //   }
-  // }, [user, hasFinalizedProfile, userProfile, isProfileModalOpen]);
-
-
-// useEffect(() => {
-//   const queryParams = new URLSearchParams(location.search);
-//   if (queryParams.get('showModal') === 'true') {
-//     setIsSubmitted(true); // 쿼리 파라미터에 따라 모달 열기
-//     setPopupMessage('모달이 열렸습니다!'); // 메시지 설정
-//   }
-// }, [location.search]); // location.search가 변경될 때마다 실행
-
-useEffect(() => {
-  if (showModal) {
-    setIsProfileModalOpen(true); // 쿼리 파라미터에 따라 프로필 모달 열기
-  }
-}, [showModal]); // showModal이 변경될 때마다 실행
+  useEffect(() => {
+    if (showModal) {
+      setIsProfileModalOpen(true); // 쿼리 파라미터에 따라 프로필 모달 열기
+    }
+  }, [showModal]); // showModal이 변경될 때마다 실행
 
   return (
     <>

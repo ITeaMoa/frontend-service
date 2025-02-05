@@ -32,7 +32,7 @@ function Section1({ feedType }) {
       const response = await axios.get(`/main/like?userId=${user.id}`);
       console.log('API 응답:', response); // API 응답 로그 추가
       if (response.data) {
-        console.log('사용자가 좋아요를 눌렀던 피드ㅓㅓㅓㅓㅓ:', response.data);
+        // console.log('사용자가 좋아요를 눌렀던 피드ㅓㅓㅓㅓㅓ:', response.data);
         setLikedProjects(prevLiked => {
           const existingLike = prevLiked.find(p => p.id === user.id);
           if (existingLike) {

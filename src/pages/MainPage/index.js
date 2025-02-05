@@ -1,16 +1,18 @@
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Nav from "../../components/Nav";
 import Section1 from "./Section1";
 import Section2 from "./Section2";
-import {useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 // import axios from 'axios';
 import Modal from '../../components/Modal';
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 import ProfileModal from '../../components/ProfileModal'; // ProfileModal 컴포넌트 추가
 
-
+// 모듈 레벨 변수: 페이지 내에서 한 번 열렸으면 true로 설정.
+// 새로고침 시에는 다시 초기화됩니다.
+let modalOpenedOnce = false;
 
 const MainPage = () => {
   const navigate = useNavigate();
@@ -23,7 +25,6 @@ const MainPage = () => {
   const [selectedFile, setSelectedFile] = useState(null); // 선택된 파일 상태
   // const { nickname } = location.state || {}; // 닉네임 받기
   const [userProfile, setUserProfile] = useState({
-
     tags: [],
     experiences: [],
     avatarUrl: null,
@@ -39,6 +40,10 @@ const MainPage = () => {
   // 모달 관련 상태
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [hasFinalizedProfile, setHasFinalizedProfile] = useState(false); // 프로필 제출 여부
+
+  // (참고: 기존 hasProfileModalOpened 상태는 컴포넌트 내부에 있으면 페이지 전환 시 초기화되므로,
+  // 모듈 레벨 변수 modalOpenedOnce를 활용)
+  const [hasProfileModalOpened, setHasProfileModalOpened] = useState(false);
 
   // 예시: userProfile 로딩 상태를 나타내는 플래그를 확인합니다.
   const [isUserProfileLoaded, setIsUserProfileLoaded] = useState(false);
@@ -111,30 +116,30 @@ const MainPage = () => {
     return headLine.length > 0 && tags.length > 0;
   };
   
-  // 프로필이 완성된 경우 모달을 닫도록 수정
+  // 프로필이 완성된 경우 모달을 자동으로 닫지 않도록 수정 (사용자가 제출버튼을 눌러야 함)
   useEffect(() => {
     if (!isUserProfileLoaded) return; // 프로필 데이터가 완전히 로딩되지 않았다면 아래 로직 실행하지 않음
 
-    if (user && !hasFinalizedProfile) {
-      // 프로필이 완성된 경우 먼저 체크
-      if (isProfileComplete()) {
-        console.log("프로필이 완성되었습니다. 모달을 닫습니다.");
-        setIsProfileModalOpen(false);
-      } else {
-        // 프로필이 완성되지 않은 경우 모달을 열기(이미 열려있지 않다면)
-        if (!isProfileModalOpen) {
-          console.log("모달을 열어야 합니다.");
-          setIsProfileModalOpen(true);
-        }
+    if (user && !hasFinalizedProfile && !modalOpenedOnce) {
+      // 프로필이 미완성일 경우에만 모달을 강제로 열어줍니다.
+      if (!isProfileComplete()) {
+        console.log("모달을 열어야 합니다.");
+        setIsProfileModalOpen(true);
+        modalOpenedOnce = true;
+        setHasProfileModalOpened(true);
       }
+      // 프로필이 완성되었더라도 자동으로 모달을 닫지 않습니다.
+      // 모달 닫기는 사용자가 제출 버튼을 눌러 handleModalClose를 호출할 때 수행됩니다.
     }
-  }, [user, hasFinalizedProfile, userProfile, isProfileModalOpen, isUserProfileLoaded]);
+  }, [user, hasFinalizedProfile, userProfile, isProfileModalOpen, isUserProfileLoaded, modalOpenedOnce]);
 
   useEffect(() => {
-    if (showModal) {
+    if (showModal && !modalOpenedOnce) {
       setIsProfileModalOpen(true); // 쿼리 파라미터에 따라 프로필 모달 열기
+      modalOpenedOnce = true;
+      setHasProfileModalOpened(true);
     }
-  }, [showModal]); // showModal이 변경될 때마다 실행
+  }, [showModal, modalOpenedOnce]); // showModal이 변경될 때마다 실행
 
   return (
     <>

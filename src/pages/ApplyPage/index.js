@@ -85,7 +85,6 @@ const ApplyPage = ({ feedType }) => {
         console.log("Selected Project:", selectedProject); // 프로젝트 정보 콘솔로 출력
         setProject(selectedProject);
       } else {
-        console.error("Project not found for projectId:", projectId);
         setProject(null);
       }
     } catch (error) {
@@ -94,22 +93,6 @@ const ApplyPage = ({ feedType }) => {
     }
   }, [projectId, sk]); // sk를 의존성 배열에 추가
 
-  // const fetchProjectDetails = useCallback(async () => {
-  //   try {
-  //     const response = await axios.get(`/main?feedType=PROJECT&projectId=${projectId}`); // projectId를 쿼리 파라미터로 추가
-  //     const selectedProject = response.data; // 응답 데이터에서 프로젝트 정보 가져오기
-  
-  //     if (selectedProject) {
-  //       setProject(selectedProject);
-  //     } else {
-  //       console.error("Project not found for projectId:", projectId);
-  //       setProject(null);
-  //     }
-  //   } catch (error) 
-  //     console.error("Error fetching project details:", error);
-  //     setProject(null); // 오류 발생 시 상태를 null로 설정
-  //   }
-  // }, [projectId]);
 
   useEffect(() => {
     fetchProjectDetails(); // 프로젝트 세부 정보를 가져옵니다.
@@ -120,39 +103,46 @@ const handleLikeClick = (newLiked, newLikesCount) => {
   console.log(`Liked: ${newLiked}, Likes Count: ${newLikesCount}`);
 };
 
+ if (project) {
+   console.log("project.sk:", project.sk);
+ } else {
+   console.log("project is null");
+ }
 
 
 const handleCommentSubmit = async () => {
+  console.log("handleCommentSubmit 호출", { commentInput, project });
+  
   if (commentInput.trim() && project) {
-      const newComment = {
-          userId: user ? user.id : null, // user가 null인 경우 처리
-          comment: commentInput,
-      };
+    const newComment = {
+      userId: user ? user.id : null,
+      comment: commentInput,
+    };
 
-      // comment 부분 콘솔로 출력
-      console.log("댓글 내용:", newComment.comment);
+    console.log("댓글 내용:", newComment.comment);
+    console.log("Current feedType:", project.sk); // project.sk를 feedType으로 사용
 
-      console.log("Current feedType:", currentFeedType); // feedType 콘솔 출력
-      try {
-          await axios.post(`/feed/${projectId}/comments`, newComment, {
-              params: { feedType: currentFeedType } // Use currentFeedType
-          });
-          setProject(prevProject => {
-              const updatedProject = {
-                  ...prevProject,
-                  comments: [...prevProject.comments, newComment] 
-              };
-              // 새로고침을 위해 프로젝트 상태를 업데이트
-              fetchProjectDetails(); // 댓글 추가 후 프로젝트 세부정보를 다시 가져옵니다.
-              console.log("Updated project stateㄴㄴㄴㄴ:", updatedProject); // 추가된 콘솔 로그
-              console.log("댓글이 성공적으로 추가되었습니다:", newComment);
-              return updatedProject;
-          });
-          setCommentInput(''); 
-      } catch (error) {
-          console.error("댓글 제출 중 오류 발생:", error);
-          alert("댓글 제출에 실패했습니다."); 
-      }
+    try {
+      await axios.post(`/feed/${projectId}/comments`, newComment, {
+        params: { feedType: project.sk } // project.sk를 feedType 파라미터에 전달
+      });
+      // 업데이트 로직
+      setProject(prevProject => {
+        const updatedProject = {
+          ...prevProject,
+          comments: [...prevProject.comments, newComment]
+        };
+        fetchProjectDetails(); // 댓글 추가 후 데이터 재요청
+        console.log("Updated project state:", updatedProject);
+        return updatedProject;
+      });
+      setCommentInput('');
+    } catch (error) {
+      console.error("댓글 제출 중 오류 발생:", error);
+      alert("댓글 제출에 실패했습니다.");
+    }
+  } else {
+    console.log("댓글 입력이 없거나, project 데이터가 존재하지 않음", { commentInput, project });
   }
 };
 
@@ -458,10 +448,10 @@ const handleToggleChange = (newFeedType) => {
               <CommentsList>
             {project.comments && Array.isArray(project.comments) ? (
               project.comments.map((comment, index) => {
-                const date = new Date(comment.timestamp);
-                const formattedDate = isNaN(date) ? '날짜 정보 없음' : date.toLocaleDateString();
-                const formattedTime = isNaN(date) ? '' : date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
+                const dateObj = new Date(comment.timestamp);
+                const formattedDate = isNaN(dateObj) ? '날짜 정보 없음' : dateObj.toLocaleDateString();
+                const formattedTime = isNaN(dateObj) ? '' : dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
                 return (
                   <Comment key={index}>
                     <Users>
@@ -469,7 +459,7 @@ const handleToggleChange = (newFeedType) => {
                       <Timestamp>
                         <strong>{comment.nickname}</strong>
                         <span style={{ fontSize: 'small', color: '#aaa' }}>
-                          {comment.timestamp ? new Date(comment.timestamp).toLocaleDateString() : '날짜 정보 없음'} {comment.timestamp ? new Date(comment.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                          {formattedDate} {formattedTime}
                         </span>
                       </Timestamp>
                     </Users>
@@ -621,7 +611,7 @@ const PostDetails = styled.div`
 const Detail = styled.div`
   flex: 1 1 calc(100%/2 - 100px);
   min-width: 250px;
-  max-width: 400px;
+  // max-width: 400px;
   padding: 10px;
   display: flex;
   align-items: center;
@@ -657,7 +647,8 @@ const TagsSection = styled.div`
   // left: %;
   flex-wrap: wrap;
   display: flex;
-  width: 700px;
+  // width: 700px;
+  width: 80%;
   // padding-top: 30px;
   margin-left:-100px;
   gap:20px;
@@ -773,8 +764,15 @@ display: flex;
 
 const Timestamp = styled.div`
   display: flex;
-  flex-direction: column;
+  // flex-direction: column;
+  flex-direction: row;
+
+  span{
+    margin-top:2px;
+  }
 `;
+
+
 
 
 const Comments = styled.div`

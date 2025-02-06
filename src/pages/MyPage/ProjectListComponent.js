@@ -563,7 +563,7 @@ const ProfileContainer = styled.div`
 const ProfileImage = styled.div`
   // background-color: gray; // 배경 색상을 회색으로 설정
   border: 1px solid gray;
-  opacity: 0.3;
+  // opacity: 0.3;
 
   border-radius: 50%;
   width: 100px;

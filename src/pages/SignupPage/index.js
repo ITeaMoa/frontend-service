@@ -169,7 +169,7 @@ const handleSignup = async () => {
       alert(response.data.message); // 서버에서 반환된 메시지를 사용자에게 알림
 
       // MainPage로 닉네임을 전달하며 이동
-      navigate('/?showModal=true', { state: { nickname } });
+      navigate('/', { state: { nickname } });
   } catch (error) {
       console.error('회원가입 오류:', error);
       if (error.response) {

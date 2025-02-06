@@ -505,6 +505,13 @@ const ProjectCard = styled.div`
     //  min-width: 350px;
   }
 
+   @media (max-width: 1176px) {
+    
+    max-height: 400px;
+      width: calc(33.33% - 30px); /* 3열로 조정 */
+    //  min-width: 350px;
+  }
+
   @media (max-width: 768px) {
    
     margin: 15px 5px;

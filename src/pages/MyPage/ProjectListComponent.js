@@ -565,9 +565,9 @@ const ProfileImage = styled.div`
   border: 1px solid gray;
   // opacity: 0.3;
 
-  border-radius: 50%;
-  width: 100px;
-  height: 100px;
+  border-radius: 50%; // 원형으로 만들기 위해 border-radius를 50%로 설정
+  // width: 100px;
+  // height: 100px;
   display: flex; // 아이콘을 중앙에 배치하기 위해 flex 사용
   align-items: center; // 수직 중앙 정렬
   // min-width: 200px;

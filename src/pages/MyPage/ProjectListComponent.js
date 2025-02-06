@@ -284,7 +284,7 @@ const ProjectListComponent = ({
           <ProfileContainer>
             <ProfileImageSection>
             <ProfileImage>
-                <FontAwesomeIcon icon={regularUser} size="50px" />
+                <img src={userProfile.avatarUrl || 'default-avatar.png'} alt="Profile" style={{ width: '100%', borderRadius: '50%' }} />
               </ProfileImage>
               <h3>{user.nickname || '닉네임이 없습니다.'}</h3>
               {/* <FontAwesomeIcon icon={faEdit} /> */}

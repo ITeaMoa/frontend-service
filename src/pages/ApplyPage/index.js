@@ -10,9 +10,17 @@ import LikeButton from '../../components/LikeButton';
 import Modal from '../../components/Modal'; // 모달 컴포넌트 import
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
+import items from '../../data'; // items를 import 추가
+import CommentsSection from './CommentsSection'; // CommentsSection import 추가
+import RoleSelectionModal from '../../components/RoleSelectionModal';
+import AuthModal from '../../components/AuthModal';
+import { useAtom } from 'jotai';
+import { feedTypeAtom, selectedProjectDetailAtom, USER } from '../../Atoms.jsx/AtomStates';
 
 
-const ApplyPage = ({ feedType }) => {
+
+
+const ApplyPage = () => {
   const navigate = useNavigate(); 
   const {projectId } = useParams(); // URL에서 projectId 가져오기
   const location = useLocation(); // 경로 상태 가져오기
@@ -29,9 +37,15 @@ const ApplyPage = ({ feedType }) => {
   const [popupMessage, setPopupMessage] = useState(''); // 팝업 메시지 상태
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
    const nickname = user ? user.nickname : 'Unknown'; //사용자 닉네임 설정
+  //  const [user, setUser] = useAtom(USER);
+  //  const [, setIsLoggedIn] = useAtom(IS_LOGGED_IN);
 
+  
 
-  const [currentFeedType, setCurrentFeedType] = useState(feedType || "PROJECT"); // Add state for feedType
+  const [feedType, setFeedType] = useAtom(feedTypeAtom);
+  const [currentFeedType, setCurrentFeedType] = useState(feedType);
+
+  const [selectedProjectDetail, setSelectedProjectDetail] = useAtom(selectedProjectDetailAtom);
 
   // user.id를 콘솔에 출력
   useEffect(() => {
@@ -75,23 +89,44 @@ const ApplyPage = ({ feedType }) => {
   // useEffect(() => {
   //   fetchProjectDetails(); // 프로젝트 세부 정보를 가져옵니다.
   // }, [fetchProjectDetails]); // 의존성 배열에 fetchProjectDetails 추가
-
-  const fetchProjectDetails = useCallback(async () => {
-    try {
-      const response = await axios.get(`/main?feedType=${sk}`); // sk 값을 사용
-      const selectedProject = response.data.find(item => item.pk === projectId); // 특정 프로젝트 찾기
+//============================================================
+//기존 프로젝트 진짜 api연결하는거 
+  // const fetchProjectDetails = useCallback(async () => {
+  //   try {
+  //     const response = await axios.get(`/main?feedType=${sk}`); // sk 값을 사용
+  //     const selectedProject = response.data.find(item => item.pk === projectId); // 특정 프로젝트 찾기
       
-      if (selectedProject) {
+  //     if (selectedProject) {
+  //       console.log("Selected Project:", selectedProject); // 프로젝트 정보 콘솔로 출력
+  //       setProject(selectedProject);
+  //     } else {
+  //       setProject(null);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching project details:", error);
+  //     setProject(null); // 오류 발생 시 상태를 null로 설정
+  //   }
+  // }, [projectId, sk]); // sk를 의존성 배열에 추가
+
+// useEffect(() => {
+//   setProject(selectedProjectDetail);
+// }, [selectedProjectDetail]);
+//   // setProject(selectedProjectDetail);   -> d아톰 이용    댓글 바뀔때도 리렌더링 되게 해야함 
+
+  //더미 데이터 이용한거 나중에 삭제 
+  const fetchProjectDetails = useCallback(async () => {
+    // ... existing code ...
+    // 더미 데이터 사용
+    const selectedProject = items.find(item => item.pk === projectId); // 더미 데이터에서 특정 프로젝트 찾기
+    
+    if (selectedProject) {
         console.log("Selected Project:", selectedProject); // 프로젝트 정보 콘솔로 출력
         setProject(selectedProject);
-      } else {
+    } else {
         setProject(null);
-      }
-    } catch (error) {
-      console.error("Error fetching project details:", error);
-      setProject(null); // 오류 발생 시 상태를 null로 설정
     }
-  }, [projectId, sk]); // sk를 의존성 배열에 추가
+    // ... existing code ...
+}, [projectId]);
 
 
   useEffect(() => {
@@ -99,15 +134,15 @@ const ApplyPage = ({ feedType }) => {
   }, [fetchProjectDetails]);
 
 
-const handleLikeClick = (newLiked, newLikesCount) => {
-  console.log(`Liked: ${newLiked}, Likes Count: ${newLikesCount}`);
-};
+// const handleLikeClick = (newLiked, newLikesCount) => {
+//   console.log(`Liked: ${newLiked}, Likes Count: ${newLikesCount}`);
+// };
 
- if (project) {
-   console.log("project.sk:", project.sk);
- } else {
-   console.log("project is null");
- }
+//  if (project) {
+//    console.log("project.sk:", project.sk);
+//  } else {
+//    console.log("project is null");
+//  }
 
 
 const handleCommentSubmit = async () => {
@@ -300,16 +335,17 @@ const postSelectedRole = async (role) => {
 };
 
 
-const handleToggleChange = (newFeedType) => {
-  setCurrentFeedType(newFeedType);
-  console.log("Current feedType:", newFeedType);
-};
+// const handleToggleChange = (newFeedType) => {
+//   setCurrentFeedType(newFeedType);
+//   console.log("Current feedType:", newFeedType);
+// };
 
 
 
   return (
     <>
-      <Nav showSearch={showSearch} onToggleChange={handleToggleChange} />
+      {/* <Nav showSearch={showSearch} onToggleChange={handleToggleChange} /> */}
+      <Nav showSearch={showSearch}  />
       <Container>
         <BackButton onClick={() => navigate(-1)} style={{ display: 'flex', alignItems: 'center' }}>
           <FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: '5px' }} />
@@ -344,7 +380,7 @@ const handleToggleChange = (newFeedType) => {
                   <LikeButton 
                 initialLiked={project.liked} 
                 initialLikesCount={project.likesCount} 
-                onLikeChange={handleLikeClick}
+                // onLikeChange={handleLikeClick} //삭제해봄
                 buttonStyle="apply"
                 sk={project.pk}
                 userId={user ? user.id : null} // user가 null인 경우 처리
@@ -431,97 +467,35 @@ const handleToggleChange = (newFeedType) => {
           </AuthorSection>
         
 
-        <CommentsSection>
-          <CommentsTitle>댓글 ({project.comments ? project.comments.length : 0})</CommentsTitle>
-      
-           <CommentInputWrapper>
-            <CommentInput
-          
-              value={commentInput}
-              onChange={(e) => setCommentInput(e.target.value)}
-              placeholder="댓글을 입력해 주세요."
-            />
-              <CommentButton onClick={handleCommentSubmit}>등록</CommentButton>
-
-              </CommentInputWrapper> 
-
-              <CommentsList>
-            {project.comments && Array.isArray(project.comments) ? (
-              project.comments.map((comment, index) => {
-                const dateObj = new Date(comment.timestamp);
-                const formattedDate = isNaN(dateObj) ? '날짜 정보 없음' : dateObj.toLocaleDateString();
-                const formattedTime = isNaN(dateObj) ? '' : dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                
-                return (
-                  <Comment key={index}>
-                    <Users>
-                      <FontAwesomeIcon icon={faUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
-                      <Timestamp>
-                        <strong>{comment.nickname}</strong>
-                        <span style={{ fontSize: 'small', color: '#aaa' }}>
-                          {formattedDate} {formattedTime}
-                        </span>
-                      </Timestamp>
-                    </Users>
-                    <Comments>{comment.comment}</Comments>
-                  </Comment>
-                );
-              })
-            ) : (
-              <span>댓글 정보가 없습니다.</span>
-            )}
-          </CommentsList>
-          
-        </CommentsSection>
+        <CommentsSection 
+          comments={project.comments} 
+          commentInput={commentInput} 
+          setCommentInput={setCommentInput} 
+          project={project} 
+          user={user} 
+          projectId={projectId} 
+          fetchProjectDetails={fetchProjectDetails} 
+        />
       </Container>
 
-      <Modal isOpen={isRoleModalOpen} onClose={() => setIsRoleModalOpen(false)} modalType="apply">
-      <RoleButtonContainer>
-          <h3>지원할 역할을 선택하세요</h3>
-          {project && project.roles ? (
-            <RoleButtonContainerStyled>
-              {Object.entries(project.roles).map(([role, count], index) => (
-                <RoleButton
-                  key={index}
-                  onClick={() => handleRoleSelect(role)}
-                  isSelected={selectedRole === role}
-                  style={{ cursor: 'pointer' }}
-                >
-                  {role} ({count})
-                </RoleButton>
-              ))}
-              <RoleButton
-                onClick={() => {
-                  if (selectedRole !== '무관') {
-                    handleRoleSelect('무관');
-                  }
-                }}
-                isSelected={selectedRole === '무관'}
-                style={{ cursor: 'pointer' }}
-              >
-                무관
-              </RoleButton>
-            </RoleButtonContainerStyled>
-          ) : (
-            <p>역할 정보가 없습니다.</p>
-          )}
-        </RoleButtonContainer>
-        <SubmitButton onClick={handleApplySubmit} style={{ cursor: 'pointer' }}>제출</SubmitButton>
-      </Modal>
+      {isRoleModalOpen && (
+        <RoleSelectionModal 
+          isOpen={isRoleModalOpen} 
+          onClose={() => setIsRoleModalOpen(false)} 
+          project={project} 
+          selectedRole={selectedRole} 
+          handleRoleSelect={handleRoleSelect} 
+          handleApplySubmit={handleApplySubmit} 
+        />
+      )}
 
-      {/* 로그인/회원가입 안내 팝업 */}
       {isAuthModalOpen && (
-        <Modal
+        <AuthModal
           isOpen={isAuthModalOpen}
           onClose={handleCloseAuthModal}
-          modalType="auth" // modalType은 필요에 따라 props를 수정하세요.
-        >
-          <h3 style={{ textAlign: 'center' }}>로그인 후에 신청할 수 있습니다.</h3>
-          <AuthButtonContainer>
-            <AuthButton onClick={handleSignUp}>회원가입하기</AuthButton>
-            <AuthButton onClick={handleLogin}>로그인하기</AuthButton>
-          </AuthButtonContainer>
-        </Modal>
+          handleSignUp={handleSignUp}
+          handleLogin={handleLogin}
+        />
       )}
     </>
   );
@@ -719,14 +693,14 @@ const AuthorID = styled.div`
   
 `;
 
-const CommentsSection = styled.div`
-  position: relative;
-  width: calc(100% / 2 + 80px);
-  border-top: 1px solid #ddd;
-  margin-top: 20px;
-  padding-top: 20px;
-  margin-bottom: 20px;
-`;
+// const CommentsSection = styled.div`
+//   position: relative;
+//   width: calc(100% / 2 + 80px);
+//   border-top: 1px solid #ddd;
+//   margin-top: 20px;
+//   padding-top: 20px;
+//   margin-bottom: 20px;
+// `;
 
 const CommentsTitle = styled.h3`
   position: absolute;

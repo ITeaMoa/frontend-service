@@ -3,18 +3,11 @@ import styled from 'styled-components';
 import Nav from "../../components/Nav";
 // import axios from 'axios';
 import ProjectDetail from './ProjectDetail';
-// import ProjectListComponent from './ProjectListComponent_del';
+import ProjectListComponent from './ProjectListComponent';
 import { useAuth } from '../../context/AuthContext'
 import axios from '../../api/axios';
 import { useAtom } from 'jotai';
 import { feedTypeAtom } from '../../Atoms.jsx/AtomStates';
-import Pagination from '../../components/Pagination';
-import Modal from '../../components/Modal';
-import ProjectItemComponent from './ProjectItemComponent';
-import UserProfile from './UserProfile';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart } from '@fortawesome/free-solid-svg-icons';
-import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 
 
 const MyPage = () => {
@@ -28,13 +21,6 @@ const MyPage = () => {
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
   const [feedType, setFeedType] = useAtom(feedTypeAtom);
   const [applications, setApplications] = useState([]); // 지원자 정보를 위한 새로운 state
-  const [isFading, setIsFading] = useState(false);
-  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [selectedProjectForCancel, setSelectedProjectForCancel] = useState(null);
-  const [isProfileVisible, setIsProfileVisible] = useState(false);
-  const [userProfile, setUserProfile] = useState({});
-  const [savedProjects, setSavedProjects] = useState([]);
-  const [likedProjects, setLikedProjects] = useState([]);
 
   // user.id를 콘솔에 출력
 useEffect(() => {
@@ -45,10 +31,46 @@ useEffect(() => {
   }
 }, [user]); // user가 변경될 때마다 실행
 
-
+// const handleToggleChange = (newFeedType) => {
+//   setFeedType(newFeedType); // feedType 업데이트
+//   console.log("현재 feedType:", newFeedType); // 콘솔에 현재 feedType 출력
+// };
 
 
 const dummySavedProjects = [
+  {
+    "pk": "c0349497-05cb-43ef-99f2-8ac4cc73ba86",
+    "sk": "PROJECT",
+    "nickname": "brynn",
+    "entityType": "FEED",
+    "creatorId": "d4487dfc-f001-7052-0905-97df4f00380c",
+    "title": "AI 데이터분석 서비스 팀원 모집합니다 !",
+    "recruitmentNum": 3,
+    "deadline": "2025-03-14T00:00:00",
+    "place": "동탄역 근처",
+    "period": 0,
+    "tags": [
+      "웹",
+      "인공지능",
+      "빅데이터"
+    ],
+    "likesCount": 1,
+    "content": "유저 데이터를 모아서 분석하고, 대시보드화해서 AI로 마케팅 방법을 제안해주는 서비스를 만들어보려고 합니다. 제가 개발을 할 수 있으니 데이터분석 및 AI 활용해서 엔지니어링 할 수 있는 분 구합니다.\n\n궁금한 점은 쪽지 주세요!",
+    "comments": [],
+    "postStatus": false,
+    "timestamp": "2025-02-03T13:42:00.587250944",
+    "savedFeed": true,
+    "roles": {
+      "ai 엔지니어": 1,
+      "프론트엔드": 1,
+      "빅데이터": 1
+    },
+    "recruitmentRoles": {
+      "ai 엔지니어": 0,
+      "프론트엔드": 1,
+      "빅데이터": 0
+    }
+  },
   {
     "pk": "c0349497-05cb-43ef-99f2-8ac4cc73ba86",
     "sk": "PROJECT",
@@ -554,68 +576,6 @@ useEffect(() => {
     setSelectedProject(null);
   };
 
-    //  userProfile 불러오기
-    useEffect(() => {
-      const fetchUserProfile = async () => {
-        try {
-          if (user && user.id) {
-            const response = await axios.get(`/my/profile/${user.id}`);
-            console.log('사용자 프로필:', response.data);
-            if (response.data) {
-              setUserProfile(response.data);
-            } else {
-              setUserProfile({
-                avatarUrl: '',
-                headLine: '',
-                tags: [],
-                experiences: [],
-                educations: [],
-                personalUrl: ''
-              });
-            }
-          }
-        } catch (error) {
-          console.error('사용자 프로필 조회 중 오류 발생:', error);
-        }
-      };
-  
-      fetchUserProfile();
-    }, [user, setUserProfile]);
-
-
-    // 프로젝트 완료 처리 함수 수정
-    const handleButtonClick = (project) => {
-      // 프로젝트가 완료되지 않은 경우에만 완료 처리
-      if (!isProjectCompleted(project.pk)) {
-          setIsFading(true);
-          setTimeout(() => {
-              handleProjectClick(project);
-              setIsFading(false);
-              
-              // localStorage에서 완료된 프로젝트 목록 초기화
-              localStorage.removeItem('completedProjects'); // 완료된 프로젝트 목록 삭제
-              
-              // 모든 프로젝트의 완료 상태를 초기화
-              setProjects(prevProjects => 
-                  prevProjects.map(p => ({ ...p, completed: false })) // 모든 프로젝트의 completed 상태를 false로 설정
-              );
-          }, 100);
-      } else {
-          console.log("이미 완료된 프로젝트입니다."); // 디버깅용 로그
-      }
-    };
-  
-     // 프로젝트 상태 확인 함수 추가
-     const isProjectCompleted = (projectId) => {
-      const saved = localStorage.getItem('completedProjects');
-      if (saved) {
-        const completedArray = JSON.parse(saved);
-        return completedArray.includes(projectId);
-      }
-      return false;
-    };
-  
-
 const handleProjectClose = async (projectId, feedType) => {
     try {
         // 문제: feedType이 객체 형태로 전달되고 있음
@@ -642,51 +602,6 @@ const handleProjectClose = async (projectId, feedType) => {
     }
 };
 
-const handleCancelApplication = async (userId, feedId) => {
-    if (!userId || !feedId) {
-      console.error("userId 또는 feedId가 null입니다.");
-      return;
-    }
-    setSelectedProjectForCancel({ userId, feedId });
-    setIsConfirmModalOpen(true);
-  };
-
-const handleConfirmCancel = async () => {
-    const { userId, feedId } = selectedProjectForCancel;
-    try {
-      const response = await axios.delete(`feed/apply-cancel?userId=${userId}&feedId=${feedId}`, {
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-      if (response.status === 200 || response.status === 204) {
-        setProjects(prevProjects => 
-          prevProjects.filter(project => project.feedId !== feedId)
-        );
-        if (refreshProjects) {
-          await refreshProjects();
-        }
-        alert('신청이 취소되었습니다.');
-      } else {
-        alert('신청 취소에 실패했습니다.');
-      }
-      setIsConfirmModalOpen(false);
-    } catch (error) {
-      console.error('오류 세부정보:', error);
-      if (error.response) {
-        alert(`신청 취소 중 오류가 발생했습니다. (${error.response.data})`);
-      } else {
-        alert(`신청 취소 중 오류가 발생했습니다. (${error.message})`);
-      }
-    }
-  };
-
-  const isProjectCanceled = (projectId) => {
-    const project = currentProjects.find(p => p.feedId === projectId);
-    return project ? project.canceled : false; // canceled 상태 확인
-  };
-
-
 
 
   return (
@@ -694,24 +609,27 @@ const handleConfirmCancel = async () => {
       {/* <Nav  showSearch={showSearch}  onToggleChange={handleToggleChange}/> */}
       <Nav  showSearch={showSearch}  />
 
-            <TabWrapType3 Border>
-        {['applied', 'interested', 'written', 'saved', 'closed', 'profile'].map((tabType) => (
-          <TabButtonType3
-            key={tabType}
-            onClick={() => handleListClick(tabType)}
-            isActive={selectedList === tabType}
-            className={selectedList === tabType ? "active" : ""}
-          >
-            {tabType === 'applied' && '신청 목록'}
-            {tabType === 'interested' && '관심 목록'}
-            {tabType === 'written' && '작성 목록'}
-            {tabType === 'saved' && '임시 저장'}
-            {tabType === 'closed' && '마감 목록'}
-            {tabType === 'profile' && '개인 정보'}
-          </TabButtonType3>
-        ))}
-      </TabWrapType3>
+          <List>
+            <ul>
+              {['applied', 'interested', 'written', 'saved', 'closed', 'profile'].map((listType) => (
+                <li key={listType}>
+                  <StyledLink 
+                    onClick={() => handleListClick(listType)} 
+                    $isSelected={selectedList === listType}
+                  >
+                    {listType === 'applied' && '신청 목록'}
+                    {listType === 'interested' && '관심 목록'}
+                    {listType === 'written' && '작성 목록'}
+                    {listType === 'saved' && '임시 저장'}
+                    {listType === 'closed' && '마감 목록'}
+                    {listType === 'profile' && '개인 정보'}
+                  </StyledLink>
+                </li>
+              ))}
+            </ul>
+          </List>
 
+            {/* 선택된 프로젝트가 있을 때 세부정보 보여줌 */}
       {selectedProject ? (
         <>
          <ProjectDetail 
@@ -724,119 +642,19 @@ const handleConfirmCancel = async () => {
 
         </>
       ) : (
-        <ProjectList isFading={isFading} selectedList={selectedList}>
-          {selectedList === 'applied' ? (
-            <>
-              {currentProjects.length === 0 ? (
-                <p>신청한 프로젝트가 없습니다.</p>
-              ) : (
-                currentProjects.map((project, index) => (
-                  <ProjectItemComponent 
-                    key={`applied-${project.pk || project.sk || index}`}
-                    project={project}
-                    user={user}
-                    handleCancelApplication={handleCancelApplication}
-                    isProjectCanceled={isProjectCanceled}
-                  />
-                ))
-              )}
-            </>
-          ) : selectedList === 'saved' ? (
-            <>
-              {currentProjects.filter(project => project.savedFeed).length === 0 ? (
-                <p>저장한 프로젝트가 없습니다.</p>
-              ) : (
-                currentProjects.filter(project => project.savedFeed).map((project, index) => (
-                  <ProjectItemComponent 
-                    key={`saved-${project.pk || project.sk || index}`}
-                    project={project}
-                    user={user}
-                    handleCancelApplication={handleCancelApplication}
-                    isProjectCanceled={isProjectCanceled}
-                    isSaved={true}
-                  />
-                ))
-              )}
-            </>
-          ) : selectedList === 'interested' ? (
-            <>
-              {currentProjects.filter(project => project.postStatus).length === 0 ? (
-                <p>좋아요한 프로젝트가 없습니다.</p>
-              ) : (
-                currentProjects.filter(project => project.postStatus).map((project, index) => (
-                  <ProjectItemComponent 
-                    key={`interested-${project.pk || project.sk || index}`}
-                    project={project}
-                    user={user}
-                    handleCancelApplication={handleCancelApplication}
-                    isProjectCanceled={isProjectCanceled}
-                    isDisabled={true}
-                  />
-                ))
-              )}
-            </>
-          ) : selectedList === 'profile' ? (
-            <UserProfile 
-              userProfile={userProfile}
-              user={user} 
-              setIsProfileVisible={setIsProfileVisible} 
-            />
-          ) : (
-            currentProjects && currentProjects.map((project, index) => (
-              <ProjectItem 
-                key={`written-${project.pk || project.sk || index}`}
-              >
-                <ProjectHeader>
-                  <HeaderItem>
-                    <FontAwesomeIcon icon={regularUser} size="15px" />
-                    <span>{project.nickname}</span>
-                  </HeaderItem>
-                  <HeaderItem>
-                    <StyledFontAwesomeIcon icon={faHeart} />
-                    <span>{project.likesCount}</span>
-                  </HeaderItem>
-                </ProjectHeader>
-                <p>{project.title}</p>
-                <Tags>
-                  {Array.isArray(project.tags) && project.tags.length > 0 ? (
-                    project.tags.map((tag, tagIndex) => (
-                      <Tag key={`${project.pk}-tag-${tagIndex}`}>{tag}</Tag>
-                    ))
-                  ) : (
-                    <span>태그가 없습니다.</span>
-                  )}
-                </Tags>
-                <Button 
-                  onClick={() => handleButtonClick(project)}
-                  disabled={isProjectCompleted(project.pk)}
-                  style={{ 
-                    backgroundColor: (!project.postStatus && !project.savedFeed) ? '#808080' : '#3563E9',
-                    opacity:  (!project.postStatus && !project.savedFeed) ? 0.6 : 1
-                  }}
-                >
-                  {isProjectCompleted(project.pk) || (!project.postStatus && !project.savedFeed) ? '모집완료' : '모집 현황'}
-                  {/* 아마 없애도 됨 isprojectcompletd */}
-                </Button>
-              </ProjectItem>
-            ))
-          )}
-        </ProjectList>
-      )}
-
-      <Pagination 
-        currentPage={currentPage}
+        <ProjectListComponent 
+          selectedList={selectedList}
+          currentProjects={currentProjects}
+          handleProjectClick={handleProjectClick}
           projectsPerPage={projectsPerPage}
           totalProjects={projects.length}
-        onPageChange={paginate} 
-      />
-
-      <Modal isOpen={isConfirmModalOpen} onClose={() => setIsConfirmModalOpen(false)}>
-        <h3 style={{ textAlign: 'center' }}>정말로 신청을 취소하시겠습니까?</h3>
-        <ButtonContainer>
-          <ModalButton onClick={handleConfirmCancel}>확인</ModalButton>
-          <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton>
-        </ButtonContainer>
-      </Modal>
+          paginate={paginate}
+          currentPage={currentPage}
+          refreshProjects={refreshProjects}
+          // setPopupMessage={setPopupMessage}
+          // project={selectedProject}
+        />
+      )}
     </Container>
   );
 };
@@ -855,13 +673,13 @@ const Container = styled.div`
 `;
 
 
-const TabWrapType3 = styled.div`
+const List = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow-x: auto; 
-  white-space: nowrap; 
-  max-width: 100%; 
+  overflow-x: auto; // Allow horizontal scrolling if needed
+  white-space: nowrap; // Prevent items from wrapping
+  max-width: 100%; // Ensure the container doesn't exceed the screen width
   padding: 20px;
 
   ul {
@@ -888,11 +706,11 @@ const TabWrapType3 = styled.div`
 `;
 
 
-const TabButtonType3 = styled.a`
+const StyledLink = styled.a`
   cursor: pointer;
-  color: ${(props) => (props.isActive ? 'white' : '#0A8ED9')}; 
-  background-color: ${(props) => (props.isActive ? 'rgba(160, 218, 251)' : 'white')}; 
-  font-weight: ${(props) => (props.isActive ? 'bold' : 'normal')}; 
+  color: ${(props) => (props.$isSelected ? 'white' : '#0A8ED9')}; 
+  background-color: ${(props) => (props.$isSelected ? 'rgba(160, 218, 251)' : 'white')}; 
+  font-weight: ${(props) => (props.$isSelected ? 'bold' : 'normal')}; 
   border: 2px solid rgba(160, 218, 251); 
   border-radius: 30px 30px 1px 30px; 
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); 
@@ -906,122 +724,6 @@ const TabButtonType3 = styled.a`
   }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-`;
-
-const ProjectList = styled.div`
-  margin-top: 60px;
-  padding: 20px;
-  padding-bottom: 0px;
-  border: 2px solid #A0DAFB;
-  border-radius: 20px;
-  width:50vw;
-  max-width: 800px; 
-  overflow-x: auto;
-  transition: transform 0.5s ease;
-  transform: ${(props) => (props.isFading ? 'translateX(100%)' : 'translateX(0)')};
-  min-height: 700px;
-  ${({ selectedList }) => (selectedList === 'applied' || selectedList === 'saved' || selectedList === 'interested') && `
-    border: none;
-    padding: 3px;
-  `}
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    width: 100%;
-  }
-`;
-
-const ProjectItem = styled.div`
-  border-bottom: ${(props) => (props.isLast ? 'none' : '2px solid #A0DAFB')};
-  border-radius: 1px;
-  padding: 15px;
-  padding-bottom: 30px;
-  margin-bottom: 15px;
-  position: relative;
-  text-align: left; 
-
-  p{
-    font-weight: bold;
-    font-size: 18px;
-  }
-`;
-
-const ProjectHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const HeaderItem = styled.div`
-  display: flex;
-  align-items: center; 
-  margin-right: 10px; 
-
-  & > span {
-    margin-left: 5px; 
-    font-weight: bold;
-  }
-`;
-
-const StyledFontAwesomeIcon = styled(FontAwesomeIcon)`
-  color: red;
-  size: 15px;
-  background-color: #BDBDBD;
-  border-radius: 50%;
-  padding:  4px;
-`;
-
-const Tags = styled.div`
-  display: flex;  
-  margin: 10px 0;
-  align-items: left;
-`;
-
-const Tag = styled.span`
-  margin-right: 5px;
-  padding: 5px 10px;
-  border: 1px solid #ddd;
-  border-radius: 14px 14px 1px 14px; 
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  background-color: white;
-  border-color: rgba(160, 218, 251);
-  color: #0A8ED9;
-`;
-
-const Button = styled.button`
-  position: absolute;
-  background-color: ${props => props.disabled ? '#808080' : '#3563E9'};
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  right: 15px;
-  bottom: 30px;
-  opacity: ${props => props.disabled ? 0.6 : 1};
-
-  &:hover {
-    background-color: ${props => props.disabled ? '#808080' : '#a0dafb'};
-  }
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 20px;
-`;
-
-const ModalButton = styled.button`
-  background-color: #3563E9;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #a0dafb;
-  }
 `;
 
 

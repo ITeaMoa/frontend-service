@@ -125,30 +125,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // // 로그인 함수
-  // const login = async (email, password) => {
-  //   try {
-  //     const response = await axios.post('/confirm/signin', {
-  //       email: email,
-  //       password,
-  //     });
 
-  //     if (response.status === 200) {
-  //       const userData = response.data.user; // 사용자 정보// 사용자 정보 (여기에 user.id가 포함되어 있어야 함)
-  //       const token = response.data.access_token; // JWT 
-
-  //       setUser(userData);
-  //       saveToken(token); // 로컬 스토리지에 JWT 저장
-  //       localStorage.setItem('user', JSON.stringify(userData)); // 사용자 정보 저장
-  //       setIsLoggedIn(true); // 로그인 상태 업데이트
-
-  //       return response;
-  //     }
-  //   } catch (error) {
-  //     console.error('로그인 실패:', error);
-  //     throw error; // 오류를 상위로 전파
-  //   }
-  // };
 
 //   // 소셜 로그인 함수
 //   const socialLogin = async (provider, { code, state }) => {
@@ -221,9 +198,8 @@ export const AuthProvider = ({ children }) => {
   const getAccessToken = async (email, refreshToken) => {
     try {
       const response = await axios.post('login/verify/refresh', {
-        // const response = await axios.post('http://localhost:8000/refresh', {
-        email, // 이메일을 하드코딩하거나 인자로 받을 수 있습니다.
-        refresh_token: refreshToken // 전달받은 refreshToken 사용
+        email, 
+        refresh_token: refreshToken 
       });
 
       if (response.status === 200) {

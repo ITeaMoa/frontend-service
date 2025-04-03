@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Nav from "../../components/Nav";
-import Section1 from "./Section1";
-import Section2 from "./Section2";
+import Section1 from "./Section1_bak";
+import Section2 from "./Section2_bak";
 import { useLocation, useNavigate } from 'react-router-dom';
 // import axios from 'axios';
 import Modal from '../../components/Modal';

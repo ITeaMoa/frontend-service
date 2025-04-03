@@ -47,6 +47,69 @@ const LoginPage = () => {
     }
   };
 
+// // JWT 디코드 함수
+// const parseJwt = (token) => {
+//   const base64Url = token.split('.')[1];
+//   const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+//   const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => `%${('00' + c.charCodeAt(0).toString(16)).slice(-2)}`).join(''));
+//   return JSON.parse(jsonPayload);
+// };
+
+// //jotai import
+// import { useAtom } from 'jotai';
+// const [, setIsLoggedIn] = useAtom(IS_LOGGED_IN); // 로그인 상태를 위한 아톰
+// const [user, setUser] = useAtom(USER); // 사용자 정보를 위한 아톰
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+
+    
+//     try {
+//       const response = await axios.post('/login/confirm/signin', {
+//         email,
+//           password,
+//         });
+    
+//       if (response) {
+//         sessionStorage.setItem("accessToken", response.data.access_token);
+//         // sessionStorage.getItem("accessToken"); //가져올때 
+
+//         const idToken = response.data.id_token; // id_token 가져오기
+        
+//         setIsLoggedIn(true); // 로그인 상태 업데이트
+//         // ID 토큰 디코드하여 사용자 정보 추출
+//         const decodedToken = parseJwt(idToken);
+//         const userId = decodedToken.sub; // 'sub' 필드에서 사용자 ID 추출
+//         const nickname = decodedToken.nickname; // ID 토큰에서 닉네임 추출
+//          // 사용자 정보를 상태에 저장 (닉네임 포함)
+//          const userInfo = { 
+//           id: userId, 
+//           email,
+//           nickname // 닉네임 추가
+//         };
+        
+//         setUser(userInfo);
+//         console.log('로그인한 사용자 정보:', userInfo);
+  
+//         // 사용자 정보를 로컬 스토리지에 저장
+//         sessionStorage.setItem('user', JSON.stringify(userInfo)); // 로컬 스토리지에 저장
+
+
+//         console.log('로그인 성공:', response);
+//         console.log('사용자 닉네임:', response.data.nickname);
+//         navigate('/');
+//         // navigate('/?showModal=true');
+//         if (rememberMe) {
+//           sessionStorage.setItem('savedEmail', email);
+//           sessionStorage.setItem('savedPassword', password);
+//         }
+//       }
+//     } catch (error) {
+//       console.error('로그인 실패:', error);
+//       alert('로그인에 실패하였습니다. 아이디와 비밀번호를 확인하세요.');
+//     }
+//   };
+
   const handleAddButtonClick = () => {
     navigate('/SignupPage'); 
   };

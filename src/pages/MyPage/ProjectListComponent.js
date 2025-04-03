@@ -8,9 +8,304 @@ import axios from '../../api/axios'; // Axios import 추가
 // import axios from 'axios';
 import { useAuth, useProject } from '../../context/AuthContext'
 import Modal from '../../components/Modal';  // Modal 컴포넌트 import
+import ProjectItemComponent from './ProjectItemComponent'; // Adjust the path as necessary
+import UserProfile from '../../components/UserProfile'; // UserProfile 컴포넌트 import
 // import {  faUser as regularUser } from '@fortawesome/free-regular-svg-icons'; 
 // import { useAtom } from 'jotai'; // jotai import 추가
+
+
 // import { userProfileAtom } from '../../atoms/userProfileAtom'; // userProfileAtom import 추가
+
+const dummySavedProjects = [
+  {
+    "pk": "c0349497-05cb-43ef-99f2-8ac4cc73ba86",
+    "sk": "PROJECT",
+    "nickname": "brynn",
+    "entityType": "FEED",
+    "creatorId": "d4487dfc-f001-7052-0905-97df4f00380c",
+    "title": "AI 데이터분석 서비스 팀원 모집합니다 !",
+    "recruitmentNum": 3,
+    "deadline": "2025-03-14T00:00:00",
+    "place": "동탄역 근처",
+    "period": 0,
+    "tags": [
+      "웹",
+      "인공지능",
+      "빅데이터"
+    ],
+    "likesCount": 1,
+    "content": "유저 데이터를 모아서 분석하고, 대시보드화해서 AI로 마케팅 방법을 제안해주는 서비스를 만들어보려고 합니다. 제가 개발을 할 수 있으니 데이터분석 및 AI 활용해서 엔지니어링 할 수 있는 분 구합니다.\n\n궁금한 점은 쪽지 주세요!",
+    "comments": [],
+    "postStatus": false,
+    "timestamp": "2025-02-03T13:42:00.587250944",
+    "savedFeed": true,
+    "roles": {
+      "ai 엔지니어": 1,
+      "프론트엔드": 1,
+      "빅데이터": 1
+    },
+    "recruitmentRoles": {
+      "ai 엔지니어": 0,
+      "프론트엔드": 1,
+      "빅데이터": 0
+    }
+  },
+  {
+    "pk": "c0349497-05cb-43ef-99f2-8ac4cc73ba86",
+    "sk": "PROJECT",
+    "nickname": "brynn",
+    "entityType": "FEED",
+    "creatorId": "d4487dfc-f001-7052-0905-97df4f00380c",
+    "title": "AI 데이터분석 서비스 팀원 모집합니다 !",
+    "recruitmentNum": 3,
+    "deadline": "2025-03-14T00:00:00",
+    "place": "동탄역 근처",
+    "period": 0,
+    "tags": [
+      "웹",
+      "인공지능",
+      "빅데이터"
+    ],
+    "likesCount": 1,
+    "content": "유저 데이터를 모아서 분석하고, 대시보드화해서 AI로 마케팅 방법을 제안해주는 서비스를 만들어보려고 합니다. 제가 개발을 할 수 있으니 데이터분석 및 AI 활용해서 엔지니어링 할 수 있는 분 구합니다.\n\n궁금한 점은 쪽지 주세요!",
+    "comments": [],
+    "postStatus": false,
+    "timestamp": "2025-02-03T13:42:00.587250944",
+    "savedFeed": true,
+    "roles": {
+      "ai 엔지니어": 1,
+      "프론트엔드": 1,
+      "빅데이터": 1
+    },
+    "recruitmentRoles": {
+      "ai 엔지니어": 0,
+      "프론트엔드": 1,
+      "빅데이터": 0
+    }
+  },
+  {
+    "pk": "c0349497-05cb-43ef-99f2-8ac4cc73ba86",
+    "sk": "PROJECT",
+    "nickname": "brynn",
+    "entityType": "FEED",
+    "creatorId": "d4487dfc-f001-7052-0905-97df4f00380c",
+    "title": "AI 데이터분석 서비스 팀원 모집합니다 !",
+    "recruitmentNum": 3,
+    "deadline": "2025-03-14T00:00:00",
+    "place": "동탄역 근처",
+    "period": 0,
+    "tags": [
+      "웹",
+      "인공지능",
+      "빅데이터"
+    ],
+    "likesCount": 1,
+    "content": "유저 데이터를 모아서 분석하고, 대시보드화해서 AI로 마케팅 방법을 제안해주는 서비스를 만들어보려고 합니다. 제가 개발을 할 수 있으니 데이터분석 및 AI 활용해서 엔지니어링 할 수 있는 분 구합니다.\n\n궁금한 점은 쪽지 주세요!",
+    "comments": [],
+    "postStatus": false,
+    "timestamp": "2025-02-03T13:42:00.587250944",
+    "savedFeed": true,
+    "roles": {
+      "ai 엔지니어": 1,
+      "프론트엔드": 1,
+      "빅데이터": 1
+    },
+    "recruitmentRoles": {
+      "ai 엔지니어": 0,
+      "프론트엔드": 1,
+      "빅데이터": 0
+    }
+  },
+  {
+    "pk": "c0349497-05cb-43ef-99f2-8ac4cc73ba86",
+    "sk": "PROJECT",
+    "nickname": "brynn",
+    "entityType": "FEED",
+    "creatorId": "d4487dfc-f001-7052-0905-97df4f00380c",
+    "title": "AI 데이터분석 서비스 팀원 모집합니다 !",
+    "recruitmentNum": 3,
+    "deadline": "2025-03-14T00:00:00",
+    "place": "동탄역 근처",
+    "period": 0,
+    "tags": [
+      "웹",
+      "인공지능",
+      "빅데이터"
+    ],
+    "likesCount": 1,
+    "content": "유저 데이터를 모아서 분석하고, 대시보드화해서 AI로 마케팅 방법을 제안해주는 서비스를 만들어보려고 합니다. 제가 개발을 할 수 있으니 데이터분석 및 AI 활용해서 엔지니어링 할 수 있는 분 구합니다.\n\n궁금한 점은 쪽지 주세요!",
+    "comments": [],
+    "postStatus": false,
+    "timestamp": "2025-02-03T13:42:00.587250944",
+    "savedFeed": true,
+    "roles": {
+      "ai 엔지니어": 1,
+      "프론트엔드": 1,
+      "빅데이터": 1
+    },
+    "recruitmentRoles": {
+      "ai 엔지니어": 0,
+      "프론트엔드": 1,
+      "빅데이터": 0
+    }
+  },
+  {
+    "pk": "c0349497-05cb-43ef-99f2-8ac4cc73ba86",
+    "sk": "PROJECT",
+    "nickname": "brynn",
+    "entityType": "FEED",
+    "creatorId": "d4487dfc-f001-7052-0905-97df4f00380c",
+    "title": "AI 데이터분석 서비스 팀원 모집합니다 !",
+    "recruitmentNum": 3,
+    "deadline": "2025-03-14T00:00:00",
+    "place": "동탄역 근처",
+    "period": 0,
+    "tags": [
+      "웹",
+      "인공지능",
+      "빅데이터"
+    ],
+    "likesCount": 1,
+    "content": "유저 데이터를 모아서 분석하고, 대시보드화해서 AI로 마케팅 방법을 제안해주는 서비스를 만들어보려고 합니다. 제가 개발을 할 수 있으니 데이터분석 및 AI 활용해서 엔지니어링 할 수 있는 분 구합니다.\n\n궁금한 점은 쪽지 주세요!",
+    "comments": [],
+    "postStatus": false,
+    "timestamp": "2025-02-03T13:42:00.587250944",
+    "savedFeed": true,
+    "roles": {
+      "ai 엔지니어": 1,
+      "프론트엔드": 1,
+      "빅데이터": 1
+    },
+    "recruitmentRoles": {
+      "ai 엔지니어": 0,
+      "프론트엔드": 1,
+      "빅데이터": 0
+    }
+  },
+  {
+    "pk": "c0349497-05cb-43ef-99f2-8ac4cc73ba86",
+    "sk": "PROJECT",
+    "nickname": "brynn",
+    "entityType": "FEED",
+    "creatorId": "d4487dfc-f001-7052-0905-97df4f00380c",
+    "title": "AI 데이터분석 서비스 팀원 모집합니다 !",
+    "recruitmentNum": 3,
+    "deadline": "2025-03-14T00:00:00",
+    "place": "동탄역 근처",
+    "period": 0,
+    "tags": [
+      "웹",
+      "인공지능",
+      "빅데이터"
+    ],
+    "likesCount": 1,
+    "content": "유저 데이터를 모아서 분석하고, 대시보드화해서 AI로 마케팅 방법을 제안해주는 서비스를 만들어보려고 합니다. 제가 개발을 할 수 있으니 데이터분석 및 AI 활용해서 엔지니어링 할 수 있는 분 구합니다.\n\n궁금한 점은 쪽지 주세요!",
+    "comments": [],
+    "postStatus": false,
+    "timestamp": "2025-02-03T13:42:00.587250944",
+    "savedFeed": true,
+    "roles": {
+      "ai 엔지니어": 1,
+      "프론트엔드": 1,
+      "빅데이터": 1
+    },
+    "recruitmentRoles": {
+      "ai 엔지니어": 0,
+      "프론트엔드": 1,
+      "빅데이터": 0
+    }
+  }
+];
+
+const likeProjects = [ // 더미 데이터 업데이트
+  {
+    "pk": "4fccc2dd-58a7-4db1-a549-b44603b9fbbb",
+    "sk": "PROJECT",
+    "nickname": "바다상어",
+    "entityType": "FEED",
+    "creatorId": "f4f84d4c-90c1-7027-d639-96212513682e",
+    "title": "ITeaMoa 프로젝트 팀원 구합니다",
+    "recruitmentNum": 5,
+    "deadline": "2025-02-28T00:00:00",
+    "place": "강남역",
+    "period": 0,
+    "tags": [
+      "웹",
+      "모바일",
+      "AWS",
+      "Git",
+      "Github",
+      "Spring Boot",
+      "React"
+    ],
+    "likesCount": 5,
+    "content": "안녕하세요.\n\n\"IT관련 프로젝트 팀원 모집 플랫폼\" 프로젝트 진행하실 팀원 구합니다~\n\n많은 관심 바라요:)",
+    "comments": [
+      {
+        "userId": "84b8ddac-3081-70eb-e79d-e8f5deef4892",
+        "comment": "질문이 있습니다",
+        "timestamp": "2025-02-05T01:20:34.78452235",
+        "name": null
+      },
+      {
+        "userId": "84b8ddac-3081-70eb-e79d-e8f5deef4892",
+        "comment": "질문 받아주세요!!",
+        "timestamp": "2025-02-05T01:26:31.379855213",
+        "name": null
+      }
+    ],
+    "postStatus": true,
+    "timestamp": "2025-02-03T13:21:40.743217531",
+    "savedFeed": false,
+    "roles": {
+      "백엔드": 2,
+      "프론트엔드": 1,
+      "기획자": 1,
+      "pm": 1
+    },
+    "recruitmentRoles": {
+      "백엔드": 1,
+      "프론트엔드": 0,
+      "기획자": 1,
+      "pm": 0
+    }
+  },
+  {
+    "pk": "914e8da3-b10b-41dd-b959-2e5cf634e692",
+    "sk": "PROJECT",
+    "nickname": "알파카",
+    "entityType": "FEED",
+    "creatorId": "04e8ddec-70d1-702c-9257-1f0078fe9c83",
+    "title": "이색동물 키우는 사람~~",
+    "recruitmentNum": 4,
+    "deadline": "2025-07-16T00:00:00",
+    "place": "죽전역",
+    "period": 5,
+    "tags": [
+      "웹",
+      "AWS",
+      "React",
+      "Spring Boot",
+      "Git",
+      "모바일"
+    ],
+    "likesCount": 2,
+    "content": "알파카랑 카피바라같이 이색동물 키우는 사람들의 모임어플을 만들려고 합니다. 서로 자기 동물 자랑하면 재밌을것같아용\n산책이나 모임, 먹이 공유 같은 기능을 만들어보려고 합니다^^",
+    "comments": [],
+    "postStatus": true,
+    "timestamp": "2025-02-03T13:30:26.152048694",
+    "savedFeed": false,
+    "roles": {
+      "백엔드": 2,
+      "프론트엔드": 2
+    },
+    "recruitmentRoles": {
+      "백엔드": 1,
+      "프론트엔드": 1,
+      "무관": 0
+    }
+  }
+];
 
 const ProjectListComponent = ({ 
   selectedList, 
@@ -32,6 +327,8 @@ const ProjectListComponent = ({
   const [selectedProjectForCancel, setSelectedProjectForCancel] = useState(null);
   const [isProfileVisible, setIsProfileVisible] = useState(false); // 프로필 내용 표시 상태 추가
   const [userProfile, setUserProfile] = useState({}); // 초기 상태를 빈 객체로 설정
+  const [savedProjects, setSavedProjects] = useState([]); // 상태로 관리
+  const [likedProjects, setLikedProjects] = useState([]); // 상태로 관리
 
   // localStorage 데이터 로드를 위한 useEffect 수정
   useEffect(() => {
@@ -120,6 +417,25 @@ const ProjectListComponent = ({
 
     fetchUserProfile();
   }, [user, setUserProfile]);
+
+  // selectedList 변경 시 savedProjects 초기화
+  useEffect(() => {
+    if (selectedList === 'saved') {
+        // 더미 데이터를 savedProjects에 설정
+        setSavedProjects(dummySavedProjects); // 더미 데이터로 초기화
+    } else {
+        setSavedProjects([]); // 'saved'가 아닐 때 초기화
+    }
+  }, [selectedList]);
+
+  useEffect(() => {
+    if (selectedList === 'interested') {
+        // 더미 데이터를 savedProjects에 설정
+        setLikedProjects(likeProjects); // 더미 데이터로 초기화
+    } else {
+        setLikedProjects([]); // 'saved'가 아닐 때 초기화
+    }
+  }, [selectedList]);
 
   // 프로젝트 완료 처리 함수 수정
   const handleButtonClick = (project) => {
@@ -222,120 +538,86 @@ const ProjectListComponent = ({
 
   return (
     <Container>
-      <ProjectList isFading={isFading}>
+      <ProjectList isFading={isFading} selectedList={selectedList}>
         {selectedList === 'applied' ? (
           <>
             {currentProjects.length === 0 ? (
               <p>신청한 프로젝트가 없습니다.</p>
             ) : (
               currentProjects.map((project, index) => (
-                <ProjectItem 
+                <ProjectItemComponent 
                   key={`applied-${project.pk || project.sk || index}`}
-                >
-                  <ProjectHeader>
-                    <HeaderItem>
-                      <FontAwesomeIcon icon={regularUser} size="15px" />
-                      <span>{project.nickname}</span>
-                      <StyledFontAwesomeIcon2 icon={faHeart} />
-                      <span>{project.likesCount || 0}</span>
-                    </HeaderItem>
-                  </ProjectHeader>
-
-                  <p>{project.title}</p>
-                
-                  <Tags>
-                    {project.tags && project.tags.map((tag, index) => (
-                      <Tag key={index}>{tag}</Tag>
-                    ))}
-                  </Tags>
-                  <Button2 
-                    onClick={() => {
-                      if (user && user.id && project.feedId) {
-                        console.log("User ID:", user.id);
-                        console.log("Project Feed ID:", project.feedId);
-                        if (project.status === "REJECTED") {
-                          console.log("반려 버튼 클릭");
-                        } else if (project.status === "ACCEPT") {
-                          console.log("승인 완료");
-                        } else {
-                          handleCancelApplication(user.id, project.feedId);
-                        }
-                      } else {
-                        console.error("User or project information is missing");
-                      }
-                    }}
-                    disabled={isProjectCanceled(project.feedId) || project.status === "REJECTED" || project.status === "ACCEPTED"}
-                    status={project.status}
-                  >
-                    {project.status === "REJECTED" ? "반려" : project.status === "ACCEPTED" ? "승인 완료" : "신청 취소"}
-                  </Button2>
-                  <AdditionalInfo>
-                    <span>지원분야&nbsp;| {project.part}</span>
-                    <span>모집현황&nbsp;| {project.recruitmentNum}명</span>
-                    <span>마감일자&nbsp;| {new Date(project.deadline).toLocaleDateString()}</span>
-                    <span>진행기간&nbsp;| {project.period ? `${project.period}개월` : '정보없음'}</span>
-                    <span>상태&nbsp; &nbsp; &nbsp;| {project.status === 'completed' ? '완료' : '진행 중'}</span>
-                  </AdditionalInfo>
-                </ProjectItem>
+                  project={project}
+                  user={user}
+                  handleCancelApplication={handleCancelApplication}
+                  isProjectCanceled={isProjectCanceled}
+                />
+              ))
+            )}
+          </>
+        ) : selectedList === 'saved' ? ( // 저장된 프로젝트 섹션 추가
+          <>
+            {currentProjects.filter(project => project.savedFeed).length === 0 ? ( // 'savedFeed' 속성으로 필터링
+              <p>저장한 프로젝트가 없습니다.</p>
+            ) : (
+              currentProjects.filter(project => project.savedFeed).map((project, index) => ( // 페이지네이션 적용
+                <ProjectItemComponent 
+                  key={`saved-${project.pk || project.sk || index}`}
+                  project={project}
+                  user={user}
+                  handleCancelApplication={handleCancelApplication}
+                  isProjectCanceled={isProjectCanceled}
+                  isSaved={true}
+                />
+              ))
+            )}
+          </>
+        ) : selectedList === 'interested' ? ( // 좋아요한 프로젝트 섹션 추가
+          <>
+            {currentProjects.filter(project => project.postStatus).length === 0 ? ( // 'postStatus' 속성으로 필터링
+              <p>좋아요한 프로젝트가 없습니다.</p>
+            ) : (
+              currentProjects.filter(project => project.postStatus).map((project, index) => ( // 페이지네이션 제거
+                <ProjectItemComponent 
+                  key={`interested-${project.pk || project.sk || index}`}
+                  project={project}
+                  user={user}
+                  handleCancelApplication={handleCancelApplication}
+                  isProjectCanceled={isProjectCanceled}
+                  isDisabled={true} // 버튼 비활성화 조건 추가
+                />
               ))
             )}
           </>
         ) : selectedList === 'profile' ? ( // selectedList가 'profile'일 때 사용자 정보 표시
-          <ProfileContainer>
-            <ProfileImageSection>
-            <ProfileImage>
-                <img src={userProfile.avatarUrl || 'default-avatar.png'} alt="Profile" style={{ width: '100%', borderRadius: '50%' }} />
-              </ProfileImage>
-              <h3>{user.nickname || '닉네임이 없습니다.'}</h3>
-              {/* <FontAwesomeIcon icon={faEdit} /> */}
-            </ProfileImageSection>
-            <ProfileContent>
-              <h2>프로필 설정</h2>
-              <ProfileField>
-                <ProfileTitle>
-                  <Label>Phone</Label> <FontAwesomeIcon icon={faEdit} />
-                </ProfileTitle>
-                <p>{userProfile.phone || '정보가 없습니다.'}</p>
-              </ProfileField>
-              <ProfileField>
-                <ProfileTitle>
-                  <Label>E-mail</Label> <FontAwesomeIcon icon={faEdit} />
-                </ProfileTitle>
-                <p>{user.email || '정보가 없습니다.'}</p>
-              </ProfileField>
-              <ProfileField>
-                <ProfileTitle>
-                  <Label>Password</Label> <FontAwesomeIcon icon={faEdit} />
-                </ProfileTitle>
-                <p>********</p>
-              </ProfileField>
-              <ProfileField>
-                <ProfileTitle>
-                  <Label>자기소개</Label> <FontAwesomeIcon icon={faEdit} />
-                </ProfileTitle>
-                <p>{userProfile.headLine || '정보가 없습니다.'}</p>
-              </ProfileField>
-              <ProfileField>
-                <ProfileTitle>
-                  <Label>기술 스택</Label> <FontAwesomeIcon icon={faEdit} />
-                </ProfileTitle>
-                <p>{userProfile.tags && userProfile.tags.length > 0 ? userProfile.tags.join(', ') : '정보가 없습니다.'}</p>
-              </ProfileField>
-              <ProfileField>
-                <ProfileTitle>
-                  <Label>학교/전공</Label> <FontAwesomeIcon icon={faEdit} />
-                </ProfileTitle>
-                <p>{userProfile.experiences && userProfile.experiences.length > 0 ? userProfile.experiences : '정보가 없습니다.'}</p>
-              </ProfileField>
-              <ProfileField>
-                <ProfileTitle>
-                  <Label>개인 링크</Label> <FontAwesomeIcon icon={faEdit} />
-                </ProfileTitle>
-                <p>{typeof userProfile.personalUrl === 'string' && userProfile.personalUrl.trim() !== '' ? userProfile.personalUrl : '정보가 없습니다.'}</p>
-              </ProfileField>
-              <CloseButton onClick={() => setIsProfileVisible(false)}>회원탈퇴</CloseButton>
-            </ProfileContent>
-          </ProfileContainer>
+          <UserProfile 
+            userProfile={{
+              pk: "USER#34f8fd4c-a001-7051-2a4e-64beb057470f",
+              sk: "PROFILE#",
+              entityType: "USER",
+              nickname: "청갈치",
+              avatarUrl: "https://iteamoa-userprofile.s3.ap-northeast-2.amazonaws.com/avatars/34f8fd4c-a001-7051-2a4e-64beb057470f/2792f078-5f12-4734-91ab-4154c4af1106_아이콘.jpg",
+              headLine: "고급 전문가",
+              tags: [
+                "Python",
+                "AWS"
+              ],
+              educations: [
+                "단국대학교"
+              ],
+              personalUrl: [
+                "네이버.com",
+                "깃허브.com"
+              ],
+              experiences: [
+                "사기꾼임 사실"
+              ],
+              email: "kbm4189@naver.com",
+              timestamp: "2025-01-14T13:13:16.0329976"
+            }} 
+            user={user} 
+            setIsProfileVisible={setIsProfileVisible} 
+          />
         ) : (
           currentProjects && currentProjects.map((project, index) => (
             <ProjectItem 
@@ -366,7 +648,7 @@ const ProjectListComponent = ({
                 disabled={isProjectCompleted(project.pk)}
                 style={{ 
                   backgroundColor: (!project.postStatus && !project.savedFeed) ? '#808080' : '#3563E9',
-                  opacity:  (!project.postStatus && !project.savedFeed)? 0.6 : 1
+                  opacity:  (!project.postStatus && !project.savedFeed) ? 0.6 : 1
                 }}
               >
                 {isProjectCompleted(project.pk) || (!project.postStatus && !project.savedFeed) ? '모집완료' : '모집 현황'}
@@ -413,6 +695,11 @@ const ProjectList = styled.div`
   transition: transform 0.5s ease;
   transform: ${(props) => (props.isFading ? 'translateX(100%)' : 'translateX(0)')};
   min-height: 700px;
+  // 신청 목록일 때 border 숨기기
+  ${({ selectedList }) => (selectedList === 'applied' || selectedList === 'saved' || selectedList === 'interested') && `
+    border: none; // 신청 목록일 때 border 제거
+    padding: 3px; // 신청 목록일 때 패딩 제거
+  `}
 `;
 
 const ProjectItem = styled.div`
@@ -561,17 +848,21 @@ const ProfileContainer = styled.div`
 `;
 
 const ProfileImage = styled.div`
-  // background-color: gray; // 배경 색상을 회색으로 설정
   border: 1px solid gray;
-  // opacity: 0.3;
-
-  border-radius: 50%; // 원형으로 만들기 위해 border-radius를 50%로 설정
+  opacity: ${props => props.hasImage ? 1 : 0.3};
+  border-radius: 50%;
   width: 100px;
   height: 100px;
-  display: flex; // 아이콘을 중앙에 배치하기 위해 flex 사용
-  align-items: center; // 수직 중앙 정렬
-  // min-width: 200px;
-  justify-content: center; // 수평 중앙 정렬
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  & img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 `;
 
 const ProfileImageSection = styled.div`

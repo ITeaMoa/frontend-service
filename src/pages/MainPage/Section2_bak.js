@@ -10,6 +10,7 @@ import Pagination from '../../components/Pagination';
 import Modal from '../../components/Modal';
 import { useAuth } from '../../context/AuthContext'
 import axios from '../../api/axios';
+import AuthModal from '../../components/AuthModal';
 
 
 const Section2 = ({ feedType }) => {
@@ -365,15 +366,12 @@ const handleCloseSubmissionPopup = () => {
       </Modal>
 
       {/* 제출 결과 팝업 */}
-      {isSubmitted && (
-        <Modal isOpen={isSubmitted} onClose={handleCloseSubmissionPopup}>
-          <h3 style={{ textAlign: 'center' }}>{popupMessage}</h3>
-          <ButtonContainer>
-            <ActionButton onClick={() => navigate('/SignupPage')}>회원가입하기</ActionButton>
-            <ActionButton onClick={() => navigate('/LoginPage')}>로그인하기</ActionButton>
-          </ButtonContainer>
-        </Modal>
-      )}
+      <AuthModal 
+        isOpen={isSubmitted} 
+        onClose={handleCloseSubmissionPopup} 
+        handleSignUp={() => navigate('/SignupPage')} 
+        handleLogin={() => navigate('/LoginPage')} 
+      />
     </SectionWrapper>
   );
 };

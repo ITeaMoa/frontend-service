@@ -5,6 +5,8 @@ import SearchFeed from "./SearchFeed";
 import styled from 'styled-components';
 // import axios from 'axios';
 import axios from '../../api/axios';
+import { useAtom } from 'jotai';
+import { feedTypeAtom } from '../../Atoms.jsx/AtomStates';
 
 
 const SearchPage = () => {
@@ -20,10 +22,10 @@ const SearchPage = () => {
     const tags = query.get("tags");
 
      // 로컬 스토리지에서 feedType을 가져와 초기값으로 설정
-  const initialFeedType = localStorage.getItem('feedType') || 'PROJECT'; // 기본값 'PROJECT'
-  const [feedType, setFeedType] = useState(initialFeedType); // 초기값 설정
-    // const feedType = query.get("feedType") || 'PROJECT';
+//   const initialFeedType = localStorage.getItem('feedType') || 'PROJECT'; // 기본값 'PROJECT'
+//   const [feedType, setFeedType] = useState(initialFeedType); // 초기값 설정
 
+    const [feedType, setFeedType] = useAtom(feedTypeAtom);
 
      useEffect(() => {
     // feedType을 섹션에 전달하는 로직

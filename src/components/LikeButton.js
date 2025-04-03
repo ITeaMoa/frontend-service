@@ -1,6 +1,4 @@
 //사용자 좋아요 ui와 이벤트 처리
-
-
 import React, { useEffect, useState, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons'; 
@@ -8,11 +6,16 @@ import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 // import axios from 'axios';
 import axios from '../api/axios'
+import { useAtom } from 'jotai';
+import { likedProjectsAtom, IS_LOGGED_IN, USER } from '../Atoms.jsx/AtomStates';  
+
 
 
 const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle, userId, sk, feedType }) => {
   const [liked, setLiked] = useState(initialLiked);
   const [likesCount, setLikesCount] = useState(initialLikesCount);
+  const [isLoggedIn, setIsLoggedIn] = useAtom(IS_LOGGED_IN);
+  const [user, setUser] = useAtom(USER);
 
   // 사용자 좋아요 상태를 API 호출로 가져오기
   const fetchUserLikeStatus = useCallback(async () => {
@@ -30,7 +33,7 @@ const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle
     } catch (error) {
       console.error('Error fetching user like status:', error);
     }
-  }, [userId, sk]);
+  }, [userId, sk,isLoggedIn,user,feedType]);
 
   // 컴포넌트가 마운트될 때 사용자 좋아요 상태를 가져옴
   useEffect(() => {
@@ -62,6 +65,8 @@ const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle
 
       // 상태 업데이트
       setLiked(newLiked);
+      // 좋아요 상태 다시 가져오기
+     fetchUserLikeStatus();
       setLikesCount(newLikesCount);
       console.log('현재 liked:', newLiked, '현재 likesCount:', newLikesCount); // 상태 확인
       if (onLikeChange) {

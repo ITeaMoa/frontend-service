@@ -160,6 +160,13 @@ const DropdownWrapper = styled.div`
         left: -30px;
         
     `}
+     ${({ dropdownType }) => dropdownType === 'profile' && `
+  
+    width: 100%;
+        left: -30px;
+        
+    `}
+
 
 
 
@@ -167,7 +174,7 @@ const DropdownWrapper = styled.div`
 `;
 
 const DropdownHeader = styled.div`
-    border: 2px solid ${({ isFocused, dropdownType }) => (dropdownType === 'main' ? 'transparent' : isFocused ? '#007BFF' : '#A0DAFB')};
+    border: 2px solid ${({ isFocused, dropdownType }) => (dropdownType === 'main' || dropdownType === 'profile' ? 'transparent' : isFocused ? '#007BFF' : '#A0DAFB')};
     border-radius: 15px;
     padding: 8px;   
     cursor: pointer;

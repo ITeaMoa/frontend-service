@@ -9,18 +9,24 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 // import axios from 'axios';
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
+import { useAtom } from 'jotai';
+import { selectedSavedProjectAtom,feedTypeAtom } from '../../Atoms.jsx/AtomStates'; // Atom import
+
 
 
 
 
 const WritePage = ({ feedType: initialFeedType }) => {
   const location = useLocation();
-  const query = new URLSearchParams(location.search);
-  const feedTypeFromQuery = query.get('feedType'); // 쿼리 파라미터에서 feedType 가져오기
+  const { project } = location.state || {}; // ProjectItemComponent에서 전달된 프로젝트 정보 가져오기
+  // const query = new URLSearchParams(location.search);
+  // const feedTypeFromQuery = query.get('feedType'); // 쿼리 파라미터에서 feedType 가져오기
+  const [feedType, setFeedType] = useAtom(feedTypeAtom);
 
-  const [feedType, setFeedType] = useState(feedTypeFromQuery || initialFeedType || 'PROJECT'); // 쿼리 파라미터가 없으면 초기값 사용
-  const [selectedRoles, setSelectedRoles] = useState([]);
-  const [selectedTags, setSelectedTags] = useState([]);
+  // const [feedType, setFeedType] = useState(feedTypeFromQuery || initialFeedType || 'PROJECT'); // 쿼리 파라미터가 없으면 초기값 사용
+  const [selectedSavedProject] = useAtom(selectedSavedProjectAtom); // 아톰에서 프로젝트 정보 가져오기
+  const [selectedRoles, setSelectedRoles] = useState(selectedSavedProject ? selectedSavedProject.roles : []);
+  const [selectedTags, setSelectedTags] = useState(selectedSavedProject ? selectedSavedProject.tags : []);
   const [period, setPeriod] = useState('');
 
   // feedType 변경 시 로그 출력
@@ -34,13 +40,13 @@ const WritePage = ({ feedType: initialFeedType }) => {
   }, [selectedRoles]);
 
   const navigate = useNavigate();
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState(selectedSavedProject ? selectedSavedProject.title : ''); // 프로젝트 제목 초기화
+  const [description, setDescription] = useState(selectedSavedProject ? selectedSavedProject.content : ''); // 프로젝트 내용 초기화
+  const [progress, setProgress] = useState(selectedSavedProject ? selectedSavedProject.place : ''); // 진행 장소 초기화
+  const [deadline, setDeadline] = useState(selectedSavedProject ? selectedSavedProject.deadline : ''); // 마감일 초기화
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
   const nickname = user ? user.nickname : 'Unknown'; //사용자 닉네임 설정
   // const [participants, setParticipants] = useState(0);
-  const [deadline, setDeadline] = useState('');
-  const [progress, setProgress] = useState('');
-  const [description, setDescription] = useState(''); 
   const showSearch = false;
 
   const [recruitmentNum, setRecruitmentNum] = useState(0); // recruitmentNum 상태 추가
@@ -94,7 +100,7 @@ const WritePage = ({ feedType: initialFeedType }) => {
     const dataToSend = {
         title,
         content: description,
-        postStatus: true,
+        postStatus: !isTemporary,
         savedFeed: isTemporary,
         tags: selectedTags,
         recruitmentNum: recruitmentNum > 0 ? recruitmentNum : 1,
@@ -321,7 +327,7 @@ const handleDeadlineChange = (e) => {
 
   return (
     <>
-      <Nav showSearch={showSearch} onToggleChange={handleToggleChange} />
+      <Nav showSearch={showSearch}/>
       <WriteWrapper>
       <BackButton onClick={() => navigate(-1)} style={{ display: 'flex', alignItems: 'center' }}>
       <FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: '5px' }} />

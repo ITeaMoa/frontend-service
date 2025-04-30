@@ -1,21 +1,56 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import Nav from '../../components/Nav';
 import ProjectCard from '../../components/ProjectCard';
+import { useAtom } from 'jotai';
+import { feedTypeAtom } from '../../Atoms.jsx/AtomStates';
 
 
 //xxxxxxx
 const SearchPage = () => {
   const [searchResults, setSearchResults] = useState([]);
-  const [showSearch, setShowSearch] = useState(true);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const showSearch = true;
+  const [feedType, setFeedType] = useAtom(feedTypeAtom);
 
+  const useQuery = () => {
+    return new URLSearchParams(useLocation().search);
+  };
+
+  let query = useQuery();
+  const searchTerm = query.get("q");
+  const tags = query.get("tags");
+    
   const handleProjectClick = (project) => {
     navigate(`/ApplyPage/${project.pk}`, { 
       state: { sk: project.sk }
     });
   };
+
+  useEffect(() => {
+    const fetchSearchItems = async () => {
+        try {
+            // 태그가 있을 경우, search-tags API 호출
+            const apiUrl = tags 
+                ? `/main/search-tags?feedType=${feedType}&tags=${encodeURIComponent(tags)}`
+                : `/main/search-keyword?feedType=${feedType}&keyword=${encodeURIComponent(searchTerm)}`;
+            
+            const response = await axios.get(apiUrl);
+            const filteredResults = response.data.filter(item => {
+                // 태그가 선택된 경우, 태그 필터링
+                return !tags || (item.tags && item.tags.some(tag => tags.split(',').includes(tag)));
+            });
+            setSearchResults(filteredResults); // 필터링된 결과 설정
+            console.log("Filtered search results set:", filteredResults);
+        } catch (error) {
+            console.error("Error fetching search items:", error);
+        }
+    };
+
+    fetchSearchItems();
+}, [searchTerm, tags, feedType]); // 검색어와 태그가 변경될 때마다 호출
 
   const handleLikeClick = (projectId, newLiked) => {
     setSearchResults(prevResults => 
@@ -49,16 +84,16 @@ const SearchPage = () => {
               key={project.id || index}
               project={project}
               onClick={() => handleProjectClick(project)}
-              onLikeClick={handleLikeClick}
+              // onLikeClick={handleLikeClick}
               onApplyClick={handleApplyClick}
               isLoggedIn={!!user}
               userId={user?.id}
-              feedType="PROJECT"
+              feedType={feedType}
             />
           ))}
         </ProjectListWrapper>
       ) : (
-        <NoResults>검색 결과가 없습니다.</NoResults>
+        <NoResults>찾고자하는 검색어 "{searchTerm}"에 맞는 아이템이 없습니다.</NoResults>
       )}
     </Container>
   );

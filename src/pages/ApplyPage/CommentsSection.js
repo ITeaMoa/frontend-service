@@ -4,6 +4,7 @@ import { faUser } from '@fortawesome/free-regular-svg-icons';
 import styled from 'styled-components';
 import axios from '../../api/axios';
 import { selectedProjectDetailAtom } from '../../Atoms.jsx/AtomStates';
+import { useAtom } from 'jotai';
 
 const CommentsSection = ({ comments, commentInput, setCommentInput, project, user, projectId, fetchProjectDetails }) => {
   const [replyInput, setReplyInput] = useState({});
@@ -11,9 +12,9 @@ const CommentsSection = ({ comments, commentInput, setCommentInput, project, use
   const [isEditing, setIsEditing] = useState(false);
   const [editedComment, setEditedComment] = useState(null);   
   const [selectedProjectDetail, setSelectedProjectDetail] = useAtom(selectedProjectDetailAtom);
-  const [project, setProject] = useState(null);
-  setProject(selectedProjectDetail);
-  //projectId -> 여기서 찾아도 될듯
+  // const [project, setProject] = useState(null);
+  // setProject(selectedProjectDetail);
+  //projectId를 -> 여기서 찾아도 될듯/ comment도?
 
   const handleCommentSubmit = async () => {
     console.log("handleCommentSubmit 호출", { commentInput, project });

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css }  from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faSlidersH } from '@fortawesome/free-solid-svg-icons';
@@ -353,7 +353,7 @@ const handleToggleChange = () => {
           <AlertContent>
             {!authIsLoggedIn ? (
               <MessageBox NoAlarm>
-                <Sub3 color="gray500">알림은 로그인 후, 확인 가능합니다.</Sub3>
+                <h2 color="gray500">알림은 로그인 후, 확인 가능합니다.</h2>
               </MessageBox>
             ) : alarms.length === 0 ? (
               <MessageBox NoAlarm>
@@ -786,6 +786,11 @@ const MessageBox = styled.div`
     text-align: center;
     min-height: 100px;
   `}
+
+  h2 {
+    font-size: 12px;
+    color: #666;
+  }
 `;
 
 const Message = styled.div`

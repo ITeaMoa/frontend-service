@@ -7,7 +7,6 @@ import Dropdown from '../../components/DropDown';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 
 
-
 const UserProfile = ({ userProfile, user, setIsProfileVisible }) => {
 
     const option3 = [
@@ -61,6 +60,16 @@ const UserProfile = ({ userProfile, user, setIsProfileVisible }) => {
     const headLineInputRef = useRef(null);
     const passwordInputRef = useRef(null);
     const [isEditingPassword, setIsEditingPassword] = useState(false);
+
+    const [, setUserProfile] = useState({
+      tags: [],
+      experiences: [],
+      avatarUrl: null,
+      headLine: "",
+      educations: [],
+      personalUrl: ""
+    });
+    
 
     const handleEdit = (field) => {
         // Implement your editing logic here

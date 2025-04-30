@@ -1,3 +1,4 @@
+//아마 필여 x
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faEdit } from '@fortawesome/free-solid-svg-icons';

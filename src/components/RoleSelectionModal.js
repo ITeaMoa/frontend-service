@@ -120,3 +120,23 @@ const AuthButton = styled.button`
     background-color: #a0dafb;
   }
 `;
+
+const RoleButton = styled.button`
+  padding: 24px 25px;
+  margin-bottom: 20px;
+  border: 1px solid;
+  border-radius: 14px 14px 1px 14px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-color: rgba(160, 218, 251);
+  background-color: ${({ isSelected }) => (isSelected ? 'rgba(160, 218, 251)' : 'white')};
+  color: #0A8ED9;
+  font-size: 16px;
+  white-space: nowrap;
+  font-size: 18px;
+  min-width: 60%;
+  padding: 10px 20px;
+
+  &:hover {
+    background-color: rgba(160, 218, 251);
+  }
+`;

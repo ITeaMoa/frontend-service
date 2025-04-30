@@ -6,6 +6,8 @@ import Modal from '../../components/Modal';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../api/axios';
+import { useAtom } from 'jotai';
+import { feedTypeAtom, likedProjectsAtom } from '../../Atoms.jsx/AtomStates';
 
 const SearchFeed = ({ itemList, setSearchResults }) => {
   const navigate = useNavigate();
@@ -17,6 +19,8 @@ const SearchFeed = ({ itemList, setSearchResults }) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
   const { user } = useAuth();
+  const [feedType, setFeedType] = useAtom(feedTypeAtom);
+  const [likedProjects, setLikedProjects] = useAtom(likedProjectsAtom);
 
   // 페이지네이션 관련
   const indexOfLastProject = currentPage * projectsPerPage;
@@ -94,7 +98,7 @@ const SearchFeed = ({ itemList, setSearchResults }) => {
         pk: user.id, // 프로젝트의 pk를 사용
         sk: project.pk, 
         part: selectedRole, // 선택한 역할
-        feedType: "PROJECT" // 고정된 값
+        feedType: feedType // 고정된 값
       };
   
       await axios.post('/main/application', applicationData); // API 호출

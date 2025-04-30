@@ -17,6 +17,7 @@ const Section2 = ({
   feedType                  // 피드 타입
 }) => {
   // 현재 페이지에 표시할 프로젝트 계산
+  const navigate = useNavigate();
 
   const location = useLocation(); // 현재 위치 가져오기
   const query = new URLSearchParams(location.search); // 쿼리 파라미터 파싱

@@ -16,6 +16,7 @@ const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle
   const [likesCount, setLikesCount] = useState(initialLikesCount);
   const [isLoggedIn, setIsLoggedIn] = useAtom(IS_LOGGED_IN);
   const [user, setUser] = useAtom(USER);
+  const [likedProjects, setLikedProjects] = useAtom(likedProjectsAtom);
 
   // 사용자 좋아요 상태를 API 호출로 가져오기
   const fetchUserLikeStatus = useCallback(async () => {
@@ -28,6 +29,11 @@ const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle
         // 사용자가 좋아요를 눌렀던 피드의 sk가 현재 버튼의 sk와 일치하는지 확인
         const userLiked = response.data.some(like => like.sk === sk);
         setLiked(userLiked); // liked 상태 설정
+        //아톰으로 추가한거 -> 테스 해볼것것: 메인페이지와 연동해서?
+        setLikedProjects(prevLikedProjects => [
+          ...prevLikedProjects,
+          { id: user.id, liked: userLiked, likesCount: likesCount }
+        ]);   //
         // setLikesCount(response.data.length); // 총 좋아요 수 설정 (여기서는 단순히 길이로 설정)
       }
     } catch (error) {
@@ -41,6 +47,7 @@ const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle
   }, [fetchUserLikeStatus]);
 
   const handleClick = async (e) => {
+    console.log('클릭됨');
     e.stopPropagation(); // 이벤트 전파 방지
     const newLiked = !liked;
     const newLikesCount = newLiked ? likesCount + 1 : Math.max(likesCount - 1, 0);

@@ -13,7 +13,7 @@ import { useAuth } from '../../context/AuthContext'
 import ProfileModal from '../../components/ProfileModal'; // ProfileModal 컴포넌트 추가
 import AuthModal from '../../components/AuthModal';
 import { useAtom } from 'jotai';
-import { feedTypeAtom, selectedProjectDetailAtom } from '../../Atoms.jsx/AtomStates';
+import { feedTypeAtom, selectedProjectDetailAtom, likedProjectsAtom } from '../../Atoms.jsx/AtomStates';
 import MainPageComponent from './MainPage';
 
 let modalOpenedOnce = false;
@@ -185,7 +185,7 @@ const MainPage = () => {
     const showSearch = true;
     const location = useLocation();
     const query = new URLSearchParams(location.search);
-    const showModal = query.get('showModal') === 'true'; 
+    // const showModal = query.get('showModal') === 'true'; 
     const { user } = useAuth(); 
 
     const [selectedFile, setSelectedFile] = useState(null); 
@@ -203,6 +203,7 @@ const MainPage = () => {
     const [hasFinalizedProfile, setHasFinalizedProfile] = useState(false); // 프로필 제출 여부
     const [hasProfileModalOpened, setHasProfileModalOpened] = useState(false);
     const [isUserProfileLoaded, setIsUserProfileLoaded] = useState(false);
+    const [likedProjects, setLikedProjects] = useAtom(likedProjectsAtom);
 
 
    
@@ -235,7 +236,7 @@ const MainPage = () => {
   
   
     const handleModalClose = async () => {
-      setHasFinalizedProfile(true);
+      // setHasFinalizedProfile(true);
       setIsProfileModalOpen(false);
     };
     
@@ -274,11 +275,16 @@ const MainPage = () => {
       return headLine.length > 0 && tags.length > 0;
     };
     
-    // 프로필이 완성된 경우 모달을 자동으로 닫지 않도록 수정 (사용자가 제출버튼을 눌러야 함)
+ 
     useEffect(() => {
-      if (!isUserProfileLoaded) return; // 프로필 데이터가 완전히 로딩되지 않았다면 아래 로직 실행하지 않음
-  
-      if (user && !hasFinalizedProfile && !modalOpenedOnce) {
+      // 로그인하지 않은 경우 (user가 null) 함수 즉시 종료
+      if(!user) return;
+      
+      // 프로필 데이터가 완전히 로딩되지 않았다면 아래 로직 실행하지 않음
+      if (!isUserProfileLoaded) return;
+    
+      // 이미 모달이 열렸던 적이 없고, 사용자가 로그인 상태일 때만 진행
+      if (!modalOpenedOnce) {
         // 프로필이 미완성일 경우에만 모달을 강제로 열어줍니다.
         if (!isProfileComplete()) {
           console.log("모달을 열어야 합니다.");
@@ -289,15 +295,17 @@ const MainPage = () => {
         // 프로필이 완성되었더라도 자동으로 모달을 닫지 않습니다.
         // 모달 닫기는 사용자가 제출 버튼을 눌러 handleModalClose를 호출할 때 수행됩니다.
       }
-    }, [user, hasFinalizedProfile, userProfile, isProfileModalOpen, isUserProfileLoaded, modalOpenedOnce]);
+    }, [user, userProfile, isProfileModalOpen, isUserProfileLoaded, modalOpenedOnce]);
+
+
   
-    useEffect(() => {
-      if (showModal && !modalOpenedOnce) {
-        setIsProfileModalOpen(true); // 쿼리 파라미터에 따라 프로필 모달 열기
-        modalOpenedOnce = true;
-        setHasProfileModalOpened(true);
-      }
-    }, [showModal, modalOpenedOnce]); // showModal이 변경될 때마다 실행
+    // useEffect(() => {
+    //   if ( !modalOpenedOnce) {
+    //     setIsProfileModalOpen(true); // 쿼리 파라미터에 따라 프로필 모달 열기
+    //     modalOpenedOnce = true;
+    //     setHasProfileModalOpened(true);
+    //   }
+    // }, [ modalOpenedOnce]); // showModal이 변경될 때마다 실행
 
 
     const fetchPopularProjects = useCallback(async () => {
@@ -312,15 +320,25 @@ const MainPage = () => {
   
         console.log('응답 데이터:', response.data);
   
-        const projectsWithLikes = response.data.map((project) => {
-          const isLiked = likedProjects.find(likedProject => likedProject.id === project.id);
-          return {
-            ...project,
-            creatorId: project.creatorId,
-            liked: isLiked ? isLiked.liked : false,
-            likesCount: project.likesCount || 0,
-          };
-        });
+        // const projectsWithLikes = response.data.map((project) => {
+        //   const isLiked = likedProjects.find(likedProject => likedProject.id === project.id);
+        //   return {
+        //     ...project,
+        //     creatorId: project.creatorId,
+        //     liked: isLiked ? isLiked.liked : false,
+        //     likesCount: project.likesCount || 0,
+        //   };
+        // });
+
+        const projectsWithLikes = response.data.map((project) => ({
+          ...project,
+          // creatorId: project.creatorId,
+          // atom의 상태를 사용하여 좋아요 여부 확인
+          liked: likedProjects.some(
+              likedProject => likedProject.id === project.id && likedProject.liked
+          ),
+          // likesCount: project.likesCount || 0  //있는지 없는지 확인인
+      }));
         setPopularProjects(projectsWithLikes);
       } catch (error) {
         console.error('Error fetching popular projects:', error);
@@ -341,13 +359,13 @@ const MainPage = () => {
     //       setAllProjects([]);
     //       return;
     //     }
-        
-    //     const projectsWithLikes = response.data.map((project) => ({
-    //       ...project,
-    //       liked: likedProjects.some(like => like.id === project.id),
-    //       likesCount: project.likesCount || 0,
-    //     }));
-        
+    // const projectsWithLikes = response.data.map((project) => ({
+    //   ...project,
+    //   // creatorId: project.creatorId,
+    //   // atom의 상태를 사용하여 좋아요 여부 확인
+    //   liked: likedProjects.some(
+    //       likedProject => likedProject.id === project.id && likedProject.liked
+    //   ),
     //     setAllProjects(projectsWithLikes);
     //   } catch (error) {
     //     console.error('프로젝트 가져오기 실패:', error);
@@ -451,6 +469,10 @@ const MainPage = () => {
   //     return newProjects; // 원래 자리 유지
   //   });
   // };
+
+  const handleRoleSelect = (role) => {
+    setSelectedRole(role);
+  };
   
     return (
       <>
@@ -487,10 +509,11 @@ const MainPage = () => {
             userId={user?.id}
             feedType={feedType}
           />
-
-      {(showModal || isProfileModalOpen) && (
+{/* 
+      {( !hasProfileModalOpened && isProfileModalOpen) && ( */}
+      {(isProfileModalOpen) &&  (
         <ProfileModal 
-          isOpen={showModal || isProfileModalOpen}
+          isOpen={ isProfileModalOpen}
           onClose={handleModalClose} 
           userProfile={userProfile} 
           setUserProfile={setUserProfile} 

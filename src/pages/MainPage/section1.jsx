@@ -59,6 +59,7 @@ const SectionWrapper = styled.div`
   border-radius: 30px 30px 1px 30px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   background-color: rgba(160, 218, 251, 0.5);
+  width:70%;
 
    @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     margin: 0 auto;
@@ -68,6 +69,7 @@ const SectionWrapper = styled.div`
     margin-left: 70px;
     justify-content: center;
     width: 150%;
+    //  width:70%;
     // padding: 0 20px;
   }
 

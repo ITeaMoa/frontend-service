@@ -10,6 +10,7 @@ import { AuthProvider } from './context/AuthContext'; // 경로를 맞춰주세�
 import { ThemeProvider } from 'styled-components';
 import theme from './components/Theme';
 import MessagePage from './pages/Messeage/MessagePage';
+import MainPage1 from './pages/MainPage/MainPage';
 
 // import { useAtom } from 'jotai';
 // const [, setIsLoggedIn] = useAtom(IS_LOGGED_IN); // 로그인 상태를 위한 아톰
@@ -62,6 +63,7 @@ function App() {
               <Route path="LoginPage" element={<LoginPage />} />
               <Route path="SignupPage" element={<SignupPage />} />
               <Route path="MessagePage" element={<MessagePage />} />
+              <Route path="MainPage1" element={<MainPage1 />} />
 
             </Route>
           </Routes>

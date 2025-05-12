@@ -15,7 +15,7 @@ import CommentsSection from './CommentsSection'; // CommentsSection import 추�
 import RoleSelectionModal from '../../components/RoleSelectionModal';
 import AuthModal from '../../components/AuthModal';
 import { useAtom } from 'jotai';
-import { feedTypeAtom, selectedProjectDetailAtom, USER } from '../../Atoms.jsx/AtomStates';
+import { feedTypeAtom, selectedProjectDetailAtom, USER, selectedSavedProjectAtom } from '../../Atoms.jsx/AtomStates';
 
 
 
@@ -40,8 +40,8 @@ const ApplyPage = () => {
   //  const [user, setUser] = useAtom(USER);
   //  const [, setIsLoggedIn] = useAtom(IS_LOGGED_IN);
 
-  
-
+  const [selectedSavedProject, setSelectedSavedProject] = useAtom(selectedSavedProjectAtom);
+  const [popupDeleteMessage, setPopupDeleteMessage] = useState(false);
   const [feedType, setFeedType] = useAtom(feedTypeAtom);
   const [currentFeedType, setCurrentFeedType] = useState(feedType);
 
@@ -108,6 +108,7 @@ const ApplyPage = () => {
   //   }
   // }, [projectId, sk]); // sk를 의존성 배열에 추가
 
+  //이것만 사용해도 될스도 있음. 위에거 삭제하고
 // useEffect(() => {
 //   setProject(selectedProjectDetail);
 // }, [selectedProjectDetail]);
@@ -340,6 +341,32 @@ const postSelectedRole = async (role) => {
 //   console.log("Current feedType:", newFeedType);
 // };
 
+const handleEdit = () => {
+  setSelectedSavedProject(project);
+  navigate('/WritePage');
+};
+
+const handleDelete = async () => {
+  try {
+    await axios.delete(
+      `/feed/${project.id}`,
+      {
+        params: {
+          feedType: 'PROJECT',
+          userId: user.id
+        }
+      }
+    );
+    // 삭제 성공 후 원하는 동작 (예: 메인 페이지로 이동)
+    alert('게시물이 삭제되었습니다.');
+    // 예시: navigate('/') 또는 window.location.href = '/'
+  } catch (error) {
+    console.error('게시물 삭제 실패:', error);
+    alert('게시물 삭제에 실패했습니다.');
+  }
+};
+
+
 
 
   return (
@@ -443,7 +470,15 @@ const postSelectedRole = async (role) => {
             )}
           </TagsSection>
 
-          <ApplyButton onClick={handleApplyClick}>신청하기</ApplyButton>
+          {user && user.id !== project.userId ? (
+                    <AuthorActions>
+                    <ActionButton onClick={handleEdit}>수정</ActionButton>
+                    <ActionButton onClick={() => setPopupMessage(true)}>삭제</ActionButton>
+                  </AuthorActions>
+          ) : (
+            <ApplyButton onClick={handleApplyClick}>신청하기</ApplyButton>
+          
+          )}
         
         </Post>
 
@@ -452,7 +487,6 @@ const postSelectedRole = async (role) => {
         {project.content}
          
         </PostDescription>
-
     
         <AuthorSection>
           <ChatButton>
@@ -475,6 +509,7 @@ const postSelectedRole = async (role) => {
           user={user} 
           projectId={projectId} 
           fetchProjectDetails={fetchProjectDetails} 
+          
         />
       </Container>
 
@@ -497,6 +532,18 @@ const postSelectedRole = async (role) => {
           handleLogin={handleLogin}
         />
       )}
+       
+       {popupDeleteMessage&& (
+    <Modal
+      isOpen={!!popupDeleteMessage}
+      onClose={() => setPopupDeleteMessage('')}
+    showFooter={true}
+    onConfirm={handleDelete}
+    >
+     <h3 style={{ textAlign: 'center' }}>정말로 삭제 하시겠습니까?</h3>
+      
+    </Modal>
+  )}
     </>
   );
 };
@@ -891,10 +938,62 @@ const AuthButton = styled.button`
   }
 `;
 
+// const AuthorSection = styled.div`
+//   display: flex;
+//   align-items: center;
+//   justify-content: space-between; // 버튼을 오른쪽 끝으로
+//   margin-top: 20px;
+// `;
+
+// const AuthorID = styled.div`
+//   display: flex;
+//   align-items: center;
+// `;
+
+const AuthorActions = styled.div`
+  display: flex;
+  gap: 8px;
+  position: absolute;
+ right: 5%;
+ top: 82%;
+`;
+
+const ActionButton = styled.button`
+  padding: 5px 12px;
+  border: none;
+  border-radius: 5px;
+  background-color: #62b9ec;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  &:hover {
+    background-color: #a0dafb;
+  }
+`;
 
 
 
 
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+`;
+
+const ModalButton = styled.button`
+  background-color: #3563E9;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #a0dafb;
+  }
+`;
 
 
 

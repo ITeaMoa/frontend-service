@@ -1,4 +1,4 @@
-//아마 필여 x
+//아마 필여 xzxzzzz
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faEdit } from '@fortawesome/free-solid-svg-icons';
@@ -392,32 +392,32 @@ const ProjectListComponent = ({
   }, [projects]);
 
   //  userProfile 불러오기
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        if (user && user.id) {
-          const response = await axios.get(`/my/profile/${user.id}`);
-          console.log('사용자 프로필:', response.data);
-          if (response.data) {
-            setUserProfile(response.data);
-          } else {
-            setUserProfile({
-              avatarUrl: '',
-              headLine: '',
-              tags: [],
-              experiences: [],
-              educations: [],
-              personalUrl: ''
-            });
-          }
-        }
-      } catch (error) {
-        console.error('사용자 프로필 조회 중 오류 발생:', error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchUserProfile = async () => {
+  //     try {
+  //       if (user && user.id) {
+  //         const response = await axios.get(`/my/profile/${user.id}`);
+  //         console.log('사용자 프로필:', response.data);
+  //         if (response.data) {
+  //           setUserProfile(response.data);
+  //         } else {
+  //           setUserProfile({
+  //             avatarUrl: '',
+  //             headLine: '',
+  //             tags: [],
+  //             experiences: [],
+  //             educations: [],
+  //             personalUrl: ''
+  //           });
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error('사용자 프로필 조회 중 오류 발생:', error);
+  //     }
+  //   };
 
-    fetchUserProfile();
-  }, [user, setUserProfile]);
+  //   fetchUserProfile();
+  // }, [user, setUserProfile]);
 
   // selectedList 변경 시 savedProjects 초기화
   useEffect(() => {
@@ -591,6 +591,7 @@ const ProjectListComponent = ({
             )}
           </>
         ) : selectedList === 'profile' ? ( // selectedList가 'profile'일 때 사용자 정보 표시
+          <>
           <UserProfile 
             userProfile={{
               pk: "USER#34f8fd4c-a001-7051-2a4e-64beb057470f",
@@ -619,6 +620,7 @@ const ProjectListComponent = ({
             user={user} 
             setIsProfileVisible={setIsProfileVisible} 
           />
+          </>
         ) : (
           currentProjects && currentProjects.map((project, index) => (
             <ProjectItem 
@@ -688,6 +690,10 @@ const ProjectList = styled.div`
   margin-top: 60px;
   padding: 20px;
   padding-bottom: 0px;
+  ${({ selectedList }) => (selectedList === 'applied' || selectedList === 'saved' || selectedList === 'interested' || selectedList === 'profile') && `
+    border: none; // 신청 목록일 때 border 제거
+    padding: 3px; // 신청 목록일 때 패딩 제거
+  `}
   border: 2px solid #A0DAFB;
   border-radius: 20px;
   width:50vw;
@@ -697,10 +703,7 @@ const ProjectList = styled.div`
   transform: ${(props) => (props.isFading ? 'translateX(100%)' : 'translateX(0)')};
   min-height: 700px;
   // 신청 목록일 때 border 숨기기
-  ${({ selectedList }) => (selectedList === 'applied' || selectedList === 'saved' || selectedList === 'interested') && `
-    border: none; // 신청 목록일 때 border 제거
-    padding: 3px; // 신청 목록일 때 패딩 제거
-  `}
+  
 `;
 
 const ProjectItem = styled.div`

@@ -823,12 +823,14 @@ const handleConfirmCancel = async () => {
         </ProjectList>
       )}
 
-      <Pagination 
-        currentPage={currentPage}
-          projectsPerPage={projectsPerPage}
+{selectedList !== 'profile' && (
+  <Pagination 
+    currentPage={currentPage}
+      projectsPerPage={projectsPerPage}
           totalProjects={projects.length}
         onPageChange={paginate} 
       />
+      )}
 
       <Modal isOpen={isConfirmModalOpen} onClose={() => setIsConfirmModalOpen(false)}>
         <h3 style={{ textAlign: 'center' }}>정말로 신청을 취소하시겠습니까?</h3>
@@ -920,9 +922,12 @@ const ProjectList = styled.div`
   transition: transform 0.5s ease;
   transform: ${(props) => (props.isFading ? 'translateX(100%)' : 'translateX(0)')};
   min-height: 700px;
-  ${({ selectedList }) => (selectedList === 'applied' || selectedList === 'saved' || selectedList === 'interested') && `
+  ${({ selectedList }) => (selectedList === 'applied' || selectedList === 'saved' || selectedList === 'interested' || selectedList === 'profile') && `
     border: none;
     padding: 3px;
+  `}
+  ${({ selectedList }) => (selectedList === 'profile') && `
+    min-height: 1000px;
   `}
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {

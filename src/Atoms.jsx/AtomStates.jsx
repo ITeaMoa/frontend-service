@@ -23,6 +23,11 @@ import { atom } from "jotai";
     nickname:''
    });
 
+   export const USER_PROFILE = atom({
+   
+    
+   });
+
 // feedType atom - 단순 초기값 설정
 export const feedTypeAtom = atom('PROJECT');
 export const toggleActiveAtom = atom(false);

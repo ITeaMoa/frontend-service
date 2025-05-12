@@ -19,6 +19,7 @@ const TagSelector = ({ options, onTagSelect, selectedTags  }) => {
 
     return (
         <DropdownWrapper>
+            {/* <HeaderContainer> */}
             <DropdownHeader>
                 <SearchInput
                     type="text"
@@ -29,6 +30,8 @@ const TagSelector = ({ options, onTagSelect, selectedTags  }) => {
                 />
      
             </DropdownHeader>
+            {/* <PlusIcon>+</PlusIcon>
+            </HeaderContainer> */}
             <TagContainer>
                 {filteredOptions.length > 0 ? (
                     filteredOptions.map(option => (
@@ -53,7 +56,7 @@ const TagSelector = ({ options, onTagSelect, selectedTags  }) => {
 
 const DropdownWrapper = styled.div`
     position: relative;
-    width: 620px;
+    min-width: 620px;
     margin-top: 10px;
 
 `;
@@ -85,6 +88,7 @@ const SearchInput = styled.input`
 const TagContainer = styled.div`
     display: flex;
     flex-wrap: wrap; 
+    min-height: 240px;
     max-height: 240px;
     overflow-y: auto;
     border-radius: 15px;
@@ -103,6 +107,7 @@ const Tag = styled.div`
     display: flex;
     align-items: center;
     margin: 5px; 
+      height: 20px;   
 
     &:hover {
         background-color: rgba(160, 218, 251, 0.5);
@@ -113,6 +118,22 @@ const NoOptions = styled.div`
     padding: 10px;
     color: #aaa;
 `;
+
+// const PlusIcon = styled.div`
+//     font-size: 20px;
+//     font-weight: bold;
+//     color: grey;
+
+//     cursor: pointer;
+    
+// `;
+
+// const HeaderContainer = styled.div`
+//     display: flex;
+//     align-items: center;
+
+// `;
+
 
 export default TagSelector;
 

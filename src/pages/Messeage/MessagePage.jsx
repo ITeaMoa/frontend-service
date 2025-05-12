@@ -1,15 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Nav from '../../components/Nav';
 import MessagePeople from './MessagePeople';
 import MessageList from './MessageList';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane, faTimes } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
+import { useAuth } from '../../context/AuthContext'
 
 const MessagePage = () => {
   const [selectedPerson, setSelectedPerson] = useState(null);
   const [showMessagePopup, setShowMessagePopup] = useState(false);
   const [newMessage, setNewMessage] = useState('');
+  const { user } = useAuth();
+  const [personList, setPersonList] = useState([]);
 
   // 메시지 목록 데이터
   const messageList = [
@@ -55,6 +59,26 @@ const MessagePage = () => {
     setNewMessage('');
   };
 
+  useEffect(() => {
+    const getMessage = async () => {
+      try {
+        const response = await axios.get('/message/list', {
+          params: { pk: user.id }
+        });
+        // response.data: { name1: id1, name2: id2, ... }
+        const list = Object.entries(response.data).map(([name, id]) => ({ name, id }));
+        setPersonList(list);
+        // 기본 선택값 설정 (예: 첫 번째 사람)
+        if (list.length > 0) setSelectedPerson(list[0].id);
+      } catch (error) {
+        console.error('메시지 가져오기 오류:', error);
+        setPersonList([]);
+      }
+    };
+    getMessage();
+  }, [user]);
+ 
+
   return (
     <>
       <Nav showSearch={false} showToggle={false} simple={true}/>
@@ -82,6 +106,7 @@ const MessagePage = () => {
           {selectedPerson ? (
             <>
               <MessageList messages={messagesByPerson[selectedPerson] || []} />
+              {/* <MessageList id={selectedPerson} /> */}
               <SendButton onClick={handleSendClick}>
                 <FontAwesomeIcon icon={faPaperPlane} />
               </SendButton>

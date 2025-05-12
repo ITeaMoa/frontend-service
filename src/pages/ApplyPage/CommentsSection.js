@@ -12,6 +12,9 @@ const CommentsSection = ({ comments, commentInput, setCommentInput, project, use
   const [isEditing, setIsEditing] = useState(false);
   const [editedComment, setEditedComment] = useState(null);   
   const [selectedProjectDetail, setSelectedProjectDetail] = useAtom(selectedProjectDetailAtom);
+  const [replies, setReplies] = useState({});
+  const [editingCommentId, setEditingCommentId] = useState(null);
+const [editCommentInput, setEditCommentInput] = useState('');
   // const [project, setProject] = useState(null);
   // setProject(selectedProjectDetail);
   //projectId를 -> 여기서 찾아도 될듯/ comment도?
@@ -51,23 +54,70 @@ const CommentsSection = ({ comments, commentInput, setCommentInput, project, use
     }
   };
 
-  const handleReplySubmit = async (commentId) => {
-    const newReply = {
-      content: replyInput[commentId], // userId 제거
-    };
+  // const handleReplySubmit = async (commentId) => {
+  //   const newReply = {
+  //     content: replyInput[commentId], // userId 제거
+  //   };
 
-    try {
-      await axios.post(`/feed/${projectId}/comments/${commentId}/replies`, newReply, {
-        params: { userId: user.id }
-      });
-      setReplyInput(prev => ({ ...prev, [commentId]: '' }));
-      fetchProjectDetails(); // Refresh project details to include new reply
-    } catch (error) {
-      console.error("대댓글 제출 중 오류 발생:", error);
-      alert("대댓글 제출에 실패했습니다.");
-    }
+  //   try {
+  //     await axios.post(`/feed/${projectId}/comments/${commentId}/replies`, newReply, {
+  //       params: { userId: user.id }
+  //     });
+  //     setReplyInput(prev => ({ ...prev, [commentId]: '' }));
+  //     fetchProjectDetails(); // Refresh project details to include new reply
+  //   } catch (error) {
+  //     console.error("대댓글 제출 중 오류 발생:", error);
+  //     alert("대댓글 제출에 실패했습니다.");
+  //   }
+  // };
+
+  //임의
+  const handleReplySubmit = (commentId) => {
+    const replyText = replyInput[commentId];
+    if (!replyText) return;
+  
+    setReplies(prev => ({
+      ...prev,
+      [commentId]: [ 
+        ...(prev[commentId] || []),
+        {
+          nickname: user?.nickname || "익명",
+          comment: replyText,
+          timestamp: new Date().toISOString(),
+          // deleted: false, // 필요시
+        }
+      ]
+    }));
+  
+    setReplyInput(prev => ({ ...prev, [commentId]: '' }));
+    setShowReplyInput(prev => ({ ...prev, [commentId]: false }));
   };
 
+const handleDeleteReply = (commentId, replyId) => {
+  setReplies(prev => ({
+    ...prev,
+    [commentId]: prev[commentId].map(reply =>
+      reply.id === replyId ? { ...reply, deleted: true } : reply
+    )
+  }));
+};
+
+// const handleDeleteReply = async (commentId, replyId, userId) => {
+//   try {
+//     await axios.delete(
+//       `/feed/${projectId}/comments/${commentId}/replies/${replyId}`,
+//       { params: { userId } }
+//     );
+//     // 성공 시 프론트 상태도 갱신
+//     setReplies(prev => ({
+//       ...prev,
+//       [commentId]: prev[commentId].filter(reply => reply.id !== replyId)
+//     }));
+//   } catch (error) {
+//     console.error('대댓글 삭제 실패:', error);
+//     alert('대댓글 삭제에 실패했습니다.');
+//   }
+// };
   const handleEditComment = async (commentId) => {
     try {
       const response = await axios.put(`/feed/${projectId}/comments/${commentId}`, {
@@ -95,7 +145,20 @@ const CommentsSection = ({ comments, commentInput, setCommentInput, project, use
       alert("댓글 삭제에 실패했습니다.");
     }
   };
-
+  const handleEditCommentSave = async (commentId) => {
+    setEditingCommentId(null);
+    try {
+      const response = await axios.put(`/feed/${projectId}/comments/${commentId}`, {
+        newContent: editedComment[commentId], // 수정할 댓글 내용
+        params: { feedType: project.sk, userId: user.id }
+      });
+      console.log("댓글 수정 성공:", response.data);
+      fetchProjectDetails();  //혹은 아톰이용
+    } catch (error) {
+      console.error("댓글 수정 중 오류 발생:", error);
+      alert("댓글 수정에 실패했습니다.");
+    }
+  };
   
   return (
     <Container>
@@ -126,14 +189,106 @@ const CommentsSection = ({ comments, commentInput, setCommentInput, project, use
                     </span>
                   </Timestamp>
                 </Users>
-                <Comments>{comment.comment}</Comments>
+                {/* <Comments>{comment.comment}</Comments> */}
+                <Comments>
+                  {editingCommentId === comment.id ? (
+                    <>
+                      <CommentEditInput
+                        value={editCommentInput}
+                        onChange={e => setEditCommentInput(e.target.value)}
+                      />
+          
+                    </>
+                  ) : (
+                    comment.comment
+                  )}
+                </Comments>
                 
-                <Actions>
-                  <ActionButton onClick={() => handleEditComment(comment.id)}>수정</ActionButton>
-                  <ActionButton onClick={() => handleDeleteComment(comment.id)}>삭제</ActionButton>
-                  <ActionButton onClick={() => setShowReplyInput(prev => ({ ...prev, [comment.id]: !prev[comment.id] }))}>댓글 추가</ActionButton>
+                {/* <Actions>
+                  {!editingCommentId ? (
+                    <>
+                      <ActionButton onClick={() => handleEditComment(comment.id)}>수정</ActionButton>
+                      <ActionButton onClick={() => handleDeleteComment(comment.id)}>삭제</ActionButton>
+                      <ActionButton onClick={() => setShowReplyInput(prev => ({ ...prev, [comment.id]: !prev[comment.id] }))}>댓글 추가</ActionButton>
+                    </>
+                  ) : (
+                    <ActionButton onClick={() => handleEditComment(comment.id)}>수정</ActionButton>
+                  )}
                 </Actions>
 
+           */}
+
+<Actions>
+  {editingCommentId === comment.id ? (
+    // 수정 중일 때
+    <>
+      <ActionButton onClick={() => handleEditCommentSave(comment.id)}>등록</ActionButton>
+      <ActionButton onClick={() => setEditingCommentId(null)}>취소</ActionButton>
+    </>
+  ) : (
+    // 평소
+    <>
+      <ActionButton
+        onClick={() => {
+          setEditingCommentId(comment.id);
+          setEditCommentInput(comment.comment);
+        }}
+      >
+        수정
+      </ActionButton>
+      <ActionButton onClick={() => handleDeleteComment(comment.id)}>삭제</ActionButton>
+      <ActionButton onClick={() => setShowReplyInput(prev => ({ ...prev, [comment.id]: !prev[comment.id] }))}>댓글 추가</ActionButton>
+    </>
+  )}
+</Actions>
+
+{replies[comment.id] && replies[comment.id].map((reply, idx) => {
+                  const replyDateObj = new Date(reply.timestamp);
+                  const replyFormattedDate = isNaN(replyDateObj) ? '' : replyDateObj.toLocaleDateString();
+                  const replyFormattedTime = isNaN(replyDateObj) ? '' : replyDateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                  return (
+                    <ReplyBox key={idx}>
+                      <Users>
+                        <FontAwesomeIcon icon={faUser} style={{ fontSize: '18px', marginRight: '6px',}} />
+                        <Timestamp>
+                          <strong style={{  }}>{reply.nickname}</strong>
+                          <span style={{ fontSize: 'small', color: '#aaa', marginLeft: 8 }}>
+                            {replyFormattedDate} {replyFormattedTime}
+                          </span>
+                        </Timestamp>
+                      </Users>
+                      <Comments>
+                        {reply.deleted ? (
+                          <DeletedBox>삭제된 댓글입니다</DeletedBox>
+                        ) : (
+                          reply.comment
+                        )}
+                      </Comments>
+                      {!reply.deleted && (
+                        <Actions>
+                          {/* <ActionButton onClick={() => handleEditReplyStart()}>수정</ActionButton> */}
+                          <ActionButton onClick={() => handleDeleteReply()}>삭제</ActionButton>
+                          {/* <ActionButton onClick={() => handleDeleteReply(comment.id, reply.id, user.id)}>
+  삭제
+</ActionButton> */}
+                        </Actions>
+                      )}
+                    </ReplyBox>
+                  );
+                })}
+
+                {/* 대댓글 입력창 */}
+                {showReplyInput[comment.id] && (
+                  <ReplyInputWrapper>
+                    <CommentInput
+                      value={replyInput[comment.id] || ''}
+                      onChange={(e) => setReplyInput(prev => ({ ...prev, [comment.id]: e.target.value }))}
+                      placeholder="대댓글을 입력해 주세요."
+                    />
+                    <CommentButton onClick={() => handleReplySubmit(comment.id)}>등록</CommentButton>
+                  </ReplyInputWrapper>
+                )}
+{/* 
                 {showReplyInput[comment.id] && (
                   <CommentInputWrapper>
                     <CommentInput
@@ -153,7 +308,7 @@ const CommentsSection = ({ comments, commentInput, setCommentInput, project, use
                       </div>
                     ))}
                   </div>
-                )}
+                )} */}
               </Comment>
             );
           })
@@ -261,3 +416,33 @@ const ActionButton = styled.button`
     background-color: #a0dafb;
   }
 `; 
+
+const DeletedBox = styled.div`
+  background: #eee;
+  color: #888;
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin: 8px 0;
+`;
+
+const ReplyBox = styled.div`
+  margin-left: 32px;
+  margin-top: 8px;
+  background: #f8fafd;
+  border-radius: 8px;
+  padding: 10px 10px 10px 16px;
+  border-left: 3px solid #a0dafb;
+`;
+
+const ReplyInputWrapper = styled(CommentInputWrapper)`
+  margin-left: 32px;
+  margin-top: 10px;
+`
+const CommentEditInput = styled(CommentInput)`
+  border: 3px solid #62b9ec;
+  border-radius: 15px;
+  margin-right: 10px;
+  background-color: white;
+  width: 88%;
+`;
+

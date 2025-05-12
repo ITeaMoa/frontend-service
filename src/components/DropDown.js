@@ -3,9 +3,17 @@ import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 
-const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => {}, dropdownType, customInputStyle }) => {
+const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => {}, dropdownType, customInputStyle, value}) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOptions, setSelectedOptions] = useState([]);
+    console.log('selectedOptions', selectedOptions);
+    // const [selectedOptions, setSelectedOptions] = useState(
+    //     value
+    //       ? Array.isArray(value)
+    //         ? value
+    //         : [value]
+    //       : []
+    //   );
     const [searchTerm, setSearchTerm] = useState('');
     const [isFocused, setIsFocused] = useState(false);
     const [peopleCounts, setPeopleCounts] = useState({}); // 각 옵션에 대한 인원수 상태 추가
@@ -42,31 +50,54 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
         }
     };
 
+      // value(selectedRoles)가 바뀔 때 peopleCounts도 동기화
+  useEffect(() => {
+    if (value && Array.isArray(value)) {
+      const counts = {};
+      value.forEach(roleObj => {
+        counts[roleObj.role] = roleObj.count;
+      });
+      setPeopleCounts(counts);
+    }
+  }, [value]);
+
     // 카운트 버튼 클릭 핸들러
-    const handleCountChange = (option, change) => {
-        console.log(`Changing count for ${option.label} by ${change}`); // 로그 추가
-        setPeopleCounts(prevCounts => {
-            const currentCount = prevCounts[option.label] || 0; // 현재 카운트 가져오기
-            const newCount = currentCount + change; // 새로운 카운트 계산
+    // const handleCountChange = (option, change) => {
+    //     setPeopleCounts(prevCounts => {
+    //         const currentCount = prevCounts[option.label] || 0; // 현재 카운트 가져오기
+    //         const newCount = currentCount + change; // 새로운 카운트 계산
 
-            console.log(`Current count: ${currentCount}, New count: ${newCount}`); // 현재 및 새로운 카운트 로그
+    //         if (newCount > 0) {
+    //             onTagSelect(option, newCount); // 부모에게 새로운 카운트 전달
+    //             return {
+    //                 ...prevCounts,
+    //                 [option.label]: newCount // 새로운 카운트 설정
+    //             };
+    //         } else {
+    //             // 카운트가 0이 되면 선택 해제 및 peopleCounts에서 제거
+    //             onTagSelect(option, 0);
+    //             setSelectedOptions(prevSelected => prevSelected.filter(selected => selected !== option.label));
+    //             // peopleCounts에서 해당 항목 삭제
+    //             const { [option.label]: _, ...rest } = prevCounts;
+    //             return rest;
+    //         }
 
-            if (newCount > 0) {
-                onTagSelect(option, newCount); // 부모에게 새로운 카운트 전달
-                return {
-                    ...prevCounts,
-                    [option.label]: newCount // 새로운 카운트 설정
-                };
-            } else {
-                // 카운트가 0이 되면 선택 해제
-                setSelectedOptions(prevSelected => prevSelected.filter(selected => selected !== option.label));
-                return {
-                    ...prevCounts,
-                    [option.label]: 0 // 카운트를 0으로 유지
-                };
-            }
-        });
-    };
+          
+    //     });
+    // };
+
+      // count 변경 핸들러
+  const handleCountChange = (option, change) => {
+    const currentCount = peopleCounts[option.label] || 0;
+    const newCount = currentCount + change;
+    if (newCount > 0) {
+      onTagSelect(option, newCount);
+    } else {
+      onTagSelect(option, 0);
+    }
+    // peopleCounts는 부모에서 value가 바뀌면 useEffect로 동기화됨
+  };
+
 
     const handlePlaceholderClick = () => {
         setIsOpen(prevState => !prevState);
@@ -76,14 +107,57 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
     const handleInputChange = (e) => {
         setSearchTerm(e.target.value);
     };
+ 
+    // console.log('value', value);
+    // //   useEffect(() => {
+    // //     if (value) {
+    // //       setSelectedOptions([value]);
+    // //     }
+    // //   }, [value]);
+    // console.log('selectedOptions', selectedOptions);
+    // const getPlaceholderText = () => {
+    //     if (selectedOptions.length === 0) return placeholder;
+    //     if (selectedOptions.length > 8) {
+    //         return `${selectedOptions.slice(0, 8).join(', ')}...`;
+    //     }
+    //     return selectedOptions.join(', ');
+    // };
 
-    const getPlaceholderText = () => {
-        if (selectedOptions.length === 0) return placeholder;
-        if (selectedOptions.length > 8) {
-            return `${selectedOptions.slice(0, 8).join(', ')}...`;
+
+    
+      useEffect(() => {
+        if (value) {
+            if (dropdownType === "profile") {
+             
+            }else{
+                setSelectedOptions(Array.isArray(value) ? value : [value]);
+            }
+          console.log('selectedOptionsdddddddddd', selectedOptions);
         }
-        return selectedOptions.join(', ');
-    };
+      }, [value],);
+    
+    //   --- placeholder 텍스트 분기 ---
+      const getPlaceholderText = () => {
+        if (selectedOptions.length === 0) return placeholder;
+    
+        if (dropdownType === "roles") {
+          // 객체 배열: [{role, count}, ...]
+        // 
+        return selectedOptions
+        .map(opt => opt.role || opt.label || opt.value || '')
+        .filter(Boolean)
+        .join(', ');
+        } else if (dropdownType === "profile") {
+          // 문자열 배열: ['5개월', ...]
+          if (selectedOptions.length > 8) {
+            return `${selectedOptions.slice(0, 8).join(', ')}...`;
+          }
+          return selectedOptions.join(', ');
+        }else{
+            return selectedOptions[0] && (selectedOptions[0].label || selectedOptions[0].value || selectedOptions[0]);
+        }
+      };
+    
 
     // 카운트 버튼 렌더링
     const renderCountButtons = (option) => {

@@ -36,7 +36,7 @@ const items = [
       }
     },
     {
-      "pk": "bfcd417e-5f0b-456f-94ae-78628ba050ac",
+      "pk": "project2",
       "sk": "PROJECT",
       "entityType": "FEED",
       "creatorId": "34f8fd4c-a001-7051-2a4e-64beb057470f",
@@ -64,13 +64,13 @@ const items = [
       "timestamp": "2025-01-16T08:31:10.900805343",
       "savedFeed": false,
       "roles": {
-        "backend": 2,
-        "frontend": 1
+        "백엔드": 2,
+        "프론트엔드": 1
       },
       "recruitmentRoles": {
-        "backend": 1,
+        "백엔드": 1,
         "무관": 1,
-        "frontend": 0
+        "프론트엔드": 0
       }
     },
     {

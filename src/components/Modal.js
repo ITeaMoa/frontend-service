@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
+import ReactDOM from 'react-dom';
 
-const Modal = ({ isOpen, onClose, children, modalType }) => {
+const Modal = ({ isOpen, onClose, children, modalType, confirmFooter,   showFooter = false, onConfirm }) => {
     if (!isOpen) return null; // 모달이 열려 있지 않으면 아무것도 렌더링하지 않음
 
     const handleOverlayClick = (e) => {
@@ -11,29 +12,42 @@ const Modal = ({ isOpen, onClose, children, modalType }) => {
         }
     };
 
-//     return (
-//         <ModalOverlay modalType={modalType} onClick={onClose}>
-//             <ModalContent modalType={modalType} onClick={(e) => e.stopPropagation()}> 
-//                 {children}
-//                 <CloseButton onClick={onClose}>X</CloseButton>
-//             </ModalContent>
-//         </ModalOverlay>
-//     );
-// };
 
 
 return (
     <ModalOverlay modalType={modalType}  onClick={handleOverlayClick}>
         <ModalContent modalType={modalType} onClick={(e) => e.stopPropagation()}>
             {children}
+            {showFooter && (
+          <ModalFooter>
+            {confirmFooter ? (
+              confirmFooter
+            ) : (
+              <>
+                <span
+                  style={{ color: '#888', cursor: 'pointer', marginRight: '32px' }}
+                  onClick={onClose}
+                >
+                  취소
+                </span>
+                <span
+                  style={{ color: '#1976d2', fontWeight: 'bold', cursor: 'pointer' }}
+                  onClick={onConfirm || onClose} // onConfirm이 없으면 onClose 실행
+                >
+                  확인
+                </span>
+              </>
+            )}
+          </ModalFooter>
+        )}
             <CloseButton onClick={onClose}>X</CloseButton>
         </ModalContent>
     </ModalOverlay>
 );
+
 };
 
 const ModalOverlay = styled.div`
-
     top: 0;
     left: 0;
     right: 0;
@@ -42,7 +56,7 @@ const ModalOverlay = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 1000;lo
     border: 2px solid #ddd;
     border-radius: 30px 30px 1px 30px;
     position:fixed;
@@ -62,6 +76,8 @@ const ModalOverlay = styled.div`
         position:fixed;
       
     `}
+
+ 
 `;
 
 const ModalContent = styled.div`
@@ -128,6 +144,16 @@ const CloseButton = styled.button`
     
     `}  
 
+`;
+const ModalFooter = styled.div`
+  border-top: 1px solid #eee;
+  margin-top: 32px;
+  padding-top: 16px;
+  display: flex;
+    justify-content: center;
+  align-items: center;
+  gap: 32px;
+  font-size: 16px;
 `;
 
 export default Modal;

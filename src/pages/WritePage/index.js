@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import Nav from '../../components/Nav';
 import Dropdown from '../../components/DropDown';
@@ -25,9 +25,10 @@ const WritePage = ({ feedType: initialFeedType }) => {
 
   // const [feedType, setFeedType] = useState(feedTypeFromQuery || initialFeedType || 'PROJECT'); // 쿼리 파라미터가 없으면 초기값 사용
   const [selectedSavedProject] = useAtom(selectedSavedProjectAtom); // 아톰에서 프로젝트 정보 가져오기
-  const [selectedRoles, setSelectedRoles] = useState(selectedSavedProject ? selectedSavedProject.roles : []);
+  // const [selectedRoles, setSelectedRoles] = useState(selectedSavedProject ? selectedSavedProject.roles : []);
+  const [selectedRoles, setSelectedRoles] = useState([]); // 반드시 배열!
   const [selectedTags, setSelectedTags] = useState(selectedSavedProject ? selectedSavedProject.tags : []);
-  const [period, setPeriod] = useState('');
+  // const [period, setPeriod] = useState('');
 
   // feedType 변경 시 로그 출력
   useEffect(() => {
@@ -44,6 +45,10 @@ const WritePage = ({ feedType: initialFeedType }) => {
   const [description, setDescription] = useState(selectedSavedProject ? selectedSavedProject.content : ''); // 프로젝트 내용 초기화
   const [progress, setProgress] = useState(selectedSavedProject ? selectedSavedProject.place : ''); // 진행 장소 초기화
   const [deadline, setDeadline] = useState(selectedSavedProject ? selectedSavedProject.deadline : ''); // 마감일 초기화
+  const [period, setPeriod] = useState(selectedSavedProject ? selectedSavedProject.period : ''); // 진행기간 초기화
+  const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const fileInputRef = useRef();
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
   const nickname = user ? user.nickname : 'Unknown'; //사용자 닉네임 설정
   // const [participants, setParticipants] = useState(0);
@@ -52,7 +57,7 @@ const WritePage = ({ feedType: initialFeedType }) => {
   const [recruitmentNum, setRecruitmentNum] = useState(0); // recruitmentNum 상태 추가
 
   
-
+console.log('selectedSavedProject', selectedSavedProject);
   // const [isProject, setIsProject] = useState(true); // 프로젝트 여부 상태 추가
 
   const handleSubmit = async (e, isTemporary) => {
@@ -97,6 +102,11 @@ const WritePage = ({ feedType: initialFeedType }) => {
 
     const periodValue = parseInt(period, 10);
 
+    const formData = new FormData();
+    if (image) {
+      formData.append('image', image);
+    }
+
     const dataToSend = {
         title,
         content: description,
@@ -114,40 +124,35 @@ const WritePage = ({ feedType: initialFeedType }) => {
         creatorId: user ? user.id : 'Unknown',
         nickname
     };
+    formData.append('feed', JSON.stringify(dataToSend));
+
 
     console.log('전송할 데이터:', JSON.stringify(dataToSend, null, 2));
 
-    // API 요청 전에 params 출력
-    console.log('전송할 params:', {
-        feedType,
-        userId: user ? user.id : null,
-    });
-
-    axios.post(`/feed/create`, dataToSend, {
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        params: {
-            feedType,
-            userId: user ? user.id : null,
-        },
-    })
-    .then(response => {
-        console.log('Success:', response.data);
-        console.log('요청 URL:', response.config.url);
-        navigate('/');
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-        if (error.response) {
-            console.error('응답 데이터:', error.response.data);
-            console.error('응답 상태:', error.response.status);
+   
+    try {
+      await axios.post(
+        '/feed/create',
+        formData,
+        {
+          params: {
+            feedType: 'PROJECT',
+            userId: user.id
+          },
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
         }
-    });
+      );
+      console.log('업로드 성공!');
+      navigate('/');
+    } catch (error) {
+      console.log('업로드 실패!');
+    }
   };
 
 
-   
+
 
   const option1 = [
     { value: '기간 미정', label: '기간 미정' },
@@ -228,8 +233,23 @@ const option3 = [
   { value: '데이터마이닝', label: '데이터마이닝' },
   { value: 'Solidity', label: 'Solidity' },
 ];
+useEffect(() => {
+  if (selectedSavedProject && selectedSavedProject.roles) {
+    // roles: { backend: 2, frontend: 1 } → [{ role: 'backend', count: 2 }, ...]
+    const rolesArray = Object.entries(selectedSavedProject.roles)
+      .map(([role, count]) => ({ role, count }));
+    setSelectedRoles(rolesArray);
+  }
+}, [selectedSavedProject]);
+console.log('selectedRoles', selectedRoles);
 
-
+useEffect(() => {
+  if (selectedSavedProject && selectedSavedProject.deadline) {
+    // 날짜만 추출 (YYYY-MM-DD)
+    const dateOnly = selectedSavedProject.deadline.split('T')[0];
+    setDeadline(dateOnly);
+  }
+}, [selectedSavedProject]);
 
 const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열기 상태
 
@@ -252,6 +272,8 @@ const handleRoleSelect = (option, count) => {
     const newRecruitmentNum = [...updatedRoles, { role: option.label, count }].reduce((total, r) => total + r.count, 0);
     setRecruitmentNum(newRecruitmentNum);
 };
+
+
 
 // Modal 내부의 Dropdown을 별도의 컴포넌트로 분리
 // 2. TagDropdown 컴포넌트는 이 handleTagSelect를 받아서
@@ -325,6 +347,22 @@ const handleDeadlineChange = (e) => {
     setDeadline(e.target.value);
 };
 
+const handleImageChange = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    setImage(file);
+    setImagePreview(URL.createObjectURL(file));
+  }
+};
+
+const handleImageButtonClick = () => {
+  fileInputRef.current.click();
+};
+const handleImageRemove = () => {
+  setImage(null);
+  setImagePreview(null);
+};
+
   return (
     <>
       <Nav showSearch={showSearch}/>
@@ -381,7 +419,7 @@ const handleDeadlineChange = (e) => {
 
 
           <InputWrapper>   
-          <Label>모집 역할</Label>
+          <Label >모집 역할</Label>
   
           {/* <Dropdown 
             options={option2} 
@@ -390,17 +428,19 @@ const handleDeadlineChange = (e) => {
             onTagSelect={(role, count) => handleRoleSelect(role, count)} // 매개변수 전달
           /> */}
           <Dropdown 
-    options={option2} 
-    placeholder={"프론트엔드,백엔드..."} 
-    showCountButtons={true}
-    onTagSelect={handleRoleSelect} // 역할과 카운트를 직접 전달
-/>
+            options={option2} 
+            placeholder={"프론트엔드,백엔드..."} 
+            showCountButtons={true}
+            value={selectedRoles}
+            onTagSelect={handleRoleSelect} // 역할과 카운트를 직접 전달
+            dropdownType="roles"
+        />
           </InputWrapper>
 
 
           <InputWrapper>   
           <Label> 진행기간 </Label>
-          <Dropdown options={option1} placeholder={"기간미정~6개월이상"} onTagSelect={handlePeriodSelect} />
+          <Dropdown options={option1} placeholder={"기간미정~6개월이상"} onTagSelect={handlePeriodSelect}  value={period}/>
 
           </InputWrapper>
           </InputBox>
@@ -460,8 +500,30 @@ const handleDeadlineChange = (e) => {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="본문을 작성해주세요"
+            spellCheck={false}
           />
 
+<div style={{ marginTop: '16px' }}>
+        <ImageButton type="button" onClick={handleImageButtonClick}>
+          이미지 첨부
+        </ImageButton>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          style={{ display: 'none' }}
+          onChange={handleImageChange}
+        />
+      </div>
+
+      {imagePreview && (
+  <ImagePreviewWrapper>
+    <PreviewImage src={imagePreview} alt="미리보기" />
+    <RemoveButton type="button" onClick={handleImageRemove} aria-label="이미지 삭제">
+      ×
+    </RemoveButton>
+  </ImagePreviewWrapper>
+)}
         </Form>
         </Body>
 
@@ -523,6 +585,7 @@ const Label = styled.label`
   font-weight: bold;
   min-width: 60px;
   text-align: left;
+  white-space: nowrap;
 `;
 
 
@@ -766,4 +829,44 @@ const SaveButton = styled.button`
  
 `;
 
+const ImageButton = styled.button`
+   border: none;
+  border-radius: 5px;
+  background-color: #62b9ec;
+   border-radius: 15px 15px 1px 15px; //반시계 ㅔ방향
+    color: white;
+  cursor: pointer;
+    padding: 10px;
+`;
 
+
+const ImagePreviewWrapper = styled.div`
+  margin-top: 12px;
+  position: relative;
+  display: inline-block;
+`;
+
+const PreviewImage = styled.img`
+  max-width: 300px;
+  max-height: 300px;
+  border-radius: 8px;
+`;
+
+const RemoveButton = styled.button`
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: rgba(0,0,0,0.5);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 28px;
+  text-align: center;
+  padding: 0;
+  z-index: 2;
+`;

@@ -5,6 +5,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { feedTypeAtom } from '../../Atoms.jsx/AtomStates';
 import Footer from '../../components/Footer';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faSlidersH } from '@fortawesome/free-solid-svg-icons';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons';  
 
 const MainPage = () => {
   const [feedType, setFeedType] = useAtom(feedTypeAtom);
@@ -21,6 +25,13 @@ const MainPage = () => {
     setFeedType(type);
   };
 
+  const handleAddButtonClick = () => {
+    const tagsQuery = selectedTags.length > 0 ? `&tags=${selectedTags.join(',')}` : '';
+    // const feedType = toggleActive ? 'PROJECT' : 'STUDY'; // 현재의 토글 값에 따라 feedType 설정
+    navigate(`/SearchPage?q=${searchValue}${tagsQuery}&feedType=${feedType}`); // 검색어, 선택된 태그, feedType을 URL로 전달
+  };
+  const [searchValue, setSearchValue] = useState("");
+  const [selectedTags, setSelectedTags] = useState([]); // 선택된 태그 상태 추가
   return (
     <PageContainer>
       {/* Header with Logo and Search */}
@@ -28,17 +39,25 @@ const MainPage = () => {
         <Logo>ITEAMOA</Logo>
         <SearchContainer>
           <SearchBar>
-            <SearchIcon src="/images/search_icon.svg" alt="Search" />
+            {/* <SearchIcon src="/images/search_icon.svg" alt="Search" /> */}
+   
+            <FontAwesomeIcon icon={faSearch} />
+
+            
             <SearchInput 
               placeholder="Search projects" 
               onKeyPress={handleSearch}
             />
           </SearchBar>
           <FilterButton>
-            <img src="/images/filter_icon.svg" alt="Filter" />
+            {/* <img src="/images/filter_icon.svg" alt="Filter" /> */}
+            <FontAwesomeIcon icon={faSlidersH} />
           </FilterButton>
-          <SearchButton>
-            <img src="/images/search_button_icon.svg" alt="Search" />
+          <SearchButton onClick={handleAddButtonClick}>
+            {/* <img src="/images/search_button_icon.svg" alt="Search" /> */}
+        
+            <FontAwesomeIcon icon={faSearch} />
+    
           </SearchButton>
         </SearchContainer>
         
@@ -74,8 +93,8 @@ const MainPage = () => {
               <CarouselTitle>IT 최신 트렌드<br/>한눈에 살펴보기</CarouselTitle>
             </CarouselTextContent>
             <CarouselImage>
-              <img src="/images/laptop_it.png" alt="Laptop IT" />
-              <img src="/images/bulb_3d.png" alt="Bulb 3D" />
+              {/* <img src="/images/laptop_it.png" alt="Laptop IT" />
+              <img src="/images/bulb_3d.png" alt="Bulb 3D" /> */}
             </CarouselImage>
             <CtaButton blue>바로가기</CtaButton>
             <SlideIndicator>01 / 04</SlideIndicator>
@@ -173,7 +192,7 @@ const MainPage = () => {
             active={feedType === 'STUDY'} 
             onClick={() => handleFeedToggle('STUDY')}
           >
-            <ToggleCircle active={feedType === 'STUDY'}>
+            <ToggleCircle active={feedType === 'STUDY'} outlined={feedType !== 'STUDY'}>
               {feedType === 'STUDY' && <ToggleCheck />}
             </ToggleCircle>
             Study
@@ -182,7 +201,11 @@ const MainPage = () => {
             active={feedType === 'PROJECT'} 
             onClick={() => handleFeedToggle('PROJECT')}
           >
-            <ToggleCircle active={feedType === 'PROJECT'} outlined={feedType !== 'PROJECT'} />
+            <ToggleCircle active={feedType === 'PROJECT'} outlined={feedType !== 'PROJECT'} >
+              {feedType === 'PROJECT' && <ToggleCheck />}
+            </ToggleCircle>
+          
+          
             Project
           </ToggleOption>
         </ToggleContainer>
@@ -195,7 +218,7 @@ const MainPage = () => {
       </ProjectFeed>
 
       {/* Footer */}
-      <Footer />
+      {/* <Footer /> */}
     </PageContainer>
   );
 };
@@ -242,8 +265,22 @@ const SearchBar = styled.div`
   flex-grow: 1;
 `;
 
-const SearchIcon = styled.img`
-  margin-right: 8px;
+// const SearchIcon = styled.img`
+//   margin-right: 8px;
+// `;
+
+const SearchIcon = styled.span`
+  position: absolute;
+  right: 20%;
+  top: 50%;
+  transform: translate(250%, -50%);
+  font-size: 20px;
+  cursor: pointer;
+  color: #0080ff;
+
+  &:hover {
+    color: #62B9EC;
+  }
 `;
 
 const SearchInput = styled.input`

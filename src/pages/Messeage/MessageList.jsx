@@ -1,12 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 
-const MessageList = ({ messages }) => {
+const MessageList = ({ messages, id }) => {
   const [selectedMessage, setSelectedMessage] = useState(null);
+  // const [messages, setMessages] = useState([]);
 
   const handleClosePopup = () => {
     setSelectedMessage(null);
   };
+
+  // useEffect(() => {
+  //   const getMessage = async (id) => {
+  //     const response = await axios.get('/message', {
+  //       params: { pk:id ,userId: messages.userId }
+  //     });
+  //     return response.data;
+  //setMessages(response.data);
+  //   };
+  //   getMessage();
+  // }, [id]);
 
   return (
     <>

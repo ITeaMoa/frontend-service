@@ -274,12 +274,12 @@ const MainPage = () => {
       const tags = userProfile.tags || [];
       return headLine.length > 0 && tags.length > 0;
     };
-    
- 
+   
+ //app.js에서 체크하며 어떨까.
     useEffect(() => {
       // 로그인하지 않은 경우 (user가 null) 함수 즉시 종료
       if(!user) return;
-      
+
       // 프로필 데이터가 완전히 로딩되지 않았다면 아래 로직 실행하지 않음
       if (!isUserProfileLoaded) return;
     

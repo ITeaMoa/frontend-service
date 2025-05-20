@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLocation } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { useAtom } from 'jotai';
@@ -10,6 +10,8 @@ const MessageList = () => {
   const [messages, setMessages] = useState([]);
   const [messageList, setMessageList] = useAtom(MESSAGE_LIST);
   const { user } = useAuth();
+
+
 
 
   const handleClosePopup = () => {
@@ -68,8 +70,10 @@ const MessageList = () => {
         ))}
       </MessageContainer> */}
        <MessageContainer>
-      {messageList.map((message, index) => (
-        <MessageCard 
+        {
+          messageList.length > 0 ? (
+            messageList.map((message, index) => (
+              <MessageCard 
           key={message.sk}  // timestamp를 key로 사용
           onClick={() => setSelectedMessage(message)}
         >
@@ -92,7 +96,12 @@ const MessageList = () => {
             } */}
           </MessageContent>
         </MessageCard>
-      ))}
+      ))
+      ) : (
+        <MessageCard>
+          쪽지가 없습니다.쪽지를 보내주세요.
+        </MessageCard>
+      )}
     </MessageContainer>
 
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useNavigate} from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment } from '@fortawesome/free-solid-svg-icons';
@@ -11,6 +11,7 @@ import { useAtom } from 'jotai';
 import { currentApplicantsAtom } from '../../Atoms.jsx/AtomStates';
 
 const ProjectDetail = ({ project, onBack, onClose}) => {
+    const navigate = useNavigate();
     const [applicants, setApplicants] = useAtom(currentApplicantsAtom);
 
     const [visibleButtons, setVisibleButtons] = useState({});
@@ -317,7 +318,7 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
                             return (
                                 <StyledApplicantWrapper key={index}>
                                     <Applicant>
-                                    <FontAwesomeIcon icon={faComment} style={{ color: '#62b9ec', fontSize: '24px', marginLeft: '20px' }} />
+                                    <FontAwesomeIcon icon={faComment} onClick={() => navigate(`/messagePage`, { state: { selectedPersonId: applicant.pk } })} style={{ color: '#62b9ec', fontSize: '24px', marginLeft: '20px' }} />
                                     <ApplicantName>{applicant.nickname}</ApplicantName>
                                     <Tags2>
                                 

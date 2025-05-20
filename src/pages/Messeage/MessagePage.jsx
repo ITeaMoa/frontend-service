@@ -10,6 +10,7 @@ import { useAuth } from '../../context/AuthContext'
 import { useAtom } from 'jotai';
 import { SELECTED_PERSON_ID, MESSAGE_LIST } from '../../Atoms.jsx/AtomStates';
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 
 const MessagePage = () => {
@@ -21,8 +22,16 @@ const MessagePage = () => {
   // const [messageList, setMessageList] = useState([]);
   const [selectedPersonId, setSelectedPersonId] = useAtom(SELECTED_PERSON_ID);
   const [messageList, setMessageList] = useAtom(MESSAGE_LIST);
+  const location = useLocation();
 
 
+useEffect(() => {
+  console.log(location.state?.selectedPersonId);
+  if (location.state?.selectedPersonId) {
+    setSelectedPersonId(location.state?.selectedPersonId);
+    setShowMessagePopup(true);
+  } 
+}, [location.state?.selectedPersonId]);
 
   // 메시지 목록 데이터
   // const messageList = [
@@ -32,28 +41,7 @@ const MessagePage = () => {
   //   { id: 4, name: '원터', messageCount: 0 },
   // ];
 
-  // 각 사람별 메시지 데이터
-  const messagesByPerson = {
-    1: [
-      {
-        title: '받은 쪽지',
-        content: '전상연님의 메시지...',
-        date: '2024/08/08 12:48',
-        type: 'received'
-      },
-      // ... 더 많은 메시지
-    ],
-    2: [
-      {
-        title: '보낸 쪽지',
-        content: '박보현님과의 대화...',
-        date: '2024/08/08 12:40',
-        type: 'sent'
-      },
-      // ... 더 많은 메시지
-    ],
-    // ... 다른 사람들의 메시지
-  };
+
 
   // const handlePersonClick = async (personId) => {
   //   setSelectedPerson(personId);
@@ -191,6 +179,7 @@ const MessagePage = () => {
       
       // 팝업 닫기 (필요한 경우)
       setShowMessagePopup(false);
+      // handlePersonClick(selectedPersonId);
   
     } catch (error) {
       console.error('Error sending message:', error);
@@ -227,13 +216,13 @@ const MessagePage = () => {
             <>
               {/* <MessageList messages={messagesByPerson[selectedPerson] || []} /> */}
               {/* <MessageList id={selectedPerson} /> */}
-              <MessageList />
+              <MessageList />        
               <SendButton onClick={handleSendClick}>
                 <FontAwesomeIcon icon={faPaperPlane} />
               </SendButton>
             </>
           ) : (
-            <EmptyRightPanel>
+            <EmptyRightPanel> 
               <EmptyText>대화 상대를 선택해주세요</EmptyText>
             </EmptyRightPanel>
           )}

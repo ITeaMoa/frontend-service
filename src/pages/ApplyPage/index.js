@@ -490,7 +490,7 @@ const handleDelete = async () => {
     
         <AuthorSection>
           <ChatButton>
-            <FontAwesomeIcon icon={faComment} />
+            <FontAwesomeIcon icon={faComment} onClick={() => navigate(`/messagePage`, { state: { selectedPersonId: project.creatorId } })}/>
  
           </ChatButton>
 

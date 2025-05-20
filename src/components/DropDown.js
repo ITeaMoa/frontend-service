@@ -153,6 +153,8 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
             return `${selectedOptions.slice(0, 8).join(', ')}...`;
           }
           return selectedOptions.join(', ');
+        }else if (dropdownType === "tags") {
+            return (selectedOptions || []).join(', ');
         }else{
             return selectedOptions[0] && (selectedOptions[0].label || selectedOptions[0].value || selectedOptions[0]);
         }

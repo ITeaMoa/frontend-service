@@ -49,11 +49,11 @@ const MainPage = () => {
   const [isUserProfileLoaded, setIsUserProfileLoaded] = useState(false);
 
   const handleAddButtonClick = () => {
-    if (!user) { // Check if user is logged in
-      setPopupMessage("로그인 후에 이용할 수 있습니다."); // Set popup message for login
-      setIsSubmitted(true); // Show submission confirmation popup
-      return; // Exit the function if not logged in
-    }
+    // if (!user) { // Check if user is logged in
+    //   setPopupMessage("로그인 후에 이용할 수 있습니다."); // Set popup message for login
+    //   setIsSubmitted(true); // Show submission confirmation popup
+    //   return; // Exit the function if not logged in
+    // }
     navigate(`/WritePage?feedType=${feedType}`); // feedType 전달
   };
 
@@ -170,7 +170,8 @@ const MainPage = () => {
         />
       )}
 
-    <AddButton onClick={handleAddButtonClick} disabled={!user}> 피드 작성하기 </AddButton>
+    {/* <AddButton onClick={handleAddButtonClick} disabled={!user}> 피드 작성하기 </AddButton> */}
+    <AddButton onClick={handleAddButtonClick} > 피드 작성하기 </AddButton>
     </MainWrapper>
     {isSubmitted && (
       <Modal isOpen={isSubmitted} onClose={() => setIsSubmitted(false)}>

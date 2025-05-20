@@ -46,6 +46,34 @@ const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle
     fetchUserLikeStatus();
   }, [fetchUserLikeStatus]);
 
+
+  // useCallback 없이 일반 함수로 작성 //uscecallback없이 작성성
+// const fetchUserLikeStatus = async () => {
+//   if (!userId || !sk) return;
+//   try {
+//     const response = await axios.get(`/main/like?userId=${userId}`);
+//     if (response.data) {
+//       console.log('사용자 좋아요 상태:', response.data);
+      
+//       // 사용자가 좋아요를 눌렀던 피드의 sk가 현재 버튼의 sk와 일치하는지 확인
+//       const userLiked = response.data.some(like => like.sk === sk);
+//       setLiked(userLiked);
+      
+//       setLikedProjects(prevLikedProjects => [
+//         ...prevLikedProjects,
+//         { id: user.id, liked: userLiked, likesCount: likesCount }
+//       ]);
+//     }
+//   } catch (error) {
+//     console.error('Error fetching user like status:', error);
+//   }
+// };
+
+// // useEffect 수정
+// useEffect(() => {
+//   fetchUserLikeStatus();
+// }, [userId, sk, isLoggedIn, user, feedType]);
+
   const handleClick = async (e) => {
     console.log('클릭됨');
     e.stopPropagation(); // 이벤트 전파 방지

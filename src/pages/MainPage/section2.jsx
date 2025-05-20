@@ -62,7 +62,7 @@ const Section2 = ({
             userId={userId}
             feedType={feedType}
           />
-        ))}
+        ))} 
       </ProjectList>
 
       {/* <Pagination 

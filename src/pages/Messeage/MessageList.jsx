@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
+import { useAtom } from 'jotai';
+import { MESSAGE_LIST } from '../../Atoms.jsx/AtomStates';
+import { useAuth } from '../../context/AuthContext';
 
-const MessageList = ({ messages, id }) => {
+const MessageList = () => {
   const [selectedMessage, setSelectedMessage] = useState(null);
-  // const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([]);
+  const [messageList, setMessageList] = useAtom(MESSAGE_LIST);
+  const { user } = useAuth();
+
 
   const handleClosePopup = () => {
     setSelectedMessage(null);
@@ -21,10 +27,28 @@ const MessageList = ({ messages, id }) => {
   //   getMessage();
   // }, [id]);
 
+  const handleDeleteMessage = async (id) => {
+    try {
+      const currentTime = new Date().toISOString();  // "2025-04-14T18:57:57.712644" 형식
+  console.log("id",id)
+      await axios.delete('/message', {
+        data: {
+          pk: id,
+          sk: currentTime  // 현재 시간을 ISO 문자열로
+        }
+      });
+      
+
+      setMessageList(messageList.filter(message => message.id !== id));
+    } catch (error) {
+      console.error('메시지 삭제 오류:', error);
+    }
+  };
+
   return (
     <>
-      <MessageContainer>
-        {messages.map((message, index) => (
+      {/* <MessageContainer>
+        {messageList.map((message, index) => (
           <MessageCard 
             key={index}
             onClick={() => setSelectedMessage(message)}
@@ -35,13 +59,42 @@ const MessageList = ({ messages, id }) => {
                 {message.date} 
                 <DeleteButton onClick={(e) => {
                   e.stopPropagation();
+                  handleDeleteMessage(message.id);
                 }}>삭제</DeleteButton>
               </MessageDate>
             </MessageHeader>
             <MessageContent>{message.content}</MessageContent>
           </MessageCard>
         ))}
-      </MessageContainer>
+      </MessageContainer> */}
+       <MessageContainer>
+      {messageList.map((message, index) => (
+        <MessageCard 
+          key={message.sk}  // timestamp를 key로 사용
+          onClick={() => setSelectedMessage(message)}
+        >
+          <MessageHeader>
+            <MessageTitle>
+              {/* {message.creatorId === user.id ? "보낸 쪽지" : "받은 쪽지"} */}
+            </MessageTitle>
+            <MessageDate>
+              {new Date(message.timestamp).toLocaleString()} 
+              <DeleteButton onClick={(e) => {
+                e.stopPropagation();
+                handleDeleteMessage(message.pk);  // pk와 sk 전달
+              }}>삭제</DeleteButton>
+            </MessageDate>
+          </MessageHeader>
+          <MessageContent>
+            {message.messageContent}
+            {/* {!message.messageStatus && message.recipientId === user.id && 
+              <UnreadBadge>안읽음</UnreadBadge>
+            } */}
+          </MessageContent>
+        </MessageCard>
+      ))}
+    </MessageContainer>
+
 
       {selectedMessage && (
         <PopupOverlay onClick={handleClosePopup}>
@@ -51,7 +104,7 @@ const MessageList = ({ messages, id }) => {
               <CloseButton onClick={handleClosePopup}>✕</CloseButton>
             </PopupHeader>
             <MessageTextArea 
-              value={selectedMessage.content} 
+              value={selectedMessage.messageContent} 
               readOnly 
             />
           </PopupContainer>
@@ -199,4 +252,12 @@ const MessageTextArea = styled.textarea`
   }
 `;
 
+const UnreadBadge = styled.span`
+  background: #3563E9;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  margin-left: 8px;
+`;
 export default MessageList;

@@ -372,7 +372,7 @@ const likeProjects = [ // 더미 데이터 업데이트
   }
 ];
 
-//진짜ㅏㅏㅏㅏㅏㅏ
+//진짜ㅏㅏㅏㅏㅏㅏ(예전꺼꺼)
 // useCallback을 사용하여 함수 메모이제이션
 // const refreshProjects = useCallback(async () => {
 //   if (!user) return; // 사용자가 없으면 실행하지 않음
@@ -408,50 +408,100 @@ const likeProjects = [ // 더미 데이터 업데이트
 // }, [ selectedList, user?.id, feedType, refreshProjects]); // refreshProjects 추가
 
 
-
+//useCallback 사용 한거거
 // useCallback을 사용하여 함수 메모이제이션
-const refreshProjects = useCallback(async () => {
-  // if (!user) return; // 사용자가 없으면 실행하지 않음
+// const refreshProjects = useCallback(async () => {
+//   // if (!user) return; // 사용자가 없으면 실행하지 않음
 
-  try {
+//   try {
   
+//     if (selectedList === 'applied') {
+//       const response = await axios.get('/feed/applications', {
+//         params: {
+//           userId: user.id,
+//         }
+//       });
+//       console.log("Fetched applied projects:", response.data);
+//       setProjects(response.data || []);
+//     } else if (selectedList === 'written') {
+//       const params = {
+//         creatorId: user.id,
+//         sk: feedType
+//       };
+//       const response = await axios.get('/my/writing', { params });
+//       setProjects(response.data || []);
+//     } else if (selectedList === 'saved') {
+//       // 저장된 프로젝트를 가져오는 API 호출
+//       setProjects(dummySavedProjects); // 더미 데이터 사용
+//     } else if (selectedList === 'interested') {
+//       // 좋아요한 프로젝트를 가져오는 API 호출
+//       setProjects(likeProjects); // 더미 데이터 사용
+//     }
+
+//     // setProjects(fetchedProjects);
+//   } catch (error) {
+//     console.error("Error fetching projects:", error);
+//     // setProjects([]); // 이전 상태를 유지하는 것이 더 나은 사용자 경험일 수 있음
+//   }
+// }, [user, selectedList, feedType]); // 필요한 의존성만 포함
+
+// // 초기 데이터 로드를 위한 useEffect
+// useEffect(() => {
+//   refreshProjects();
+// }, [selectedList, user?.id, feedType, refreshProjects]); // refreshProjects 추가
+
+  // 선택된 목록이 변경될 때 신청 프로젝트를 가져오는 새로운 useEffect
+ 
+// 그냥 일반 함수로 작성
+const refreshProjects = async () => {
+  try {
+    let response;
+    
     if (selectedList === 'applied') {
-      const response = await axios.get('/feed/applications', {
+      response = await axios.get('/feed/applications', {
         params: {
           userId: user.id,
         }
       });
-      console.log("Fetched applied projects:", response.data);
-      setProjects(response.data || []);
     } else if (selectedList === 'written') {
-      const params = {
-        creatorId: user.id,
-        sk: feedType
-      };
-      const response = await axios.get('/my/writing', { params });
-      setProjects(response.data || []);
+      response = await axios.get('/my/writing', {
+        params: {
+          creatorId: user.id,
+          sk: feedType
+        }
+      });
+     
     } else if (selectedList === 'saved') {
-      // 저장된 프로젝트를 가져오는 API 호출
-      setProjects(dummySavedProjects); // 더미 데이터 사용
+      // response = await axios.get('/my/temp', {
+      //   params: {
+      //     creatorId: user.id,
+      //     feedType: 'PROJECT'
+      //   }
+      // });
+      setProjects(dummySavedProjects);
     } else if (selectedList === 'interested') {
-      // 좋아요한 프로젝트를 가져오는 API 호출
-      setProjects(likeProjects); // 더미 데이터 사용
+      // response = await axios.get('/my/like', {
+      //   params: {
+      //     userId: user.id,
+      //     feedType: 'PROJECT'
+      //   }
+      // });
+      setProjects(likedProjects);
     }
 
-    // setProjects(fetchedProjects);
+    console.log(`${selectedList} 목록:`, response.data);
+    // setProjects(response.data || []);
+    
   } catch (error) {
     console.error("Error fetching projects:", error);
-    // setProjects([]); // 이전 상태를 유지하는 것이 더 나은 사용자 경험일 수 있음
   }
-}, [user, selectedList, feedType]); // 필요한 의존성만 포함
+};
 
-// 초기 데이터 로드를 위한 useEffect
+// useEffect에서 사용
 useEffect(() => {
   refreshProjects();
-}, [selectedList, user?.id, feedType, refreshProjects]); // refreshProjects 추가
+}, [selectedList, user?.id, feedType]); // refreshProjects는 의존성 배열에서 제거
 
-  // 선택된 목록이 변경될 때 신청 프로젝트를 가져오는 새로운 useEffect
- 
 //신청목록
   useEffect(() => {
     const fetchApplications = async (feedId) => {

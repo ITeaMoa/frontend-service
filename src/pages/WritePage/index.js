@@ -27,8 +27,9 @@ const WritePage = ({ feedType: initialFeedType }) => {
   const [selectedSavedProject] = useAtom(selectedSavedProjectAtom); // 아톰에서 프로젝트 정보 가져오기
   // const [selectedRoles, setSelectedRoles] = useState(selectedSavedProject ? selectedSavedProject.roles : []);
   const [selectedRoles, setSelectedRoles] = useState([]); // 반드시 배열!
-  const [selectedTags, setSelectedTags] = useState(selectedSavedProject ? selectedSavedProject.tags : []);
+  const [selectedTags, setSelectedTags] = useState(selectedSavedProject.length > 0 ? selectedSavedProject.tags : []);
   // const [period, setPeriod] = useState('');
+  console.log('selectedSavedProject', selectedSavedProject);
 
   // feedType 변경 시 로그 출력
   useEffect(() => {
@@ -297,11 +298,16 @@ const handleTagSelect = (option) => {
         return;
     }
     
+    // const MAX_TAGS = 10;
+    // if (selectedTags?.length >= MAX_TAGS) {
+    //     alert('최대 10개의 태그만 선택할 수 있습니다.');
+    //     return;
+    // }
     const MAX_TAGS = 10;
-    if (selectedTags.length >= MAX_TAGS) {
-        alert('최대 10개의 태그만 선택할 수 있습니다.');
-        return;
-    }
+if ((selectedTags || []).length >= MAX_TAGS) {
+  alert('최대 10개의 태그만 선택할 수 있습니다.');
+  return;
+}
 
     setSelectedTags(prevTags => {
         // 중복 체크를 더 엄격하게 수행
@@ -448,7 +454,7 @@ const handleImageRemove = () => {
         </Form>
 
         <TagsSection>
-            {selectedTags.map((tag, index) => (
+            {selectedTags?.map((tag, index) => (
                 <TagButton key={tag}>
                     {tag}
                     <span 
@@ -481,11 +487,12 @@ const handleImageRemove = () => {
                 <Dropdown 
         options={option3} 
         placeholder={"태그를 선택하시오"}
-        // dropdownType="ㄴ"
+        dropdownType="tags"
         onTagSelect={(selectedTags) => {
             handleTagSelect(selectedTags);
             console.log('Tag selected:', selectedTags.label); // 디버깅용
         }}
+
         // customInputStyle={{ border: ' 2px solid #A0DAFB;', borderRadius: '5px' }} // Example custom styles
     />
             </Modal>

@@ -521,8 +521,9 @@ const MainPage = () => {
           setSelectedFile={setSelectedFile}
         />
       )}
-
+ 
     <AddButton onClick={handleAddButtonClick} disabled={!user}> 피드 작성하기 </AddButton>
+
         </MainWrapper>
         <Modal 
         isOpen={isRoleModalOpen} 

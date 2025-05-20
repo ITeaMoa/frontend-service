@@ -34,3 +34,5 @@ export const toggleActiveAtom = atom(false);
 
 export const selectedProjectDetailAtom = atom([]);
 
+export const SELECTED_PERSON_ID = atom(null);
+export const MESSAGE_LIST = atom([]);

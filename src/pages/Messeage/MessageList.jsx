@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useLocation } from 'react';
 import styled from 'styled-components';
-import axios from 'axios';
+import axios from '../../api/axios';
 import { useAtom } from 'jotai';
 import { MESSAGE_LIST } from '../../Atoms.jsx/AtomStates';
 import { useAuth } from '../../context/AuthContext';
@@ -23,11 +23,36 @@ const MessageList = () => {
   //     const response = await axios.get('/message', {
   //       params: { pk:id ,userId: messages.userId }
   //     });
+  //     setMessages(response.data);
   //     return response.data;
-  //setMessages(response.data);
+
   //   };
   //   getMessage();
-  // }, [id]);
+  // }, []);
+
+  // useEffect(() => {
+  //   const getMessage = async () => {
+  //     try {
+  //       const response = await axios.get('/message', {
+  //         params: { 
+  //           userId: user.id,  // 현재 사용자 ID
+  //           recipientId: selectedPerson  // 선택된 상대방 ID
+  //         }
+  //       });
+        
+  //       if (response.data) {
+  //         setMessages(response.data);
+  //       }
+  //     } catch (error) {
+  //       console.error('메시지 가져오기 오류:', error);
+  //     }
+  //   };
+  
+  //   // selectedPerson이 변경될 때마다 메시지 가져오기
+  //   if (selectedPerson) {
+  //     getMessage();
+  //   }
+  // }, [ user.id]); // 의존성 배열에 selectedPerson과 user.id 추가ㄴ
 
   const handleDeleteMessage = async (id) => {
     try {
@@ -46,7 +71,7 @@ const MessageList = () => {
       console.error('메시지 삭제 오류:', error);
     }
   };
-
+console.log("messageList",messageList)
   return (
     <>
       {/* <MessageContainer>
@@ -79,7 +104,7 @@ const MessageList = () => {
         >
           <MessageHeader>
             <MessageTitle>
-              {/* {message.creatorId === user.id ? "보낸 쪽지" : "받은 쪽지"} */}
+              {message.creatorId === user.id ? "보낸 쪽지" : "받은 쪽지"}
             </MessageTitle>
             <MessageDate>
               {new Date(message.timestamp).toLocaleString()} 

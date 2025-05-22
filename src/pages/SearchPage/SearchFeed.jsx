@@ -7,7 +7,11 @@ import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../api/axios';
 import { useAtom } from 'jotai';
-import { feedTypeAtom, likedProjectsAtom } from '../../Atoms.jsx/AtomStates';
+import { feedTypeAtom, likedProjectsAtom, selectedProjectDetailAtom } from '../../Atoms.jsx/AtomStates';
+import RoleSelectionModal from '../../components/RoleSelectionModal';
+import Section2 from '../MainPage/section2';
+// import { SelectedProjectDetail } from '../../Atoms.jsx/AtomStates';
+
 
 const SearchFeed = ({ itemList, setSearchResults }) => {
   const navigate = useNavigate();
@@ -21,6 +25,7 @@ const SearchFeed = ({ itemList, setSearchResults }) => {
   const { user } = useAuth();
   const [feedType, setFeedType] = useAtom(feedTypeAtom);
   const [likedProjects, setLikedProjects] = useAtom(likedProjectsAtom);
+  const [selectedProjectDetail, setSelectedProjectDetail] = useAtom(selectedProjectDetailAtom);
 
   // 페이지네이션 관련
   const indexOfLastProject = currentPage * projectsPerPage;
@@ -28,10 +33,16 @@ const SearchFeed = ({ itemList, setSearchResults }) => {
   const currentProjects = itemList.slice(indexOfFirstProject, indexOfLastProject);
 
   // 이벤트 핸들러들...
+  // const handleProjectClick = (project) => {
+  //   navigate(`/ApplyPage/${project.pk}`, { 
+  //     state: { sk: project.sk }
+  //   });
+  // };
+  
   const handleProjectClick = (project) => {
-    navigate(`/ApplyPage/${project.pk}`, { 
-      state: { sk: project.sk }
-    });
+    navigate(`/ApplyPage/${project.pk}`);
+    console.log(project);
+    setSelectedProjectDetail(project);
   };
 
 
@@ -123,8 +134,8 @@ const SearchFeed = ({ itemList, setSearchResults }) => {
 
   return (
     <SectionWrapper>
-      <ProjectList>
-        {itemList.length === 1 ? (
+      {/* <ProjectList> */}
+        {/* {itemList.length === 1 ? (
           <CenteredProjectCard>
             <ProjectCard
               project={itemList[0]}
@@ -149,15 +160,25 @@ const SearchFeed = ({ itemList, setSearchResults }) => {
               feedType={project.sk}
             />
           ))
-        )}
-      </ProjectList>
+        )} */}
 
-      <Pagination 
+<Section2 
+            projects={itemList}
+            onProjectClick={handleProjectClick}
+            // onLikeClick={handleLikeClick}
+            onApplyClick={handleApplyClick}
+            isLoggedIn={!!user}
+            userId={user?.id}
+            feedType={feedType}
+          />
+      {/* </ProjectList> */}
+
+      {/* <Pagination 
         currentPage={currentPage}
         projectsPerPage={projectsPerPage}
         totalProjects={itemList.length}
         onPageChange={setCurrentPage}
-      />
+      /> */}
 
       {/* 모달 컴포넌트들... */}
       <RoleSelectionModal
@@ -193,6 +214,7 @@ const SectionWrapper = styled.div`
   width: 100%;
   margin-top: 70px;
   margin-bottom: 40px;
+  margin-top: 250px;
 `;
 
 
@@ -226,60 +248,60 @@ const CenteredProjectCard = styled.div`
   width: 100%;
 `;
 
-const ProjectCard = styled.div`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  border: 2px solid #A0DAFB;
-  border-radius: 30px 30px 1px 30px;
-  padding: 15px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  margin-right: 30px;
-  width: calc(100%/2 - 50px);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  background-color: white;
-  min-height: 200px;
-  max-height: 800px;
+// const ProjectCard = styled.div`
+//   position: relative;
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: space-between;
+//   border: 2px solid #A0DAFB;
+//   border-radius: 30px 30px 1px 30px;
+//   padding: 15px;
+//   margin-top: 10px;
+//   margin-bottom: 10px;
+//   margin-right: 30px;
+//   width: calc(100%/2 - 50px);
+//   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+//   background-color: white;
+//   min-height: 200px;
+//   max-height: 800px;
 
 
 
-  @media (max-width: 1200px) {
+//   @media (max-width: 1200px) {
     
-    max-height: 500px;
-  }
+//     max-height: 500px;
+//   }
 
-  @media (max-width: 768px) {
+//   @media (max-width: 768px) {
    
-    margin: 15px 5px;
-    max-height: 400px; 
-  }
+//     margin: 15px 5px;
+//     max-height: 400px; 
+//   }
 
-  @media (max-width: 480px) {
+//   @media (max-width: 480px) {
 
-    margin: 10px 0; 
-    max-height: 300px; 
-  }
+//     margin: 10px 0; 
+//     max-height: 300px; 
+//   }
 
 
-  &:hover {
-    background-color: #A0DAFB;
-  }
+//   &:hover {
+//     background-color: #A0DAFB;
+//   }
 
-  @media (max-width: 1200px) {
-    width: calc(33.33% - 20px); /* 3열로 조정 */
-  }
+//   @media (max-width: 1200px) {
+//     width: calc(33.33% - 20px); /* 3열로 조정 */
+//   }
 
-  @media (max-width: 768px) {
-    width: calc(50% - 20px); /* 2열로 조정 */
-  }
+//   @media (max-width: 768px) {
+//     width: calc(50% - 20px); /* 2열로 조정 */
+//   }
 
-  @media (max-width: 480px) {
-    width: 100%; /* 1열로 조정 */
-  }
+//   @media (max-width: 480px) {
+//     width: 100%; /* 1열로 조정 */
+//   }
 
-`;
+// `;
 
 
 

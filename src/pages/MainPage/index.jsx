@@ -7,13 +7,14 @@ import Section2 from "./section2";
 import { useLocation, useNavigate } from 'react-router-dom';
 // import axios from 'axios';
 import Modal from '../../components/Modal';
+import RoleSelectionModal from '../../components/RoleSelectionModal';
 
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 import ProfileModal from '../../components/ProfileModal'; // ProfileModal 컴포넌트 추가
 import AuthModal from '../../components/AuthModal';
 import { useAtom } from 'jotai';
-import { feedTypeAtom, selectedProjectDetailAtom, likedProjectsAtom } from '../../Atoms.jsx/AtomStates';
+import { feedTypeAtom, selectedProjectDetailAtom, likedProjectsAtom, USER_PROFILE } from '../../Atoms.jsx/AtomStates';
 import MainPageComponent from './MainPage';
 
 let modalOpenedOnce = false;
@@ -40,24 +41,7 @@ const MainPage = () => {
         "디자이너": 1
       }
     },
-    {
-      id: 2,
-      pk: "project2",
-      sk: "details2",
-      nickname: "디자인고수",
-      title: "AI 기반 학습 플랫폼 UI/UX 디자인",
-      content: "인공지능 학습 플랫폼의 사용자 경험을 개선하는 프로젝트입니다. 직관적이고 효율적인 인터페이스 설계가 핵심입니다. 교육과 기술의 조화를 추구합니다.",
-      tags: ["UI/UX", "AI", "교육", "디자인"],
-      recruitmentNum: 3,
-      deadline: "2024-07-15",
-      liked: true,
-      likesCount: 23,
-      creatorId: "user2",
-      roles: {
-        "UI디자이너": 2,
-        "프론트엔드": 1
-      }
-    },
+   
     {
       id: 3,
       pk: "project2",
@@ -94,87 +78,15 @@ const MainPage = () => {
         "프론트엔드": 1
       }
     },
-    // ... 나머지 더미 데이터 ...
-    {
-      id: 5,
-      pk: "project2",
-      sk: "details2",
-      nickname: "디자인고수",
-      title: "AI 기반 학습 플랫폼 UI/UX 디자인",
-      content: "인공지능 학습 플랫폼의 사용자 경험을 개선하는 프로젝트입니다. 직관적이고 효율적인 인터페이스 설계가 핵심입니다. 교육과 기술의 조화를 추구합니다.",
-      tags: ["UI/UX", "AI", "교육", "디자인"],
-      recruitmentNum: 3,
-      deadline: "2024-07-15",
-      liked: true,
-      likesCount: 23,
-      creatorId: "user2",
-      roles: {
-        "UI디자이너": 2,
-        "프론트엔드": 1
-      }
-    },
-     {
-      id: 6,
-      pk: "project2",
-      sk: "details2",
-      nickname: "디자인고수",
-      title: "AI 기반 학습 플랫폼 UI/UX 디자인",
-      content: "인공지능 학습 플랫폼의 사용자 경험을 개선하는 프로젝트입니다. 직관적이고 효율적인 인터페이스 설계가 핵심입니다. 교육과 기술의 조화를 추구합니다.",
-      tags: ["UI/UX", "AI", "교육", "디자인"],
-      recruitmentNum: 3,
-      deadline: "2024-07-15",
-      liked: true,
-      likesCount: 23,
-      creatorId: "user2",
-      roles: {
-        "UI디자이너": 2,
-        "프론트엔드": 1
-      }
-    },
-    {
-      id: 7,
-      pk: "project2",
-      sk: "details2",
-      nickname: "디자인고수",
-      title: "AI 기반 학습 플랫폼 UI/UX 디자인",
-      content: "인공지능 학습 플랫폼의 사용자 경험을 개선하는 프로젝트입니다. 직관적이고 효율적인 인터페이스 설계가 핵심입니다. 교육과 기술의 조화를 추구합니다.",
-      tags: ["UI/UX", "AI", "교육", "디자인"],
-      recruitmentNum: 3,
-      deadline: "2024-07-15",
-      liked: true,
-      likesCount: 23,
-      creatorId: "user2",
-      roles: {
-        "UI디자이너": 2,
-        "프론트엔드": 1
-      }
-    },
-    {
-      id: 8,
-      pk: "project2",
-      sk: "details2",
-      nickname: "디자인고수",
-      title: "AI 기반 학습 플랫폼 UI/UX 디자인",
-      content: "인공지능 학습 플랫폼의 사용자 경험을 개선하는 프로젝트입니다. 직관적이고 효율적인 인터페이스 설계가 핵심입니다. 교육과 기술의 조화를 추구합니다.",
-      tags: ["UI/UX", "AI", "교육", "디자인"],
-      recruitmentNum: 3,
-      deadline: "2024-07-15",
-      liked: true,
-      likesCount: 23,
-      creatorId: "user2",
-      roles: {
-        "UI디자이너": 2,
-        "프론트엔드": 1
-      }
-    },
+    
   ];
 
   
     // // ... 기존 상태들 ...
-    // const [allProjects, setAllProjects] = useState([]);
-    // const [popularProjects, setPopularProjects] = useState([]);
-    const [popularProjects, setPopularProjects] = useState(dummyProjects);
-    const [allProjects, setAllProjects] = useState(dummyProjects);
+    const [allProjects, setAllProjects] = useState([]);
+    const [popularProjects, setPopularProjects] = useState([]);
+    // const [popularProjects, setPopularProjects] = useState(dummyProjects);
+    // const [allProjects, setAllProjects] = useState(dummyProjects);
     const [currentPage, setCurrentPage] = useState(1);
     const [projectsPerPage] = useState(6);
     const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
@@ -186,17 +98,10 @@ const MainPage = () => {
     const location = useLocation();
     const query = new URLSearchParams(location.search);
     // const showModal = query.get('showModal') === 'true'; 
+    const [showAlertPopup, setShowAlertPopup] = useState(false);
     const { user } = useAuth(); 
-
     const [selectedFile, setSelectedFile] = useState(null); 
-    const [userProfile, setUserProfile] = useState({
-      tags: [],
-      experiences: [],
-      avatarUrl: null,
-      headLine: "",
-      educations: [],
-      personalUrl: ""
-    });
+    const [userProfile, setUserProfile] = useAtom(USER_PROFILE);
     const [popupMessage, setPopupMessage] = useState('');
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
@@ -204,9 +109,10 @@ const MainPage = () => {
     const [hasProfileModalOpened, setHasProfileModalOpened] = useState(false);
     const [isUserProfileLoaded, setIsUserProfileLoaded] = useState(false);
     const [likedProjects, setLikedProjects] = useAtom(likedProjectsAtom);
+    // const [showAlertPopup, setShowAlertPopup] = useState(false);
+    const [showApplyPopup, setShowApplyPopup] = useState(false);
 
 
-   
 
   
     const handleAddButtonClick = () => {
@@ -318,28 +224,17 @@ const MainPage = () => {
           return;
         }
   
-        console.log('응답 데이터:', response.data);
-  
-        // const projectsWithLikes = response.data.map((project) => {
-        //   const isLiked = likedProjects.find(likedProject => likedProject.id === project.id);
-        //   return {
-        //     ...project,
-        //     creatorId: project.creatorId,
-        //     liked: isLiked ? isLiked.liked : false,
-        //     likesCount: project.likesCount || 0,
-        //   };
-        // });
-
-        const projectsWithLikes = response.data.map((project) => ({
-          ...project,
-          // creatorId: project.creatorId,
-          // atom의 상태를 사용하여 좋아요 여부 확인
-          liked: likedProjects.some(
-              likedProject => likedProject.id === project.id && likedProject.liked
-          ),
-          // likesCount: project.likesCount || 0  //있는지 없는지 확인인
-      }));
-        setPopularProjects(projectsWithLikes);
+    
+      //   const projectsWithLikes = response.data.map((project) => ({
+      //     ...project,
+      //     // creatorId: project.creatorId,
+      //     // atom의 상태를 사용하여 좋아요 여부 확인
+      //     liked: likedProjects.some(
+      //         likedProject => likedProject.id === project.id && likedProject.liked
+      //     ),
+      //     // likesCount: project.likesCount || 0  //있는지 없는지 확인인
+      // }));
+        setPopularProjects(response.data);
       } catch (error) {
         console.error('Error fetching popular projects:', error);
       }
@@ -349,32 +244,50 @@ const MainPage = () => {
       fetchPopularProjects();
     }, [fetchPopularProjects, feedType]);
   
-  
-  
-    // // Section2 관련 API 호출 함수들을 MainPage로 이동
-    // const fetchAllProjects = useCallback(async () => {
+    // const fetchPopularProjects = async () => {
     //   try {
-    //     const response = await axios.get(`/main?feedType=${feedType}`);
+    //     const response = await axios.get(`/main/liked?feedType=${feedType}`);
+    
     //     if (!response.data || response.data.length === 0) {
-    //       setAllProjects([]);
+    //       console.warn('프로젝트 데이터가 없습니다.');
+    //       setPopularProjects([]);
     //       return;
     //     }
-    // const projectsWithLikes = response.data.map((project) => ({
-    //   ...project,
-    //   // creatorId: project.creatorId,
-    //   // atom의 상태를 사용하여 좋아요 여부 확인
-    //   liked: likedProjects.some(
-    //       likedProject => likedProject.id === project.id && likedProject.liked
-    //   ),
-    //     setAllProjects(projectsWithLikes);
+    
+    //     setPopularProjects(response.data);
     //   } catch (error) {
-    //     console.error('프로젝트 가져오기 실패:', error);
+    //     console.error('Error fetching popular projects:', error);
     //   }
-    // }, [feedType, likedProjects]);
+    // };
+  
+    // // Section2 관련 API 호출 함수들을 MainPage로 이동
+    const fetchAllProjects = useCallback(async () => {
+      try {
+        const response = await axios.get(`/main?feedType=${feedType}`);
+        if (!response.data || response.data.length === 0) {
+          setAllProjects([]);
+          return;
+        }
+        console.log('모든 게시물:', response.data);
 
-//  useEffect(() => {
-//     fetchAllProjects();
-//   }, [fetchAllProjects, feedType]);
+  //   const projectsWithLikes = response.data.map((project) => ({
+  //     ...project,
+  //     // creatorId: project.creatorId,
+  //     // atom의 상태를 사용하여 좋아요 여부 확인
+  //     liked: likedProjects.some(
+  //         likedProject => likedProject.id === project.id && likedProject.liked
+  //     ),
+  //     // likesCount: project.likesCount || 0  //있는지 없는지 확인인
+  // }));
+  setAllProjects(response.data);
+      } catch (error) {
+        console.error('프로젝트 가져오기 실패:', error);
+      }
+    }, [feedType, likedProjects]);
+
+ useEffect(() => {
+    fetchAllProjects();
+  }, [fetchAllProjects, feedType]);
 
 
     const handleApplyClick = async (project) => {
@@ -386,7 +299,8 @@ const MainPage = () => {
     
       // 자신이 작성한 게시글인지 확인
       if (project && project.creatorId === user.id) {
-        alert("자신이 작성한 게시글에는 신청할 수 없습니다."); 
+        // alert("자신이 작성한 게시글에는 신청할 수 없습니다."); 
+        setShowAlertPopup(true);
         return; 
       }
     
@@ -404,7 +318,7 @@ const MainPage = () => {
         // 선택한 프로젝트의 pk와 비교
         const isAlreadyApplied = appliedProjects.includes(project.pk);
         if (isAlreadyApplied) {
-          alert("이미 신청한 프로젝트입니다."); 
+          setShowApplyPopup("이미 신청한 프로젝트입니다."); 
           // setPopupMessage("이미 신청한 프로젝트입니다."); // 이미 신청한 경우 메시지 설정
           // setIsSubmitted(true); // 제출 확인 팝업 표시
           return; // Exit the function if already applied
@@ -426,19 +340,21 @@ const MainPage = () => {
         setIsSubmitted(true);
         return;
       }
-  
+     
       try {
         const applicationData = {
           pk: user.id,
-          sk: project.pk,
-          part: role,
+          sk: selectedProject.pk,
+          part: selectedRole,
           feedType: feedType
         };
+        console.log('applicationData:', applicationData);
         await axios.post('/main/application', applicationData);
-        alert("신청이 완료되었습니다.");
+        setShowApplyPopup("신청이 완료되었습니다.");
+        setIsRoleModalOpen(false);
       } catch (error) {
         console.error("신청 실패:", error);
-        alert("신청에 실패했습니다.");
+        setShowApplyPopup("신청에 실패했습니다.");
       }
     };
 
@@ -472,6 +388,7 @@ const MainPage = () => {
 
   const handleRoleSelect = (role) => {
     setSelectedRole(role);
+    console.log('선택된 역할:', role);
   };
   
     return (
@@ -525,9 +442,10 @@ const MainPage = () => {
     <AddButton onClick={handleAddButtonClick} disabled={!user}> 피드 작성하기 </AddButton>
 
         </MainWrapper>
-        <Modal 
+        {/* <Modal 
         isOpen={isRoleModalOpen} 
-        onClose={handleModalClose}
+        // onClose={handleModalClose}
+        onClose={() => setIsRoleModalOpen(false)}
         modalType="apply"
       >
         <RoleButtonContainer>
@@ -554,8 +472,18 @@ const MainPage = () => {
             <p>역할 정보가 없습니다.</p>
           )}
         </RoleButtonContainer>
-        <SubmitButton onClick={handleApplySubmit}>제출</SubmitButton>
-      </Modal>
+        <SubmitButton onClick={() => handleApplySubmit(selectedProject, selectedRole)}>제출</SubmitButton>
+      </Modal> */}
+
+<RoleSelectionModal
+        isOpen={isRoleModalOpen}
+        onClose={() => setIsRoleModalOpen(false)}
+        project={selectedProject}
+        selectedRole={selectedRole}
+        handleRoleSelect={handleRoleSelect}
+        handleApplySubmit={handleApplySubmit}
+      />
+
 
       <AuthModal 
         isOpen={isSubmitted}
@@ -563,6 +491,28 @@ const MainPage = () => {
         handleSignUp={() => navigate('/SignupPage')}
         handleLogin={() => navigate('/LoginPage')}
       />
+
+{showAlertPopup && (
+  <Modal isOpen={showAlertPopup} onClose={() => setShowAlertPopup(false)}>
+        <h3 style={{ textAlign: 'center' }}>자신이 작성한 게시글에는 신청할 수 없습니다</h3>
+        <ButtonContainer>
+          <ModalButton onClick={() => setShowAlertPopup(false)}>확인</ModalButton>
+          {/* <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton> */}
+        </ButtonContainer>
+      </Modal>  
+)}
+
+
+{showApplyPopup && (
+  <Modal isOpen={showApplyPopup} onClose={() => setShowApplyPopup(false)}>
+        <h3 style={{ textAlign: 'center',fontSize:'16px' }}>{showApplyPopup}</h3>
+        <ButtonContainer>
+          <ModalButton onClick={() => setShowApplyPopup(false)}>확인</ModalButton>
+          {/* <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton> */}
+        </ButtonContainer>
+      </Modal>  
+ 
+)}
       </>
     );
   };
@@ -698,4 +648,22 @@ const RoleButtonContainerStyled = styled.div`
 
 `;
 
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+`;
 
+const ModalButton = styled.button`
+  background-color: #3563E9;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #a0dafb;
+  }
+`;

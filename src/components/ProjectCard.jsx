@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 import LikeButton from './LikeButton';
+import { useAtom } from 'jotai';
+import { USER_PROFILE } from '../Atoms.jsx/AtomStates';
 
 const ProjectCard = ({ 
   project, 
@@ -14,7 +16,7 @@ const ProjectCard = ({
   feedType 
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-
+  const [userProfile, setUserProfile] = useAtom(USER_PROFILE);
   return (
     <CardWrapper onClick={onClick}>
       <ProjectOwner>
@@ -24,13 +26,28 @@ const ProjectCard = ({
         />
         {project.nickname}
       </ProjectOwner>
+      {/* <ProjectOwner> */}
+  {/* {userProfile.avatarUrl ? (
+    <img 
+      src={encodeURI(userProfile.avatarUrl)} 
+      alt="Profile Avatar" 
+    />
+  ) : (
+    <FontAwesomeIcon 
+      icon={regularUser} 
+      style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px',marginTop: '10px' }} 
+    />
+  )} */}
+  {/* {project.nickname} */}
+  {/* <span style={{ fontWeight: 600, color: '#888',marginTop: '8px', fontSize: '18px'}}>{project.nickname}</span>
+</ProjectOwner> */}
       <LikeButtonWrapper>
         <LikeButton 
           // initialLiked={project.liked}
           initialLikesCount={project.likesCount}
           // onLikeChange={(newLiked) => onLikeClick(project.id, newLiked)}
           sk={project.pk}
-          userId={userId}
+          // userId={userId}
           feedType={feedType}
         />
       </LikeButtonWrapper>
@@ -104,6 +121,7 @@ const CardWrapper = styled.div`
 
   &:hover {
     background-color: #A0DAFB;
+    cursor: pointer;
   }
 
   @media (max-width: 1400px) {
@@ -140,10 +158,18 @@ const LikeButtonWrapper = styled.div`
 `;
 
 const ProjectOwner = styled.div`
+  display: flex;
   font-weight: bold;
   text-align: left;
   color: #858585;
   margin-left: 10px;
+
+  img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    margin-right: 6px;
+  }
 `;
 
 const ProjectTitle = styled.h3`

@@ -4,9 +4,14 @@ import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 import LikeButton from '../../components/LikeButton';
+import { useAtom } from 'jotai';
+import { USER_PROFILE } from '../../Atoms.jsx/AtomStates';
+
+
 
 
 const Section1 = ({ feedType, projects, onLikeClick, onProjectClick }) => {
+    const [userProfile, setUserProfile] = useAtom(USER_PROFILE);
     return (
         <SectionWrapper>
             <SectionTitle>인기 프로젝트</SectionTitle>
@@ -20,6 +25,23 @@ const Section1 = ({ feedType, projects, onLikeClick, onProjectClick }) => {
                             />
                             {project.nickname}
                         </AuthorID>
+                        {/* <AuthorID style={{ display: 'flex', alignItems: 'center' }}>
+                          {userProfile.avatarUrl ? (
+                            <img
+                              src={encodeURI(userProfile.avatarUrl)}
+                              alt="Profile Avatar"
+                              style={{ width: '25px', height: '25px', borderRadius: '50%', marginRight: '6px' }}
+                            />
+                          ) : (
+                            <FontAwesomeIcon
+                              icon={regularUser}
+                              style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }}
+                            />
+                          )}
+                          <span style={{ fontWeight: 600, color: '#888' }}>
+                            {project.nickname || "닉네임 없음"}
+                          </span>
+                        </AuthorID> */}
                         <LikeButtonWrapper>
                             <LikeButton 
                                 initialLiked={project.liked} 

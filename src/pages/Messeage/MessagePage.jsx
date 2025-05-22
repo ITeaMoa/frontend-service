@@ -5,7 +5,7 @@ import MessagePeople from './MessagePeople';
 import MessageList from './MessageList';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane, faTimes } from '@fortawesome/free-solid-svg-icons';
-import axios from 'axios';
+import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 import { useAtom } from 'jotai';
 import { SELECTED_PERSON_ID, MESSAGE_LIST } from '../../Atoms.jsx/AtomStates';
@@ -57,48 +57,15 @@ useEffect(() => {
       setSelectedPerson(personId);
       setSelectedPersonId(personId);
       
-      // const response = await axios.get('/message', {
-      //   params: {
-      //      recipientId: personId,      // f8d12c2e-954f-455e-a9ca-0d8235dfd8c5 같은 형식
-      //     userId: user.id    // 현재 로그인한 사용자 ID
-      //   }
-      // });
-      const messageList = [
-        {
-          "pk": "c13244ba-ab21-4e04-9767-1189503efd8f",
-          "sk": "2025-05-19T19:07:19.358308",
-          "entityType": "MESSAGE",
-          "creatorId": "84b8ddac-3081-70eb-e79d-e8f5deef4892",
-          "userStatus": true,
-          "recipientId": "04e8ddec-70d1-702c-9257-1f0078fe9c83",
-          "messageContent": "진짜 머리가 터져. 진짜 터진다?",
-          "messageStatus": true,
-          "timestamp": "2025-05-19T19:07:19.358308"
-        },
-        {
-          "pk": "c13244ba-ab21-4e04-9767-1189503efd8f",
-          "sk": "2025-05-19T19:07:19.358308",
-          "entityType": "MESSAGE",
-          "creatorId": "84b8ddac-3081-70eb-e79d-e8f5deef4892",
-          "userStatus": true,
-          "recipientId": "04e8ddec-70d1-702c-9257-1f0078fe9c83",
-          "messageContent": "진짜 머리가 터져. 진짜 터진다?",
-          "messageStatus": true,
-          "timestamp": "2025-05-19T19:07:19.358308"
-        },
-        {
-          "pk": "c13244ba-ab21-4e04-9767-1189503efd8f",
-          "sk": "2025-05-19T19:07:19.358308",
-          "entityType": "MESSAGE",
-          "creatorId": "84b8ddac-3081-70eb-e79d-e8f5deef4892",
-          "userStatus": true,
-          "recipientId": "04e8ddec-70d1-702c-9257-1f0078fe9c83",
-          "messageContent": "진짜 머리가 터져. 진짜 터진다?",
-          "messageStatus": true,
-          "timestamp": "2025-05-19T19:07:19.358308"
-        },]
-      // setMessageList(response.data);
-      setMessageList(messageList);
+      const response = await axios.get('/message', {
+        params: {
+           recipientId: personId,      // f8d12c2e-954f-455e-a9ca-0d8235dfd8c5 같은 형식
+          userId: user.id    // 현재 로그인한 사용자 ID
+        }
+      });
+   
+      setMessageList(response.data);
+      // setMessageList(messageList);
     } catch (error) {
       console.error('메시지 목록 조회 오류:', error);
     }
@@ -113,51 +80,81 @@ useEffect(() => {
     setNewMessage('');
   };
 
-  useEffect(() => {
-    const getMessage = async () => {
-      try {
-        // const response = await axios.get('/message/list', {
-        //   params: { pk: user.id }
-        // });
-        // const list = Object.entries(response.data).map(([userId, nickname]) => ({
-        //   id: userId,
-        //   name: nickname
-        // }));
-        // setPersonList(list);
+  // useEffect(() => {
+  //   const getMessage = async () => {
+  //     try {
+  //       const response = await axios.get('/message/list', {
+  //         params: { pk: user.id }
+  //       });
+  //       const list = Object.entries(response.data).map(([userId, nickname]) => ({
+  //         id: userId,
+  //         name: nickname
+  //       }));
+  //       setPersonList(list);
+  //       console.log(list);
      
-        // 기본 선택값 설정 (예: 첫 번째 사람)
-        // if (list.length > 0) setSelectedPerson(list[0].id);
+  //       // 기본 선택값 설정 (예: 첫 번째 사람)
+  //       if (list.length > 0) setSelectedPerson(list[0].id);
 
-        // const countResponse = await axios.get('/message/count', {
-        //   params: { pk: user.id }
-        // });
+  //       const countResponse = await axios.get('/message/count', {
+  //         params: { pk: user.id }
+  //       });
+  //       console.log("countResponse", countResponse);
 
-        // const countData = countResponse.data;
+  //       const countData = countResponse.data;
+  //       console.log("countData", countData);
+  //       const mergedPersonList = list.map(person => ({
+  //         ...person,
+  //         count: countData[person.id] !== undefined ? countData[person.id] : "0"
+  //       }));
 
-        // const mergedPersonList = PersonList.map(person => ({
-        //   ...person,
-        //   count: countData[person.id] !== undefined ? countData[person.id] : "0"
-        // }));
+  //       setPersonList(mergedPersonList);
+  //       console.log("mergedPersonList", mergedPersonList);
 
-        // setPersonList(mergedPersonList);
+     
+  //     } catch (error) {
+  //       console.error('메시지 가져오기 오류:', error);
+  //       setPersonList([]);
+  //     }
+  //   };
+  //   getMessage();
+  // }, [user?.id]);
 
-        const PersonList = [
-          { id: "04e8ddec-70d1-702c-9257-1f0078fe9c83", name: "알파카", count: 1 },
-          { id: "1488fdac-d041-7079-f537-151b2fa728f5", name: "쥐다람쥐", count: 2 },
-          { id: "84b8ddac-3081-70eb-e79d-e8f5deef4892", name: "전상연", count: 3 },
-          { id: "148dac-d041-7079-f537-151b2fa728f5", name: "박보현", count: 4 },
-          { id: "148dac-d041-7079-f53-151b2fa728f5", name: "김보명", count: 5 },
-          { id: "148dac-d041-779-f537-151b2fa728f5", name: "원터", count: 6 },
-        ];
-        setPersonList(PersonList);
-      } catch (error) {
-        console.error('메시지 가져오기 오류:', error);
-        setPersonList([]);
-      }
-    };
-    getMessage();
-  }, []);
+  // 1. getMessage 함수 분리
+const getMessage = async () => {
+  try {
+    const response = await axios.get('/message/list', {
+      params: { pk: user.id }
+    });
+    const list = Object.entries(response.data).map(([userId, nickname]) => ({
+      id: userId,
+      name: nickname
+    }));
+    setPersonList(list);
 
+    if (list.length > 0) setSelectedPerson(list[0].id);
+
+    const countResponse = await axios.get('/message/count', {
+      params: { pk: user.id }
+    });
+
+    const countData = countResponse.data;
+    const mergedPersonList = list.map(person => ({
+      ...person,
+      count: countData[person.id] !== undefined ? countData[person.id] : "0"
+    }));
+
+    setPersonList(mergedPersonList);
+  } catch (error) {
+    console.error('메시지 가져오기 오류:', error);
+    setPersonList([]);
+  }
+};
+
+// 2. useEffect에서 호출
+useEffect(() => {
+  getMessage();
+}, [user?.id]);
 
   const handleSendMessage = async () => {
     try {
@@ -176,7 +173,7 @@ useEffect(() => {
       
       // 메시지 목록 업데이트 (선택사항)
       // setMessageList([...messageList, response.data]);
-      
+      await getMessage();;
       // 팝업 닫기 (필요한 경우)
       setShowMessagePopup(false);
       // handlePersonClick(selectedPersonId);
@@ -216,10 +213,12 @@ useEffect(() => {
             <>
               {/* <MessageList messages={messagesByPerson[selectedPerson] || []} /> */}
               {/* <MessageList id={selectedPerson} /> */}
-              <MessageList />        
+              <MessageList />  
+         
               <SendButton onClick={handleSendClick}>
                 <FontAwesomeIcon icon={faPaperPlane} />
               </SendButton>
+            
             </>
           ) : (
             <EmptyRightPanel> 
@@ -227,7 +226,7 @@ useEffect(() => {
             </EmptyRightPanel>
           )}
         </RightPanel>
-      </Container>
+      </Container> 
 
       {showMessagePopup && (
         <PopupOverlay>
@@ -335,12 +334,14 @@ const EmptyRightPanel = styled.div`
   align-items: center;
   height: 100%;
   color: #666;
+  position: relative;  // 추가: 상대 위치 설정ㄴㄴ
 `;
 
 const SendButton = styled.button`
-  position: absolute;
-  bottom: 30px;
-  right: 50px;
+  // position: absolute;
+  position: fixed;
+  bottom: 90px;
+  right: 140px;
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -361,6 +362,10 @@ const SendButton = styled.button`
      color: #226FFF; // hover 시 아이콘 색상을 #226FFF로 변경
   }
 `;
+
+
+
+
 
 const PopupOverlay = styled.div`
   position: fixed;

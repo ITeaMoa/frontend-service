@@ -1,21 +1,32 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import Dropdown from '../../components/DropDown';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
-import axios from 'axios';
+import axios from '../../api/axios';
 import Modal from '../../components/Modal';
+import { useAtom } from 'jotai';
+import { USER_PROFILE } from '../../Atoms.jsx/AtomStates';
+import { useAuth } from '../../context/AuthContext'; // AuthContext에서 useAuth 가져오기
 
 
 
-const UserProfile = ({  user, setIsProfileVisible }) => {
-
+const UserProfile = ({  setIsProfileVisible, setShowAlertPopup}) => {
 
     const [popupMessage, setPopupMessage] = useState(false);
     const [isEditingNickname, setIsEditingNickname] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null); 
+    const [userProfile, setUserProfile] = useAtom(USER_PROFILE);
+    const { user } = useAuth();
+    const experiencesInputRef = useRef(null);
+    const personalUrlInputRef = useRef(null);
+    const headLineInputRef = useRef(null);
+    const passwordInputRef = useRef(null);
+    const nicknameInputRef = useRef(null);
+    const [showImageEdit, setShowImageEdit] = useState(false);
+    const fileInputRef = useRef();
+    const [isEditingPassword, setIsEditingPassword] = useState(false);
 
     const option3 = [
         { value: '웹', label: '웹' },
@@ -63,53 +74,94 @@ const UserProfile = ({  user, setIsProfileVisible }) => {
         { value: 'Solidity', label: 'Solidity' },
       ];
 
-    const experiencesInputRef = useRef(null);
-    const personalUrlInputRef = useRef(null);
-    const headLineInputRef = useRef(null);
-    const passwordInputRef = useRef(null);
-    const nicknameInputRef = useRef(null);
-    const [showImageEdit, setShowImageEdit] = useState(false);
 
-const fileInputRef = useRef();
-    const [isEditingPassword, setIsEditingPassword] = useState(false);
-
-    const [userProfile, setUserProfile] = useState({
-      tags: [],
-      experiences: [],
-      avatarUrl: null,
-      headLine: "",
-      educations: [],
-      personalUrl: ""
-    });
-    useEffect(() => {
-      const fetchUserProfile = async () => {
-        try {
-          if (user && user.id) {
-            const response = await axios.get(`/my/profile/${user.id}`);
-            console.log('사용자 프로필:', response.data);
-            if (response.data) {
-              setUserProfile(response.data);
+    // useEffect(() => {
+    //   const fetchUserProfile = async () => {
+    //     try {
+    //       if (user && user.id) {
+    //         const response = await axios.get(`/my/profile/${user.id}`);
+    //         console.log('사용자 프로필:', response.data);
+    //         if (response.data) {
+    //           setUserProfile(response.data);
               
-            } else {
-              setUserProfile({
-                avatarUrl: '',
-                headLine: '',
-                tags: [],
-                experiences: [],
-                educations: [],
-                personalUrl: '',
-                nickname: ''  
-              });
+    //         } else {
+    //           setUserProfile({
+    //             avatarUrl: '',
+    //             headLine: '',
+    //             tags: [],
+    //             experiences: [],
+    //             educations: [],
+    //             personalUrl: '',
+    //             nickname: ''  
+    //           });
           
-            }
-          }
-        } catch (error) {
-          console.error('사용자 프로필 조회 중 오류 발생:', error);
+    //         }
+    //       }
+    //     } catch (error) {
+    //       console.error('사용자 프로필 조회 중 오류 발생:', error);
+    //     }
+    //   }
+  
+    //   fetchUserProfile(); // 사용자 정보가 있을 때 프로필을 가져옴
+    // }, [user]); // user가 변경될 때마다 실행
+
+    // useEffect(() => {
+//   const fetchUserProfile = async () => {
+//       try {
+//           if (user && user.id) {
+//               // MainPage와 동일한 형식으로 API 호출
+//               const response = await axios.get(`/my/profile/${user.id}`);
+//               console.log('사용자 프로필:', response.data);
+//               if (response.data) {
+//                   setUserProfile(response.data);
+//               } else {
+//                   setUserProfile({
+//                       avatarUrl: '',
+//                       headLine: '',
+//                       tags: [],
+//                       experiences: [],
+//                       educations: [],
+//                       personalUrl: ''
+//                   });
+//               }
+//           }
+//       } catch (error) {
+//           console.error('사용자 프로필 조회 중 오류 발생:', error);
+//       }
+//   };
+
+//   fetchUserProfile();
+// }, [user]);
+
+useEffect(() => {
+  const fetchUserProfile = async () => {
+    try {
+      console.log('사용자 프로필 조회 시작' , user.id);
+      if (user && user.id) {
+        const response = await axios.get(`/my/profile/${user.id}`);
+        console.log('사용자 프로필:', response.data);
+        if (response.data) {
+          setUserProfile(response.data);
+       
+        } else {
+          setUserProfile({
+            avatarUrl: '',
+            headLine: '',
+            tags: [],
+            experiences: [],
+            educations: [],
+            personalUrl: ''
+          });
+          
         }
       }
-  
-      fetchUserProfile(); // 사용자 정보가 있을 때 프로필을 가져옴
-    }, [user]); // user가 변경될 때마다 실행
+    } catch (error) {
+      console.error('사용자 프로필 조회 중 오류 발생:', error);
+    }
+  }
+
+  fetchUserProfile(); // 사용자 정보가 있을 때 프로필을 가져옴
+}, [user]); // user가 변경될 때마다 실행
 
     const handleEdit = (field) => {
         // Implement your editing logic here
@@ -191,6 +243,7 @@ const fileInputRef = useRef();
           }
         });
         console.log('사용자 프로필 업데이트 응답:', response.data);
+        // setShowAlertPopup(true);
       } catch (error) {
         console.error('프로필 업데이트 에러:', error.response?.data || error.message);
       }
@@ -260,7 +313,7 @@ const fileInputRef = useRef();
         />
         ) : (
           <>
-            {nickname || '닉네임이 없습니다.'}
+            {user.nickname || '닉네임이 없습니다.'}
             <FontAwesomeIcon
               color="#1489CE"
               icon={faEdit}
@@ -403,7 +456,11 @@ const fileInputRef = useRef();
         </ButtonContainer>
     </Modal>
   )}
+
+
+
     </ProfileContainer>
+
 
     
   );

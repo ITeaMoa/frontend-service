@@ -35,6 +35,7 @@ const MyPage = () => {
   const [userProfile, setUserProfile] = useState({});
   const [savedProjects, setSavedProjects] = useState([]);
   const [likedProjects, setLikedProjects] = useState([]);
+  const [showAlertPopup, setShowAlertPopup] = useState(false);
 
   // user.id를 콘솔에 출력
 useEffect(() => {
@@ -456,6 +457,7 @@ const likeProjects = [ // 더미 데이터 업데이트
 const refreshProjects = async () => {
   try {
     let response;
+    console.log('selectedList', selectedList);
     
     if (selectedList === 'applied') {
       response = await axios.get('/feed/applications', {
@@ -472,25 +474,31 @@ const refreshProjects = async () => {
       });
      
     } else if (selectedList === 'saved') {
-      // response = await axios.get('/my/temp', {
-      //   params: {
-      //     creatorId: user.id,
-      //     feedType: 'PROJECT'
-      //   }
-      // });
-      setProjects(dummySavedProjects);
+      response = await axios.get('/my/temp', {
+        params: {
+          creatorId: user.id,
+          feedType: feedType
+        }
+      });
+      // setProjects(dummySavedProjects);
     } else if (selectedList === 'interested') {
-      // response = await axios.get('/my/like', {
-      //   params: {
-      //     userId: user.id,
-      //     feedType: 'PROJECT'
-      //   }
-      // });
-      setProjects(likedProjects);
+      response = await axios.get('/my/like', {
+        params: {
+          userId: user.id,
+          feedType: feedType
+        }
+      });
+      // setProjects(likedProjects);
     }
 
     console.log(`${selectedList} 목록:`, response.data);
-    // setProjects(response.data || []);
+    if (response && response.data) {
+      setProjects(response.data);
+      console.log('프로젝트 데이터 로드 성공:', response.data);
+    } else {
+      console.error('응답 데이터가 없습니다:', response);
+      setProjects([]); // 빈 배열로 초기화
+    }
     
   } catch (error) {
     console.error("Error fetching projects:", error);
@@ -604,34 +612,61 @@ useEffect(() => {
     setSelectedProject(null);
   };
 
-    //  userProfile 불러오기
-    useEffect(() => {
-      const fetchUserProfile = async () => {
-        try {
-          if (user && user.id) {
-            const response = await axios.get(`/my/profile/${user.id}`);
-            console.log('사용자 프로필:', response.data);
-            if (response.data) {
-              setUserProfile(response.data);
-            } else {
-              setUserProfile({
-                avatarUrl: '',
-                headLine: '',
-                tags: [],
-                experiences: [],
-                educations: [],
-                personalUrl: ''
-              });
-            }
-          }
-        } catch (error) {
-          console.error('사용자 프로필 조회 중 오류 발생:', error);
-        }
-      };
+    // //  userProfile 불러오기
+    // useEffect(() => {
+    //   const fetchUserProfile = async () => {
+    //     try {
+    //       if (user && user.id) {
+    //         const response = await axios.get(`/my/profile/${user.id}`);
+    //         console.log('사용자 프로필:', response.data);
+    //         if (response.data) {
+    //           setUserProfile(response.data);
+    //         } else {
+    //           setUserProfile({
+    //             avatarUrl: '',
+    //             headLine: '',
+    //             tags: [],
+    //             experiences: [],
+    //             educations: [],
+    //             personalUrl: ''
+    //           });
+    //         }
+    //       }
+    //     } catch (error) {
+    //       console.error('사용자 프로필 조회 중 오류 발생:', error);
+    //     }
+    //   };
   
-      fetchUserProfile();
-    }, [user, setUserProfile]);
+    //   fetchUserProfile();
+    // }, [user, setUserProfile]);
+// UserProfile.js
+// useEffect(() => {
+//   const fetchUserProfile = async () => {
+//       try {
+//           if (user && user.id) {
+//               // MainPage와 동일한 형식으로 API 호출
+//               const response = await axios.get(`/my/profile/${user.id}`);
+//               console.log('사용자 프로필:', response.data);
+//               if (response.data) {
+//                   setUserProfile(response.data);
+//               } else {
+//                   setUserProfile({
+//                       avatarUrl: '',
+//                       headLine: '',
+//                       tags: [],
+//                       experiences: [],
+//                       educations: [],
+//                       personalUrl: ''
+//                   });
+//               }
+//           }
+//       } catch (error) {
+//           console.error('사용자 프로필 조회 중 오류 발생:', error);
+//       }
+//   };
 
+//   fetchUserProfile();
+// }, [user]);
 
     // 프로젝트 완료 처리 함수 수정
     const handleButtonClick = (project) => {
@@ -740,6 +775,7 @@ const handleConfirmCancel = async () => {
 
 
   return (
+    <>
     <Container>
       {/* <Nav  showSearch={showSearch}  onToggleChange={handleToggleChange}/> */}
       <Nav  showSearch={showSearch}  />
@@ -827,9 +863,10 @@ const handleConfirmCancel = async () => {
             </>
           ) : selectedList === 'profile' ? (
             <UserProfile 
-              userProfile={userProfile}
+              // userProfile={userProfile}
               user={user} 
               setIsProfileVisible={setIsProfileVisible} 
+              setShowAlertPopup={setShowAlertPopup}
             />
           ) : (
             currentProjects && currentProjects.map((project, index) => (
@@ -889,7 +926,21 @@ const handleConfirmCancel = async () => {
           <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton>
         </ButtonContainer>
       </Modal>
+
+      
     </Container>
+    {showAlertPopup && (
+      <Modal isOpen={showAlertPopup} onClose={() => setShowAlertPopup(false)}>
+            <h3 style={{ textAlign: 'center' }}>댓글 제출에 실패했습니다. 다시 시도해주세요.</h3>
+            {/* <ButtonContainer>
+              <ModalButton onClick={handleConfirmCancel}>확인</ModalButton>
+              <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton>
+            </ButtonContainer> */}
+          </Modal>  
+     
+    )}
+    </>
+   
   );
 };
 

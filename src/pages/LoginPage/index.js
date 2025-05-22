@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import Modal from '../../components/Modal';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
-  
+  const [showAlertPopup, setShowAlertPopup] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -22,10 +23,10 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('로그인 시도');
-    console.log('이메일:', email);
-    console.log('비밀번호:', password);
-    console.log('ID 저장:', rememberMe);
+    // console.log('로그인 시도');
+    // console.log('이메일:', email);
+    // console.log('비밀번호:', password);
+    // console.log('ID 저장:', rememberMe);
     
     try {
       const response = await login(email, password);
@@ -43,7 +44,7 @@ const LoginPage = () => {
       }
     } catch (error) {
       console.error('로그인 실패:', error);
-      alert('로그인에 실패하였습니다. 아이디와 비밀번호를 확인하세요.');
+      setShowAlertPopup('로그인에 실패하였습니다. 아이디와 비밀번호를 확인하세요.');
     }
   };
 
@@ -173,7 +174,20 @@ const LoginPage = () => {
       <Signup>
         아직 회원이 아니신가요? <span onClick={handleAddButtonClick}> 회원가입하기 </span>
       </Signup>
+
+      {showAlertPopup && (
+  <Modal isOpen={showAlertPopup} onClose={() => setShowAlertPopup(false)}>
+        <h3 style={{ textAlign: 'center',fontSize:'16px' }}>{showAlertPopup}</h3>
+        <ButtonContainer>
+          <ModalButton onClick={() => setShowAlertPopup(false)}>확인</ModalButton>
+          {/* <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton> */}
+        </ButtonContainer>
+      </Modal>  
+ 
+)}
     </Container>
+
+
   );
 };
 
@@ -376,4 +390,24 @@ const Signup = styled.span`
     color: #62B9EC;
   }
   
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+`;
+
+const ModalButton = styled.button`
+  background-color: #3563E9;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #a0dafb;
+  }
 `;

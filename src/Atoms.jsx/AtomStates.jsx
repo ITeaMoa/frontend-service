@@ -24,7 +24,12 @@ import { atom } from "jotai";
    });
 
    export const USER_PROFILE = atom({
-   
+    tags: [],
+      experiences: [],
+      avatarUrl: null,
+      headLine: "",
+      educations: [],
+      personalUrl: ""
     
    });
 

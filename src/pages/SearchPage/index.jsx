@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Nav from '../../components/Nav';
 import ProjectCard from '../../components/ProjectCard';
 import { useAtom } from 'jotai';
-import { feedTypeAtom } from '../../Atoms.jsx/AtomStates';
-
-
+import { feedTypeAtom, selectedProjectDetailAtom } from '../../Atoms.jsx/AtomStates';
+import { useAuth } from '../../context/AuthContext';
+import axios from '../../api/axios';
+import SearchFeed from './SearchFeed';
 //xxxxxxx
 const SearchPage = () => {
   const [searchResults, setSearchResults] = useState([]);
@@ -14,6 +15,7 @@ const SearchPage = () => {
   const navigate = useNavigate();
   const showSearch = true;
   const [feedType, setFeedType] = useAtom(feedTypeAtom);
+  const [selectedProjectDetail, setSelectedProjectDetail] = useAtom(selectedProjectDetailAtom);
 
   const useQuery = () => {
     return new URLSearchParams(useLocation().search);
@@ -23,11 +25,19 @@ const SearchPage = () => {
   const searchTerm = query.get("q");
   const tags = query.get("tags");
     
+  // const handleProjectClick = (project) => {
+  //   navigate(`/ApplyPage/${project.pk}`, { 
+  //     state: { sk: project.sk }
+  //   });
+  // };
+
+    
   const handleProjectClick = (project) => {
-    navigate(`/ApplyPage/${project.pk}`, { 
-      state: { sk: project.sk }
-    });
+    navigate(`/ApplyPage/${project.pk}`);
+    console.log(project);
+    setSelectedProjectDetail(project);
   };
+
 
   useEffect(() => {
     const fetchSearchItems = async () => {
@@ -74,24 +84,26 @@ const SearchPage = () => {
     navigate(`/ApplyPage/${project.pk}`);
   };
 
+  console.log(searchResults);
   return (
     <Container>
       <Nav showSearch={showSearch} />
       {searchResults.length > 0 ? (
-        <ProjectListWrapper>
-          {searchResults.map((project, index) => (
-            <ProjectCard
-              key={project.id || index}
-              project={project}
-              onClick={() => handleProjectClick(project)}
-              // onLikeClick={handleLikeClick}
-              onApplyClick={handleApplyClick}
-              isLoggedIn={!!user}
-              userId={user?.id}
-              feedType={feedType}
-            />
-          ))}
-        </ProjectListWrapper>
+        // <ProjectListWrapper>
+        //   {searchResults.map((project, index) => (
+        //     <ProjectCard
+        //       key={project.id || index}
+        //       project={project}
+        //       onClick={() => handleProjectClick(project)}
+        //       // onLikeClick={handleLikeClick}
+        //       onApplyClick={handleApplyClick}
+        //       isLoggedIn={!!user}
+        //       userId={user?.id}
+        //       feedType={feedType}
+        //     />
+        //   ))}
+        // </ProjectListWrapper>
+        <SearchFeed itemList={searchResults} setSearchResults={setSearchResults} />
       ) : (
         <NoResults>찾고자하는 검색어 "{searchTerm}"에 맞는 아이템이 없습니다.</NoResults>
       )}
@@ -114,11 +126,13 @@ const ProjectListWrapper = styled.div`
   justify-content: center;
   max-width: 1200px;
   margin: 0 auto;
+  margin-top: 300px;
 `;
 
 const NoResults = styled.div`
   text-align: center;
-  margin-top: 50px;
+  // margin-top: 50px;
+  margin-top: 300px;
   font-size: 18px;
   color: #666;
 `;

@@ -175,7 +175,7 @@ const AdditionalInfo = styled.div`
   font-size: 12px;
   color: #666;
   right: 15px;
-  bottom: 30px;
+  bottom: 10px;
 `;
 
 export { ProjectItem, ProjectHeader, HeaderItem, StyledFontAwesomeIcon2, Tags, Tag, Button2, AdditionalInfo };

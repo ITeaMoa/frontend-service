@@ -15,7 +15,7 @@ import CommentsSection from './CommentsSection'; // CommentsSection import 추�
 import RoleSelectionModal from '../../components/RoleSelectionModal';
 import AuthModal from '../../components/AuthModal';
 import { useAtom } from 'jotai';
-import { feedTypeAtom, selectedProjectDetailAtom, USER, selectedSavedProjectAtom } from '../../Atoms.jsx/AtomStates';
+import { feedTypeAtom, selectedProjectDetailAtom, USER, selectedSavedProjectAtom, USER_PROFILE } from '../../Atoms.jsx/AtomStates';
 
 
 
@@ -28,7 +28,6 @@ const ApplyPage = () => {
   //usestate : 컴포넌트 상태 관리에 씀
   //첫번째 요소: 현재 상태 값, 두번째 요소 : 상태를 없데이트하는 값 
   const [commentInput, setCommentInput] = useState('');
-  
   const [project, setProject] = useState(null);
   const showSearch = false;
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
@@ -39,31 +38,13 @@ const ApplyPage = () => {
    const nickname = user ? user.nickname : 'Unknown'; //사용자 닉네임 설정
   //  const [user, setUser] = useAtom(USER);
   //  const [, setIsLoggedIn] = useAtom(IS_LOGGED_IN);
-
   const [selectedSavedProject, setSelectedSavedProject] = useAtom(selectedSavedProjectAtom);
   const [popupDeleteMessage, setPopupDeleteMessage] = useState(false);
   const [feedType, setFeedType] = useAtom(feedTypeAtom);
   const [currentFeedType, setCurrentFeedType] = useState(feedType);
-
+  const [userProfile, setUserProfile] = useAtom(USER_PROFILE);
   const [selectedProjectDetail, setSelectedProjectDetail] = useAtom(selectedProjectDetailAtom);
 
-  // user.id를 콘솔에 출력
-  useEffect(() => {
-    if (user) {
-      console.log('User ID:', user.id); // 로그인한 사용자 ID 출력
-    } else {
-      console.log('사용자가 로그인하지 않았습니다.');
-    }
-  }, [user]); // user가 변경될 때마다 실행
-
-  useEffect(() => {
-    if (user) {
-      console.log('User:', user); // 로그인한 사용자 정보 출력
-      console.log('Project Creator ID:', project ? project.creatorId : 'Project is null'); // 프로젝트 생성자 ID 출력
-    } else {
-      console.log('사용자가 로그인하지 않았습니다.');
-    }
-  }, [user, project]); // user와 project가 변경될 때마다 실행
 
 
   // // fetchProjectDetails를 useCallback으로 래핑하여 메모이제이션
@@ -90,97 +71,36 @@ const ApplyPage = () => {
   //   fetchProjectDetails(); // 프로젝트 세부 정보를 가져옵니다.
   // }, [fetchProjectDetails]); // 의존성 배열에 fetchProjectDetails 추가
 //============================================================
-//기존 프로젝트 진짜 api연결하는거 
-  // const fetchProjectDetails = useCallback(async () => {
-  //   try {
-  //     const response = await axios.get(`/main?feedType=${sk}`); // sk 값을 사용
-  //     const selectedProject = response.data.find(item => item.pk === projectId); // 특정 프로젝트 찾기
-      
-  //     if (selectedProject) {
-  //       console.log("Selected Project:", selectedProject); // 프로젝트 정보 콘솔로 출력
-  //       setProject(selectedProject);
-  //     } else {
-  //       setProject(null);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching project details:", error);
-  //     setProject(null); // 오류 발생 시 상태를 null로 설정
-  //   }
-  // }, [projectId, sk]); // sk를 의존성 배열에 추가
-
-  //이것만 사용해도 될스도 있음. 위에거 삭제하고
-// useEffect(() => {
-//   setProject(selectedProjectDetail);
-// }, [selectedProjectDetail]);
-//   // setProject(selectedProjectDetail);   -> d아톰 이용    댓글 바뀔때도 리렌더링 되게 해야함 
-
-  //더미 데이터 이용한거 나중에 삭제 
+//존 프로젝트 진짜 api연결하는거 
   const fetchProjectDetails = useCallback(async () => {
-    // ... existing code ...
-    // 더미 데이터 사용
-    const selectedProject = items.find(item => item.pk === projectId); // 더미 데이터에서 특정 프로젝트 찾기
-    
-    if (selectedProject) {
+    try {
+      const response = await axios.get(`/main?feedType=${sk}`); // sk 값을 사용
+      const selectedProject = response.data.find(item => item.pk === projectId); // 특정 프로젝트 찾기
+      
+      if (selectedProject) {
         console.log("Selected Project:", selectedProject); // 프로젝트 정보 콘솔로 출력
         setProject(selectedProject);
-    } else {
+      } else {
         setProject(null);
-    }
-    // ... existing code ...
-}, [projectId]);
-
-
-  useEffect(() => {
-    fetchProjectDetails(); // 프로젝트 세부 정보를 가져옵니다.
-  }, [fetchProjectDetails]);
-
-
-// const handleLikeClick = (newLiked, newLikesCount) => {
-//   console.log(`Liked: ${newLiked}, Likes Count: ${newLikesCount}`);
-// };
-
-//  if (project) {
-//    console.log("project.sk:", project.sk);
-//  } else {
-//    console.log("project is null");
-//  }
-
-
-const handleCommentSubmit = async () => {
-  console.log("handleCommentSubmit 호출", { commentInput, project });
-  
-  if (commentInput.trim() && project) {
-    const newComment = {
-      userId: user ? user.id : null,
-      comment: commentInput,
-    };
-
-    console.log("댓글 내용:", newComment.comment);
-    console.log("Current feedType:", project.sk); // project.sk를 feedType으로 사용
-
-    try {
-      await axios.post(`/feed/${projectId}/comments`, newComment, {
-        params: { feedType: project.sk } // project.sk를 feedType 파라미터에 전달
-      });
-      // 업데이트 로직
-      setProject(prevProject => {
-        const updatedProject = {
-          ...prevProject,
-          comments: [...prevProject.comments, newComment]
-        };
-        fetchProjectDetails(); // 댓글 추가 후 데이터 재요청
-        console.log("Updated project state:", updatedProject);
-        return updatedProject;
-      });
-      setCommentInput('');
+      }
     } catch (error) {
-      console.error("댓글 제출 중 오류 발생:", error);
-      alert("댓글 제출에 실패했습니다.");
+      console.error("Error fetching project details:", error);
+      setProject(null); // 오류 발생 시 상태를 null로 설정
     }
-  } else {
-    console.log("댓글 입력이 없거나, project 데이터가 존재하지 않음", { commentInput, project });
-  }
-};
+  }, [projectId, sk]); // sk를 의존성 배열에 추가
+
+  //이것만 사용해도 될스도 있음. 위에거 삭제하고
+useEffect(() => {
+  setProject(selectedProjectDetail);
+}, [selectedProjectDetail]);
+  // setProject(selectedProjectDetail);   -> d아톰 이용    댓글 바뀔때도 리렌더링 되게 해야함 
+
+  
+  // useEffect(() => {
+  //   fetchProjectDetails(); // 프로젝트 세부 정보를 가져옵니다.
+  // }, [fetchProjectDetails]); // 의존성 배열에 fetchProjectDetails 추가
+
+console.log("project:", project);
 
 
   // 프로젝트가 로딩 중일 때
@@ -195,7 +115,7 @@ const handleCommentSubmit = async () => {
     // }
 
     if (!user) { // Check if user is logged in
-      setPopupMessage("로그인 후에 신청할 수 있습니다."); // Set popup message for login
+      // setPopupMessage("로그인 후에 신청할 수 있습니다."); // Set popup message for login
       setIsAuthModalOpen(true); // Show submission confirmation popup
       return; // Exit the function if not logged in
     }
@@ -245,7 +165,6 @@ const handleCommentSubmit = async () => {
 
     console.log('제출된 역할:', selectedRole); // 선택된 역할 로깅
     console.log('프로젝트 ID:', projectId); // 프로젝트 ID 로깅
-    console.log('사용자 ID:', user?.id); // 사용자 ID 로깅
 
     setIsRoleModalOpen(false);
 
@@ -349,16 +268,18 @@ const handleEdit = () => {
 const handleDelete = async () => {
   try {
     await axios.delete(
-      `/feed/${project.id}`,
+      `/feed/${project.pk}`,
       {
         params: {
-          feedType: 'PROJECT',
+          feedType: project.sk,
           userId: user.id
         }
       }
     );
     // 삭제 성공 후 원하는 동작 (예: 메인 페이지로 이동)
     alert('게시물이 삭제되었습니다.');
+    setPopupMessage(false);
+    navigate('/');
     // 예시: navigate('/') 또는 window.location.href = '/'
   } catch (error) {
     console.error('게시물 삭제 실패:', error);
@@ -367,7 +288,15 @@ const handleDelete = async () => {
 };
 
 
-
+const handleChatClick = () => {
+  if(user && user?.id !== project.userId) {
+    navigate(`/messagePage`, { state: { selectedPersonId: project.creatorId } });
+  } else if (user?.id === project.userId) {
+    return;
+  } else {
+    return;
+  } 
+  };
 
   return (
     <>
@@ -470,7 +399,7 @@ const handleDelete = async () => {
             )}
           </TagsSection>
 
-          {user && user.id !== project.userId ? (
+          {user && user.id === project.creatorId ? (
                     <AuthorActions>
                     <ActionButton onClick={handleEdit}>수정</ActionButton>
                     <ActionButton onClick={() => setPopupMessage(true)}>삭제</ActionButton>
@@ -483,14 +412,12 @@ const handleDelete = async () => {
         </Post>
 
         <PostDescription>
-
         {project.content}
-         
         </PostDescription>
     
         <AuthorSection>
           <ChatButton>
-            <FontAwesomeIcon icon={faComment} onClick={() => navigate(`/messagePage`, { state: { selectedPersonId: project.creatorId } })}/>
+            <FontAwesomeIcon icon={faComment} onClick={() => handleChatClick()}/>
  
           </ChatButton>
 
@@ -498,6 +425,21 @@ const handleDelete = async () => {
             <FontAwesomeIcon icon={faUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
             작성자: {project.nickname}
           </AuthorID>
+          {/* <AuthorID>
+  {userProfile.avatarUrl ? (
+    <img
+      src={encodeURI(userProfile.avatarUrl)}
+      alt="Profile Avatar"
+      style={{ width: '20px', height: '20px', borderRadius: '50%', marginRight: '6px' }}
+    />
+  ) : (
+    <FontAwesomeIcon
+      icon={faUser}
+      style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }}
+    />
+  )}
+  작성자: {project.nickname}
+</AuthorID> */}
           </AuthorSection>
         
 
@@ -508,7 +450,7 @@ const handleDelete = async () => {
           project={project} 
           user={user} 
           projectId={projectId} 
-          fetchProjectDetails={fetchProjectDetails} 
+          // fetchProjectDetails={fetchProjectDetails} 
           
         />
       </Container>
@@ -533,10 +475,10 @@ const handleDelete = async () => {
         />
       )}
        
-       {popupDeleteMessage&& (
+       {popupMessage && (
     <Modal
-      isOpen={!!popupDeleteMessage}
-      onClose={() => setPopupDeleteMessage('')}
+      isOpen={!!popupMessage}
+      onClose={() => setPopupMessage('')}
     showFooter={true}
     onConfirm={handleDelete}
     >

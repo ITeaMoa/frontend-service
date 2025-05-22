@@ -88,13 +88,13 @@ export const AuthProvider = ({ children }) => {
         password,
       });
   
-      console.log('응답 데이터:', response.data); // 응답 데이터 로그
+      // console.log('응답 데이터:', response.data); // 응답 데이터 로그
   
       if (response.status === 200) {
         const token = response.data.access_token; // JWT 
         const idToken = response.data.id_token; // id_token 가져오기
   
-        console.log('로그인 성공, JWT 토큰:', token); // JWT 로그
+        // console.log('로그인 성공, JWT 토큰:', token); // JWT 로그
   
         saveToken(token); // 로컬 스토리지에 JWT 저장
         setIsLoggedIn(true); // 로그인 상태 업데이트
@@ -112,7 +112,7 @@ export const AuthProvider = ({ children }) => {
         };
         
         setUser(userInfo);
-        console.log('로그인한 사용자 정보:', userInfo);
+        // console.log('로그인한 사용자 정보:', userInfo);
   
         // 사용자 정보를 로컬 스토리지에 저장
         sessionStorage.setItem('user', JSON.stringify(userInfo)); // 로컬 스토리지에 저장

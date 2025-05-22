@@ -65,8 +65,8 @@ const option3 = [
   const navigate = useNavigate();
   const location = useLocation(); // 현재 경로 확인을 위해 추가
   const { logout } = useAuth(); // logout 함수 가져오기
-  // const { isLoggedIn: authIsLoggedIn } = useAuth(); // AuthContext에서 isLoggedIn 가져오기 //나중에 넣기
-  const [authIsLoggedIn, setAuthIsLoggedIn] = useState(true); //나중에 삭제
+  const { isLoggedIn: authIsLoggedIn } = useAuth(); // AuthContext에서 isLoggedIn 가져오기 //나중에 넣기
+  // const [authIsLoggedIn, setAuthIsLoggedIn] = useState(true); //나중에 삭제
   const [feedType, setFeedType] = useAtom(feedTypeAtom);
   const [toggleActive, setToggleActive] = useAtom(toggleActiveAtom);
 
@@ -123,8 +123,8 @@ const option3 = [
 
 // 상태 변경 추적을 위한 useEffect 추가
 useEffect(() => {
-  console.log('toggleActive 상태 변경됨:', toggleActive);
-  console.log('현재 feedType:', feedType);
+  // console.log('toggleActive 상태 변경됨:', toggleActive);
+  // console.log('현재 feedType:', feedType);
 }, [toggleActive, feedType]);
 
 const handleToggleChange = () => {
@@ -146,7 +146,7 @@ const handleToggleChange = () => {
     if (e.key === 'Enter') {
         handleAddButtonClick();
     }
-    console.log('e.target.value', e.target.value);
+    // console.log('e.target.value', e.target.value);
   }
 
   // const handleAddButtonClick = () => {

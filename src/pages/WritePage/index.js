@@ -13,15 +13,11 @@ import { useAtom } from 'jotai';
 import { selectedSavedProjectAtom,feedTypeAtom } from '../../Atoms.jsx/AtomStates'; // Atom import
 
 
-
-
-
-const WritePage = ({ feedType: initialFeedType }) => {
+const WritePage = () => {
   const location = useLocation();
-  const { project } = location.state || {}; // ProjectItemComponent에서 전달된 프로젝트 정보 가져오기
   // const query = new URLSearchParams(location.search);
   // const feedTypeFromQuery = query.get('feedType'); // 쿼리 파라미터에서 feedType 가져오기
-  const [feedType, setFeedType] = useAtom(feedTypeAtom);
+  const [feedType, ] = useAtom(feedTypeAtom);
 
   // const [feedType, setFeedType] = useState(feedTypeFromQuery || initialFeedType || 'PROJECT'); // 쿼리 파라미터가 없으면 초기값 사용
   const [selectedSavedProject] = useAtom(selectedSavedProjectAtom); // 아톰에서 프로젝트 정보 가져오기
@@ -30,16 +26,6 @@ const WritePage = ({ feedType: initialFeedType }) => {
   const [selectedTags, setSelectedTags] = useState(selectedSavedProject.length > 0 ? selectedSavedProject.tags : []);
   // const [period, setPeriod] = useState('');
   console.log('selectedSavedProject', selectedSavedProject);
-
-  // feedType 변경 시 로그 출력
-  useEffect(() => {
-    console.log('현재 feedType:', feedType);
-  }, [feedType]);
-
-  // 선택된 역할 변경 시 로그 출력
-  useEffect(() => {
-    console.log('현재 선택된 역할:', selectedRoles);
-  }, [selectedRoles]);
 
   const navigate = useNavigate();
   const [title, setTitle] = useState(selectedSavedProject ? selectedSavedProject.title : ''); // 프로젝트 제목 초기화
@@ -54,106 +40,12 @@ const WritePage = ({ feedType: initialFeedType }) => {
   const nickname = user ? user.nickname : 'Unknown'; //사용자 닉네임 설정
   // const [participants, setParticipants] = useState(0);
   const showSearch = false;
-
+  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열기 상태
   const [recruitmentNum, setRecruitmentNum] = useState(0); // recruitmentNum 상태 추가
 
-  
-console.log('selectedSavedProject', selectedSavedProject);
   // const [isProject, setIsProject] = useState(true); // 프로젝트 여부 상태 추가
 
-  const handleSubmit = async (e, isTemporary) => {
-    e.preventDefault();
-
-    // user가 존재하는지 확인
-    if (!user || !user.id) {
-        alert('로그인 상태가 아닙니다. 로그인 후 다시 시도해주세요.');
-        return; // 로그인 상태가 아닐 경우 함수 종료
-    }
-
-    const missingFields = [];
-
-    if (!title.trim()) {
-        missingFields.push('제목');
-    }
-    if (!description.trim()) {
-        missingFields.push('본문');
-    }
-    if (!deadline) {
-        missingFields.push('마감일자');
-    }
-    if (!progress.trim()) {
-        missingFields.push('진행장소');
-    }
-    if (selectedRoles.length === 0) {
-        missingFields.push('모집 역할');
-    }
-    if (selectedTags.length === 0) {
-        missingFields.push('태그');
-    }
-    if (!period) {
-        missingFields.push('진행기간');
-    }
-
-    if (missingFields.length > 0) {
-        alert(`다음 필드를 올바르게 입력해주세요: ${missingFields.join(', ')}`);
-        return;
-    }
-
-    const deadlineISO = new Date(deadline).toISOString();
-
-    const periodValue = parseInt(period, 10);
-
-    const formData = new FormData();
-    if (image) {
-      formData.append('image', image);
-    }
-
-    const dataToSend = {
-        title,
-        content: description,
-        postStatus: !isTemporary,
-        savedFeed: isTemporary,
-        tags: selectedTags,
-        recruitmentNum: recruitmentNum > 0 ? recruitmentNum : 1,
-        deadline: deadlineISO,
-        place: progress,
-        period: periodValue,
-        roles: selectedRoles.length > 0 ? selectedRoles.reduce((acc, role) => {
-            acc[role.role.toLowerCase()] = role.count;
-            return acc;
-        }, {}) : {},
-        creatorId: user ? user.id : 'Unknown',
-        nickname
-    };
-    formData.append('feed', JSON.stringify(dataToSend));
-
-
-    console.log('전송할 데이터:', JSON.stringify(dataToSend, null, 2));
-
-   
-    try {
-      await axios.post(
-        '/feed/create',
-        formData,
-        {
-          params: {
-            feedType: 'PROJECT',
-            userId: user.id
-          },
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        }
-      );
-      console.log('업로드 성공!');
-      navigate('/');
-    } catch (error) {
-      console.log('업로드 실패!');
-    }
-  };
-
-
-
+  
 
   const option1 = [
     { value: '기간 미정', label: '기간 미정' },
@@ -234,6 +126,103 @@ const option3 = [
   { value: '데이터마이닝', label: '데이터마이닝' },
   { value: 'Solidity', label: 'Solidity' },
 ];
+
+// 선택된 역할 변경 시 로그 출력
+useEffect(() => {
+  console.log('현재 선택된 역할:', selectedRoles);
+}, [selectedRoles]);
+
+  const handleSubmit = async (e, isTemporary) => {
+    e.preventDefault();
+
+    // user가 존재하는지 확인
+    if (!user || !user.id) {
+        alert('로그인 상태가 아닙니다. 로그인 후 다시 시도해주세요.');
+        return;
+    }
+
+    const missingFields = [];
+
+    // 각 필드가 존재하는지 먼저 확인
+    if (!title || !title.trim()) {
+        missingFields.push('제목');
+    }
+    if (!description || !description.trim()) {
+        missingFields.push('본문');
+    }
+    if (!deadline) {
+        missingFields.push('마감일자');
+    }
+    if (!progress || !progress.trim()) {
+        missingFields.push('진행장소');
+    }
+    if (!selectedRoles || selectedRoles.length === 0) {
+        missingFields.push('모집 역할');
+    }
+    if (!selectedTags || selectedTags.length === 0) {
+        missingFields.push('태그');
+    }
+    if (!period) {
+        missingFields.push('진행기간');
+    }
+
+    if (missingFields.length > 0) {
+        alert(`다음 필드를 올바르게 입력해주세요: ${missingFields.join(', ')}`);
+        return;
+    }
+
+    const deadlineISO = new Date(deadline).toISOString();
+    const periodValue = parseInt(period, 10);
+
+    const formData = new FormData();
+    if (image) {
+      formData.append('image', image);
+    }
+
+    const dataToSend = {
+        title,
+        content: description,
+        postStatus: !isTemporary,
+        savedFeed: isTemporary,
+        tags: selectedTags,
+        recruitmentNum: recruitmentNum > 0 ? recruitmentNum : 1,
+        deadline: deadlineISO,
+        place: progress,
+        period: periodValue,
+        roles: selectedRoles.length > 0 ? selectedRoles.reduce((acc, role) => {
+            acc[role.role.toLowerCase()] = role.count;
+            return acc;
+        }, {}) : {},
+        creatorId: user ? user.id : 'Unknown',
+        nickname
+    };
+
+    formData.append('feed', JSON.stringify(dataToSend));
+   
+    try {
+      await axios.post(
+        '/feed/create',
+        formData,
+        {
+          params: {
+            feedType: feedType,
+            userId: user.id
+          },
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        //   headers: {
+        //     'Content-Type': 'application/json'  // multipart/form-data 대신 application/json 사용
+        // }
+        }
+      );
+      console.log('업로드 성공!');
+      navigate('/');
+    } catch (error) {
+      console.log('업로드 실패!');
+    }
+  };
+
 useEffect(() => {
   if (selectedSavedProject && selectedSavedProject.roles) {
     // roles: { backend: 2, frontend: 1 } → [{ role: 'backend', count: 2 }, ...]
@@ -241,18 +230,18 @@ useEffect(() => {
       .map(([role, count]) => ({ role, count }));
     setSelectedRoles(rolesArray);
   }
-}, [selectedSavedProject]);
-console.log('selectedRoles', selectedRoles);
-
-useEffect(() => {
   if (selectedSavedProject && selectedSavedProject.deadline) {
     // 날짜만 추출 (YYYY-MM-DD)
     const dateOnly = selectedSavedProject.deadline.split('T')[0];
     setDeadline(dateOnly);
   }
+
+  if (selectedSavedProject && selectedSavedProject.tags) {
+    setSelectedTags(selectedSavedProject.tags);
+  }
+  
 }, [selectedSavedProject]);
 
-const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열기 상태
 
 const handleAddTagClick = () => {
     setIsModalOpen(true); 
@@ -273,7 +262,6 @@ const handleRoleSelect = (option, count) => {
     const newRecruitmentNum = [...updatedRoles, { role: option.label, count }].reduce((total, r) => total + r.count, 0);
     setRecruitmentNum(newRecruitmentNum);
 };
-
 
 
 // Modal 내부의 Dropdown을 별도의 컴포넌트로 분리
@@ -330,16 +318,7 @@ const handlePeriodSelect = (selectedOption) => {
     setPeriod(selectedOption.value);
 };
 
-const handleToggleChange = (newFeedType) => {
-    console.log("Feed type changed to:", newFeedType);
-    setFeedType(newFeedType);
-    // handleSubmit을 호출하여 전송을 시도할 수 있습니다.
-    // handleSubmit(newFeedType)와 같이 인자를 전달합니다.
-};
 
-useEffect(() => {
-    console.log('Current selectedTags:', selectedTags);
-}, [selectedTags]);
 
 const handleDeadlineChange = (e) => {
     const selectedDate = new Date(e.target.value);
@@ -380,19 +359,16 @@ const handleImageRemove = () => {
   
 
         <Form>
-     
-          
+        
           <TitleInput>
           <InputField
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="제목을 적어주세요"
           />
-          
           </TitleInput>
           </Form>
-        
-
+      
         <Container>
         <Form> 
         <Title>
@@ -401,8 +377,6 @@ const handleImageRemove = () => {
     
         <InputBox>
       
-
-
           <InputWrapper>
 
           <Label>마감일자</Label>
@@ -535,7 +509,10 @@ const handleImageRemove = () => {
         </Body>
 
         <Submit>
-        <SaveButton onClick={(e) => handleSubmit(e, true)}>임시저장</SaveButton>
+        {!selectedSavedProject || selectedSavedProject.length === 0 && (
+  <SaveButton onClick={(e) => handleSubmit(e, true)}>임시저장</SaveButton>
+)}
+        {/* <SaveButton onClick={(e) => handleSubmit(e, true)}>임시저장</SaveButton> */}
         <SaveButton onClick={(e) => handleSubmit(e, false)}>저장하기</SaveButton>
         </Submit>
       </WriteWrapper>

@@ -77,7 +77,6 @@ const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle
   const handleClick = async (e) => {
     console.log('클릭됨');
     e.stopPropagation(); // 이벤트 전파 방지
-    console.log(liked);
     const newLiked = !liked;
     const newLikesCount = newLiked ? likesCount + 1 : Math.max(likesCount - 1, 0);
 

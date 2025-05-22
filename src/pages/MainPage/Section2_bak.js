@@ -11,9 +11,7 @@ import Modal from '../../components/Modal';
 import { useAuth } from '../../context/AuthContext'
 import axios from '../../api/axios';
 import AuthModal from '../../components/AuthModal';
-// import { likedProjectsAtom } from '../../Atoms/AtomState';
-import { useAtom } from 'jotai';
-import { likedProjectsAtom, IS_LOGGED_IN, USER } from '../../Atoms.jsx/AtomStates';  
+
 
 const Section2 = ({ feedType }) => {
   const location = useLocation(); // 현재 위치 가져오기
@@ -30,8 +28,7 @@ const Section2 = ({ feedType }) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [popupMessage, setPopupMessage] = useState(''); // 팝업 메시지 상태
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
-  // const [likedProjects, setLikedProjects] = useState([]);
-  const [likedProjects, setLikedProjects] = useAtom(likedProjectsAtom);
+  const [likedProjects, setLikedProjects] = useState([]);
 
 
 

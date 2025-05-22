@@ -65,8 +65,8 @@ const option3 = [
   const navigate = useNavigate();
   const location = useLocation(); // 현재 경로 확인을 위해 추가
   const { logout } = useAuth(); // logout 함수 가져오기
-  const { isLoggedIn: authIsLoggedIn } = useAuth(); // AuthContext에서 isLoggedIn 가져오기 //나중에 넣기
-  // const [authIsLoggedIn, setAuthIsLoggedIn] = useState(true); //나중에 삭제
+  // const { isLoggedIn: authIsLoggedIn } = useAuth(); // AuthContext에서 isLoggedIn 가져오기 //나중에 넣기
+  const [authIsLoggedIn, setAuthIsLoggedIn] = useState(true); //나중에 삭제
   const [feedType, setFeedType] = useAtom(feedTypeAtom);
   const [toggleActive, setToggleActive] = useAtom(toggleActiveAtom);
 

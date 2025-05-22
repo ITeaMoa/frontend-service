@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
 import Nav from "../../components/Nav";
-import Section1 from "./Section1";
-import Section2 from "./Section2";
+import Section1 from "./section1";
+import Section2 from "./section2";
 // import Section2 from "./Section2";
 import { useLocation, useNavigate } from 'react-router-dom';
 // import axios from 'axios';

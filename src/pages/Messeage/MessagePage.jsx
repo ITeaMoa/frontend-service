@@ -33,24 +33,6 @@ useEffect(() => {
   } 
 }, [location.state?.selectedPersonId]);
 
-  // 메시지 목록 데이터
-  // const messageList = [
-  //   { id: 1, name: '전상연', messageCount: 12 },
-  //   { id: 2, name: '박보현', messageCount: 7 },
-  //   { id: 3, name: '김보명', messageCount: 25 },
-  //   { id: 4, name: '원터', messageCount: 0 },
-  // ];
-
-
-
-  // const handlePersonClick = async (personId) => {
-  //   setSelectedPerson(personId);
-  //   setSelectedPersonId(personId);
-  //   const response = await axios.get('/message/list', {
-  //     params: { pk: personId }
-  //   });
-  //   setMessageList(response.data);
-  // };
 
   const handlePersonClick = async (personId) => {
     try {
@@ -59,7 +41,7 @@ useEffect(() => {
       
       const response = await axios.get('/message', {
         params: {
-           recipientId: personId,      // f8d12c2e-954f-455e-a9ca-0d8235dfd8c5 같은 형식
+          recipientId: personId,      // f8d12c2e-954f-455e-a9ca-0d8235dfd8c5 같은 형식
           userId: user.id    // 현재 로그인한 사용자 ID
         }
       });
@@ -80,53 +62,16 @@ useEffect(() => {
     setNewMessage('');
   };
 
-  // useEffect(() => {
-  //   const getMessage = async () => {
-  //     try {
-  //       const response = await axios.get('/message/list', {
-  //         params: { pk: user.id }
-  //       });
-  //       const list = Object.entries(response.data).map(([userId, nickname]) => ({
-  //         id: userId,
-  //         name: nickname
-  //       }));
-  //       setPersonList(list);
-  //       console.log(list);
-     
-  //       // 기본 선택값 설정 (예: 첫 번째 사람)
-  //       if (list.length > 0) setSelectedPerson(list[0].id);
 
-  //       const countResponse = await axios.get('/message/count', {
-  //         params: { pk: user.id }
-  //       });
-  //       console.log("countResponse", countResponse);
-
-  //       const countData = countResponse.data;
-  //       console.log("countData", countData);
-  //       const mergedPersonList = list.map(person => ({
-  //         ...person,
-  //         count: countData[person.id] !== undefined ? countData[person.id] : "0"
-  //       }));
-
-  //       setPersonList(mergedPersonList);
-  //       console.log("mergedPersonList", mergedPersonList);
-
-     
-  //     } catch (error) {
-  //       console.error('메시지 가져오기 오류:', error);
-  //       setPersonList([]);
-  //     }
-  //   };
-  //   getMessage();
-  // }, [user?.id]);
-
-  // 1. getMessage 함수 분리
 const getMessage = async () => {
   try {
     const response = await axios.get('/message/list', {
       params: { pk: user.id }
     });
-    const list = Object.entries(response.data).map(([userId, nickname]) => ({
+    console.log("response", response.data);
+    const data = response.data || {};
+    
+    const list = Object.entries(data).map(([userId, nickname]) => ({
       id: userId,
       name: nickname
     }));
@@ -151,7 +96,7 @@ const getMessage = async () => {
   }
 };
 
-// 2. useEffect에서 호출
+
 useEffect(() => {
   getMessage();
 }, [user?.id]);

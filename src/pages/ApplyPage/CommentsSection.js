@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-regular-svg-icons';
 import styled from 'styled-components';
@@ -20,19 +20,65 @@ const [editCommentInput, setEditCommentInput] = useState('');
 //  const [project, setProject] = useState(null);
   const [project, setProject] = useState(null);
   const [comments, setComments] = useState(selectedProjectDetail?.comments || []);
-console.log(comments)
+console.log("comments:", comments)
   // setProject(selectedProjectDetail);
   //projectId를 -> 여기서 찾아도 될듯/ comment도?
 
+  // const fetchProjectDetails = async () => {
+  //   try {
+    
+      
+  //     if (selectedProjectDetail) {
+  //       console.log("selectedProjectDetail:", selectedProjectDetail);
+  //       const response = await axios.get(`/main?feedType=${selectedProjectDetail.sk}`);
+  //     const selectedProject = response.data.find(item => item.pk === projectId);
+
+  //     for (const comment of selectedProject.comments) {
+  //       const commentId = comment.commentId;
+  //       const replyIdResponse = await axios.get(`/feed/${projectId}/comments/${commentId}/replies`);
+  //       console.log("대댓글 아이디 받아오기:", replyIdResponse.data);
+  //       setReplies(replyIdResponse.data);
+  //     }
+  //       console.log("Selected Project:", selectedProject);
+  //       setSelectedProjectDetail(selectedProject);
+  //       setComments(selectedProject.comments || []);
+   
+  //     } else {
+  //       setSelectedProjectDetail(null);
+  //       setComments([]);
+  //       setReplies([]);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching project details:", error);
+  //     setSelectedProjectDetail(null);
+  //     setComments([]);
+  //     setReplies([]);
+  //   }
+  // };
+
   const fetchProjectDetails = async () => {
     try {
-      const response = await axios.get(`/main?feedType=${selectedProjectDetail.sk}`);
-      const selectedProject = response.data.find(item => item.pk === projectId);
-      
-      if (selectedProject) {
-        console.log("Selected Project:", selectedProject);
+      if (selectedProjectDetail) {
+        console.log("selectedProjectDetail:", selectedProjectDetail);
+        const response = await axios.get(`/main?feedType=${selectedProjectDetail.sk}`);
+        const selectedProject = response.data.find(item => item.pk === projectId);
+  
+        // 각 댓글에 대한 대댓글을 가져와서 구조화
+        const commentsWithReplies = await Promise.all(
+          selectedProject.comments.map(async (comment) => {
+            const replyResponse = await axios.get(`/feed/${projectId}/comments/${comment.commentId}/replies`);
+            console.log("대댓글 아이디 받아오기:", replyResponse.data);
+            return {
+              ...comment,
+              replies: replyResponse.data
+            };
+          })
+        );
+  
+        console.log("Selected Project with replies:", commentsWithReplies);
         setSelectedProjectDetail(selectedProject);
-        setComments(selectedProject.comments || []);
+        setComments(commentsWithReplies);
+        // setReplies는 더 이상 필요하지 않음
       } else {
         setSelectedProjectDetail(null);
         setComments([]);
@@ -43,6 +89,10 @@ console.log(comments)
       setComments([]);
     }
   };
+
+  useEffect(() => {
+    fetchProjectDetails();
+  }, []);
 
   const handleCommentSubmit = async () => {
     console.log("handleCommentSubmit 호출", { commentInput, project });
@@ -119,6 +169,9 @@ console.log(comments)
           }
         ]
       }));
+
+      const replyIdResponse = await axios.get(`/feed/${projectId}/comments/${commentId}/replies`);
+      console.log("대댓글 아이디 받아오기:", replyIdResponse.data);
   
       // 입력 필드 초기화
       setReplyInput(prev => ({ ...prev, [commentId]: '' }));
@@ -139,16 +192,18 @@ console.log(comments)
 
 const handleDeleteReply = async (commentId, replyId, userId) => {
   console.log("handleDeleteReply 호출", { commentId, replyId, userId });
+
   try {
     await axios.delete(
       `/feed/${projectId}/comments/${commentId}/replies/${replyId}`,
       { params: { userId } }
     );
     // 성공 시 프론트 상태도 갱신
-    setReplies(prev => ({
-      ...prev,
-      [commentId]: prev[commentId].filter(reply => reply.id !== replyId)
-    }));
+    // setReplies(prev => ({
+    //   ...prev,
+    //   [commentId]: prev[commentId].filter(reply => reply.id !== replyId)
+    // }));
+    await fetchProjectDetails();
   } catch (error) {
     console.error('대댓글 삭제 실패:', error);
     alert('대댓글 삭제에 실패했습니다.');
@@ -313,40 +368,36 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
                 
               </Actions>
 
-                {replies[comment.commentId] && replies[comment.commentId].map((reply, idx) => {
-                                  const replyDateObj = new Date(reply.timestamp);
-                                  const replyFormattedDate = isNaN(replyDateObj) ? '' : replyDateObj.toLocaleDateString();
-                                  const replyFormattedTime = isNaN(replyDateObj) ? '' : replyDateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                                  return (
-                                    <ReplyBox key={idx}>
-                                      <Users>
-                                        <FontAwesomeIcon icon={faUser} style={{ fontSize: '18px', marginRight: '6px',}} />
-                                        <Timestamp>
-                                          <strong style={{  }}>{reply.nickname}</strong>
-                                          <span style={{ fontSize: 'small', color: '#aaa', marginLeft: 8 }}>
-                                            {replyFormattedDate} {replyFormattedTime}
-                                          </span>
-                                        </Timestamp>
-                                      </Users>
-                                      <Comments>
-                                        {reply.deleted ? (
-                                          <DeletedBox>삭제된 댓글입니다</DeletedBox>
-                                        ) : (
-                                          reply.comment
-                                        )}
-                                      </Comments>
-                                      {!reply.deleted && (
-                                        <Actions>
-                                          {/* <ActionButton onClick={() => handleEditReplyStart()}>수정</ActionButton> */}
-                                          <ActionButton onClick={() => handleDeleteReply(comment.commentId, reply.id, user.id)}>삭제</ActionButton>
-                                          {/* <ActionButton onClick={() => handleDeleteReply(comment.id, reply.id, user.id)}>
-                  삭제
-                </ActionButton> */}
-                                        </Actions>
-                                      )}
-                                    </ReplyBox>
-                                  );
-                                })}
+                {comment.replies && comment.replies.map((reply, idx) => {
+                  const replyDateObj = new Date(reply.timestamp);
+                  const replyFormattedDate = isNaN(replyDateObj) ? '' : replyDateObj.toLocaleDateString();
+                  const replyFormattedTime = isNaN(replyDateObj) ? '' : replyDateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                  return (
+                    <ReplyBox key={idx}>
+                      <Users>
+                        <FontAwesomeIcon icon={faUser} style={{ fontSize: '18px', marginRight: '6px',}} />
+                        <Timestamp>
+                          <strong style={{  }}>{reply.nickname}</strong>
+                          <span style={{ fontSize: 'small', color: '#aaa', marginLeft: 8 }}>
+                            {replyFormattedDate} {replyFormattedTime}
+                          </span>
+                        </Timestamp>
+                      </Users>
+                      <Comments>
+                        {reply.deleted ? (
+                          <DeletedBox>삭제된 댓글입니다</DeletedBox>
+                        ) : (
+                          reply.content
+                        )}
+                      </Comments>
+                      {!reply.deleted && user.id === reply.userId && (
+                        <Actions>
+                          <ActionButton onClick={() => handleDeleteReply(comment.commentId, reply.replyId, user.id)}>삭제</ActionButton>
+                        </Actions>
+                      )}
+                    </ReplyBox>
+                  );
+                })}
 
                 {/* 대댓글 입력창 */}
                 {showReplyInput[comment.commentId] && (

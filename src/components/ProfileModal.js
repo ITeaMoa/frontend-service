@@ -187,26 +187,58 @@ const ProfileModal = ({ isOpen, onClose, userProfile, setUserProfile, selectedFi
         />
 
         <Label>기술 스택 <span>*</span></Label>
-        <Dropdown 
+        {/* <Dropdown 
           options={option3} 
           value={(userProfile.tags ?? []).map(tag => ({ value: tag, label: tag }))}
           placeholder={(userProfile.tags?.length ?? 0) > 0 ? userProfile.tags.join(', ') : "태그를 선택하시오"}
           dropdownType="main"
-          onTagSelect={(selectedTags) => {
-            console.log('선택된 태그:', selectedTags);
-            const tagsArray = Array.isArray(selectedTags) ? selectedTags : [selectedTags];
-            const newTags = tagsArray.map(tag => ({ value: tag.value, label: tag.label }));
+          // onTagSelect={(selectedTags) => {
+          //   console.log('선택된 태그:', selectedTags);
+          //   const tagsArray = Array.isArray(selectedTags) ? selectedTags : [selectedTags];
+          //   const newTags = tagsArray.map(tag => ({ value: tag.value, label: tag.label }));
 
-            setUserProfile(prevState => ({
-              ...prevState,
-              tags: [
-                ...((prevState?.tags ?? [])),
-                ...newTags.filter(newTag => 
-                  newTag && !prevState?.tags?.some(existingTag => existingTag && existingTag.value === newTag.value)
-                )
-              ]
-            }));
-          }}
+          //   setUserProfile(prevState => ({
+          //     ...prevState,
+          //     tags: [
+          //       ...((prevState?.tags ?? [])),
+          //       ...newTags.filter(newTag => 
+          //         newTag && !prevState?.tags?.some(existingTag => existingTag && existingTag.value === newTag.value)
+          //       )
+          //     ]
+          //   }));
+         
+        /> */}
+
+        <Dropdown 
+
+        options={option3} 
+        value={(userProfile.tags ?? []).map(tag => ({ value: tag, label: tag }))}
+        // placeholder={(userProfile.tags?.length ?? 0) > 0 ? userProfile.tags.join(', ') : "태그를 선택하시오"}
+        placeholder={
+          (userProfile.tags?.length ?? 0) > 0
+            ? userProfile.tags.map(tag =>
+                typeof tag === 'string'
+                  ? tag
+                  : (tag.value || '')
+              ).join(', ')
+            : "태그를 선택하시오"
+        }
+        dropdownType="profile"
+        onTagSelect={(selectedTags) => {
+          console.log('선택된 태그:', selectedTags);
+          const tagsArray = Array.isArray(selectedTags) ? selectedTags : [selectedTags];
+          const newTags = tagsArray.map(tag => ({ value: tag.value, label: tag.label }));
+
+          setUserProfile(prevState => ({
+            ...prevState,
+            tags: [
+              ...((prevState?.tags ?? [])),
+              ...newTags.filter(newTag => 
+                newTag && !prevState?.tags?.some(existingTag => existingTag && existingTag.value === newTag.value)
+              )
+            ]
+          }));
+        }}
         />
 
         <Label>학교/전공</Label>

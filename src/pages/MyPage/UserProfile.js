@@ -12,7 +12,7 @@ import { useAuth } from '../../context/AuthContext'; // AuthContext에서 useAut
 
 
 
-const UserProfile = ({  setIsProfileVisible, setShowAlertPopup}) => {
+const UserProfile = ({  setIsProfileVisible}) => {
 
     const [popupMessage, setPopupMessage] = useState(false);
     const [isEditingNickname, setIsEditingNickname] = useState(false);
@@ -27,6 +27,7 @@ const UserProfile = ({  setIsProfileVisible, setShowAlertPopup}) => {
     const [showImageEdit, setShowImageEdit] = useState(false);
     const fileInputRef = useRef();
     const [isEditingPassword, setIsEditingPassword] = useState(false);
+    const [newTags, setNewTags] = useState([]);
 
     const option3 = [
         { value: '웹', label: '웹' },
@@ -204,18 +205,29 @@ useEffect(() => {
       if (selectedFile) {
         data.append('file', selectedFile);
       }
-  
+      console.log("newTags", newTags);
+      console.log("userProfile.tags", userProfile.tags);
       // 백엔드가 요구하는 구조로 프로필 데이터를 구성합니다.
       const profileData = {
         // pk: `USER#${user.id}`, // 사용자 id를 이용하여 pk 구성
+
         sk: "PROFILE#",
         entityType: "USER",
         timestamp: new Date().toISOString(), // 현재 시간을 ISO 형식으로
         avatarUrl: userProfile.avatarUrl ? userProfile.avatarUrl : null,
         headLine: userProfile.headLine || '',
-        tags: Array.isArray(userProfile.tags)
-          ? userProfile.tags.map(tag => (tag.value ? tag.value : tag))
-          : [],
+        // tags: Array.isArray(userProfile.tags)
+        //   ? userProfile.tags.map(tag => (tag.value ? tag.value : tag))
+        //   : [],
+        // tags: userProfile.tags 
+        // ? [...new Set(userProfile.tags.map(tag => tag.value || tag))] // 중복 제거
+        // : [],
+        tags: newTags.tags ? newTags.tags.map(tag => {
+          if (typeof tag === 'string') {
+            return tag;
+          }
+          return tag.value || tag;
+        }) : [],
         educations: Array.isArray(userProfile.educations)
           ? userProfile.educations
           : [],
@@ -396,10 +408,25 @@ useEffect(() => {
           dropdownType="profile"
           onTagSelect={(selectedTags) => {
             console.log('선택된 태그:', selectedTags);
+    
             const tagsArray = Array.isArray(selectedTags) ? selectedTags : [selectedTags];
             const newTags = tagsArray.map(tag => ({ value: tag.value, label: tag.label }));
 
-            setUserProfile(prevState => ({
+            // setUserProfile(prevState => ({
+            //   ...prevState,
+            //   tags: newTags.map(tag => tag.value || tag) // 모든 선택된 태그 저장
+            // }));
+            // setUserProfile(prevState => ({
+            //   ...prevState,
+            //   tags: [
+            //     ...((prevState?.tags ?? [])),
+            //     ...newTags.filter(newTag => 
+            //       newTag && !prevState?.tags?.some(existingTag => existingTag && existingTag.value === newTag.value)
+            //     )
+            //   ]
+            // }));
+
+            setNewTags(prevState => ({
               ...prevState,
               tags: [
                 ...((prevState?.tags ?? [])),
@@ -408,6 +435,10 @@ useEffect(() => {
                 )
               ]
             }));
+      
+            
+        
+          
           }}
         />
         </ProfileField>

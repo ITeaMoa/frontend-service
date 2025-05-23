@@ -134,7 +134,7 @@ const handleSignup = async () => {
       });
       
       // 응답 데이터의 구조에 맞게 메시지 처리
-      console.log('회원가입 응답:', response.data);
+      // console.log('회원가입 응답:', response.data);
       // alert(response.data.message); // 서버에서 반환된 메시지를 사용자에게 알림
       setShowAlertPopup(response.data.message);
       // MainPage로 닉네임을 전달하며 이동

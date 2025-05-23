@@ -6,6 +6,7 @@ import Modal from '../../components/Modal';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faPaperclip } from '@fortawesome/free-solid-svg-icons';
 // import axios from 'axios';
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
@@ -336,7 +337,8 @@ const handleImageChange = (e) => {
   const file = e.target.files[0];
   if (file) {
     setImage(file);
-    setImagePreview(URL.createObjectURL(file));
+    // setImagePreview(URL.createObjectURL(file));
+    setImagePreview(file); // 파일 객체 자체를 저장
   }
 };
 
@@ -486,21 +488,39 @@ const handleImageRemove = () => {
 
 <div style={{ marginTop: '16px' }}>
         <ImageButton type="button" onClick={handleImageButtonClick}>
-          이미지 첨부
+          파일 첨부
         </ImageButton>
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/*"
+          // accept="image/*"
+            accept="image/jpeg,image/png,image/gif,application/pdf"
           style={{ display: 'none' }}
           onChange={handleImageChange}
         />
       </div>
-
+{/* 
       {imagePreview && (
   <ImagePreviewWrapper>
     <PreviewImage src={imagePreview} alt="미리보기" />
     <RemoveButton type="button" onClick={handleImageRemove} aria-label="이미지 삭제">
+      ×
+    </RemoveButton>
+  </ImagePreviewWrapper>
+)} */}
+    {imagePreview && (
+  <ImagePreviewWrapper>
+    {imagePreview.type?.includes('image/') ? (
+      // 이미지 파일인 경우
+      <PreviewImage src={URL.createObjectURL(imagePreview)} alt="미리보기" />
+    ) : (
+      // PDF 등 다른 파일인 경우
+      <FilePreview>
+        <FontAwesomeIcon icon={faPaperclip} style={{ marginRight: '8px' }} />
+        <FileName>{imagePreview.name}</FileName>
+      </FilePreview>
+    )}
+    <RemoveButton type="button" onClick={handleImageRemove} aria-label="파일 삭제">
       ×
     </RemoveButton>
   </ImagePreviewWrapper>
@@ -853,4 +873,19 @@ const RemoveButton = styled.button`
   text-align: center;
   padding: 0;
   z-index: 2;
+`;
+
+const FilePreview = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  width: 100%;
+`;
+
+const FileName = styled.span`
+  font-size: 14px;
+  color: #333;
+  word-break: break-all;
 `;

@@ -44,6 +44,7 @@ const ApplyPage = () => {
   const [currentFeedType, setCurrentFeedType] = useState(feedType);
   const [userProfile, setUserProfile] = useAtom(USER_PROFILE);
   const [selectedProjectDetail, setSelectedProjectDetail] = useAtom(selectedProjectDetailAtom);
+  const [showAlertPopup, setShowAlertPopup] = useState('');
 
 
 
@@ -115,6 +116,7 @@ console.log("project:", project);
     // }
 
     if (!user) { // Check if user is logged in
+      console.log("로그인 후에 신청할 수 있습니다."); // Set popup message for logins
       // setPopupMessage("로그인 후에 신청할 수 있습니다."); // Set popup message for login
       setIsAuthModalOpen(true); // Show submission confirmation popup
       return; // Exit the function if not logged in
@@ -141,8 +143,8 @@ console.log("project:", project);
       // 선택한 프로젝트의 pk와 비교
       const isAlreadyApplied = appliedProjects.includes(project.pk);
       if (isAlreadyApplied) {
-        setPopupMessage("이미 신청한 프로젝트입니다."); // 이미 신청한 경우 메시지 설정
-        setIsAuthModalOpen(true); // 제출 확인 팝업 표시
+        setShowAlertPopup("이미 신청한 프로젝트입니다."); // 이미 신청한 경우 메시지 설정
+        // setIsAuthModalOpen(true); // 제출 확인 팝업 표시
         return; // Exit the function if already applied
       }
     } catch (error) {
@@ -159,7 +161,7 @@ console.log("project:", project);
 
   const handleApplySubmit = async () => {
     if (!selectedRole) {
-      alert("역할을 선택하세요.");
+      setShowAlertPopup("역할을 선택하세요.");
       return;
     }
 
@@ -185,12 +187,12 @@ console.log("project:", project);
         };
       });
 
-      setPopupMessage("제출되었습니다.");
+      setShowAlertPopup("제출되었습니다.");
       setIsAuthModalOpen(false);
     } catch (error) {
       console.error("Submission failed:", error);
-      setPopupMessage("제출에 실패했습니다. 다시 시도하세요.");
-      setIsAuthModalOpen(true);
+      setShowAlertPopup("제출에 실패했습니다. 다시 시도하세요.");
+      // setIsAuthModalOpen(true);
     }
   };
 
@@ -209,26 +211,7 @@ console.log("project:", project);
     navigate('/LoginPage');
   };
 
-  // 예시용 함수: 사용자가 제출하려고 할 때 로그인 여부를 확인
-  const handleSubmissionOrAuth = () => {
-    if (!user) {
-      setIsAuthModalOpen(true);
-      return;
-    }
-    // 로그인이 된 경우 제출 관련 추가 로직을 처리합니다.
-    // ...
-  };
-
-  // // 선택한 역할을 서버에 전송하는 모의 함수
-  // const postSelectedRole = async (role) => {
-  //   try {
-  //     const response = await axios.post('/api/submitRole', { role});
-  //     return response.data; // 서버로부터의 응답 데이터 반환
-  //   } catch (error) {
-  //     throw new Error('서버 요청 실패');
-  //   }
-  // };
-
+  
 
 
 // 선택한 역할을 서버에 전송하는 함수
@@ -277,19 +260,19 @@ const handleDelete = async () => {
       }
     );
     // 삭제 성공 후 원하는 동작 (예: 메인 페이지로 이동)
-    alert('게시물이 삭제되었습니다.');
+    setShowAlertPopup('게시물이 삭제되었습니다.');
     setPopupMessage(false);
     navigate('/');
     // 예시: navigate('/') 또는 window.location.href = '/'
   } catch (error) {
     console.error('게시물 삭제 실패:', error);
-    alert('게시물 삭제에 실패했습니다.');
+    setShowAlertPopup('게시물 삭제에 실패했습니다.');
   }
 };
 
 
 const handleChatClick = () => {
-  if(user && user?.id !== project.userId) {
+  if(user && user?.id !== project.creatorId) {
     navigate(`/messagePage`, { state: { selectedPersonId: project.creatorId } });
   } else if (user?.id === project.userId) {
     return;
@@ -426,7 +409,7 @@ const handleChatClick = () => {
             작성자: {project.nickname}
           </AuthorID>
           {/* <AuthorID>
-  {userProfile.avatarUrl ? (
+  {userProfile.avatarUrl ? ( 
     <img
       src={encodeURI(userProfile.avatarUrl)}
       alt="Profile Avatar"
@@ -486,6 +469,17 @@ const handleChatClick = () => {
       
     </Modal>
   )}
+
+{showAlertPopup && (
+  <Modal isOpen={showAlertPopup} onClose={() => setShowAlertPopup(false)}>
+        <h3 style={{ textAlign: 'center',fontSize:'16px' }}>{showAlertPopup}</h3>
+        <ButtonContainer>
+          <ModalButton onClick={() => setShowAlertPopup(false)}>확인</ModalButton>
+          {/* <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton> */}
+        </ButtonContainer>
+      </Modal>  
+ 
+)}
     </>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useNavigate} from 'react';
+import React, { useState, useEffect, useCallback} from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment } from '@fortawesome/free-solid-svg-icons';
@@ -9,6 +9,7 @@ import axios from '../../api/axios'
 import Modal from '../../components/Modal';
 import { useAtom } from 'jotai';
 import { currentApplicantsAtom } from '../../Atoms.jsx/AtomStates';
+import { useNavigate } from 'react-router-dom';
 
 const ProjectDetail = ({ project, onBack, onClose}) => {
     const navigate = useNavigate();

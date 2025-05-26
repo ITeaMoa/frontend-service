@@ -82,7 +82,6 @@ const MainPage = () => {
   ];
 
   
-    // // ... 기존 상태들 ...
     const [allProjects, setAllProjects] = useState([]);
     const [popularProjects, setPopularProjects] = useState([]);
     // const [popularProjects, setPopularProjects] = useState(dummyProjects);
@@ -111,6 +110,9 @@ const MainPage = () => {
     const [likedProjects, setLikedProjects] = useAtom(likedProjectsAtom);
     // const [showAlertPopup, setShowAlertPopup] = useState(false);
     const [showApplyPopup, setShowApplyPopup] = useState(false);
+    // const initialFeedType = localStorage.getItem('feedType') || 'PROJECT'; 
+    // const [feedType, setFeedType] = useState(initialFeedType); 
+    const [feedType, ] = useAtom(feedTypeAtom);
 
 
 
@@ -124,15 +126,7 @@ const MainPage = () => {
       navigate(`/WritePage?feedType=${feedType}`); 
     };
   
-    // const initialFeedType = localStorage.getItem('feedType') || 'PROJECT'; 
-    // const [feedType, setFeedType] = useState(initialFeedType); 
-    const [feedType, setFeedType] = useAtom(feedTypeAtom);
 
-  
-    useEffect(() => {
-      console.log("현재 feedType:", feedType);
-    }, [feedType]); 
-  
     // const handleToggleChange = (newFeedType) => {
     //   setFeedType(newFeedType); 
     //   localStorage.setItem('feedType', newFeedType); 
@@ -140,7 +134,7 @@ const MainPage = () => {
     //   navigate(location.pathname); 
     // };
   
-  
+
     const handleModalClose = async () => {
       // setHasFinalizedProfile(true);
       setIsProfileModalOpen(false);
@@ -204,27 +198,19 @@ const MainPage = () => {
     }, [user, userProfile, isProfileModalOpen, isUserProfileLoaded, modalOpenedOnce]);
 
 
-  
-    // useEffect(() => {
-    //   if ( !modalOpenedOnce) {
-    //     setIsProfileModalOpen(true); // 쿼리 파라미터에 따라 프로필 모달 열기
-    //     modalOpenedOnce = true;
-    //     setHasProfileModalOpened(true);
-    //   }
-    // }, [ modalOpenedOnce]); // showModal이 변경될 때마다 실행
 
-
-    const fetchPopularProjects = useCallback(async () => {
-      try {
-        const response = await axios.get(`/main/liked?feedType=${feedType}`);
-  
-        if (!response.data || response.data.length === 0) {
-          console.warn('프로젝트 데이터가 없습니다.');
-          setPopularProjects([]);
-          return;
-        }
-  
+    useEffect(() => {
+      const fetchPopularProjects = async () => {
+        try {
+          const response = await axios.get(`/main/liked?feedType=${feedType}`);
     
+          if (!response.data || response.data.length === 0) {
+            console.warn('프로젝트 데이터가 없습니다.');
+            setPopularProjects([]);
+            return;
+          }
+
+          
       //   const projectsWithLikes = response.data.map((project) => ({
       //     ...project,
       //     // creatorId: project.creatorId,
@@ -234,60 +220,48 @@ const MainPage = () => {
       //     ),
       //     // likesCount: project.likesCount || 0  //있는지 없는지 확인인
       // }));
-        setPopularProjects(response.data);
-      } catch (error) {
-        console.error('Error fetching popular projects:', error);
-      }
-    }, [feedType, likedProjects]);
-
-    useEffect(() => {
-      fetchPopularProjects();
-    }, [fetchPopularProjects, feedType]);
-  
-    // const fetchPopularProjects = async () => {
-    //   try {
-    //     const response = await axios.get(`/main/liked?feedType=${feedType}`);
     
-    //     if (!response.data || response.data.length === 0) {
-    //       console.warn('프로젝트 데이터가 없습니다.');
-    //       setPopularProjects([]);
-    //       return;
-    //     }
-    
-    //     setPopularProjects(response.data);
-    //   } catch (error) {
-    //     console.error('Error fetching popular projects:', error);
-    //   }
-    // };
-  
-    // // Section2 관련 API 호출 함수들을 MainPage로 이동
-    const fetchAllProjects = useCallback(async () => {
-      try {
-        const response = await axios.get(`/main?feedType=${feedType}`);
-        if (!response.data || response.data.length === 0) {
-          setAllProjects([]);
-          return;
+          setPopularProjects(response.data);
+        } catch (error) {
+          console.error('Error fetching popular projects:', error);
         }
-        console.log('모든 게시물:', response.data);
+      };
+    
+      fetchPopularProjects();
+    }, [feedType]);
 
-  //   const projectsWithLikes = response.data.map((project) => ({
-  //     ...project,
-  //     // creatorId: project.creatorId,
-  //     // atom의 상태를 사용하여 좋아요 여부 확인
-  //     liked: likedProjects.some(
-  //         likedProject => likedProject.id === project.id && likedProject.liked
-  //     ),
-  //     // likesCount: project.likesCount || 0  //있는지 없는지 확인인
-  // }));
-  setAllProjects(response.data);
-      } catch (error) {
-        console.error('프로젝트 가져오기 실패:', error);
-      }
-    }, [feedType, likedProjects]);
+ 
+  
+  
+    useEffect(() => {
+      const fetchAllProjects = async () => {
+        try {
+          const response = await axios.get(`/main?feedType=${feedType}`);
+          if (!response.data || response.data.length === 0) {
+            setAllProjects([]);
+            return;
+          }
+          console.log('모든 게시물:', response.data);
+    
+          // 필요하다면 여기서 likedProjects 관련 로직 추가
+          // const projectsWithLikes = response.data.map((project) => ({
+          //   ...project,
+          //   liked: likedProjects.some(
+          //     likedProject => likedProject.id === project.id && likedProject.liked
+          //   ),
+          // }));
+          // setAllProjects(projectsWithLikes);
+    
+          setAllProjects(response.data);
+        } catch (error) {
+          console.error('프로젝트 가져오기 실패:', error);
+        }
+      };
+    
+      fetchAllProjects();
+    }, [feedType]);
 
- useEffect(() => {
-    fetchAllProjects();
-  }, [fetchAllProjects, feedType]);
+ 
 
 
     const handleApplyClick = async (project) => {
@@ -310,10 +284,8 @@ const MainPage = () => {
             userId: user.id,
           }
         });
-        console.log('이미신청한 프로젝트:', response.data); // 응답 데이터 출력
     
         const appliedProjects = response.data.map(app => app.feedId); // 신청한 프로젝트의 feedId 목록
-        console.log('신청한 프로젝트 feedId 목록:', appliedProjects); // 신청한 프로젝트 feedId 출력
     
         // 선택한 프로젝트의 pk와 비교
         const isAlreadyApplied = appliedProjects.includes(project.pk);

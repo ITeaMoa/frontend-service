@@ -10,15 +10,15 @@ import Modal from '../../components/Modal';
 const CommentsSection = ({ commentInput, setCommentInput, user, projectId }) => {
   const [replyInput, setReplyInput] = useState({});
   const [showReplyInput, setShowReplyInput] = useState({});
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedComment, setEditedComment] = useState(null);   
+  // const [isEditing, setIsEditing] = useState(false);
+  // const [editedComment, setEditedComment] = useState(null);   
   const [selectedProjectDetail, setSelectedProjectDetail] = useAtom(selectedProjectDetailAtom);
-  const [replies, setReplies] = useState({});
+  const [, setReplies] = useState({});
   const [editingCommentId, setEditingCommentId] = useState(null);
 const [editCommentInput, setEditCommentInput] = useState('');
  const [showAlertPopup,setShowAlertPopup] =useState(false)
 //  const [project, setProject] = useState(null);
-  const [project, setProject] = useState(null);
+  const [project, ] = useState(null);
   const [comments, setComments] = useState(selectedProjectDetail?.comments || []);
 console.log("comments:", comments)
   // setProject(selectedProjectDetail);
@@ -96,7 +96,6 @@ console.log("comments:", comments)
 
   const handleCommentSubmit = async () => {
     console.log("handleCommentSubmit 호출", { commentInput, project });
-    console.log("현재 프로젝트:", project);
     if(!user) {
       return;
     }
@@ -105,8 +104,6 @@ console.log("comments:", comments)
         userId: user ? user.id : null,
         comment: commentInput,
       };
-
-      console.log("댓글 내용:", newComment.comment);
       console.log("Current feedType:", selectedProjectDetail.sk);
 
       try {

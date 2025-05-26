@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Nav from '../../components/Nav';
 import Dropdown from '../../components/DropDown';
 import Modal from '../../components/Modal';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { faPaperclip } from '@fortawesome/free-solid-svg-icons';
@@ -15,7 +15,7 @@ import { selectedSavedProjectAtom,feedTypeAtom } from '../../Atoms.jsx/AtomState
 
 
 const WritePage = () => {
-  const location = useLocation();
+  // const location = useLocation();
   // const query = new URLSearchParams(location.search);
   // const feedTypeFromQuery = query.get('feedType'); // 쿼리 파라미터에서 feedType 가져오기
   const [feedType, ] = useAtom(feedTypeAtom);
@@ -529,7 +529,7 @@ const handleImageRemove = () => {
         </Body>
 
         <Submit>
-        {!selectedSavedProject || selectedSavedProject.length === 0 && (
+        {(!selectedSavedProject || selectedSavedProject.length === 0) && (
   <SaveButton onClick={(e) => handleSubmit(e, true)}>임시저장</SaveButton>
 )}
         {/* <SaveButton onClick={(e) => handleSubmit(e, true)}>임시저장</SaveButton> */}

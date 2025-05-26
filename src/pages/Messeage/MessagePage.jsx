@@ -9,7 +9,6 @@ import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 import { useAtom } from 'jotai';
 import { SELECTED_PERSON_ID, MESSAGE_LIST } from '../../Atoms.jsx/AtomStates';
-import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 
 
@@ -21,7 +20,7 @@ const MessagePage = () => {
   const [personList, setPersonList] = useState([]);
   // const [messageList, setMessageList] = useState([]);
   const [selectedPersonId, setSelectedPersonId] = useAtom(SELECTED_PERSON_ID);
-  const [messageList, setMessageList] = useAtom(MESSAGE_LIST);
+  const [, setMessageList] = useAtom(MESSAGE_LIST);
   const location = useLocation();
 
 
@@ -31,7 +30,7 @@ useEffect(() => {
     setSelectedPersonId(location.state?.selectedPersonId);
     setShowMessagePopup(true);
   } 
-}, [location.state?.selectedPersonId]);
+}, [location.state?.selectedPersonId,setSelectedPersonId]);
 
 
   const handlePersonClick = async (personId) => {
@@ -103,12 +102,13 @@ useEffect(() => {
 
   const handleSendMessage = async () => {
     try {
-
+      
       const data = {
         creatorId: user.id,  // 보내는 사람 ID (현재 로그인한 사용자)
         recipientId: selectedPersonId, // 받는 사람 ID
         messageContent: newMessage  // 메시지 내용
       }
+      console.log("data", data);
       const response = await axios.post('/message', data);
   
       console.log('Message sent:', response.data);

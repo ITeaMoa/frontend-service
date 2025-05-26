@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState,  } from 'react';
 import styled from 'styled-components';
 import Nav from "../../components/Nav";
 // import axios from 'axios';
@@ -26,16 +26,16 @@ const MyPage = () => {
   // const isLoggedIn = true; 
   const showSearch = false;
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
-  const [feedType, setFeedType] = useAtom(feedTypeAtom);
+  const [feedType, ] = useAtom(feedTypeAtom);
   const [applications, setApplications] = useState([]); // 지원자 정보를 위한 새로운 state
   const [isFading, setIsFading] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [selectedProjectForCancel, setSelectedProjectForCancel] = useState(null);
-  const [isProfileVisible, setIsProfileVisible] = useState(false);
-  const [userProfile, setUserProfile] = useState({});
-  const [savedProjects, setSavedProjects] = useState([]);
-  const [likedProjects, setLikedProjects] = useState([]);
-  const [showAlertPopup, setShowAlertPopup] = useState(false);
+  const [, setIsProfileVisible] = useState(false);
+  // const [userProfile, setUserProfile] = useState({});
+  // const [savedProjects, setSavedProjects] = useState([]);
+  // const [likedProjects, setLikedProjects] = useState([]);
+  const [showAlertPopup, setShowAlertPopup] = useState('');
 
   // user.id를 콘솔에 출력
 useEffect(() => {
@@ -46,332 +46,137 @@ useEffect(() => {
   }
 }, [user]); // user가 변경될 때마다 실행
 
+useEffect(() => {
+  window.scrollTo(0, 0);
+}, []);
 
 
+// const dummySavedProjects = [
+//   {
+//     "pk": "c0349497-05cb-43ef-99f2-8ac4cc73ba86",
+//     "sk": "PROJECT",
+//     "nickname": "brynn",
+//     "entityType": "FEED",
+//     "creatorId": "d4487dfc-f001-7052-0905-97df4f00380c",
+//     "title": "AI 데이터분석 서비스 팀원 모집합니다 !",
+//     "recruitmentNum": 3,
+//     "deadline": "2025-03-14T00:00:00",
+//     "place": "동탄역 근처",
+//     "period": 0,
+//     "tags": [
+//       "웹",
+//       "인공지능",
+//       "빅데이터"
+//     ],
+//     "likesCount": 1,
+//     "content": "유저 데이터를 모아서 분석하고, 대시보드화해서 AI로 마케팅 방법을 제안해주는 서비스를 만들어보려고 합니다. 제가 개발을 할 수 있으니 데이터분석 및 AI 활용해서 엔지니어링 할 수 있는 분 구합니다.\n\n궁금한 점은 쪽지 주세요!",
+//     "comments": [],
+//     "postStatus": false,
+//     "timestamp": "2025-02-03T13:42:00.587250944",
+//     "savedFeed": true,
+//     "roles": {
+//       "ai 엔지니어": 1,
+//       "프론트엔드": 1,
+//       "빅데이터": 1
+//     },
+//     "recruitmentRoles": {
+//       "ai 엔지니어": 0,
+//       "프론트엔드": 1,
+//       "빅데이터": 0
+//     }
+//   },
+ 
+//   {
+//     "pk": "c0349497-05cb-43ef-99f2-8ac4cc73ba86",
+//     "sk": "PROJECT",
+//     "nickname": "brynn",
+//     "entityType": "FEED",
+//     "creatorId": "d4487dfc-f001-7052-0905-97df4f00380c",
+//     "title": "AI 데이터분석 서비스 팀원 모집합니다 !",
+//     "recruitmentNum": 3,
+//     "deadline": "2025-03-14T00:00:00",
+//     "place": "동탄역 근처",
+//     "period": 0,
+//     "tags": [
+//       "웹",
+//       "인공지능",
+//       "빅데이터"
+//     ],
+//     "likesCount": 1,
+//     "content": "유저 데이터를 모아서 분석하고, 대시보드화해서 AI로 마케팅 방법을 제안해주는 서비스를 만들어보려고 합니다. 제가 개발을 할 수 있으니 데이터분석 및 AI 활용해서 엔지니어링 할 수 있는 분 구합니다.\n\n궁금한 점은 쪽지 주세요!",
+//     "comments": [],
+//     "postStatus": false,
+//     "timestamp": "2025-02-03T13:42:00.587250944",
+//     "savedFeed": true,
+//     "roles": {
+//       "ai 엔지니어": 1,
+//       "프론트엔드": 1,
+//       "빅데이터": 1
+//     },
+//     "recruitmentRoles": {
+//       "ai 엔지니어": 0,
+//       "프론트엔드": 1,
+//       "빅데이터": 0
+//     }
+//   },
+ 
+// ];
 
-const dummySavedProjects = [
-  {
-    "pk": "c0349497-05cb-43ef-99f2-8ac4cc73ba86",
-    "sk": "PROJECT",
-    "nickname": "brynn",
-    "entityType": "FEED",
-    "creatorId": "d4487dfc-f001-7052-0905-97df4f00380c",
-    "title": "AI 데이터분석 서비스 팀원 모집합니다 !",
-    "recruitmentNum": 3,
-    "deadline": "2025-03-14T00:00:00",
-    "place": "동탄역 근처",
-    "period": 0,
-    "tags": [
-      "웹",
-      "인공지능",
-      "빅데이터"
-    ],
-    "likesCount": 1,
-    "content": "유저 데이터를 모아서 분석하고, 대시보드화해서 AI로 마케팅 방법을 제안해주는 서비스를 만들어보려고 합니다. 제가 개발을 할 수 있으니 데이터분석 및 AI 활용해서 엔지니어링 할 수 있는 분 구합니다.\n\n궁금한 점은 쪽지 주세요!",
-    "comments": [],
-    "postStatus": false,
-    "timestamp": "2025-02-03T13:42:00.587250944",
-    "savedFeed": true,
-    "roles": {
-      "ai 엔지니어": 1,
-      "프론트엔드": 1,
-      "빅데이터": 1
-    },
-    "recruitmentRoles": {
-      "ai 엔지니어": 0,
-      "프론트엔드": 1,
-      "빅데이터": 0
-    }
-  },
-  {
-    "pk": "c0349497-05cb-43ef-99f2-8ac4cc73ba86",
-    "sk": "PROJECT",
-    "nickname": "brynn",
-    "entityType": "FEED",
-    "creatorId": "d4487dfc-f001-7052-0905-97df4f00380c",
-    "title": "AI 데이터분석 서비스 팀원 모집합니다 !",
-    "recruitmentNum": 3,
-    "deadline": "2025-03-14T00:00:00",
-    "place": "동탄역 근처",
-    "period": 0,
-    "tags": [
-      "웹",
-      "인공지능",
-      "빅데이터"
-    ],
-    "likesCount": 1,
-    "content": "유저 데이터를 모아서 분석하고, 대시보드화해서 AI로 마케팅 방법을 제안해주는 서비스를 만들어보려고 합니다. 제가 개발을 할 수 있으니 데이터분석 및 AI 활용해서 엔지니어링 할 수 있는 분 구합니다.\n\n궁금한 점은 쪽지 주세요!",
-    "comments": [],
-    "postStatus": false,
-    "timestamp": "2025-02-03T13:42:00.587250944",
-    "savedFeed": true,
-    "roles": {
-      "ai 엔지니어": 1,
-      "프론트엔드": 1,
-      "빅데이터": 1
-    },
-    "recruitmentRoles": {
-      "ai 엔지니어": 0,
-      "프론트엔드": 1,
-      "빅데이터": 0
-    }
-  },
-  {
-    "pk": "c0349497-05cb-43ef-99f2-8ac4cc73ba86",
-    "sk": "PROJECT",
-    "nickname": "brynn",
-    "entityType": "FEED",
-    "creatorId": "d4487dfc-f001-7052-0905-97df4f00380c",
-    "title": "AI 데이터분석 서비스 팀원 모집합니다 !",
-    "recruitmentNum": 3,
-    "deadline": "2025-03-14T00:00:00",
-    "place": "동탄역 근처",
-    "period": 0,
-    "tags": [
-      "웹",
-      "인공지능",
-      "빅데이터"
-    ],
-    "likesCount": 1,
-    "content": "유저 데이터를 모아서 분석하고, 대시보드화해서 AI로 마케팅 방법을 제안해주는 서비스를 만들어보려고 합니다. 제가 개발을 할 수 있으니 데이터분석 및 AI 활용해서 엔지니어링 할 수 있는 분 구합니다.\n\n궁금한 점은 쪽지 주세요!",
-    "comments": [],
-    "postStatus": false,
-    "timestamp": "2025-02-03T13:42:00.587250944",
-    "savedFeed": true,
-    "roles": {
-      "ai 엔지니어": 1,
-      "프론트엔드": 1,
-      "빅데이터": 1
-    },
-    "recruitmentRoles": {
-      "ai 엔지니어": 0,
-      "프론트엔드": 1,
-      "빅데이터": 0
-    }
-  },
-  {
-    "pk": "c0349497-05cb-43ef-99f2-8ac4cc73ba86",
-    "sk": "PROJECT",
-    "nickname": "brynn",
-    "entityType": "FEED",
-    "creatorId": "d4487dfc-f001-7052-0905-97df4f00380c",
-    "title": "AI 데이터분석 서비스 팀원 모집합니다 !",
-    "recruitmentNum": 3,
-    "deadline": "2025-03-14T00:00:00",
-    "place": "동탄역 근처",
-    "period": 0,
-    "tags": [
-      "웹",
-      "인공지능",
-      "빅데이터"
-    ],
-    "likesCount": 1,
-    "content": "유저 데이터를 모아서 분석하고, 대시보드화해서 AI로 마케팅 방법을 제안해주는 서비스를 만들어보려고 합니다. 제가 개발을 할 수 있으니 데이터분석 및 AI 활용해서 엔지니어링 할 수 있는 분 구합니다.\n\n궁금한 점은 쪽지 주세요!",
-    "comments": [],
-    "postStatus": false,
-    "timestamp": "2025-02-03T13:42:00.587250944",
-    "savedFeed": true,
-    "roles": {
-      "ai 엔지니어": 1,
-      "프론트엔드": 1,
-      "빅데이터": 1
-    },
-    "recruitmentRoles": {
-      "ai 엔지니어": 0,
-      "프론트엔드": 1,
-      "빅데이터": 0
-    }
-  },
-  {
-    "pk": "c0349497-05cb-43ef-99f2-8ac4cc73ba86",
-    "sk": "PROJECT",
-    "nickname": "brynn",
-    "entityType": "FEED",
-    "creatorId": "d4487dfc-f001-7052-0905-97df4f00380c",
-    "title": "AI 데이터분석 서비스 팀원 모집합니다 !",
-    "recruitmentNum": 3,
-    "deadline": "2025-03-14T00:00:00",
-    "place": "동탄역 근처",
-    "period": 0,
-    "tags": [
-      "웹",
-      "인공지능",
-      "빅데이터"
-    ],
-    "likesCount": 1,
-    "content": "유저 데이터를 모아서 분석하고, 대시보드화해서 AI로 마케팅 방법을 제안해주는 서비스를 만들어보려고 합니다. 제가 개발을 할 수 있으니 데이터분석 및 AI 활용해서 엔지니어링 할 수 있는 분 구합니다.\n\n궁금한 점은 쪽지 주세요!",
-    "comments": [],
-    "postStatus": false,
-    "timestamp": "2025-02-03T13:42:00.587250944",
-    "savedFeed": true,
-    "roles": {
-      "ai 엔지니어": 1,
-      "프론트엔드": 1,
-      "빅데이터": 1
-    },
-    "recruitmentRoles": {
-      "ai 엔지니어": 0,
-      "프론트엔드": 1,
-      "빅데이터": 0
-    }
-  },
-  {
-    "pk": "c0349497-05cb-43ef-99f2-8ac4cc73ba86",
-    "sk": "PROJECT",
-    "nickname": "brynn",
-    "entityType": "FEED",
-    "creatorId": "d4487dfc-f001-7052-0905-97df4f00380c",
-    "title": "AI 데이터분석 서비스 팀원 모집합니다 !",
-    "recruitmentNum": 3,
-    "deadline": "2025-03-14T00:00:00",
-    "place": "동탄역 근처",
-    "period": 0,
-    "tags": [
-      "웹",
-      "인공지능",
-      "빅데이터"
-    ],
-    "likesCount": 1,
-    "content": "유저 데이터를 모아서 분석하고, 대시보드화해서 AI로 마케팅 방법을 제안해주는 서비스를 만들어보려고 합니다. 제가 개발을 할 수 있으니 데이터분석 및 AI 활용해서 엔지니어링 할 수 있는 분 구합니다.\n\n궁금한 점은 쪽지 주세요!",
-    "comments": [],
-    "postStatus": false,
-    "timestamp": "2025-02-03T13:42:00.587250944",
-    "savedFeed": true,
-    "roles": {
-      "ai 엔지니어": 1,
-      "프론트엔드": 1,
-      "빅데이터": 1
-    },
-    "recruitmentRoles": {
-      "ai 엔지니어": 0,
-      "프론트엔드": 1,
-      "빅데이터": 0
-    }
-  },
-  {
-    "pk": "c0349497-05cb-43ef-99f2-8ac4cc73ba86",
-    "sk": "PROJECT",
-    "nickname": "brynn",
-    "entityType": "FEED",
-    "creatorId": "d4487dfc-f001-7052-0905-97df4f00380c",
-    "title": "AI 데이터분석 서비스 팀원 모집합니다 !",
-    "recruitmentNum": 3,
-    "deadline": "2025-03-14T00:00:00",
-    "place": "동탄역 근처",
-    "period": 0,
-    "tags": [
-      "웹",
-      "인공지능",
-      "빅데이터"
-    ],
-    "likesCount": 1,
-    "content": "유저 데이터를 모아서 분석하고, 대시보드화해서 AI로 마케팅 방법을 제안해주는 서비스를 만들어보려고 합니다. 제가 개발을 할 수 있으니 데이터분석 및 AI 활용해서 엔지니어링 할 수 있는 분 구합니다.\n\n궁금한 점은 쪽지 주세요!",
-    "comments": [],
-    "postStatus": false,
-    "timestamp": "2025-02-03T13:42:00.587250944",
-    "savedFeed": true,
-    "roles": {
-      "ai 엔지니어": 1,
-      "프론트엔드": 1,
-      "빅데이터": 1
-    },
-    "recruitmentRoles": {
-      "ai 엔지니어": 0,
-      "프론트엔드": 1,
-      "빅데이터": 0
-    }
-  },
-];
-
-const likeProjects = [ // 더미 데이터 업데이트
-  {
-    "pk": "4fccc2dd-58a7-4db1-a549-b44603b9fbbb",
-    "sk": "PROJECT",
-    "nickname": "바다상어",
-    "entityType": "FEED",
-    "creatorId": "f4f84d4c-90c1-7027-d639-96212513682e",
-    "title": "ITeaMoa 프로젝트 팀원 구합니다",
-    "recruitmentNum": 5,
-    "deadline": "2025-02-28T00:00:00",
-    "place": "강남역",
-    "period": 0,
-    "tags": [
-      "웹",
-      "모바일",
-      "AWS",
-      "Git",
-      "Github",
-      "Spring Boot",
-      "React"
-    ],
-    "likesCount": 5,
-    "content": "안녕하세요.\n\n\"IT관련 프로젝트 팀원 모집 플랫폼\" 프로젝트 진행하실 팀원 구합니다~\n\n많은 관심 바라요:)",
-    "comments": [
-      {
-        "userId": "84b8ddac-3081-70eb-e79d-e8f5deef4892",
-        "comment": "질문이 있습니다",
-        "timestamp": "2025-02-05T01:20:34.78452235",
-        "name": null
-      },
-      {
-        "userId": "84b8ddac-3081-70eb-e79d-e8f5deef4892",
-        "comment": "질문 받아주세요!!",
-        "timestamp": "2025-02-05T01:26:31.379855213",
-        "name": null
-      }
-    ],
-    "postStatus": true,
-    "timestamp": "2025-02-03T13:21:40.743217531",
-    "savedFeed": false,
-    "roles": {
-      "백엔드": 2,
-      "프론트엔드": 1,
-      "기획자": 1,
-      "pm": 1
-    },
-    "recruitmentRoles": {
-      "백엔드": 1,
-      "프론트엔드": 0,
-      "기획자": 1,
-      "pm": 0
-    }
-  },
-  {
-    "pk": "914e8da3-b10b-41dd-b959-2e5cf634e692",
-    "sk": "PROJECT",
-    "nickname": "알파카",
-    "entityType": "FEED",
-    "creatorId": "04e8ddec-70d1-702c-9257-1f0078fe9c83",
-    "title": "이색동물 키우는 사람~~",
-    "recruitmentNum": 4,
-    "deadline": "2025-07-16T00:00:00",
-    "place": "죽전역",
-    "period": 5,
-    "tags": [
-      "웹",
-      "AWS",
-      "React",
-      "Spring Boot",
-      "Git",
-      "모바일"
-    ],
-    "likesCount": 2,
-    "content": "알파카랑 카피바라같이 이색동물 키우는 사람들의 모임어플을 만들려고 합니다. 서로 자기 동물 자랑하면 재밌을것같아용\n산책이나 모임, 먹이 공유 같은 기능을 만들어보려고 합니다^^",
-    "comments": [],
-    "postStatus": true,
-    "timestamp": "2025-02-03T13:30:26.152048694",
-    "savedFeed": false,
-    "roles": {
-      "백엔드": 2,
-      "프론트엔드": 2
-    },
-    "recruitmentRoles": {
-      "백엔드": 1,
-      "프론트엔드": 1,
-      "무관": 0
-    }
-  }
-];
+// const likeProjects = [ // 더미 데이터 업데이트
+//   {
+//     "pk": "4fccc2dd-58a7-4db1-a549-b44603b9fbbb",
+//     "sk": "PROJECT",
+//     "nickname": "바다상어",
+//     "entityType": "FEED",
+//     "creatorId": "f4f84d4c-90c1-7027-d639-96212513682e",
+//     "title": "ITeaMoa 프로젝트 팀원 구합니다",
+//     "recruitmentNum": 5,
+//     "deadline": "2025-02-28T00:00:00",
+//     "place": "강남역",
+//     "period": 0,
+//     "tags": [
+//       "웹",
+//       "모바일",
+//       "AWS",
+//       "Git",
+//       "Github",
+//       "Spring Boot",
+//       "React"
+//     ],
+//     "likesCount": 5,
+//     "content": "안녕하세요.\n\n\"IT관련 프로젝트 팀원 모집 플랫폼\" 프로젝트 진행하실 팀원 구합니다~\n\n많은 관심 바라요:)",
+//     "comments": [
+//       {
+//         "userId": "84b8ddac-3081-70eb-e79d-e8f5deef4892",
+//         "comment": "질문이 있습니다",
+//         "timestamp": "2025-02-05T01:20:34.78452235",
+//         "name": null
+//       },
+//       {
+//         "userId": "84b8ddac-3081-70eb-e79d-e8f5deef4892",
+//         "comment": "질문 받아주세요!!",
+//         "timestamp": "2025-02-05T01:26:31.379855213",
+//         "name": null
+//       }
+//     ],
+//     "postStatus": true,
+//     "timestamp": "2025-02-03T13:21:40.743217531",
+//     "savedFeed": false,
+//     "roles": {
+//       "백엔드": 2,
+//       "프론트엔드": 1,
+//       "기획자": 1,
+//       "pm": 1
+//     },
+//     "recruitmentRoles": {
+//       "백엔드": 1,
+//       "프론트엔드": 0,
+//       "기획자": 1,
+//       "pm": 0
+//     }
+//   },
+ 
+// ];
 
 //진짜ㅏㅏㅏㅏㅏㅏ(예전꺼꺼)
 // useCallback을 사용하여 함수 메모이제이션
@@ -723,7 +528,7 @@ const handleProjectClose = async (projectId, feedType) => {
         );
     } catch (error) {
         console.error('Error:', error);
-        alert('모집 완료 처리 중 문제가 발생했습니다.');
+        setShowAlertPopup('모집 완료 처리 중 문제가 발생했습니다.');
     }
 };
 
@@ -751,17 +556,17 @@ const handleConfirmCancel = async () => {
         if (refreshProjects) {
           await refreshProjects();
         }
-        alert('신청이 취소되었습니다.');
+        setShowAlertPopup('신청이 취소되었습니다.');
       } else {
-        alert('신청 취소에 실패했습니다.');
+        setShowAlertPopup('신청 취소에 실패했습니다.');
       }
       setIsConfirmModalOpen(false);
     } catch (error) {
       console.error('오류 세부정보:', error);
       if (error.response) {
-        alert(`신청 취소 중 오류가 발생했습니다. (${error.response.data})`);
+        setShowAlertPopup(`신청 취소 중 오류가 발생했습니다. (${error.response.data})`);
       } else {
-        alert(`신청 취소 중 오류가 발생했습니다. (${error.message})`);
+        setShowAlertPopup(`신청 취소 중 오류가 발생했습니다. (${error.message})`);
       }
     }
   };
@@ -930,15 +735,15 @@ const handleConfirmCancel = async () => {
       
     </Container>
     {showAlertPopup && (
-      <Modal isOpen={showAlertPopup} onClose={() => setShowAlertPopup(false)}>
-            <h3 style={{ textAlign: 'center' }}>댓글 제출에 실패했습니다. 다시 시도해주세요.</h3>
-            {/* <ButtonContainer>
-              <ModalButton onClick={handleConfirmCancel}>확인</ModalButton>
-              <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton>
-            </ButtonContainer> */}
-          </Modal>  
-     
-    )}
+  <Modal isOpen={showAlertPopup} onClose={() => setShowAlertPopup(false)}>
+        <h3 style={{ textAlign: 'center',fontSize:'16px' }}>{showAlertPopup}</h3>
+        <ButtonContainer>
+          <ModalButton onClick={() => setShowAlertPopup(false)}>확인</ModalButton>
+          {/* <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton> */}
+        </ButtonContainer>
+      </Modal>  
+ 
+)}
     </>
    
   );

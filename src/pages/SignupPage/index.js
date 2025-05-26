@@ -30,14 +30,20 @@ const SignUpPage = () => {
 
   const handleAuthNumberSend = async () => {
     try {
-      const response = await axios.post('/login/verify/email', 
+      // const response = await axios.post('/login/verify/email', 
+      //   { email: email }, 
+      //   { 
+      //     headers: { 
+      //       'Content-Type': 'application/json',
+      //     }
+      //   }
+      // );
+
+      await axios.post('/login/verify/email', 
         { email: email }, 
-        { 
-          headers: { 
-            'Content-Type': 'application/json',
-          }
-        }
+        { headers: { 'Content-Type': 'application/json' } }
       );
+      
   
       setShowAlertPopup('인증번호가 발송되었습니다. 이메일을 확인하세요.');
       setIsAuthNumberSent(true);
@@ -95,7 +101,7 @@ const SignUpPage = () => {
 
   const handleConfirmEmail = async () => {
     try {
-        const response = await axios.post('login/confirm/email', 
+     await axios.post('login/confirm/email', 
             { email: email, verification_code: authNumber }, 
             { headers: { 'Content-Type': 'application/json' } }
         );

@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useCallback  } from 'react';
+import React, { useState, useEffect,  } from 'react';
 import styled from 'styled-components';
 import Nav from '../../components/Nav';
 import { useNavigate , useParams, useLocation } from 'react-router-dom';
@@ -10,12 +10,12 @@ import LikeButton from '../../components/LikeButton';
 import Modal from '../../components/Modal'; // 모달 컴포넌트 import
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
-import items from '../../data'; // items를 import 추가
+// import items from '../../data'; // items를 import 추가
 import CommentsSection from './CommentsSection'; // CommentsSection import 추가
 import RoleSelectionModal from '../../components/RoleSelectionModal';
 import AuthModal from '../../components/AuthModal';
 import { useAtom } from 'jotai';
-import { feedTypeAtom, selectedProjectDetailAtom, USER, selectedSavedProjectAtom, USER_PROFILE } from '../../Atoms.jsx/AtomStates';
+import {  selectedProjectDetailAtom, selectedSavedProjectAtom,  } from '../../Atoms.jsx/AtomStates';
 
 
 
@@ -35,15 +35,14 @@ const ApplyPage = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [popupMessage, setPopupMessage] = useState(''); // 팝업 메시지 상태
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
-   const nickname = user ? user.nickname : 'Unknown'; //사용자 닉네임 설정
+  //  const nickname = user ? user.nickname : 'Unknown'; //사용자 닉네임 설정
   //  const [user, setUser] = useAtom(USER);
   //  const [, setIsLoggedIn] = useAtom(IS_LOGGED_IN);
-  const [selectedSavedProject, setSelectedSavedProject] = useAtom(selectedSavedProjectAtom);
-  const [popupDeleteMessage, setPopupDeleteMessage] = useState(false);
-  const [feedType, setFeedType] = useAtom(feedTypeAtom);
-  const [currentFeedType, setCurrentFeedType] = useState(feedType);
-  const [userProfile, setUserProfile] = useAtom(USER_PROFILE);
-  const [selectedProjectDetail, setSelectedProjectDetail] = useAtom(selectedProjectDetailAtom);
+  const [, setSelectedSavedProject] = useAtom(selectedSavedProjectAtom);
+  // const [popupDeleteMessage, setPopupDeleteMessage] = useState(false);
+  // const [feedType, setFeedType] = useAtom(feedTypeAtom);
+  // const [userProfile, setUserProfile] = useAtom(USER_PROFILE);
+  const [selectedProjectDetail, ] = useAtom(selectedProjectDetailAtom);
   const [showAlertPopup, setShowAlertPopup] = useState('');
 
 
@@ -73,22 +72,22 @@ const ApplyPage = () => {
   // }, [fetchProjectDetails]); // 의존성 배열에 fetchProjectDetails 추가
 //============================================================
 //존 프로젝트 진짜 api연결하는거 
-  const fetchProjectDetails = useCallback(async () => {
-    try {
-      const response = await axios.get(`/main?feedType=${sk}`); // sk 값을 사용
-      const selectedProject = response.data.find(item => item.pk === projectId); // 특정 프로젝트 찾기
+  // const fetchProjectDetails = useCallback(async () => {
+  //   try {
+  //     const response = await axios.get(`/main?feedType=${sk}`); // sk 값을 사용
+  //     const selectedProject = response.data.find(item => item.pk === projectId); // 특정 프로젝트 찾기
       
-      if (selectedProject) {
-        console.log("Selected Project:", selectedProject); // 프로젝트 정보 콘솔로 출력
-        setProject(selectedProject);
-      } else {
-        setProject(null);
-      }
-    } catch (error) {
-      console.error("Error fetching project details:", error);
-      setProject(null); // 오류 발생 시 상태를 null로 설정
-    }
-  }, [projectId, sk]); // sk를 의존성 배열에 추가
+  //     if (selectedProject) {
+  //       console.log("Selected Project:", selectedProject); // 프로젝트 정보 콘솔로 출력
+  //       setProject(selectedProject);
+  //     } else {
+  //       setProject(null);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching project details:", error);
+  //     setProject(null); // 오류 발생 시 상태를 null로 설정
+  //   }
+  // }, [projectId, sk]); // sk를 의존성 배열에 추가
 
   //이것만 사용해도 될스도 있음. 위에거 삭제하고
 useEffect(() => {
@@ -685,194 +684,194 @@ const AuthorID = styled.div`
 //   margin-bottom: 20px;
 // `;
 
-const CommentsTitle = styled.h3`
-  position: absolute;
-  font-size: 20px;
-`;
+// const CommentsTitle = styled.h3`
+//   position: absolute;
+//   font-size: 20px;
+// `;
 
-const CommentsList = styled.div`
-margin-top: 20px;
-// width: calc(100% / 2 + 80px);
-width: 100%;
+// const CommentsList = styled.div`
+// margin-top: 20px;
+// // width: calc(100% / 2 + 80px);
+// width: 100%;
 
-`;
+// `;
 
-const Comment = styled.div`
-  margin: 5px 0;
-  padding: 14px;
-  padding-left: 20px;
-   border: 1px solid #e0e0e0;
-  text-align: left;
-  border: none;
-  border-bottom: 2px solid rgba(160, 218, 251);
+// const Comment = styled.div`
+//   margin: 5px 0;
+//   padding: 14px;
+//   padding-left: 20px;
+//    border: 1px solid #e0e0e0;
+//   text-align: left;
+//   border: none;
+//   border-bottom: 2px solid rgba(160, 218, 251);
 
-  strong{
-   margin-left: 15px;
-  }
-  span{
-    margin-left: 15px;
-  }
-`;
+//   strong{
+//    margin-left: 15px;
+//   }
+//   span{
+//     margin-left: 15px;
+//   }
+// `;
 
-const Users= styled.div`
+// const Users= styled.div`
 
-display: flex;
-`;
+// display: flex;
+// `;
 
-const Timestamp = styled.div`
-  display: flex;
-  // flex-direction: column;
-  flex-direction: row;
+// const Timestamp = styled.div`
+//   display: flex;
+//   // flex-direction: column;
+//   flex-direction: row;
 
-  span{
-    margin-top:2px;
-  }
-`;
-
-
+//   span{
+//     margin-top:2px;
+//   }
+// `;
 
 
-const Comments = styled.div`
-   margin: 10px 10px;
-
-`;
-
-const CommentInputWrapper = styled.div`
-  margin-top: 60px;
-  display: flex;
-  align-items: center;
-`;
-
-const CommentInput = styled.input`
-  flex: 1;
-  padding: 15px;
-  border: 3px solid #62b9ec;
-  border-radius: 5px;
-  margin-right: 10px;
-  border-radius: 15px;
-  background-color: white;
-
-  // ::placeholder {
-  //   color: #A7D6F2;
-  //   opacity: 1; /* 크롬에서 기본 opacity가 0.5로 설정되어 있기 때문에 1로 설정 */
-  // }
 
 
-`;
+// const Comments = styled.div`
+//    margin: 10px 10px;
 
-const CommentButton = styled.button`
-  padding: 10px 20px;
-  border: none;
-  border-radius: 15px;
-  background-color: #62b9ec;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
+// `;
 
-  &:hover {
-    background-color: #a0dafb;
-  }
-`;
+// const CommentInputWrapper = styled.div`
+//   margin-top: 60px;
+//   display: flex;
+//   align-items: center;
+// `;
 
-const RoleButton = styled.button`
-  padding: 24px 25px;
-  margin-bottom: 20px;
-  border: 1px solid;
-  border-radius: 14px 14px 1px 14px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  border-color: rgba(160, 218, 251);
-  background-color: ${({ isSelected }) => (isSelected ? 'rgba(160, 218, 251)' : 'white')};
-  color: #0A8ED9;
-  font-size: 16px;
-  white-space: nowrap;
-  font-size: 18px;
-  min-width: 60%;
-  padding: 10px 20px;
+// const CommentInput = styled.input`
+//   flex: 1;
+//   padding: 15px;
+//   border: 3px solid #62b9ec;
+//   border-radius: 5px;
+//   margin-right: 10px;
+//   border-radius: 15px;
+//   background-color: white;
 
-  &:hover {
-    background-color: rgba(160, 218, 251);
-  }
-`;
-
-const RoleButtonContainer = styled.div`
-  // margin-top: -20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  justify-content: space-between;
-  max-height: 400px; // 최대 높이 설정
-  overflow-y: auto; // 세로 스크롤 가능
-
-  position: relative; // 위치 고정을 위한 설정
-
-  h3 {
-    font-size: 24px;
-    margin-bottom: 40px;
-    position: sticky; // 스크롤 시 고정
-    top: 0; // 상단에 고정
-    background-color: white; // 배경색 설정 (필요시)
-    z-index: 1; // 다른 요소 위에 표시되도록 설정
-    //  padding: 20px;
-  }
-`;
-
-const SubmitButton = styled.button`
-  border: none;
-  border-radius: 15px;
-  background-color: #62b9ec;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  padding: 10px 20px;
-  margin-top: 70px;
+//   // ::placeholder {
+//   //   color: #A7D6F2;
+//   //   opacity: 1; /* 크롬에서 기본 opacity가 0.5로 설정되어 있기 때문에 1로 설정 */
+//   // }
 
 
-  &:hover {
-    background-color: #a0dafb;
-  }
-`;
+// `;
+
+// const CommentButton = styled.button`
+//   padding: 10px 20px;
+//   border: none;
+//   border-radius: 15px;
+//   background-color: #62b9ec;
+//   color: white;
+//   font-weight: bold;
+//   cursor: pointer;
+
+//   &:hover {
+//     background-color: #a0dafb;
+//   }
+// `;
+
+// const RoleButton = styled.button`
+//   padding: 24px 25px;
+//   margin-bottom: 20px;
+//   border: 1px solid;
+//   border-radius: 14px 14px 1px 14px;
+//   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+//   border-color: rgba(160, 218, 251);
+//   background-color: ${({ isSelected }) => (isSelected ? 'rgba(160, 218, 251)' : 'white')};
+//   color: #0A8ED9;
+//   font-size: 16px;
+//   white-space: nowrap;
+//   font-size: 18px;
+//   min-width: 60%;
+//   padding: 10px 20px;
+
+//   &:hover {
+//     background-color: rgba(160, 218, 251);
+//   }
+// `;
+
+// const RoleButtonContainer = styled.div`
+//   // margin-top: -20px;
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   width: 100%;
+//   justify-content: space-between;
+//   max-height: 400px; // 최대 높이 설정
+//   overflow-y: auto; // 세로 스크롤 가능
+
+//   position: relative; // 위치 고정을 위한 설정
+
+//   h3 {
+//     font-size: 24px;
+//     margin-bottom: 40px;
+//     position: sticky; // 스크롤 시 고정
+//     top: 0; // 상단에 고정
+//     background-color: white; // 배경색 설정 (필요시)
+//     z-index: 1; // 다른 요소 위에 표시되도록 설정
+//     //  padding: 20px;
+//   }
+// `;
+
+// const SubmitButton = styled.button`
+//   border: none;
+//   border-radius: 15px;
+//   background-color: #62b9ec;
+//   color: white;
+//   font-weight: bold;
+//   cursor: pointer;
+//   padding: 10px 20px;
+//   margin-top: 70px;
 
 
-const CloseButton = styled(SubmitButton)`
-  margin-top: 20px; 
+//   &:hover {
+//     background-color: #a0dafb;
+//   }
+// `;
 
-`;
 
-const RoleButtonContainerStyled = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  justify-content: space-between;
-  max-height: 400px; // 최대 높이 설정
-  overflow-y: auto; // 세로 스크롤 가능
-  // height: 800px;
+// const CloseButton = styled(SubmitButton)`
+//   margin-top: 20px; 
 
-  position: relative; // 위치 고정을 위한 설정
+// `;
 
-`;
+// const RoleButtonContainerStyled = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   width: 100%;
+//   justify-content: space-between;
+//   max-height: 400px; // 최대 높이 설정
+//   overflow-y: auto; // 세로 스크롤 가능
+//   // height: 800px;
 
-const AuthButtonContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-top: 80px;
-`;
+//   position: relative; // 위치 고정을 위한 설정
 
-const AuthButton = styled.button`
-    border: none;
-  border-radius: 15px;
-  background-color: #62b9ec;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  padding: 10px 20px;
-  margin-left: 10px;
+// `;
 
-  &:hover {
-    background-color: #a0dafb;
-  }
-`;
+// const AuthButtonContainer = styled.div`
+//   display: flex;
+//   justify-content: space-between;
+//   margin-top: 80px;
+// `;
+
+// const AuthButton = styled.button`
+//     border: none;
+//   border-radius: 15px;
+//   background-color: #62b9ec;
+//   color: white;
+//   font-weight: bold;
+//   cursor: pointer;
+//   padding: 10px 20px;
+//   margin-left: 10px;
+
+//   &:hover {
+//     background-color: #a0dafb;
+//   }
+// `;
 
 // const AuthorSection = styled.div`
 //   display: flex;

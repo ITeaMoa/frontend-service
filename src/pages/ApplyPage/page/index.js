@@ -1,22 +1,22 @@
 import React, { useState, useEffect,  } from 'react';
 import styled from 'styled-components';
-import Nav from '../../components/Nav';
+import Nav from '../../../components/Nav';
 import { useNavigate , useParams, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft,faComment } from '@fortawesome/free-solid-svg-icons';
 import { faUser } from '@fortawesome/free-regular-svg-icons';
 // import axios from 'axios';
-import LikeButton from '../../components/LikeButton';
-import Modal from '../../components/Modal'; // 모달 컴포넌트 import
-import axios from '../../api/axios'
-import { useAuth } from '../../context/AuthContext'
+import LikeButton from '../../../components/LikeButton';
+import Modal from '../../../components/Modal'; // 모달 컴포넌트 import
+import axios from '../../../api/axios'
+import { useAuth } from '../../../context/AuthContext'
 // import items from '../../data'; // items를 import 추가
-import CommentsSection from './CommentsSection'; // CommentsSection import 추가
-import RoleSelectionModal from '../../components/RoleSelectionModal';
-import AuthModal from '../../components/AuthModal';
+import CommentsSection from '../components/CommentsSection'; // CommentsSection import 추가
+import RoleSelectionModal from '../../../components/RoleSelectionModal';
+import AuthModal from '../../../components/AuthModal';
 import { useAtom } from 'jotai';
-import {  selectedProjectDetailAtom, selectedSavedProjectAtom,  } from '../../Atoms.jsx/AtomStates';
-
+import {  selectedProjectDetailAtom, selectedSavedProjectAtom,  } from '../../../Atoms.jsx/AtomStates';
+import AlertModal from '../../../components/AlertModal';
 
 
 
@@ -469,16 +469,11 @@ const handleChatClick = () => {
     </Modal>
   )}
 
-{showAlertPopup && (
-  <Modal isOpen={showAlertPopup} onClose={() => setShowAlertPopup(false)}>
-        <h3 style={{ textAlign: 'center',fontSize:'16px' }}>{showAlertPopup}</h3>
-        <ButtonContainer>
-          <ModalButton onClick={() => setShowAlertPopup(false)}>확인</ModalButton>
-          {/* <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton> */}
-        </ButtonContainer>
-      </Modal>  
- 
-)}
+<AlertModal
+  isOpen={!!showAlertPopup}
+  message={showAlertPopup}
+  onClose={() => setShowAlertPopup(false)}
+/>
     </>
   );
 };

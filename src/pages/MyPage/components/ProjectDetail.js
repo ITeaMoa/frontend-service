@@ -2,13 +2,13 @@ import React, { useState, useEffect, useCallback} from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment } from '@fortawesome/free-solid-svg-icons';
-import Pagination from '../../components/Pagination'; 
-import axios from '../../api/axios'
+import Pagination from '../../../components/Pagination'; 
+import axios from '../../../api/axios'
 // import axios from 'axios';
 // import { useAuth } from '../../context/AuthContext'
-import Modal from '../../components/Modal';
+import Modal from '../../../components/Modal';
 import { useAtom } from 'jotai';
-import { currentApplicantsAtom } from '../../Atoms.jsx/AtomStates';
+import { currentApplicantsAtom } from '../../../Atoms.jsx/AtomStates';
 import { useNavigate } from 'react-router-dom';
 
 const ProjectDetail = ({ project, onBack, onClose}) => {

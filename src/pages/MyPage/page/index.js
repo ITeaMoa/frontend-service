@@ -1,21 +1,21 @@
 import React, { useEffect, useState,  } from 'react';
 import styled from 'styled-components';
-import Nav from "../../components/Nav";
+import Nav from "../../../components/Nav";
 // import axios from 'axios';
-import ProjectDetail from './ProjectDetail';
+import ProjectDetail from '../components/ProjectDetail';
 // import ProjectListComponent from './ProjectListComponent_del';
-import { useAuth } from '../../context/AuthContext'
-import axios from '../../api/axios';
+import { useAuth } from '../../../context/AuthContext'
+import axios from '../../../api/axios';
 import { useAtom } from 'jotai';
-import { feedTypeAtom } from '../../Atoms.jsx/AtomStates';
-import Pagination from '../../components/Pagination';
-import Modal from '../../components/Modal';
-import ProjectItemComponent from './ProjectItemComponent';
-import UserProfile from './UserProfile';
+import { feedTypeAtom } from '../../../Atoms.jsx/AtomStates';
+import Pagination from '../../../components/Pagination';
+import Modal from '../../../components/Modal';
+import ProjectItemComponent from '../components/ProjectItemComponent';
+import UserProfile from '../components/UserProfile';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
-
+import AlertModal from '../../../components/AlertModal';
 
 const MyPage = () => {
   const [projects, setProjects] = useState([]);
@@ -287,7 +287,7 @@ const refreshProjects = async () => {
       });
       // setProjects(dummySavedProjects);
     } else if (selectedList === 'interested') {
-      response = await axios.get('/my/like', {
+      response = await axios.get('/my/like', { 
         params: {
           userId: user.id,
           feedType: feedType
@@ -734,16 +734,11 @@ const handleConfirmCancel = async () => {
 
       
     </Container>
-    {showAlertPopup && (
-  <Modal isOpen={showAlertPopup} onClose={() => setShowAlertPopup(false)}>
-        <h3 style={{ textAlign: 'center',fontSize:'16px' }}>{showAlertPopup}</h3>
-        <ButtonContainer>
-          <ModalButton onClick={() => setShowAlertPopup(false)}>확인</ModalButton>
-          {/* <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton> */}
-        </ButtonContainer>
-      </Modal>  
- 
-)}
+    <AlertModal
+  isOpen={!!showAlertPopup}
+  message={showAlertPopup}
+  onClose={() => setShowAlertPopup(false)}
+/>
     </>
    
   );

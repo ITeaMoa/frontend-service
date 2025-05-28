@@ -12,6 +12,7 @@ import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 import { useAtom } from 'jotai';
 import { selectedSavedProjectAtom,feedTypeAtom } from '../../Atoms.jsx/AtomStates'; // Atom import
+import AlertModal from '../../components/AlertModal';
 
 
 const WritePage = () => {
@@ -43,7 +44,7 @@ const WritePage = () => {
   const showSearch = false;
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열기 상태
   const [recruitmentNum, setRecruitmentNum] = useState(0); // recruitmentNum 상태 추가
-
+  const [showAlertPopup, setShowAlertPopup] = useState(false); // 경고 모달 상태 추가
   // const [isProject, setIsProject] = useState(true); // 프로젝트 여부 상태 추가
 
   
@@ -138,7 +139,7 @@ useEffect(() => {
 
     // user가 존재하는지 확인
     if (!user || !user.id) {
-        alert('로그인 상태가 아닙니다. 로그인 후 다시 시도해주세요.');
+        setShowAlertPopup('로그인 상태가 아닙니다. 로그인 후 다시 시도해주세요.');
         return;
     }
 
@@ -168,7 +169,7 @@ useEffect(() => {
     }
 
     if (missingFields.length > 0) {
-        alert(`다음 필드를 올바르게 입력해주세요: ${missingFields.join(', ')}`);
+          setShowAlertPopup(`다음 필드를 올바르게 입력해주세요: ${missingFields.join(', ')}`);
         return;
     }
 
@@ -286,15 +287,10 @@ const handleTagSelect = (option) => {
     if (!option || !option.label) {
         return;
     }
-    
-    // const MAX_TAGS = 10;
-    // if (selectedTags?.length >= MAX_TAGS) {
-    //     alert('최대 10개의 태그만 선택할 수 있습니다.');
-    //     return;
-    // }
+  
     const MAX_TAGS = 10;
 if ((selectedTags || []).length >= MAX_TAGS) {
-  alert('최대 10개의 태그만 선택할 수 있습니다.');
+  setShowAlertPopup('최대 10개의 태그만 선택할 수 있습니다.');
   return;
 }
 
@@ -327,7 +323,7 @@ const handleDeadlineChange = (e) => {
     today.setHours(0, 0, 0, 0); // Set time to midnight for comparison
 
     if (selectedDate < today) {
-        alert('마감일자는 오늘 이후의 날짜만 선택할 수 있습니다.');
+        setShowAlertPopup('마감일자는 오늘 이후의 날짜만 선택할 수 있습니다.');
         return;
     }
     setDeadline(e.target.value);
@@ -461,15 +457,13 @@ const handleImageRemove = () => {
             <Modal isOpen={isModalOpen} onClose={closeModal}>
                 {/* <TagDropdown onTagSelect={handleTagSelect} /> */}
                 <Dropdown 
-        options={option3} 
-        placeholder={"태그를 선택하시오"}
-        dropdownType="tags"
-        onTagSelect={(selectedTags) => {
+              options={option3} 
+              placeholder={"태그를 선택하시오"}
+              dropdownType="tags"
+              onTagSelect={(selectedTags) => {
             handleTagSelect(selectedTags);
             console.log('Tag selected:', selectedTags.label); // 디버깅용
         }}
-
-        // customInputStyle={{ border: ' 2px solid #A0DAFB;', borderRadius: '5px' }} // Example custom styles
     />
             </Modal>
         </TagsSection>
@@ -536,7 +530,15 @@ const handleImageRemove = () => {
         <SaveButton onClick={(e) => handleSubmit(e, false)}>저장하기</SaveButton>
         </Submit>
       </WriteWrapper>
+
+      <AlertModal
+  isOpen={!!showAlertPopup}
+  message={showAlertPopup}
+  onClose={() => setShowAlertPopup(false)}
+/>
     </>
+
+    
   );
 };
 
@@ -888,4 +890,25 @@ const FileName = styled.span`
   font-size: 14px;
   color: #333;
   word-break: break-all;
+`;
+
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+`;
+
+const ModalButton = styled.button`
+  background-color: #3563E9;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #a0dafb;
+  }
 `;

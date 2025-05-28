@@ -5,12 +5,12 @@ import { faHeart, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 import styled from 'styled-components';
 import Pagination from '../../components/Pagination';
-import axios from '../../api/axios'; // Axios import 추가
+import axios from '../../../api/axios'; // Axios import 추가
 // import axios from 'axios';
-import { useAuth, useProject } from '../../context/AuthContext'
-import Modal from '../../components/Modal';  // Modal 컴포넌트 import
+import { useAuth, useProject } from '../../../context/AuthContext'
+import Modal from '../../../components/Modal';  // Modal 컴포넌트 import
 import ProjectItemComponent from './ProjectItemComponent'; // Adjust the path as necessary
-import UserProfile from '../../components/UserProfile'; // UserProfile 컴포넌트 import
+import UserProfile from '../../../components/UserProfile'; // UserProfile 컴포넌트 import
 // import {  faUser as regularUser } from '@fortawesome/free-regular-svg-icons'; 
 // import { useAtom } from 'jotai'; // jotai import 추가
 

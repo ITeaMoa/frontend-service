@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useLocation } from 'react';
 import styled from 'styled-components';
-import axios from '../../api/axios';
+import axios from '../../../api/axios';
 import { useAtom } from 'jotai';
-import { MESSAGE_LIST } from '../../Atoms.jsx/AtomStates';
-import { useAuth } from '../../context/AuthContext';
+import { MESSAGE_LIST } from '../../../Atoms.jsx/AtomStates';
+import { useAuth } from '../../../context/AuthContext';
 
 const MessageList = () => {
   const [selectedMessage, setSelectedMessage] = useState(null);

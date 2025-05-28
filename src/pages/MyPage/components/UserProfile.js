@@ -2,13 +2,13 @@ import React, { useRef, useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
-import Dropdown from '../../components/DropDown';
+import Dropdown from '../../../components/DropDown';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
-import axios from '../../api/axios';
-import Modal from '../../components/Modal';
+import axios from '../../../api/axios';
+import Modal from '../../../components/Modal';
 import { useAtom } from 'jotai';
-import { USER_PROFILE } from '../../Atoms.jsx/AtomStates';
-import { useAuth } from '../../context/AuthContext'; // AuthContext에서 useAuth 가져오기
+import { USER_PROFILE } from '../../../Atoms.jsx/AtomStates';
+import { useAuth } from '../../../context/AuthContext'; // AuthContext에서 useAuth 가져오기
 
 
 

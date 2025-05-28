@@ -59,7 +59,6 @@ const fetchUserLikeStatus = async () => {
       console.log('사용자 좋아요 상태:', response.data);
       
       // 사용자가 좋아요를 눌렀던 피드의 sk가 현재 버튼의 sk와 일치하는지 확인
-      console.log('response.data:', response.data);
       const userLiked = response.data.some(like => like.sk === sk);
       setLiked(userLiked);
       console.log('userLiked:', userLiked);
@@ -190,7 +189,7 @@ useEffect(() => {
         console.log('좋아요 제거 성공');
         // setLikesCount(newLikesCount - (newLiked ? 1 : -1));
         const response = await axios.get(`/main/like?userId=${user.id}`);
-        console.log('서버 응답ㅅㄹㄹㄹㄹㄹㄹㄹㄹㄹ:', response.data);
+        console.log('사용자 좋아요 상탠:', response.data);
       }
 
       // 상태 업데이트
@@ -251,7 +250,7 @@ useEffect(() => {
 
   return (
     <Button onClick={handleClick} buttonStyle={buttonStyle}>
-      <FontAwesomeIcon icon={liked || likesCount > 0 ? faHeart : regularHeart} style={{ color: liked || likesCount > 0 ? 'red' : 'white', marginRight: '4px' }} />
+      <FontAwesomeIcon icon={liked && likesCount > 0 ? faHeart : regularHeart} style={{ color: liked && likesCount > 0 ? 'red' : 'white', marginRight: '4px' }} />
       {Math.abs(likesCount)}
     </Button>
   );

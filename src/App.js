@@ -1,16 +1,16 @@
-import MainPage from "./pages/MainPage";
+import MainPage from "./pages/MainPage/page";
 import WritePage from "./pages/WritePage";
-import ApplyPage from "./pages/ApplyPage";
-import SearchPage from "./pages/SearchPage";
-import MyPage from "./pages/MyPage";
+import ApplyPage from "./pages/ApplyPage/page";
+import SearchPage from "./pages/SearchPage/page";
+import MyPage from "./pages/MyPage/page";
 import LoginPage from "./pages/LoginPage";
 import { Outlet, Route, Routes } from 'react-router-dom';
 import SignupPage from './pages/SignupPage';
 import { AuthProvider } from './context/AuthContext'; // 경로를 맞춰주세요
 import { ThemeProvider } from 'styled-components';
 import theme from './components/Theme';
-import MessagePage from './pages/Messeage/MessagePage';
-import MainPage1 from './pages/MainPage/MainPage';
+import MessagePage from './pages/Messeage/page/MessagePage';
+import MainPage1 from './pages/MainPage/page/MainPage';
 
 // import { useAtom } from 'jotai';
 // const [, setIsLoggedIn] = useAtom(IS_LOGGED_IN); // 로그인 상태를 위한 아톰

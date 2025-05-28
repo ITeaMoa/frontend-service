@@ -1,21 +1,22 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
-import Nav from "../../components/Nav";
-import Section1 from "./section1";
-import Section2 from "./section2";
+import Nav from "../../../components/Nav";
+import Section1 from "../components/section1";
+import Section2 from "../components/section2";
 // import Section2 from "./Section2";
 import { useLocation, useNavigate } from 'react-router-dom';
 // import axios from 'axios';
-import Modal from '../../components/Modal';
-import RoleSelectionModal from '../../components/RoleSelectionModal';
+import Modal from '../../../components/Modal';
+import RoleSelectionModal from '../../../components/RoleSelectionModal';
 
-import axios from '../../api/axios'
-import { useAuth } from '../../context/AuthContext'
-import ProfileModal from '../../components/ProfileModal'; // ProfileModal 컴포넌트 추가
-import AuthModal from '../../components/AuthModal';
+import axios from '../../../api/axios'
+import { useAuth } from '../../../context/AuthContext'
+import ProfileModal from '../../../components/ProfileModal'; // ProfileModal 컴포넌트 추가
+import AuthModal from '../../../components/AuthModal';
 import { useAtom } from 'jotai';
-import { feedTypeAtom, selectedProjectDetailAtom, likedProjectsAtom, USER_PROFILE } from '../../Atoms.jsx/AtomStates';
-import MainPageComponent from './MainPage';
+import { feedTypeAtom, selectedProjectDetailAtom, likedProjectsAtom, USER_PROFILE } from '../../../Atoms.jsx/AtomStates';
+// import MainPageComponent from '../MainPage';
+import AlertModal from '../../../components/AlertModal';
 
 let modalOpenedOnce = false;
 
@@ -274,7 +275,7 @@ const MainPage = () => {
       // 자신이 작성한 게시글인지 확인
       if (project && project.creatorId === user.id) {
         // alert("자신이 작성한 게시글에는 신청할 수 없습니다."); 
-        setShowAlertPopup(true);
+        setShowAlertPopup("자신이 작성한 게시글에는 신청할 수 없습니다.");
         return; 
       }
     
@@ -464,16 +465,11 @@ const MainPage = () => {
         handleLogin={() => navigate('/LoginPage')}
       />
 
-{showAlertPopup && (
-  <Modal isOpen={showAlertPopup} onClose={() => setShowAlertPopup(false)}>
-        <h3 style={{ textAlign: 'center' }}>자신이 작성한 게시글에는 신청할 수 없습니다</h3>
-        <ButtonContainer>
-          <ModalButton onClick={() => setShowAlertPopup(false)}>확인</ModalButton>
-          {/* <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton> */}
-        </ButtonContainer>
-      </Modal>  
-)}
-
+<AlertModal
+  isOpen={!!showAlertPopup}
+  message={showAlertPopup}
+  onClose={() => setShowAlertPopup(false)}
+/>
 
 {showApplyPopup && (
   <Modal isOpen={showApplyPopup} onClose={() => setShowApplyPopup(false)}>

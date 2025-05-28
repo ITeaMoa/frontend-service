@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-regular-svg-icons';
 import styled from 'styled-components';
-import axios from '../../api/axios';
-import { selectedProjectDetailAtom } from '../../Atoms.jsx/AtomStates';
+import axios from '../../../api/axios';
+import { selectedProjectDetailAtom } from '../../../Atoms.jsx/AtomStates';
 import { useAtom } from 'jotai';
-import Modal from '../../components/Modal';
+import Modal from '../../../components/Modal';
+import AlertModal from '../../../components/AlertModal';
 
 const CommentsSection = ({ commentInput, setCommentInput, user, projectId }) => {
   const [replyInput, setReplyInput] = useState({});
@@ -20,6 +21,7 @@ const [editCommentInput, setEditCommentInput] = useState('');
 //  const [project, setProject] = useState(null);
   const [project, ] = useState(null);
   const [comments, setComments] = useState(selectedProjectDetail?.comments || []);
+
 console.log("comments:", comments)
   // setProject(selectedProjectDetail);
   //projectId를 -> 여기서 찾아도 될듯/ comment도?
@@ -131,7 +133,7 @@ console.log("comments:", comments)
       } catch (error) {
         console.error("댓글 제출 중 오류 발생:", error);
         // alert("댓글 제출에 실패했습니다.");
-        setShowAlertPopup(true);
+        setShowAlertPopup("댓글 제출에 실패했습니다. 다시 시도해주세요.");
       }
     } else {
       console.log("댓글 입력이 없거나, project 데이터가 존재하지 않음", { commentInput, selectedProjectDetail });
@@ -435,16 +437,11 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
           <span>댓글 정보가 없습니다.</span>
         )}
 
-        
-{showAlertPopup && (
-  <Modal isOpen={showAlertPopup} onClose={() => setShowAlertPopup(false)}>
-        <h3 style={{ textAlign: 'center' }}>댓글 제출에 실패했습니다. 다시 시도해주세요.</h3>
-        {/* <ButtonContainer>
-          <ModalButton onClick={handleConfirmCancel}>확인</ModalButton>
-          <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton>
-        </ButtonContainer> */}
-      </Modal>  
-)}
+<AlertModal
+  isOpen={!!showAlertPopup}
+  message={showAlertPopup}
+  onClose={() => setShowAlertPopup(false)}
+/>
       </CommentsList>
     </Container>
    

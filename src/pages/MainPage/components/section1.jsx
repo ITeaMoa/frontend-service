@@ -3,9 +3,9 @@ import React from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
-import LikeButton from '../../components/LikeButton';
+import LikeButton from '../../../components/LikeButton';
 import { useAtom } from 'jotai';
-import { USER_PROFILE } from '../../Atoms.jsx/AtomStates';
+import { USER_PROFILE } from '../../../Atoms.jsx/AtomStates';
 
 
 

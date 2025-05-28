@@ -3,9 +3,9 @@ import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons'; 
-import LikeButton from '../../components/LikeButton';
-import Pagination from '../../components/Pagination';
-import ProjectCard from '../../components/ProjectCard';
+import LikeButton from '../../../components/LikeButton';
+import Pagination from '../../../components/Pagination';
+import ProjectCard from '../../../components/ProjectCard';
 
 const Section2 = ({
   projects,                    // 전체 프로젝트 목록            

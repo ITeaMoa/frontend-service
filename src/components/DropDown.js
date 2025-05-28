@@ -140,13 +140,26 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
       const getPlaceholderText = () => {
         if (selectedOptions.length === 0) return placeholder;
     
+        // if (dropdownType === "roles") {
+        //   // 객체 배열: [{role, count}, ...]
+        // // 
+        // return selectedOptions
+        // .map(opt => opt.role || opt.label || opt.value || '')
+        // .filter(Boolean)
+        // .join(', ');
         if (dropdownType === "roles") {
-          // 객체 배열: [{role, count}, ...]
-        // 
-        return selectedOptions
-        .map(opt => opt.role || opt.label || opt.value || '')
-        .filter(Boolean)
-        .join(', ');
+            // 객체 배열: [{role, count}, ...]
+            return selectedOptions
+              .map(opt => {
+                const name = opt.role || opt.label || opt.value || '';
+                // count가 있으면 (count) 표시
+                return opt.count !== undefined && opt.count !== null
+                  ? `${name} (${opt.count})`
+                  : name;
+              })
+              .filter(Boolean)
+              .join(', ');
+          
         } else if (dropdownType === "profile") {
           // 문자열 배열: ['5개월', ...]
           if (selectedOptions.length > 8) {
@@ -322,6 +335,7 @@ const DropdownItem = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: ${({ isSelected }) => (isSelected ? 'rgba(160, 218, 251, 0.5)' : 'white')};
 
     &:hover {
         background-color: rgba(160, 218, 251, 0.5);

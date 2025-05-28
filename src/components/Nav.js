@@ -246,7 +246,7 @@ const handleToggleChange = () => {
   const handleAlertToggle = () => {
     if (showAlert) {
       setIsClosing(true);
-      setTimeout(() => {
+      setTimeout(() => { 
         setShowAlert(false);
         setIsClosing(false);
       }, 300); // 애니메이션 시간
@@ -264,9 +264,9 @@ const handleToggleChange = () => {
           alt="Logo"
           src="/images/logo1.png"
         onClick={() => (window.location.href = "/")}/>
-      </Logo>
+      </Logo> 
 
-      {showToggle && (
+      {showToggle && ( 
       <ToggleContainer >
         <ToggleLabel active={toggleActive}>STUDY</ToggleLabel>
         <ToggleSwitch type="checkbox" checked={!toggleActive} onChange={handleToggleChange} />

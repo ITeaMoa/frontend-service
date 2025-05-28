@@ -5,7 +5,7 @@ import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
-import { selectedSavedProjectAtom } from '../../Atoms.jsx/AtomStates';
+import { selectedSavedProjectAtom } from '../../../Atoms.jsx/AtomStates';
 
     
 

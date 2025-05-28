@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import ProjectCard from '../../components/ProjectCard';
-import Pagination from '../../components/Pagination';
-import Modal from '../../components/Modal';
-import { useAuth } from '../../context/AuthContext';
+import ProjectCard from '../../../components/ProjectCard';
+import Pagination from '../../../components/Pagination';
+import Modal from '../../../components/Modal';
+import { useAuth } from '../../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import axios from '../../api/axios';
+import axios from '../../../api/axios';
 import { useAtom } from 'jotai';
-import { feedTypeAtom, likedProjectsAtom, selectedProjectDetailAtom } from '../../Atoms.jsx/AtomStates';
-import RoleSelectionModal from '../../components/RoleSelectionModal';
-import Section2 from '../MainPage/section2';
+import { feedTypeAtom, likedProjectsAtom, selectedProjectDetailAtom } from '../../../Atoms.jsx/AtomStates';
+import RoleSelectionModal from '../../../components/RoleSelectionModal';
+import Section2 from '../../MainPage/components/section2';
 // import { SelectedProjectDetail } from '../../Atoms.jsx/AtomStates';
 
 

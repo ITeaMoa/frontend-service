@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import Nav from '../../components/Nav';
-import MessagePeople from './MessagePeople';
-import MessageList from './MessageList';
+import Nav from '../../../components/Nav';
+import MessagePeople from '../components/MessagePeople';
+import MessageList from '../components/MessageList';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane, faTimes } from '@fortawesome/free-solid-svg-icons';
-import axios from '../../api/axios'
-import { useAuth } from '../../context/AuthContext'
+import axios from '../../../api/axios'
+import { useAuth } from '../../../context/AuthContext'
 import { useAtom } from 'jotai';
-import { SELECTED_PERSON_ID, MESSAGE_LIST } from '../../Atoms.jsx/AtomStates';
+import { SELECTED_PERSON_ID, MESSAGE_LIST } from '../../../Atoms.jsx/AtomStates';
 import { useLocation } from 'react-router-dom';
 
 

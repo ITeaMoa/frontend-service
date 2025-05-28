@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import Nav from "../../components/Nav"; 
-import SearchFeed from "./SearchFeed"; 
+import Nav from "../../../components/Nav"; 
+import SearchFeed from "../components/SearchFeed"; 
 import styled from 'styled-components';
 // import axios from 'axios';
-import axios from '../../api/axios';
+import axios from '../../../api/axios';
 import { useAtom } from 'jotai';
-import { feedTypeAtom } from '../../Atoms.jsx/AtomStates';
+import { feedTypeAtom } from '../../../Atoms.jsx/AtomStates';
 
 
 const SearchPage = () => {

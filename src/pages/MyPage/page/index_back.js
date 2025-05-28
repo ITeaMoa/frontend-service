@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
-import Nav from "../../components/Nav";
+import Nav from "../../../components/Nav";
 // import axios from 'axios';
 import ProjectDetail from './ProjectDetail';
-import ProjectListComponent from './ProjectListComponent';
-import { useAuth } from '../../context/AuthContext'
-import axios from '../../api/axios';
+import ProjectListComponent from '../component/ProjectListComponent';
+import { useAuth } from '../../../context/AuthContext'
+import axios from '../../../api/axios';
 import { useAtom } from 'jotai';
-import { feedTypeAtom } from '../../Atoms.jsx/AtomStates';
+import { feedTypeAtom } from '../../../Atoms.jsx/AtomStates';
 
 
 const MyPage = () => {

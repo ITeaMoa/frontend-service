@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
-import Nav from '../../components/Nav';
-import ProjectCard from '../../components/ProjectCard';
+import Nav from '../../../components/Nav';
+import ProjectCard from '../../../components/ProjectCard';
 import { useAtom } from 'jotai';
-import { feedTypeAtom, selectedProjectDetailAtom } from '../../Atoms.jsx/AtomStates';
-import { useAuth } from '../../context/AuthContext';
-import axios from '../../api/axios';
-import SearchFeed from './SearchFeed';
+import { feedTypeAtom, selectedProjectDetailAtom } from '../../../Atoms.jsx/AtomStates';
+import { useAuth } from '../../../context/AuthContext';
+import axios from '../../../api/axios';
+import SearchFeed from '../components/SearchFeed';
 //xxxxxxx
 const SearchPage = () => {
   const [searchResults, setSearchResults] = useState([]);

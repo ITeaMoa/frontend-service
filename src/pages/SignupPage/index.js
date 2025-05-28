@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 //import axios from 'axios';
 import axios from '../../api/axios'
 import Modal from '../../components/Modal';
+import AlertModal from '../../components/AlertModal';
 
 const SignUpPage = () => {
   const navigate = useNavigate();
@@ -278,16 +279,11 @@ const handleSignup = async () => {
       </Form>
     </Container>
 
-{showAlertPopup && (
-  <Modal isOpen={showAlertPopup} onClose={() => setShowAlertPopup(false)}>
-        <h3 style={{ textAlign: 'center',fontSize:'16px' }}>{showAlertPopup}</h3>
-        <ButtonContainer>
-          <ModalButton onClick={() => setShowAlertPopup(false)}>확인</ModalButton>
-          {/* <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton> */}
-        </ButtonContainer>
-      </Modal>  
- 
-)}
+    <AlertModal
+  isOpen={!!showAlertPopup}
+  message={showAlertPopup}
+  onClose={() => setShowAlertPopup(false)}
+/>
 </>
   );
 };

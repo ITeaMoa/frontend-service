@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Modal from '../../components/Modal';
+import AlertModal from '../../components/AlertModal';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -175,16 +176,12 @@ const LoginPage = () => {
         아직 회원이 아니신가요? <span onClick={handleAddButtonClick}> 회원가입하기 </span>
       </Signup>
 
-      {showAlertPopup && (
-  <Modal isOpen={showAlertPopup} onClose={() => setShowAlertPopup(false)}>
-        <h3 style={{ textAlign: 'center',fontSize:'16px' }}>{showAlertPopup}</h3>
-        <ButtonContainer>
-          <ModalButton onClick={() => setShowAlertPopup(false)}>확인</ModalButton>
-          {/* <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton> */}
-        </ButtonContainer>
-      </Modal>  
- 
-)}
+    
+<AlertModal
+isOpen={!!showAlertPopup}
+message={showAlertPopup}
+onClose={() => setShowAlertPopup(false)}
+/>
     </Container>
 
 

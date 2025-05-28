@@ -389,7 +389,7 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
                           reply.content
                         )}
                       </Comments>
-                      {!reply.deleted && user.id === reply.userId && (
+                      {!reply?.deleted && user?.id === reply?.userId && (
                         <Actions>
                           <ActionButton onClick={() => handleDeleteReply(comment.commentId, reply.replyId, user.id)}>삭제</ActionButton>
                         </Actions>

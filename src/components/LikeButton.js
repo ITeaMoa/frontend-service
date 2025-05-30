@@ -1,13 +1,14 @@
 //사용자 좋아요 ui와 이벤트 처리
 import React, { useEffect, useState, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useLocation } from 'react-router-dom';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons'; 
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 // import axios from 'axios';
 import axios from '../api/axios'
 import { useAtom } from 'jotai';
-import { likedProjectsAtom, IS_LOGGED_IN, USER } from '../Atoms.jsx/AtomStates';  
+import { likedProjectsAtom, IS_LOGGED_IN, USER} from '../Atoms.jsx/AtomStates';  
 import { useAuth } from '../context/AuthContext'; // AuthContext에서 useAuth 가져오기
 
 
@@ -20,6 +21,7 @@ const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle
   const [likedProjects, setLikedProjects] = useAtom(likedProjectsAtom);
   const [allProjects, setAllProjects] = useState([]);
   const { user } = useAuth();
+  const location = useLocation(); // 현재 경로를 가져옵니다.
 
   // // 사용자 좋아요 상태를 API 호출로 가져오기
   // const fetchUserLikeStatus = useCallback(async () => {
@@ -49,7 +51,9 @@ const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle
   //   fetchUserLikeStatus();
   // }, [fetchUserLikeStatus]);
 
-
+useEffect(() => {
+  setLikesCount(initialLikesCount);
+}, [initialLikesCount]);
  // useCallback 없이 일반 함수로 작성 //uscecallback없이 작성성
 const fetchUserLikeStatus = async () => {
   if (!user?.id || !sk) return;
@@ -73,7 +77,9 @@ const fetchUserLikeStatus = async () => {
   }
 };
 
-
+useEffect(() => {
+  fetchUserLikeStatus();
+}, [user,sk, authIsLoggedIn, user, feedType,liked, location.pathname]);
     // // Section2 관련 API 호출 함수들을 MainPage로 이동
 //     const fetchAllProjects = useCallback(async () => {
 //       try {
@@ -147,10 +153,6 @@ const fetchUserLikeStatus = async () => {
 // };
 
 // useEffect 수정
-useEffect(() => {
-  fetchUserLikeStatus();
-}, [user,sk, authIsLoggedIn, user, feedType]);
-
 
   const handleClick = async (e) => {
     if(!user) {
@@ -206,51 +208,14 @@ useEffect(() => {
   };
 
 
-  // const handleClick = async (e) => {
-  //   e.stopPropagation(); // 부모 클릭 이벤트 전파 방지
-  //   const newLiked = !liked;
-  //   const newLikesCount = newLiked ? likesCount + 1 : likesCount - 1;
-
-  //   setLiked(newLiked);
-  //   setLikesCount(newLikesCount);
-  //   if (onLikeChange) {
-  //     onLikeChange(newLiked, newLikesCount); // 이벤트 객체 생략
-  //   }
-
-  //   // API 호출
-  //   const data = {
-  //     pk: userId,
-  //     sk: sk, // sk 변수가 정의되어야 합니다.
-  //     feedType: "PROJECT"
-  //   };
-
-  //   try {
-  //     if (newLiked) {
-  //       // 좋아요 추가
-  //       await axios.post(apiEndpoint, data);
-  //     } else {
-  //       // 좋아요 제거
-  //       await axios.delete(apiEndpoint, { data });
-  //     }
-  //   } catch (error) {
-  //     console.error('Error updating like status:', error);
-  //     // 상태를 원래대로 되돌리기
-  //     setLiked(!newLiked);
-  //     setLikesCount(newLikesCount - (newLiked ? 1 : -1));
-  //   }
-  // };
 
 
 
-
-
-    
-
-
+  
 
   return (
     <Button onClick={handleClick} buttonStyle={buttonStyle}>
-      <FontAwesomeIcon icon={liked && likesCount > 0 ? faHeart : regularHeart} style={{ color: liked && likesCount > 0 ? 'red' : 'white', marginRight: '4px' }} />
+      <FontAwesomeIcon icon={liked ? faHeart : regularHeart} style={{ color: liked ? 'red' : 'white', marginRight: '4px' }} />
       {Math.abs(likesCount)}
     </Button>
   );

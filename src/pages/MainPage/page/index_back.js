@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Nav from "../../components/Nav";
-import Section1 from "./Section1_bak";
-import Section2 from "./Section2_bak";
+import Nav from "../../../components/Nav";
+import Section1 from "../Section1_bak";
+import Section2 from "../Section2_bak";
 import { useLocation, useNavigate } from 'react-router-dom';
 // import axios from 'axios';
-import Modal from '../../components/Modal';
-import axios from '../../api/axios'
-import { useAuth } from '../../context/AuthContext'
-import ProfileModal from '../../components/ProfileModal'; // ProfileModal 컴포넌트 추가
+import Modal from '../../../components/Modal';
+import axios from '../../../api/axios'
+import { useAuth } from '../../../context/AuthContext'
+import ProfileModal from '../../../components/ProfileModal'; // ProfileModal 컴포넌트 추가
 
 // 모듈 레벨 변수: 페이지 내에서 한 번 열렸으면 true로 설정.
 // 새로고침 시에는 다시 초기화됩니다.

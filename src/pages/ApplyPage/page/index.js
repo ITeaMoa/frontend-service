@@ -280,6 +280,7 @@ const handleChatClick = () => {
   } 
   };
 
+
   return (
     <>
       {/* <Nav showSearch={showSearch} onToggleChange={handleToggleChange} /> */}
@@ -305,23 +306,13 @@ const handleChatClick = () => {
          */}
 
 
-              {/* <LikeButton 
-                initialLiked={likedProjects.find(like => like.id === projectId)?.liked || false} 
-                initialLikesCount={likedProjects.find(like => like.id === projectId)?.likesCount || 0} 
-                onLikeChange={handleLikeClick} 
-                apiEndpoint="/main/like" 
-                buttonStyle='apply'ㅌ
-                sk={project.pk}
-                userId={user ? user.id : null} 
-              /> */}
-
                   <LikeButton 
-                initialLiked={project.liked} 
+                // initialLiked={project.liked} 
                 initialLikesCount={project.likesCount} 
-                // onLikeChange={handleLikeClick} //삭제해봄
+                // onLikeChange={handleLikeClick} //삭제해봄 
                 buttonStyle="apply"
                 sk={project.pk}
-                userId={user ? user.id : null} // user가 null인 경우 처리
+                // userId={user ? user.id : null} // user가 null인 경우 처리
                 feedType={project.sk} // Use project.sk as feedType
               />
         

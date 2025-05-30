@@ -3,12 +3,12 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons'; 
-import LikeButton from '../../components/LikeButton';
-import Pagination from '../../components/Pagination';
-import Modal from '../../components/Modal';
+import LikeButton from '../../../components/LikeButton';
+import Pagination from '../../../components/Pagination';
+import Modal from '../../../components/Modal';
 // import { useAuth } from '../../context/AuthContext'; // AuthContext 경로를 맞춰주세요
-import { useAuth } from '../../context/AuthContext'
-import axios from '../../api/axios'
+import { useAuth } from '../../../context/AuthContext'
+import axios from '../../../api/axios'
 
 
 //searchpage에서 itemslist 가져오기

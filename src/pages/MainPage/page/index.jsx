@@ -416,7 +416,7 @@ const MainPage = () => {
 
         </MainWrapper>
         {/* <Modal 
-        isOpen={isRoleModalOpen} 
+        isOpen={isRoleModalOpen}  
         // onClose={handleModalClose}
         onClose={() => setIsRoleModalOpen(false)}
         modalType="apply"

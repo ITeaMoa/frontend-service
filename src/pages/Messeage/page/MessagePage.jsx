@@ -102,7 +102,6 @@ useEffect(() => {
 
   const handleSendMessage = async () => {
     try {
-      
       const data = {
         creatorId: user.id,  // 보내는 사람 ID (현재 로그인한 사용자)
         recipientId: selectedPersonId, // 받는 사람 ID
@@ -116,13 +115,24 @@ useEffect(() => {
       // 메시지 전송 후 입력창 초기화
       setNewMessage('');
       
-      // 메시지 목록 업데이트 (선택사항)
-      // setMessageList([...messageList, response.data]);
-      await getMessage();;
-      // 팝업 닫기 (필요한 경우)
+      // 새로운 메시지 목록을 가져오기
+      try {
+        const messageResponse = await axios.get('/message', {
+          params: {
+            recipientId: selectedPersonId,
+            userId: user.id
+          }
+        });
+        setMessageList(messageResponse.data);
+      } catch (error) {
+        console.error('Error fetching messages:', error);
+      }
+      
+      // 사용자 목록 업데이트
+      // await getMessage();
+      
       setShowMessagePopup(false);
-      // handlePersonClick(selectedPersonId);
-  
+
     } catch (error) {
       console.error('Error sending message:', error);
       // 에러 처리 (예: 알림 표시)

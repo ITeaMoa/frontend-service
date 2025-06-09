@@ -310,7 +310,7 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
                 <Users>
                   <FontAwesomeIcon icon={faUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
                   <Timestamp>
-                    <strong>{comment.userId}</strong>
+                    <strong>{comment.nickname}</strong>
                     <span style={{ fontSize: 'small', color: '#aaa' }}>
                       {formattedDate} {formattedTime}
                     </span>
@@ -354,9 +354,13 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
                       >
                         수정
                       </ActionButton>
+                      
+                      
+                    )} 
+                    {user.id === comment.userId && (
+                      <ActionButton onClick={() => handleDeleteComment(comment.commentId)}>삭제</ActionButton>
                     )}
-                    <ActionButton onClick={() => handleDeleteComment(comment.commentId)}>삭제</ActionButton>
-                    <ActionButton onClick={() => setShowReplyInput(prev => ({ ...prev, [comment.commentId]: !prev[comment.commentId] }))}>
+                      <ActionButton onClick={() => setShowReplyInput(prev => ({ ...prev, [comment.commentId]: !prev[comment.commentId] }))}>
                       댓글 추가
                     </ActionButton>
                   </>

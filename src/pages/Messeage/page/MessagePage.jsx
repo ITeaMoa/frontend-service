@@ -76,7 +76,7 @@ const getMessage = async () => {
     }));
     setPersonList(list);
 
-    if (list.length > 0) setSelectedPerson(list[0].id);
+    // if (list.length > 0) setSelectedPerson(list[0].id);
 
     const countResponse = await axios.get('/message/count', {
       params: { pk: user.id }
@@ -196,6 +196,12 @@ useEffect(() => {
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="메시지를 입력하세요..."
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {  // Shift + Enter가 아닌 경우에만
+                  e.preventDefault();  // 기본 줄바꿈 동작 방지
+                  handleSendMessage();  // 메시지 전송
+                }
+              }}
             />
             <SendMessageButton onClick={handleSendMessage}>
               <FontAwesomeIcon icon={faPaperPlane} /> 보내기

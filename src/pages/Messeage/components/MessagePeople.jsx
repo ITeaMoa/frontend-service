@@ -5,13 +5,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 
 const MessagePeople = ({ name, messageCount, isSelected, onClick }) => {
+  // 클릭 이벤트를 처리하는 새로운 함수
+  const handleClick = () => {
+    onClick(); // 기존 onClick 함수 실행
+  };
+
   return (
-    <PersonContainer onClick={onClick} isSelected={isSelected}>
+    <PersonContainer onClick={handleClick} isSelected={isSelected}>
       <PersonInfo>
-      <FontAwesomeIcon icon={regularUser} size="15px" />
+        <FontAwesomeIcon icon={regularUser} size="15px" />
         <Name>{name}</Name>
       </PersonInfo>
-      <MessageCount>{messageCount}</MessageCount>
+      <MessageCount>{isSelected ? "0" : messageCount}</MessageCount>
     </PersonContainer>
   );
 };

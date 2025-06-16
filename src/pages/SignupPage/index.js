@@ -17,7 +17,8 @@ const SignUpPage = () => {
   const [isResendDisabled, setIsResendDisabled] = useState(false);
   const [remainingTime, setRemainingTime] = useState(180); // 3분
   const [showAlertPopup, setShowAlertPopup] = useState('');
-
+  const [isNicknameAvailable, setIsNicknameAvailable] = useState(false);
+  const [confirmEmail, setConfirmEmail] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
     // console.log('이메일:', email);
@@ -92,10 +93,8 @@ const SignUpPage = () => {
                 }
             }
         );
-        console.log('인증 번호 재발송 응답:', response.data);
         setShowAlertPopup('인증번호가 재발송되었습니다. 이메일을 확인하세요.');
     } catch (error) {
-        console.error('인증 번호 재발송 오류:', error);
         setShowAlertPopup('인증 번호 재발송에 실패했습니다. 다시 시도하세요.');
     }
   };
@@ -108,6 +107,7 @@ const SignUpPage = () => {
         );
         // console.log('인증 응답:', response.data);
         setShowAlertPopup('이메일 인증이 완료되었습니다.');
+        setConfirmEmail(true);
         setIsResendDisabled(false);
     } catch (error) {
         // console.error('이메일 인증 오류:', error);
@@ -120,7 +120,16 @@ const SignUpPage = () => {
     return passwordRegex.test(password);
   };
 
-
+  const isFormValid = () => {
+    return (
+      isPasswordValid(password) &&          
+      isNicknameAvailable &&                 
+      password === confirmPassword &&     
+      password !== '' &&                    
+      confirmPassword !== '' &&
+      confirmEmail
+    );
+  };
 
 const handleSignup = async () => {
   if (password !== confirmPassword) {
@@ -162,12 +171,21 @@ const handleSignup = async () => {
       // 서버 응답 구조 확인을 위한 상세 로깅
  
       // 여기서 응답 구조를 확인한 후 적절한 조건문을 작성할 수 있습니다
-      setShowAlertPopup(response.data.message ? '사용가능한 닉네임입니다' : '사용불가능한 닉네임입니다');
+      // setShowAlertPopup(response.data.message ? '사용가능한 닉네임입니다' : '사용불가능한 닉네임입니다');
+          // 닉네임 사용 가능 여부에 따라 state 업데이트
+          if (response.data.message) {
+            setShowAlertPopup('사용가능한 닉네임입니다');
+            setIsNicknameAvailable(true); // 사용 가능한 경우 true
+          } else {
+            setShowAlertPopup('사용불가능한 닉네임입니다');
+            setIsNicknameAvailable(false); // 사용 불가능한 경우 false
+          }
 
     } catch (error) {
       console.error('닉네임 확인 오류:', error);
       // alert('닉네임 확인에 실패했습니다. 다시 시도하세요.');
       setShowAlertPopup('닉네임 확인에 실패했습니다. 다시 시도하세요.');
+      setIsNicknameAvailable(false);
     }
   };
   return (
@@ -206,7 +224,7 @@ const handleSignup = async () => {
             placeholder="이메일 입력" 
             required 
           />
-          <AuthButton type="button" onClick={isAuthNumberSent ? handleResendCode : handleAuthNumberSend}>
+          <AuthButton disabled={!isNicknameAvailable} type="button" onClick={isAuthNumberSent ? handleResendCode : handleAuthNumberSend}>
             {isAuthNumberSent ? '인증번호 재발송' : '인증번호 발송'}
           </AuthButton>
   
@@ -220,7 +238,7 @@ const handleSignup = async () => {
           placeholder="인증번호 입력" 
           required 
         />
-         <AuthButton type="button" onClick={handleConfirmEmail}>인증번호 확인</AuthButton>
+         <AuthButton disabled={!isNicknameAvailable} type="button" onClick={handleConfirmEmail}>인증번호 확인</AuthButton>
          </InputContainer>
          {isResendDisabled && (
         <RemainTime>
@@ -252,7 +270,17 @@ const handleSignup = async () => {
           <span style={{ color: 'red', fontSize: '12px', textAlign: 'center', display: 'block' }}>비밀번호가 일치하지 않습니다.</span>
         )}
         
-        <Button type="button" onClick={handleSignup} disabled={!isPasswordValid(password)}>가입하기</Button>
+        <Button 
+          type="button" 
+          onClick={handleSignup} 
+          disabled={!isFormValid()}
+          style={{
+            opacity: isFormValid() ? 1 : 0.5,
+            cursor: isFormValid() ? 'pointer' : 'not-allowed'
+          }}
+        >
+          가입하기
+        </Button>
 
         </Form>
 

@@ -215,7 +215,7 @@ useEffect(() => {
 
   return (
     <Button onClick={handleClick} buttonStyle={buttonStyle}>
-      <FontAwesomeIcon icon={liked ? faHeart : regularHeart} style={{ color: liked ? 'red' : 'white', marginRight: '4px' }} />
+      <FontAwesomeIcon icon={liked && likesCount > 0 ? faHeart : regularHeart} style={{ color: liked && likesCount > 0 ? 'red' : 'white', marginRight: '4px' }} />
       {Math.abs(likesCount)}
     </Button>
   );

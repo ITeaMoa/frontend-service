@@ -225,6 +225,15 @@ const MainPage = () => {
           setPopularProjects(response.data);
         } catch (error) {
           console.error('Error fetching popular projects:', error);
+          
+          // Network error handling - set empty array as fallback
+          if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
+            console.warn('API 서버에 연결할 수 없습니다. 네트워크 연결 또는 서버 상태를 확인해주세요.');
+            setPopularProjects([]); // Set empty array as fallback
+          } else {
+            console.error('API 요청 중 오류가 발생했습니다:', error.message);
+            setPopularProjects([]);
+          }
         }
       };
     
@@ -256,6 +265,15 @@ const MainPage = () => {
           setAllProjects(response.data);
         } catch (error) {
           console.error('프로젝트 가져오기 실패:', error);
+          
+          // Network error handling - set empty array as fallback
+          if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
+            console.warn('API 서버에 연결할 수 없습니다. 네트워크 연결 또는 서버 상태를 확인해주세요.');
+            setAllProjects([]); // Set empty array as fallback
+          } else {
+            console.error('API 요청 중 오류가 발생했습니다:', error.message);
+            setAllProjects([]);
+          }
         }
       };
     

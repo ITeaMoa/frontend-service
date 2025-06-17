@@ -44,7 +44,7 @@ const ProjectCard = ({
       <LikeButtonWrapper>
         <LikeButton 
           // initialLiked={project.liked}
-          initialLikesCount={project.likesCount}
+          // initialLikesCount={project.likesCount}
           // onLikeChange={(newLiked) => onLikeClick(project.id, newLiked)}
           sk={project.pk}
           // userId={userId}

@@ -14,7 +14,7 @@ import { useAuth } from '../context/AuthContext'; // AuthContext에서 useAuth �
 
 const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle, userId, sk, feedType }) => {
   const [liked, setLiked] = useState(initialLiked);
-  const [likesCount, setLikesCount] = useState(initialLikesCount);
+  const [likesCount, setLikesCount] = useState(0);
   // const [isLoggedIn, setIsLoggedIn] = useAtom(IS_LOGGED_IN);
   const { isLoggedIn: authIsLoggedIn } = useAuth(); // AuthContext에서 isLoggedIn 가져오기 //나중에 넣기
   // const [user, setUser] = useAtom(USER);
@@ -51,26 +51,30 @@ const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle
   //   fetchUserLikeStatus();
   // }, [fetchUserLikeStatus]);
 
-useEffect(() => {
-  setLikesCount(initialLikesCount);
-}, [initialLikesCount]);
+// useEffect(() => {
+//   setLikesCount(initialLikesCount);
+// }, [initialLikesCount]);
  // useCallback 없이 일반 함수로 작성 //uscecallback없이 작성성
 const fetchUserLikeStatus = async () => {
   if (!user?.id || !sk) return;
   try {
-    const response = await axios.get(`/main/like?userId=${user.id}`);
-    if (response.data) {
-      console.log('사용자 좋아요 상태:', response.data);
-      
-      // 사용자가 좋아요를 눌렀던 피드의 sk가 현재 버튼의 sk와 일치하는지 확인
-      const userLiked = response.data.some(like => like.sk === sk);
-      setLiked(userLiked);
-      console.log('userLiked:', userLiked);
+    // 1. 내 좋아요 상태 확인
+    const likeResponse = await axios.get(`/main/like?userId=${user.id}`);
+    console.log('likeResponse:', likeResponse.data);
+    const userLiked = likeResponse.data.some(like => like.sk === sk);
+    setLiked(userLiked);
 
-      setLikedProjects(prevLikedProjects => [
-        ...prevLikedProjects,
-        { id: user.id, liked: userLiked, likesCount: likesCount }
-      ]);
+    // 2. 전체 피드에서 해당 sk의 좋아요 수 찾기
+    const feedResponse = await axios.get(`/main?feedType=${feedType}`);
+    if (feedResponse.data ) {
+      const thisFeed = feedResponse.data.find(feed => feed.pk === sk);
+      if (thisFeed) {
+        setLikesCount(thisFeed.likesCount || 0);
+        // 디버깅용
+        console.log('likesCount:', thisFeed.likesCount, 'sk:', sk);
+      } else {
+        setLikesCount(0);
+      }
     }
   } catch (error) {
     console.error('Error fetching user like status:', error);
@@ -79,150 +83,51 @@ const fetchUserLikeStatus = async () => {
 
 useEffect(() => {
   fetchUserLikeStatus();
-}, [user,sk, authIsLoggedIn, user, feedType,liked, location.pathname]);
-    // // Section2 관련 API 호출 함수들을 MainPage로 이동
-//     const fetchAllProjects = useCallback(async () => {
-//       try {
-//         const response = await axios.get(`/main?feedType=${feedType}`);
-//         if (!response.data || response.data.length === 0) {
-//           setAllProjects([]);
-//           return;
-//         }
-
-//   //   const projectsWithLikes = response.data.map((project) => ({
-//   //     ...project,
-//   //     // creatorId: project.creatorId,
-//   //     // atom의 상태를 사용하여 좋아요 여부 확인
-//   //     liked: likedProjects.some(
-//   //         likedProject => likedProject.id === project.id && likedProject.liked
-//   //     ),
-//   //     // likesCount: project.likesCount || 0  //있는지 없는지 확인인
-//   // }));
-//   setAllProjects(response.data);
-//       } catch (error) {
-//         console.error('프로젝트 가져오기 실패:', error);
-//       }
-//     }, [feedType, likedProjects]);
-
-//  useEffect(() => {
-//     fetchAllProjects();
-//   }, [fetchAllProjects, feedType]);
-
-
-// const fetchUserLikeStatus = async () => {
-//   // 조건문 수정
-//   if (!user?.id || !sk) {
-//       return;
-//   }
-
-//   try {
-//     // 프로젝트 데이터 가져오기
-//     const projectsResponse = await axios.get(`/main?feedType=${feedType}`);
-//     if (!projectsResponse.data || projectsResponse.data.length === 0) {
-//       setAllProjects([]);
-//       return;
-//     }
-//     setAllProjects(projectsResponse.data);
-
-//       // 좋아요 상태 가져오기
-//     if (user?.id && sk) {
-//       const likeResponse = await axios.get(`/main/like?userId=${user.id}`);
-//       console.log('좋아요 응답:', likeResponse.data);
-//       if (likeResponse.data) {
-//         // 사용자의 좋아요 상태 확인
-//         const userLiked = likeResponse.data.some(like => like.sk === sk);
-
-//         // 프로젝트의 좋아요 상태 확인
-//         const projectLiked = projectsResponse.data.some(project => project.sk === sk);
-        
-//         // 두 상태가 일치하는지 확인
-//         if (userLiked === projectLiked) {
-//           setLiked(userLiked);
-//           // 좋아요 수 설정
-//           const likesCount = likeResponse.data.filter(like => like.sk === sk).length;
-//           console.log('좋아요 수:', likesCount);
-//           setLikesCount(likesCount);
-//         } else {
-//           console.log('좋아요 상태 불일치:', { userLiked, projectLiked });
-//         }
-//       }
-//     }
-//   } catch (error) {
-//       console.error('좋아요 상태 조회 실패:', error);
-//   }
-// };
-
+}, [user, sk, authIsLoggedIn, feedType, location.pathname]);
+   
 // useEffect 수정
 
   const handleClick = async (e) => {
-    if(!user) {
-      return;
-    }
-    e.stopPropagation(); // 이벤트 전파 방지
-    const newLiked = !liked;
-    console.log('newLiked:', newLiked);
-    const newLikesCount = newLiked ? likesCount + 1 : Math.max(likesCount - 1, 0);
-    console.log('newLikesCount:', newLikesCount);
+    if (!user) return;
+    e.stopPropagation();
 
-    // API 호출 및 상태 업데이트
-    const likeData = {
-      pk: user?.id,
-      sk: sk,
-      feedType: feedType
-    };
+    const likeData = { pk: user?.id, sk, feedType };
 
     try {
-
-      const checkResponse = await axios.get(`/main/like?userId=${user.id}`);
-        const isAlreadyLiked = checkResponse.data.some(like => like.sk === sk);
-        
-        // 좋아요 추가 시에만 중복 체크
-        if (isAlreadyLiked && !liked) {
-            console.log('이미 좋아요가 눌린 상태입니다');
-            return;
-        }
-      if (newLiked) {
+      if (!liked) {
         // 좋아요 추가
+        console.log('좋아요 추가');
+        const checkResponse = await axios.get(`/main/like?userId=${user.id}`);
+        const isAlreadyLiked = checkResponse.data.some(like => like.sk === sk);
+        if (isAlreadyLiked) {
+          console.log('이미 좋아요가 눌린 상태입니다');
+          return;
+        }
         await axios.post(`/main/like`, likeData);
-        console.log('좋아요 추가 성공');
       } else {
-        // 좋아요 제거
+        // 좋아요 취소
+        console.log('좋아요 취소');
         await axios.delete(`/main/like`, { data: likeData });
-        console.log('좋아요 제거 성공');
-        // setLikesCount(newLikesCount - (newLiked ? 1 : -1));
-        const response = await axios.get(`/main/like?userId=${user.id}`);
-        console.log('사용자 좋아요 상탠:', response.data);
       }
 
-      // 상태 업데이트
-      setLiked(newLiked);
-      console.log('newLiked:', newLiked);
-      // 좋아요 상태 다시 가져오기
-    //  fetchUserLikeStatus();
-      setLikesCount(newLikesCount);
-      console.log('현재 liked:', newLiked, '현재 likesCount:', newLikesCount); // 상태 확인
-      
+      // 서버에서 최신 상태로 동기화
+      await fetchUserLikeStatus();
     } catch (error) {
       console.error('Error updating like status:', error);
     }
   };
 
-
-
-
-
   
 
   return (
     <Button onClick={handleClick} buttonStyle={buttonStyle}>
-      <FontAwesomeIcon icon={liked && likesCount > 0 ? faHeart : regularHeart} style={{ color: liked && likesCount > 0 ? 'red' : 'white', marginRight: '4px' }} />
+      <FontAwesomeIcon icon={liked ? faHeart : regularHeart} style={{ color: liked ? 'red' : 'white', marginRight: '4px' }} />
       {Math.abs(likesCount)}
     </Button>
   );
 };
 
-const Button = styled.div`
-  border: 1px solid #ddd;
+const Button = styled.div`  border: 1px solid #ddd;
   padding: 2px 8px;
   // width: 50px;
   border-radius: 15px;
@@ -250,3 +155,4 @@ const Button = styled.div`
 `;
 
 export default LikeButton;
+

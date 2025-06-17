@@ -359,6 +359,7 @@ const MainPage = () => {
   // };
 
   const handleProjectClick = (project) => {
+    console.log("mainprojecttodetail", project)
     navigate(`/ApplyPage/${project.pk}`);
     setSelectedProjectDetail(project);
   };

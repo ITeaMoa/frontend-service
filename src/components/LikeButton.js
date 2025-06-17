@@ -13,7 +13,7 @@ import { useAuth } from '../context/AuthContext'; // AuthContext에서 useAuth �
 
 
 const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle, userId, sk, feedType }) => {
-  const [liked, setLiked] = useState(initialLiked);
+  const [liked, setLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
   // const [isLoggedIn, setIsLoggedIn] = useAtom(IS_LOGGED_IN);
   const { isLoggedIn: authIsLoggedIn } = useAuth(); // AuthContext에서 isLoggedIn 가져오기 //나중에 넣기

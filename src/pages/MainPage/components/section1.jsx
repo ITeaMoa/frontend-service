@@ -44,12 +44,12 @@ const Section1 = ({ feedType, projects, onLikeClick, onProjectClick }) => {
                         </AuthorID> */}
                         <LikeButtonWrapper>
                             <LikeButton 
-                                initialLiked={project.liked} 
-                                initialLikesCount={project.likesCount} 
+                                // initialLiked={project.liked} 
+                                // initialLikesCount={project.likesCount} 
                                 // onLikeChange={(newLiked, newLikesCount) => onLikeClick(index, newLiked, newLikesCount)}
                                 buttonStyle="s1"
                                 sk={project.pk}
-                                userId={project.userId}
+                                // userId={project.userId}
                                 feedType={feedType}
                             />
                         </LikeButtonWrapper>

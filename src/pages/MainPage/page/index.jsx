@@ -380,7 +380,6 @@ const MainPage = () => {
 
   const handleRoleSelect = (role) => {
     setSelectedRole(role);
-    console.log('선택된 역할:', role);
   };
   
     return (

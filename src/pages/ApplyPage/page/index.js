@@ -109,42 +109,27 @@ console.log("project:", project);
   }
 
   const handleApplyClick = async () => {
-    // if (!user) { // 로그인 여부 확인
-    //   alert("로그인 후 신청할 수 있습니다."); // 로그인하지 않은 경우 알림
-    //   return; // 함수 종료
-    // }
 
-    if (!user) { // Check if user is logged in
-      console.log("로그인 후에 신청할 수 있습니다."); // Set popup message for logins
-      // setPopupMessage("로그인 후에 신청할 수 있습니다."); // Set popup message for login
-      setIsAuthModalOpen(true); // Show submission confirmation popup
-      return; // Exit the function if not logged in
+    if (!user) { 
+      setIsAuthModalOpen(true); 
+      return; 
     }
 
-    // // 자신이 작성한 게시글인지 확인
-    // if (project && project.creatorId === user.id) {
-    //   alert("자신이 작성한 게시글에는 신청할 수 없습니다."); // 자신이 작성한 경우 알림
-    //   return; // 함수 종료
-    // }
-
-    // 이미 신청한 프로젝트 확인
     try {
       const response = await axios.get('/feed/applications', {
         params: {
           userId: user.id,
         }
       });
-      console.log('이미 신청한 프로젝트:', response.data); // 응답 데이터 출력
-
+ 
       const appliedProjects = response.data.map(app => app.feedId); // 신청한 프로젝트의 feedId 목록
-      console.log('신청한 프로젝트 feedId 목록:', appliedProjects); // 신청한 프로젝트 feedId 출력
 
       // 선택한 프로젝트의 pk와 비교
       const isAlreadyApplied = appliedProjects.includes(project.pk);
       if (isAlreadyApplied) {
         setShowAlertPopup("이미 신청한 프로젝트입니다."); // 이미 신청한 경우 메시지 설정
-        // setIsAuthModalOpen(true); // 제출 확인 팝업 표시
-        return; // Exit the function if already applied
+
+        return; 
       }
     } catch (error) {
       console.error("신청한 프로젝트를 가져오는 중 오류 발생:", error);
@@ -153,8 +138,9 @@ console.log("project:", project);
     setIsRoleModalOpen(true); // 역할 선택 모달 열기
   };
 
+
+
   const handleRoleSelect = (role) => {
-    console.log(`선택된 역할: ${role}`); // 선택된 역할을 콘솔에 출력
     setSelectedRole(role);
   };
 
@@ -164,17 +150,32 @@ console.log("project:", project);
       return;
     }
 
-    console.log('제출된 역할:', selectedRole); // 선택된 역할 로깅
-    console.log('프로젝트 ID:', projectId); // 프로젝트 ID 로깅
-
-    setIsRoleModalOpen(false);
-
     try {
-      // 선택한 역할을 서버에 전송
-      const response = await postSelectedRole(selectedRole);
-      console.log('서버 응답:', response); // 서버 응답 로깅
+      // const applicationData = {
+      //   userId: user.id, // 현재 사용자 ID
+      //   feedId: projectId, // 프로젝트 ID
+      //   part: selectedRole, // 선택한 역할
+      // };
 
-      // 제출 후 프로젝트 상태를 즉시 업데이트
+      const applicationData = {
+        pk: user.id,
+        sk: project.pk,
+        part: selectedRole,
+        feedType: project.sk
+      };
+
+      console.log('Sending application data:', applicationData); // 전송할 데이터 콘솔 출력
+
+      // const response = await axios.post(
+      //   `/feed/apply?feedType=${sk}&projectId=${projectId}`, // projectId를 쿼리 파라미터로 추가
+      //   applicationData
+      // );
+
+      const response = await axios.post('/main/application', applicationData);
+      
+      console.log('서버 응답:', response.data); // 서버 응답을 콘솔에 출력
+
+       // // 제출 후 프로젝트 상태를 즉시 업데이트
       setProject(prevProject => {
         const updatedRecruitmentRoles = {
           ...prevProject.recruitmentRoles,
@@ -185,15 +186,18 @@ console.log("project:", project);
           recruitmentRoles: updatedRecruitmentRoles // recruitmentRoles 업데이트
         };
       });
-
+      
       setShowAlertPopup("제출되었습니다.");
       setIsAuthModalOpen(false);
+      setIsRoleModalOpen(false);
     } catch (error) {
       console.error("Submission failed:", error);
       setShowAlertPopup("제출에 실패했습니다. 다시 시도하세요.");
       // setIsAuthModalOpen(true);
     }
   };
+
+  
 
   // 인증 팝업 닫기 핸들러
   const handleCloseAuthModal = () => {
@@ -211,30 +215,6 @@ console.log("project:", project);
   };
 
   
-
-
-// 선택한 역할을 서버에 전송하는 함수
-const postSelectedRole = async (role) => {
-  const applicationData = {
-    userId: user.id, // 현재 사용자 ID
-    feedId: projectId, // 프로젝트 ID
-    part: role, // 선택한 역할
-  };
-
-  console.log('Sending application data:', applicationData); // 전송할 데이터 콘솔 출력
-
-  try {
-    const response = await axios.post(
-      `/feed/apply?feedType=${sk}&projectId=${projectId}`, // projectId를 쿼리 파라미터로 추가
-      applicationData
-    );
-    console.log('서버 응답:', response.data); // 서버 응답을 콘솔에 출력
-    return response.data; // 서버로부터의 응답 데이터 반환
-  } catch (error) {
-    console.error('서버 요청 실패:', error);
-    throw error; // 오류 발생 시 적절히 처리
-  }
-};
 
 
 // const handleToggleChange = (newFeedType) => {
@@ -428,7 +408,7 @@ const handleChatClick = () => {
         />
       </Container>
 
-      {isRoleModalOpen && (
+
         <RoleSelectionModal 
           isOpen={isRoleModalOpen} 
           onClose={() => setIsRoleModalOpen(false)} 
@@ -437,7 +417,7 @@ const handleChatClick = () => {
           handleRoleSelect={handleRoleSelect} 
           handleApplySubmit={handleApplySubmit} 
         />
-      )}
+
 
       {isAuthModalOpen && (
         <AuthModal

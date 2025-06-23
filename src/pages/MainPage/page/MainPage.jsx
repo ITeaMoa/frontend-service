@@ -10,6 +10,8 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { faSlidersH } from '@fortawesome/free-solid-svg-icons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';  
 import { ContentsWrap , MainContent} from '../../../assets/BusinessAnalysisStyle';
+import Nav from '../../../components/Nav';
+import NavigationBar from '../components/NavigationBar';
 
 
 const MainPage = () => {
@@ -58,6 +60,8 @@ const MainPage = () => {
     // ... 여러 개 추가
   ];
 
+  const slideCount = 3; // 슬라이드 개수(캐러셀 아이템 개수와 맞추세요)
+
   // 2. 카드 컴포넌트
   const ProjectFeedCard = ({ project }) => (
     <ProjectCard>
@@ -89,13 +93,13 @@ const MainPage = () => {
         <ProjectDetail>마감일 | {project.date}</ProjectDetail>
       </div>
       <div style={{ display: "flex", alignItems: "center" }}>
-        <LikeButton>
-          <svg width="18" height="18" viewBox="0 0 20 20" fill="#b0b0b0" xmlns="http://www.w3.org/2000/svg">
+        <VerticalLikeButton>
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="#222" xmlns="http://www.w3.org/2000/svg">
             <path d="M10 17.5l-1.45-1.32C4.4 12.36 2 10.28 2 7.5 2 5.5 3.5 4 5.5 4c1.04 0 2.09.54 2.7 1.44C8.41 5.54 9.46 5 10.5 5 12.5 5 14 6.5 14 8.5c0 2.78-2.4 4.86-6.55 8.68L10 17.5z"/>
           </svg>
-          2
-        </LikeButton>
-        <ApplyButton style={{ flex: 1 }}>신청하기</ApplyButton>
+          <span>2</span>
+        </VerticalLikeButton>
+        <ApplyButton>신청하기</ApplyButton>
       </div>
     </ProjectCard>
   );
@@ -103,51 +107,19 @@ const MainPage = () => {
   return (
     <ContentsWrap>
     {/* <PageContainer> */}
+    {/* <Nav/> */}
     <MainContent Wide1030>
       {/* Header with Logo and Search */}
-      <Header>
-        <Logo>ITEAMOA</Logo>
-        <SearchContainer>
-          <SearchBar>
-            {/* <SearchIcon src="/images/search_icon.svg" alt="Search" /> */}
-   
-            <FontAwesomeIcon icon={faSearch} />
-
-            
-            <SearchInput 
-              placeholder="Search projects" 
-              onKeyPress={handleSearch}
-            />
-          </SearchBar>
-          <FilterButton>
-            {/* <img src="/images/filter_icon.svg" alt="Filter" /> */}
-            <FontAwesomeIcon icon={faSlidersH} />
-          </FilterButton>
-          <SearchButton onClick={handleAddButtonClick}>
-            {/* <img src="/images/search_button_icon.svg" alt="Search" /> */}
-        
-            <FontAwesomeIcon icon={faSearch} />
-    
-          </SearchButton>
-        </SearchContainer>
-        
-        <TagsRow>
-          <Tag>AWS</Tag>
-          <Tag>Blockchain</Tag>
-          <Tag>NodeJS</Tag>
-          <Tag>React</Tag>
-          <Tag>Java</Tag>
-          <Tag>Dapp</Tag>
-          <Tag>DID</Tag>
-          <Tag>Backend</Tag>
-        </TagsRow>
-      </Header>
+      <NavigationBar 
+        handleSearch={handleSearch} 
+        handleAddButtonClick={handleAddButtonClick} 
+      />
 
       {/* Carousel Section */}
       <CarouselWrapper>
         <CarouselArrow
           style={{ left: -18 }}
-          onClick={() => setCurrentSlide((prev) => prev > 0 ? prev - 1 : 2)}
+          onClick={() => setCurrentSlide((prev) => prev > 0 ? prev - 1 : slideCount - 1)}
           aria-label="이전"
         >
           {/* 왼쪽 화살표 SVG */}
@@ -195,7 +167,7 @@ const MainPage = () => {
 
         <CarouselArrow
           style={{ right: -18 }}
-          onClick={() => setCurrentSlide((prev) => prev < 2 ? prev + 1 : 0)}
+          onClick={() => setCurrentSlide((prev) => prev < slideCount - 1 ? prev + 1 : 0)}
           aria-label="다음"
         >
           {/* 오른쪽 화살표 SVG */}
@@ -785,20 +757,16 @@ const ProjectFeed = styled.div`
 `;
 
 const ApplyButton = styled.button`
-  width: 100%;
-  background: #00aeff;
+  flex: 1;
+  height: 44px;
+  // background: linear-gradient(90deg, #36c6ff 0%, #3a8dff 100%);
+  background: #00BEFF;
   color: #fff;
   border: none;
   border-radius: 8px;
-  padding: 12px 0;
-  font-size: 16px;
-  font-weight: 600;
-  margin-top: 8px;
+  font-size: 18px;
+  font-weight: bold;
   cursor: pointer;
-  transition: background 0.2s;
-  &:hover {
-    background: #0090d8;
-  }
 `;
 
 const PopularProjectDetail = styled.span`
@@ -826,6 +794,31 @@ const LikeButton = styled.button`
   svg {
     margin-right: 6px;
     font-size: 18px;
+  }
+`;
+
+const VerticalLikeButton = styled.button`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: #f5f5f5;
+  border: none;
+  border-radius: 8px;
+  margin-right: 12px;
+  cursor: pointer;
+  font-size: 15px;
+  color: #222;
+  box-shadow: none;
+  padding: 0;
+  transition: background 0.2s;
+  &:hover {
+    background: #e0e0e0;
+  }
+  svg {
+    margin-bottom: 2px;
   }
 `;
 

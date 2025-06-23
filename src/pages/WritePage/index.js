@@ -523,9 +523,12 @@ const handleImageRemove = () => {
         </Body>
 
         <Submit>
-        {(!selectedSavedProject || selectedSavedProject.length === 0) && (
+        {/* {(!selectedSavedProject || selectedSavedProject.length === 0) && (
   <SaveButton onClick={(e) => handleSubmit(e, true)}>임시저장</SaveButton>
-)}
+)} */}
+   
+  <SaveButton onClick={(e) => handleSubmit(e, true)}>임시저장</SaveButton>
+
         {/* <SaveButton onClick={(e) => handleSubmit(e, true)}>임시저장</SaveButton> */}
         <SaveButton onClick={(e) => handleSubmit(e, false)}>저장하기</SaveButton>
         </Submit>

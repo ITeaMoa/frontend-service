@@ -395,6 +395,7 @@ useEffect(() => {
   const handleListClick = (listType) => {
     setSelectedList(listType);
     setCurrentPage(1); 
+    setSelectedProject(null); 
 
     // 특정 리스트 타입에 대해 프로젝트를 빈 배열로 설정
     if (listType === 'saved' || listType === 'closed' || listType === 'interested' || listType === 'applied' || listType === 'written') {

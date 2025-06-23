@@ -311,7 +311,7 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
                   <FontAwesomeIcon icon={faUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
                   <Timestamp>
                     <strong>{comment.nickname}</strong>
-                    <span style={{ fontSize: 'small', color: '#aaa' }}>
+                    <span style={{ fontSize: 'small', color: '#aaa', marginLeft: '10px' }}>
                       {formattedDate} {formattedTime}
                     </span>
                   </Timestamp>

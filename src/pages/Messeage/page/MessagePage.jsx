@@ -46,6 +46,8 @@ useEffect(() => {
       });
    
       setMessageList(response.data);
+
+      await getMessage();
       // setMessageList(messageList);
     } catch (error) {
       console.error('메시지 목록 조회 오류:', error);
@@ -98,7 +100,7 @@ const getMessage = async () => {
 
 useEffect(() => {
   getMessage();
-}, [user?.id]);
+}, [user?.id,]);
 
   const handleSendMessage = async () => {
     try {
@@ -197,9 +199,9 @@ useEffect(() => {
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="메시지를 입력하세요..."
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {  // Shift + Enter가 아닌 경우에만
-                  e.preventDefault();  // 기본 줄바꿈 동작 방지
-                  handleSendMessage();  // 메시지 전송
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSendMessage();
                 }
               }}
             />

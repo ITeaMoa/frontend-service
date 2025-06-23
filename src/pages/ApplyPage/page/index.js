@@ -100,7 +100,15 @@ useEffect(() => {
   //   fetchProjectDetails(); // 프로젝트 세부 정보를 가져옵니다.
   // }, [fetchProjectDetails]); // 의존성 배열에 fetchProjectDetails 추가
 
-console.log("project:", project);
+
+
+useEffect(() => {
+
+  if (!selectedProjectDetail) {
+    navigate('/', { replace: true });
+  }
+}, [selectedProjectDetail, navigate]);
+
 
 
   // 프로젝트가 로딩 중일 때
@@ -259,6 +267,13 @@ const handleChatClick = () => {
     return;
   } 
   };
+
+  // useEffect(() => {
+  //   // 새로고침 시(페이지가 처음 마운트될 때) /로 이동
+  //   if (performance && performance.navigation.type === 1) {
+  //     navigate('/', { replace: true });
+  //   }
+  // }, [navigate]);
 
 
   return (

@@ -13,6 +13,8 @@ export const ContentsWrap = styled.div`
   padding: ${(props) => (props.isMobile ? "20px" : "0 4px 0 0")};
   min-height: 100vh;
   // overflow: ${({ noScroll }) => (noScroll ? "hidden" : "auto")};
+  // transform: scale(0.9);
+  // transform-origin: top center;
 `;
 
 export const ContentSection = styled.div`

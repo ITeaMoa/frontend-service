@@ -9,6 +9,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { faSlidersH } from '@fortawesome/free-solid-svg-icons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';  
+import { ContentsWrap , MainContent} from '../../../assets/BusinessAnalysisStyle';
+
 
 const MainPage = () => {
   const [feedType, setFeedType] = useAtom(feedTypeAtom);
@@ -32,8 +34,76 @@ const MainPage = () => {
   };
   const [searchValue, setSearchValue] = useState("");
   const [selectedTags, setSelectedTags] = useState([]); // 선택된 태그 상태 추가
+
+  // 1. 프로젝트 데이터 예시
+  const projectList = [
+    {
+      id: 1,
+      title: "재난 대응 어플리케이션 백엔드 구해요!",
+      description: "재난 대응 어플리케이션에서 백엔드 개발자를 구합니다. 주요 업무는 ...",
+      tags: ["백엔드", "Node.js", "React"],
+      people: "2",
+      date: "2024.06.08",
+      views: 340,
+    },
+    {
+      id: 2,
+      title: "재난 대응 어플리케이션 백엔드 구해요!",
+      description: "재난 대응 어플리케이션에서 백엔드 개발자를 구합니다. 주요 업무는 ...",
+      tags: ["백엔드", "Node.js", "React"],
+      people: "2",
+      date: "2024.06.08",
+      views: 340,
+    },
+    // ... 여러 개 추가
+  ];
+
+  // 2. 카드 컴포넌트
+  const ProjectFeedCard = ({ project }) => (
+    <ProjectCard>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <img src={project.profile} alt="profile" style={{ width: 32, height: 32, borderRadius: "50%", marginRight: 8, objectFit: "cover" }} />
+          <span style={{ fontWeight: 600 }}>{project.nickname}</span>
+        </div>
+        <span style={{ color: "#b0b0b0", fontSize: 15 }}>👁 {project.views}</span>
+      </div>
+      <ProjectTitle style={{ fontSize: 18, fontWeight: 700, margin: "8px 0 10px 0" }}>{project.title}</ProjectTitle>
+      <div style={{ marginBottom: 8 }}>
+        {project.tags.map(tag => (
+          <ProjectTag key={tag}>{tag}</ProjectTag>
+        ))}
+      </div>
+      <ProjectDescription style={{
+        fontSize: 14,
+        color: "#666",
+        marginBottom: 16,
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        display: "-webkit-box",
+        WebkitLineClamp: 2,
+        WebkitBoxOrient: "vertical"
+      }}>{project.description}</ProjectDescription>
+      <div style={{ display: "flex", textAlign: "left", marginBottom: 8, flexDirection: "column", gap: 8 }}>
+        <ProjectDetail>모집인원 | {project.people}</ProjectDetail>
+        <ProjectDetail>마감일 | {project.date}</ProjectDetail>
+      </div>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <LikeButton>
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="#b0b0b0" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 17.5l-1.45-1.32C4.4 12.36 2 10.28 2 7.5 2 5.5 3.5 4 5.5 4c1.04 0 2.09.54 2.7 1.44C8.41 5.54 9.46 5 10.5 5 12.5 5 14 6.5 14 8.5c0 2.78-2.4 4.86-6.55 8.68L10 17.5z"/>
+          </svg>
+          2
+        </LikeButton>
+        <ApplyButton style={{ flex: 1 }}>신청하기</ApplyButton>
+      </div>
+    </ProjectCard>
+  );
+
   return (
-    <PageContainer>
+    <ContentsWrap>
+    {/* <PageContainer> */}
+    <MainContent Wide1030>
       {/* Header with Logo and Search */}
       <Header>
         <Logo>ITEAMOA</Logo>
@@ -74,114 +144,135 @@ const MainPage = () => {
       </Header>
 
       {/* Carousel Section */}
-      <CarouselSection>
-        <CarouselItem active={currentSlide === 0}>
-          <CarouselContent purple>
-            <CarouselTextContent>
-              <CarouselSubtitle>일 잘하는 사람들을 위한</CarouselSubtitle>
-              <CarouselTitle>인기있는 프로젝트<br/>모아보기</CarouselTitle>
-            </CarouselTextContent>
-            <CarouselImage src="/images/code_graphic.png" alt="Code graphic" />
-            <CtaButton>바로가기</CtaButton>
-          </CarouselContent>
-        </CarouselItem>
+      <CarouselWrapper>
+        <CarouselArrow
+          style={{ left: -18 }}
+          onClick={() => setCurrentSlide((prev) => prev > 0 ? prev - 1 : 2)}
+          aria-label="이전"
+        >
+          {/* 왼쪽 화살표 SVG */}
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M13 16L8 10L13 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </CarouselArrow>
 
-        <CarouselItem active={currentSlide === 1}>
-          <CarouselContent primary>
-            <CarouselTextContent>
-              <CarouselSubtitle>2025 트렌드가 궁금하다면?</CarouselSubtitle>
-              <CarouselTitle>IT 최신 트렌드<br/>한눈에 살펴보기</CarouselTitle>
-            </CarouselTextContent>
-            <CarouselImage>
-              {/* <img src="/images/laptop_it.png" alt="Laptop IT" />
-              <img src="/images/bulb_3d.png" alt="Bulb 3D" /> */}
-            </CarouselImage>
-            <CtaButton blue>바로가기</CtaButton>
-            <SlideIndicator>01 / 04</SlideIndicator>
-          </CarouselContent>
-        </CarouselItem>
+        <CarouselSection>
+          <CarouselItem active={currentSlide === 0}>
+            <CarouselContent purple>
+              <CarouselTextContent>
+                <CarouselSubtitle>일 잘하는 사람들을 위한</CarouselSubtitle>
+                <CarouselTitle>인기있는 프로젝트<br/>모아보기</CarouselTitle>
+              </CarouselTextContent>
+              <CarouselImage src="/images/code_graphic.png" alt="Code graphic" />
+              <CtaButton>바로가기</CtaButton>
+            </CarouselContent>
+          </CarouselItem>
 
-        <CarouselItem active={currentSlide === 2}>
-          <CarouselContent blue>
-            <CarouselTextContent>
-              <CarouselSubtitle>시간과 비용을 절약하고 싶다면?</CarouselSubtitle>
-              <CarouselTitle>개발자들 몰래 보는<br/>꿀팁 사이트 보러가기</CarouselTitle>
-            </CarouselTextContent>
-            <CarouselImage src="/images/developer_image.png" alt="Developer" />
-            <CtaButton white>바로가기</CtaButton>
-          </CarouselContent>
-        </CarouselItem>
-      </CarouselSection>
+          <CarouselItem active={currentSlide === 1}>
+            <CarouselContent primary>
+              <CarouselTextContent>
+                <CarouselSubtitle>2025 트렌드가 궁금하다면?</CarouselSubtitle>
+                <CarouselTitle>IT 최신 트렌드<br/>한눈에 살펴보기</CarouselTitle>
+              </CarouselTextContent>
+              <CarouselImage>
+                {/* <img src="/images/laptop_it.png" alt="Laptop IT" />
+                <img src="/images/bulb_3d.png" alt="Bulb 3D" /> */}
+              </CarouselImage>
+              <CtaButton blue>바로가기</CtaButton>
+              <SlideIndicator>01 / 04</SlideIndicator>
+            </CarouselContent>
+          </CarouselItem>
+
+          <CarouselItem active={currentSlide === 2}>
+            <CarouselContent blue>
+              <CarouselTextContent>
+                <CarouselSubtitle>시간과 비용을 절약하고 싶다면?</CarouselSubtitle>
+                <CarouselTitle>개발자들 몰래 보는<br/>꿀팁 사이트 보러가기</CarouselTitle>
+              </CarouselTextContent>
+              <CarouselImage src="/images/developer_image.png" alt="Developer" />
+              <CtaButton white>바로가기</CtaButton>
+            </CarouselContent>
+          </CarouselItem>
+        </CarouselSection>
+
+        <CarouselArrow
+          style={{ right: -18 }}
+          onClick={() => setCurrentSlide((prev) => prev < 2 ? prev + 1 : 0)}
+          aria-label="다음"
+        >
+          {/* 오른쪽 화살표 SVG */}
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M7 4L12 10L7 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </CarouselArrow>
+      </CarouselWrapper>
 
       {/* Popular Projects Section */}
       <SectionHeader>
         <SectionTitle>인기 프로젝트</SectionTitle>
         <ViewMoreLink>
-          자세히 알아보기
-          <ArrowIcon src="/images/arrow_up.svg" alt="Arrow" />
+          자세히 알아보기 
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M7 4L12 10L7 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          {/* <ArrowIcon src="/images/arrow_up.svg" alt="Arrow" /> */}
         </ViewMoreLink>
       </SectionHeader>
 
       <PopularProjectsGrid>
-        <ProjectCard>
-          <ProjectHeader>
-            <ProjectTitle>블록체인 Dapp 프로젝트</ProjectTitle>
-            <DeadlineTag>D-54</DeadlineTag>
-          </ProjectHeader>
-          <ProjectDescription>
+        <PopularProjectCard>
+          <PopularProjectHeader>
+            <PopularProjectTitle>블록체인 Dapp 프로젝트</PopularProjectTitle>
+            <PopularDeadlineTag>D-54</PopularDeadlineTag>
+          </PopularProjectHeader>
+          <PopularProjectDescription>
             이번 블록체인 Dapp 프로젝트에서 백엔드를
             맡아주실 개발자 분을 구하고 있습니다...
-          </ProjectDescription>
-          <ProjectInfo>
-            <ProjectDetail>모집 인원 | 3~4명</ProjectDetail>
-            <ProjectDetail>마감일 25.03.15</ProjectDetail>
-          </ProjectInfo>
-          <ProjectTags>
-            <ProjectTag>AWS</ProjectTag>
-            <ProjectTag>Blockchain</ProjectTag>
-            <ProjectTag>React</ProjectTag>
-          </ProjectTags>
-        </ProjectCard>
+          </PopularProjectDescription>
+          <PopularProjectInfo>
+            <PopularProjectDetail>모집 인원 | 3~4명</PopularProjectDetail>
+            <PopularProjectDetail>마감일 25.03.15</PopularProjectDetail>
+          </PopularProjectInfo>
+          <PopularProjectTags>
+            <PopularProjectTag>AWS</PopularProjectTag>
+            <PopularProjectTag>Blockchain</PopularProjectTag>
+            <PopularProjectTag>React</PopularProjectTag>
+          </PopularProjectTags>
+        </PopularProjectCard>
 
-        <ProjectCard>
-          <ProjectHeader>
-            <ProjectTitle>하이브리드 웹 개발자 양성</ProjectTitle>
-            <DeadlineTag>D-64</DeadlineTag>
-          </ProjectHeader>
-          <ProjectDescription>
+        <PopularProjectCard>
+          <PopularProjectHeader>
+            <PopularProjectTitle>하이브리드 웹 개발자 양성</PopularProjectTitle>
+            <PopularDeadlineTag>D-64</PopularDeadlineTag>
+          </PopularProjectHeader>
+          <PopularProjectDescription>
             안녕하세요! 저희는 이번에 하이브리드 웹 개발자
             양성을 위하여 새로운 신입 멤버를 모집하고 있...
-          </ProjectDescription>
-          <ProjectInfo>
-            <ProjectDetail>모집 인원 | 3~4명</ProjectDetail>
-            <ProjectDetail>마감일 25.04.06</ProjectDetail>
-          </ProjectInfo>
-          <ProjectTags>
-            <ProjectTag>Hybrid</ProjectTag>
-            <ProjectTag>Web</ProjectTag>
-            <ProjectTag>front</ProjectTag>
-          </ProjectTags>
-        </ProjectCard>
+          </PopularProjectDescription>
+          <PopularProjectInfo>
+            <PopularProjectDetail>모집 인원 | 3~4명</PopularProjectDetail>
+            <PopularProjectDetail>마감일 25.04.06</PopularProjectDetail>
+          </PopularProjectInfo>
+          <PopularProjectTags>
+            <PopularProjectTag>Hybrid</PopularProjectTag>
+            <PopularProjectTag>Web</PopularProjectTag>
+            <PopularProjectTag>front</PopularProjectTag>
+          </PopularProjectTags>
+        </PopularProjectCard>
 
-        <ProjectCard>
-          <ProjectHeader>
-            <ProjectTitle>알고리즘 프로젝트 모집!</ProjectTitle>
-            <DeadlineTag>D-70</DeadlineTag>
-          </ProjectHeader>
-          <ProjectDescription>
+        <PopularProjectCard>
+          <PopularProjectHeader>
+            <PopularProjectTitle>알고리즘 프로젝트 모집!</PopularProjectTitle>
+            <PopularDeadlineTag>D-70</PopularDeadlineTag>
+          </PopularProjectHeader>
+          <PopularProjectDescription>
             안녕하세요 저희는 뉴알고리즘을 만들고자 새로운
             능력자분을 모시고 있습니다 저희는 디앱 기반 ...
-          </ProjectDescription>
-          <ProjectInfo>
-            <ProjectDetail>모집 인원 | 5~7명</ProjectDetail>
-            <ProjectDetail>마감일 25.04.30</ProjectDetail>
-          </ProjectInfo>
-          <ProjectTags>
-            <ProjectTag>Newproject</ProjectTag>
-            <ProjectTag>Algorithm</ProjectTag>
-            <ProjectTag>AWS</ProjectTag>
-          </ProjectTags>
-        </ProjectCard>
+          </PopularProjectDescription>
+          <PopularProjectInfo>
+            <PopularProjectDetail>모집 인원 | 5~7명</PopularProjectDetail>
+            <PopularProjectDetail>마감일 25.04.30</PopularProjectDetail>
+          </PopularProjectInfo>
+          <PopularProjectTags>
+            <PopularProjectTag>Newproject</PopularProjectTag>
+            <PopularProjectTag>Algorithm</PopularProjectTag>
+            <PopularProjectTag>AWS</PopularProjectTag>
+          </PopularProjectTags>
+        </PopularProjectCard>
       </PopularProjectsGrid>
 
       {/* Project Feed Toggle */}
@@ -212,14 +303,22 @@ const MainPage = () => {
       </FeedToggleSection>
 
       {/* Project Feed */}
-      <ProjectFeed>
-        {/* Project items would be rendered here */}
-        {/* This would normally be a component or a map over data */}
+      <ProjectFeed style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(2, 1fr)",
+        gap: "32px",
+        marginBottom: "32px"
+      }}>
+        {projectList.map(project => (
+          <ProjectFeedCard key={project.id} project={project} />
+        ))}
       </ProjectFeed>
 
       {/* Footer */}
       {/* <Footer /> */}
-    </PageContainer>
+      </MainContent>
+    {/* </PageContainer> */}
+    </ContentsWrap>
   );
 };
 
@@ -319,20 +418,49 @@ const SearchButton = styled.button`
 const TagsRow = styled.div`
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
   flex-wrap: wrap;
 `;
 
 const Tag = styled.div`
   border: 1px solid #CECECE;
   border-radius: 4100px;
-  padding: 16px 24px;
-  font-size: 24px;
+  padding: 12px 18px;
+  font-size: 18px;
   color: #1A1A1A;
   cursor: pointer;
   
   &:hover {
     background-color: #F3F0F0;
+  }
+`;
+
+const CarouselWrapper = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
+const CarouselArrow = styled.button`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  background: rgba(255,255,255,0.8);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: #888;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: background 0.15s;
+  &:hover {
+    background: #eaf6ff;
+    color: #00aeff;
   }
 `;
 
@@ -357,7 +485,7 @@ const CarouselContent = styled.div`
   position: relative;
   border-radius: 28px;
   padding: 40px;
-  height: 300px;
+  height: 250px;
   width: 480px;
   background-color: ${props => props.purple ? '#662CC2' : props.blue ? '#00AEFF' : '#1A1A1A'};
   display: flex;
@@ -438,7 +566,7 @@ const SectionHeader = styled.div`
 `;
 
 const SectionTitle = styled.h2`
-  font-size: 40px;
+  font-size: 24px;
   font-weight: 600;
   color: #000000;
   margin: 0;
@@ -448,9 +576,10 @@ const ViewMoreLink = styled.a`
   display: flex;
   align-items: center;
   gap: 24px;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 300;
   color: #1A1A1A;
+  font-weight: 500;
   text-decoration: none;
   cursor: pointer;
 `;
@@ -464,16 +593,90 @@ const PopularProjectsGrid = styled.div`
   justify-content: space-between;
   gap: 16px;
   margin-bottom: 48px;
+   max-width: 100%;
+`;
+
+const PopularProjectCard = styled.div`
+  background: linear-gradient(135deg, #eaf6ff 80%, #f6fbff 100%);
+  border-radius: 16px;
+  padding: 24px 20px 18px 20px;
+  // min-width: 300px;
+  max-width: 33%;
+  min-height: 200px;
+  // max-width: 100%;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+const PopularProjectHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const PopularProjectTitle = styled.h3`
+  font-size: 18px;
+  font-weight: 700;
+  color: #222;
+  margin: 0;
+`;
+
+const PopularDeadlineTag = styled.span`
+  background: #00aeff;
+  color: #fff;
+  border-radius: 16px;
+  padding: 4px 14px;
+  font-size: 13px;
+  font-weight: 500;
+`;
+
+const PopularProjectDescription = styled.p`
+  font-size: 14px;
+  color: #444;
+  margin: 12px 0 10px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+`;
+
+const PopularProjectInfo = styled.div`
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 8px;
+`;
+
+const PopularProjectTags = styled.div`
+  display: flex;
+  gap: 8px;
+`;
+
+const PopularProjectTag = styled.span`
+  background: #fff;
+  color: #00aeff;
+  border-radius: 16px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid #e0f0ff;
 `;
 
 const ProjectCard = styled.div`
-  background-color: #F1F1F1;
-  border-radius: 8px;
-  padding: 24px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.07);
+  padding: 28px 24px 20px 24px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  width: 316px;
+  min-height: 400px;
+  justify-content: space-between;
+  border: 1px solid #e6eaf2;
+
 `;
 
 const ProjectHeader = styled.div`
@@ -524,12 +727,13 @@ const ProjectTags = styled.div`
 `;
 
 const ProjectTag = styled.span`
-  border: 1px solid #CECECE;
-  border-radius: 50px;
-  padding: 7.5px 12px;
-  font-size: 12px;
-  color: #1A1A1A;
-  background-color: white;
+  background: #eaf6ff;
+  color: #009cff;
+  border-radius: 16px;
+  padding: 4px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  margin-right: 6px;
 `;
 
 const FeedToggleSection = styled.div`
@@ -579,5 +783,55 @@ const ProjectFeed = styled.div`
   gap: 24px;
   margin-bottom: 32px;
 `;
+
+const ApplyButton = styled.button`
+  width: 100%;
+  background: #00aeff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+  &:hover {
+    background: #0090d8;
+  }
+`;
+
+const PopularProjectDetail = styled.span`
+  font-size: 13px;
+  color: #555;
+  margin-right: 12px;
+`;
+
+const LikeButton = styled.button`
+  display: flex;
+  align-items: center;
+  background: #f7f7f7;
+  border: 1px solid #e6eaf2;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 16px;
+  color: #888;
+  cursor: pointer;
+  margin-right: 12px;
+  transition: background 0.15s;
+  &:hover {
+    background: #eaf6ff;
+    color: #00aeff;
+  }
+  svg {
+    margin-right: 6px;
+    font-size: 18px;
+  }
+`;
+
+// const ContentsWrap = styled.div`
+//   transform: scale(0.9);
+//   transform-origin: top center;
+// `;
 
 export default MainPage; 

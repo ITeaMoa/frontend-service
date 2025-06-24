@@ -159,12 +159,7 @@ useEffect(() => {
     }
 
     try {
-      // const applicationData = {
-      //   userId: user.id, // 현재 사용자 ID
-      //   feedId: projectId, // 프로젝트 ID
-      //   part: selectedRole, // 선택한 역할
-      // };
-
+     
       const applicationData = {
         pk: user.id,
         sk: project.pk,
@@ -172,16 +167,9 @@ useEffect(() => {
         feedType: project.sk
       };
 
-      console.log('Sending application data:', applicationData); // 전송할 데이터 콘솔 출력
-
-      // const response = await axios.post(
-      //   `/feed/apply?feedType=${sk}&projectId=${projectId}`, // projectId를 쿼리 파라미터로 추가
-      //   applicationData
-      // );
-
+  
       const response = await axios.post('/main/application', applicationData);
       
-      console.log('서버 응답:', response.data); // 서버 응답을 콘솔에 출력
 
        // // 제출 후 프로젝트 상태를 즉시 업데이트
       setProject(prevProject => {
@@ -288,27 +276,12 @@ const handleChatClick = () => {
 
         <Title> {project.title} </Title>
 
-       {/* <LikeButton 
-          initialLiked={liked} 
-          initialLikesCount={likesCount} 
-          onLikeChange={handleLike} 
-          buttonStyle='apply'
-          apiEndpoint={`/feed/${projectId}/like`} 
-          userId={user ? user.id : null} // user가 null인 경우 처리
-          isApplyPage={true} // 또는 false로 설정하여 페이지 구분
-         
-        />
-         */}
-
 
                   <LikeButton 
-                // initialLiked={project.liked} 
                 initialLikesCount={project.likesCount} 
-                // onLikeChange={handleLikeClick} //삭제해봄 
                 buttonStyle="apply"
                 sk={project.pk}
-                // userId={user ? user.id : null} // user가 null인 경우 처리
-                feedType={project.sk} // Use project.sk as feedType
+                feedType={project.sk} 
               />
         
         <Post>
@@ -386,28 +359,13 @@ const handleChatClick = () => {
         <AuthorSection>
           <ChatButton>
             <FontAwesomeIcon icon={faComment} onClick={() => handleChatClick()}/>
- 
           </ChatButton>
 
           <AuthorID>
             <FontAwesomeIcon icon={faUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
             작성자: {project.nickname}
           </AuthorID>
-          {/* <AuthorID>
-  {userProfile.avatarUrl ? ( 
-    <img
-      src={encodeURI(userProfile.avatarUrl)}
-      alt="Profile Avatar"
-      style={{ width: '20px', height: '20px', borderRadius: '50%', marginRight: '6px' }}
-    />
-  ) : (
-    <FontAwesomeIcon
-      icon={faUser}
-      style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }}
-    />
-  )}
-  작성자: {project.nickname}
-</AuthorID> */}
+        
           </AuthorSection>
         
 

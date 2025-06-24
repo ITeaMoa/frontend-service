@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { feedTypeAtom, selectedProjectDetailAtom } from '../../../Atoms.jsx/AtomStates';
 import Footer from '../../../components/Footer';
@@ -12,7 +13,6 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { ContentsWrap , MainContent} from '../../../assets/BusinessAnalysisStyle';
 import Nav from '../../../components/Nav';
 import NavigationBar from '../../../components/NavigationBar';
-import PopularProject from '../components/PopularProject';
 import ProjectFeedCard from '../components/ProjectFeedCard';
 import axios from '../../../api/axios'
 import { useAuth } from '../../../context/AuthContext';
@@ -20,8 +20,6 @@ import AlertModal from '../../../components/AlertModal';
 import Modal from '../../../components/Modal';
 import RoleSelectionModal from '../../../components/RoleSelectionModal';
 import Pagination from '../../../components/Pagination';
-import ProfileModal from '../../../components/ProfileModal';
-import MainCarousel from '../components/MainCarousel';
 
 
 
@@ -48,27 +46,48 @@ const MainPage = () => {
   const [isUserProfileLoaded, setIsUserProfileLoaded] = useState(false);
   const [modalOpenedOnce, setModalOpenedOnce] = useState(false);
   const [hasProfileModalOpened, setHasProfileModalOpened] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const navigate = useNavigate();
+  const showSearch = true;
   // const [isProfileComplete, setIsProfileComplete] = useState(false);
 
-  const navigate = useNavigate();
-  
-  const handleSearch = (e) => {
-    if (e.key === 'Enter') {
-      navigate(`/search?query=${e.target.value}`);
-    }
+
+  const useQuery = () => {
+    return new URLSearchParams(useLocation().search);
   };
+
+  let query = useQuery();
+  const searchTerm = query.get("q");
+  const tags = query.get("tags");
+
+
+  useEffect(() => {
+    const fetchSearchItems = async () => {
+        try {
+            // 태그가 있을 경우, search-tags API 호출
+            const apiUrl = tags 
+                ? `/main/search-tags?feedType=${feedType}&tags=${encodeURIComponent(tags)}`
+                : `/main/search-keyword?feedType=${feedType}&keyword=${encodeURIComponent(searchTerm)}`;
+            
+            const response = await axios.get(apiUrl);
+            const filteredResults = response.data.filter(item => {
+                // 태그가 선택된 경우, 태그 필터링
+                return !tags || (item.tags && item.tags.some(tag => tags.split(',').includes(tag)));
+            });
+            setSearchResults(filteredResults); // 필터링된 결과 설정
+            console.log("Filtered search results set:", filteredResults);
+        } catch (error) {
+            console.error("Error fetching search items:", error);
+        }
+    };
+
+    fetchSearchItems();
+}, [searchTerm, tags, feedType]); // 검색어와 태그가 변경될 때마다 호출
 
   const handleFeedToggle = (type) => {
     setFeedType(type);
   };
 
-  const handleAddButtonClick = () => {
-    const tagsQuery = selectedTags.length > 0 ? `&tags=${selectedTags.join(',')}` : '';
-    // const feedType = toggleActive ? 'PROJECT' : 'STUDY'; // 현재의 토글 값에 따라 feedType 설정
-    navigate(`/SearchPage?q=${searchValue}${tagsQuery}&feedType=${feedType}`); // 검색어, 선택된 태그, feedType을 URL로 전달
-  };
-  const [searchValue, setSearchValue] = useState("");
-  const [selectedTags, setSelectedTags] = useState([]); // 선택된 태그 상태 추가
 
   // 1. 프로젝트 데이터 예시
   const projectList = [
@@ -93,130 +112,8 @@ const MainPage = () => {
     // ... 여러 개 추가
   ];
 
-  // const popularProjects = [
-  //   {
-  //     title: '블록체인 Dapp 프로젝트',
-  //     deadlineTag: 'D-54',
-  //     description: '이번 블록체인 Dapp 프로젝트에서 백엔드를 맡아주실 개발자 분을 구하고 있습니다...',
-  //     recruitInfo: '모집 인원 | 3~4명',
-  //     deadlineInfo: '마감일 25.03.15',
-  //     tags: ['AWS', 'Blockchain', 'React']
-  //   },
-  //   {
-  //     title: '하이브리드 웹 개발자 양성',
-  //     deadlineTag: 'D-64',
-  //     description: '안녕하세요! 저희는 이번에 하이브리드 웹 개발자 양성을 위하여 새로운 신입 멤버를 모집하고 있...',
-  //     recruitInfo: '모집 인원 | 3~4명',
-  //     deadlineInfo: '마감일 25.04.06',
-  //     tags: ['Hybrid', 'Web', 'front']
-  //   },
-  //   {
-  //     title: '알고리즘 프로젝트 모집!',
-  //     deadlineTag: 'D-70',
-  //     description: '안녕하세요 저희는 뉴알고리즘을 만들고자 새로운 능력자분을 모시고 있습니다 저희는 디앱 기반 ...',
-  //     recruitInfo: '모집 인원 | 5~7명',
-  //     deadlineInfo: '마감일 25.04.30',
-  //     tags: ['Newproject', 'Algorithm', 'AWS']
-  //   }
-  // ];
-
   
 
-
-
-  const handleModalClose = async () => {
-    // setHasFinalizedProfile(true);
-    setIsProfileModalOpen(false);
-  };
-  
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        if (user && user.id) {
-          const response = await axios.get(`/my/profile/${user.id}`);
-          console.log('사용자 프로필:', response.data);
-          if (response.data) {
-            setUserProfile(response.data);
-            setIsUserProfileLoaded(true);
-          } else {
-            setUserProfile({
-              avatarUrl: '',
-              headLine: '',
-              tags: [],
-              experiences: [],
-              educations: [],
-              personalUrl: ''
-            });
-            setIsUserProfileLoaded(true);
-          }
-        }
-      } catch (error) {
-        console.error('사용자 프로필 조회 중 오류 발생:', error);
-      }
-    }
-
-    fetchUserProfile(); // 사용자 정보가 있을 때 프로필을 가져옴
-  }, [user]); // user가 변경될 때마다 실행
-
-  const isProfileComplete = () => {
-    const headLine = userProfile.headLine ? userProfile.headLine.trim() : "";
-    const tags = userProfile.tags || [];
-    return headLine.length > 0 && tags.length > 0;
-  };
- 
-//app.js에서 체크하며 어떨까.
-  useEffect(() => {
-    // 로그인하지 않은 경우 (user가 null) 함수 즉시 종료
-    if(!user) return;
-
-    // 프로필 데이터가 완전히 로딩되지 않았다면 아래 로직 실행하지 않음
-    if (!isUserProfileLoaded) return;
-  
-    // 이미 모달이 열렸던 적이 없고, 사용자가 로그인 상태일 때만 진행
-    if (!modalOpenedOnce) {
-      // 프로필이 미완성일 경우에만 모달을 강제로 열어줍니다.
-      if (!isProfileComplete()) {
-        console.log("모달을 열어야 합니다.");
-        setIsProfileModalOpen(true);
-        modalOpenedOnce = true;
-        setHasProfileModalOpened(true);
-      }
-  
-    }
-  }, [user, userProfile, isProfileModalOpen, isUserProfileLoaded, modalOpenedOnce]);
-
-
-
-  const slideCount = 3; // 슬라이드 개수(캐러셀 아이템 개수와 맞추세요)
-
-  useEffect(() => {
-    const fetchPopularProjects = async () => {
-      try {
-        const response = await axios.get(`/main/liked?feedType=${feedType}`);
-  
-        if (!response.data || response.data.length === 0) {
-          console.warn('프로젝트 데이터가 없습니다.');
-          setPopularProjects([]);
-          return;
-        }
-
-        setPopularProjects(response.data);
-      } catch (error) {
-        console.error('Error fetching popular projects:', error);
-        
-        // Network error handling - set empty array as fallback
-        if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
-          console.warn('API 서버에 연결할 수 없습니다. 네트워크 연결 또는 서버 상태를 확인해주세요.');
-          setPopularProjects([]); // Set empty array as fallback
-        } else {
-          console.error('API 요청 중 오류가 발생했습니다:', error.message);
-          setPopularProjects([]);
-        }
-      }
-    };
-  
-    fetchPopularProjects();
-  }, [feedType]);
 
   const handleProjectClick = (project) => {
     console.log("mainprojecttodetail", project)
@@ -331,15 +228,9 @@ const MainPage = () => {
 
   const projectsPerPage = 6;
   const [currentPage, setCurrentPage] = useState(1);
-  // const [projectsPerPage] = useState(6); 
 
-  //페이지네이션방법 1
-  // const indexOfLastProject = currentPage * projectsPerPage;
-  // const indexOfFirstProject = indexOfLastProject - projectsPerPage;
-  // const currentProjects = projects.slice(indexOfFirstProject, indexOfLastProject);
 
-    //페이지네이션방법 2
-  const currentProjects = allProjects.slice(
+  const currentProjects = searchResults.slice(
     (currentPage - 1) * projectsPerPage,
     currentPage * projectsPerPage
   );
@@ -358,24 +249,13 @@ const MainPage = () => {
     <MainContent Wide1030>
       {/* Header with Logo and Search */}
       <NavigationBar 
-
+ 
       />
 
       {/* Carousel Section */}
-      <MainCarousel currentSlide={currentSlide} setCurrentSlide={setCurrentSlide} slideCount={slideCount} />
+     
 
-      {/* Popular Projects Section */}
-      <SectionHeader>
-        <SectionTitle>인기 프로젝트</SectionTitle>
-        <ViewMoreLink>
-          자세히 알아보기 
-          <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M7 4L12 10L7 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          {/* <ArrowIcon src="/images/arrow_up.svg" alt="Arrow" /> */}
-        </ViewMoreLink>
-      </SectionHeader>
-
-
-      <PopularProject projects={popularProjects} handleProjectClick={handleProjectClick} />
+      {/* <PopularProject projects={popularProjects} handleProjectClick={handleProjectClick} /> */}
 
       {/* Project Feed Toggle */}
       <FeedToggleSection>
@@ -436,16 +316,6 @@ const MainPage = () => {
     {/* </PageContainer> */}
     </ContentsWrap>
 
-    {(isProfileModalOpen) &&  (
-        <ProfileModal 
-          isOpen={ isProfileModalOpen}
-          onClose={handleModalClose} 
-          userProfile={userProfile} 
-          setUserProfile={setUserProfile} 
-          selectedFile={selectedFile} 
-          setSelectedFile={setSelectedFile}
-        />
-      )}
 
 
     <RoleSelectionModal
@@ -593,9 +463,6 @@ const Tag = styled.div`
 const CarouselWrapper = styled.div`
   position: relative;
   width: 100%;
-  // overflow: hidden;
-  max-width: 900px;
-  margin: 0 auto 32px auto;
 `;
 
 const CarouselArrow = styled.button`
@@ -624,25 +491,27 @@ const CarouselArrow = styled.button`
 
 const CarouselSection = styled.section`
   display: flex;
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  transform: translateX(-${props => props.$currentSlide * 100}%);
-  width: 100%;
+  gap: 24px;
+  margin-bottom: 32px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const CarouselItem = styled.div`
-  flex: 0 0 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  display: flex;
-  justify-content: center;
+  flex: 0 0 auto;
+  opacity: ${props => props.active ? 1 : 0.8};
 `;
 
 const CarouselContent = styled.div`
   position: relative;
   border-radius: 28px;
   padding: 40px;
-  height: 200px;
-  width: 80%;
+  height: 250px;
+  width: 480px;
   background-color: ${props => props.purple ? '#662CC2' : props.blue ? '#00AEFF' : '#1A1A1A'};
   display: flex;
   flex-direction: column;
@@ -664,7 +533,7 @@ const CarouselSubtitle = styled.h3`
 `;
 
 const CarouselTitle = styled.h2`
-  font-size: 36px;
+  font-size: 48px;
   font-weight: 700;
   color: white;
   margin: 0;
@@ -679,21 +548,21 @@ const CarouselImage = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: flex-end;
+  
   img {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
-    display: block;
   }
 `;
 
 const CtaButton = styled.button`
   position: absolute;
-  bottom: 20px;
-  left: 20px;
+  bottom: 40px;
+  left: 40px;
   border-radius: 100px;
   padding: 16px 36px;
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 600;
   background-color: ${props => props.blue ? '#00AEFF' : props.white ? '#FFFFFF' : '#FFFFFF'};
   color: ${props => props.white ? '#00AEFF' : props.blue ? '#FFFFFF' : '#662CC2'};

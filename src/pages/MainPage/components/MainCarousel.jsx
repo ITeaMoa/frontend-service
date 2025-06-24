@@ -1,0 +1,194 @@
+import React from 'react';
+import styled from 'styled-components';
+
+const MainCarousel = ({ currentSlide, setCurrentSlide, slideCount }) => (
+  <CarouselWrapper>
+    <CarouselArrow
+      style={{ left: -18 }}
+      onClick={() => setCurrentSlide((prev) => prev > 0 ? prev - 1 : slideCount - 1)}
+      aria-label="이전"
+    >
+      {/* 왼쪽 화살표 SVG */}
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M13 16L8 10L13 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+    </CarouselArrow>
+
+    <CarouselSection $currentSlide={currentSlide}>
+      <CarouselItem>
+        <CarouselContent purple>
+          <CarouselTextContent>
+            <CarouselSubtitle>일 잘하는 사람들을 위한</CarouselSubtitle>
+            <CarouselTitle>인기있는 프로젝트<br/>모아보기</CarouselTitle>
+          </CarouselTextContent>
+          <CarouselImage>
+            <img src="/images/code_graphic.png" alt="Code graphic" />
+          </CarouselImage>
+          <CtaButton>바로가기</CtaButton>
+        </CarouselContent>
+      </CarouselItem>
+
+      <CarouselItem>
+        <CarouselContent primary>
+          <CarouselTextContent>
+            <CarouselSubtitle>2025 트렌드가 궁금하다면?</CarouselSubtitle>
+            <CarouselTitle>IT 최신 트렌드<br/>한눈에 살펴보기</CarouselTitle>
+          </CarouselTextContent>
+          <CarouselImage>
+            {/* <img src="/images/laptop_it.png" alt="Laptop IT" />
+            <img src="/images/bulb_3d.png" alt="Bulb 3D" /> */}
+          </CarouselImage>
+          <CtaButton blue>바로가기</CtaButton>
+          <SlideIndicator>01 / 04</SlideIndicator>
+        </CarouselContent>
+      </CarouselItem>
+
+      <CarouselItem>
+        <CarouselContent blue>
+          <CarouselTextContent>
+            <CarouselSubtitle>시간과 비용을 절약하고 싶다면?</CarouselSubtitle>
+            <CarouselTitle>개발자들 몰래 보는<br/>꿀팁 사이트 보러가기</CarouselTitle>
+          </CarouselTextContent>
+          <CarouselImage>
+            <img src="/images/developer_image.png" alt="Developer" />
+          </CarouselImage>
+          <CtaButton white>바로가기</CtaButton>
+        </CarouselContent>
+      </CarouselItem>
+    </CarouselSection>
+
+    <CarouselArrow
+      style={{ right: -18 }}
+      onClick={() => setCurrentSlide((prev) => prev < slideCount - 1 ? prev + 1 : 0)}
+      aria-label="다음"
+    >
+      {/* 오른쪽 화살표 SVG */}
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M7 4L12 10L7 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+    </CarouselArrow>
+  </CarouselWrapper>
+);
+
+export default MainCarousel;
+
+// --- 스타일 컴포넌트 복사 ---
+const CarouselWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  max-width: 900px;
+  margin: 0 auto 32px auto;
+`;
+
+const CarouselSection = styled.section`
+  display: flex;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(-${props => props.$currentSlide * 100}%);
+  width: 100%;
+`;
+
+const CarouselItem = styled.div`
+  flex: 0 0 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+`;
+
+const CarouselContent = styled.div`
+  position: relative;
+  border-radius: 28px;
+  padding: 40px;
+  height: 200px;
+  width: 90%;
+  background-color: ${props => props.purple ? '#662CC2' : props.blue ? '#00AEFF' : '#1A1A1A'};
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+`;
+
+const CarouselTextContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 1;
+`;
+
+const CarouselSubtitle = styled.h3`
+  font-size: 30px;
+  font-weight: 300;
+  color: white;
+  margin: 0;
+`;
+
+const CarouselTitle = styled.h2`
+  font-size: 36px;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+`;
+
+const CarouselImage = styled.div`
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 50%;
+  height: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+`;
+
+const CtaButton = styled.button`
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  border-radius: 100px;
+  padding: 16px 36px;
+  font-size: 20px;
+  font-weight: 600;
+  background-color: ${props => props.blue ? '#00AEFF' : props.white ? '#FFFFFF' : '#FFFFFF'};
+  color: ${props => props.white ? '#00AEFF' : props.blue ? '#FFFFFF' : '#662CC2'};
+  border: none;
+  cursor: pointer;
+  z-index: 1;
+`;
+
+const SlideIndicator = styled.div`
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background-color: rgba(109, 109, 109, 0.5);
+  border-radius: 50px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+`;
+
+const CarouselArrow = styled.button`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  background: rgba(255,255,255,0.8);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: #888;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: background 0.15s;
+  &:hover {
+    background: #eaf6ff;
+    color: #00aeff;
+  }
+`; 

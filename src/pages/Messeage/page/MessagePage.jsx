@@ -24,31 +24,58 @@ const MessagePage = () => {
   const location = useLocation();
 
 
+// useEffect(() => {
+//   if (location.state?.selectedPersonId) {
+//     setSelectedPersonId(location.state?.selectedPersonId);
+//     setShowMessagePopup(true);
+//     // handlePersonClick(location.state?.selectedPersonId);
+//   } 
+// }, [location.state?.selectedPersonId,setSelectedPersonId]);
+
 useEffect(() => {
-  console.log(location.state?.selectedPersonId);
   if (location.state?.selectedPersonId) {
     setSelectedPersonId(location.state?.selectedPersonId);
     setShowMessagePopup(true);
-  } 
-}, [location.state?.selectedPersonId,setSelectedPersonId]);
+
+    // personList에 있는지 확인
+    const exists = personList.some(person => person.id === location.state.selectedPersonId);
+    if (exists) {
+      handlePersonClick(location.state.selectedPersonId);
+    }
+    // 없는 경우: 팝업만 띄우고, 메시지 보내기 후 getMessage() 호출
+  }
+  // eslint-disable-next-line
+}, [location.state?.selectedPersonId, setSelectedPersonId, personList]);
 
 
   const handlePersonClick = async (personId) => {
     try {
       setSelectedPerson(personId);
       setSelectedPersonId(personId);
-      
+
+      // 메시지 목록 불러오기
       const response = await axios.get('/message', {
         params: {
-          recipientId: personId,      // f8d12c2e-954f-455e-a9ca-0d8235dfd8c5 같은 형식
-          userId: user.id    // 현재 로그인한 사용자 ID
+          recipientId: personId,
+          userId: user.id
         }
       });
-   
       setMessageList(response.data);
 
-      await getMessage();
-      // setMessageList(messageList);
+      // 선택한 사람의 메시지 count만 새로 불러오기
+      const countResponse = await axios.get('/message/count', {
+        params: { pk: user.id }
+      });
+      const countData = countResponse.data;
+
+      // personList에서 해당 사람만 count 갱신
+      setPersonList(prevList =>
+        prevList.map(person =>
+          person.id === personId
+            ? { ...person, count: countData[personId] || "0" }
+            : person
+        )
+      );
     } catch (error) {
       console.error('메시지 목록 조회 오류:', error);
     }
@@ -103,21 +130,24 @@ useEffect(() => {
 }, [user?.id,]);
 
   const handleSendMessage = async () => {
+    if (!selectedPersonId) return;
     try {
       const data = {
-        creatorId: user.id,  // 보내는 사람 ID (현재 로그인한 사용자)
-        recipientId: selectedPersonId, // 받는 사람 ID
-        messageContent: newMessage  // 메시지 내용
-      }
-      console.log("data", data);
-      const response = await axios.post('/message', data);
-  
-      console.log('Message sent:', response.data);
-      
-      // 메시지 전송 후 입력창 초기화
+        creatorId: user.id,
+        recipientId: selectedPersonId,
+        messageContent: newMessage
+      };
+      await axios.post('/message', data);
       setNewMessage('');
-      
-      // 새로운 메시지 목록을 가져오기
+      setShowMessagePopup(false);
+
+      // 기존 목록에 없는 사용자면 getMessage() 호출
+      const exists = personList.some(person => person.id === selectedPersonId);
+      if (!exists) {
+        await getMessage();
+      }
+
+      // 메시지 목록도 새로고침
       try {
         const messageResponse = await axios.get('/message', {
           params: {
@@ -129,18 +159,51 @@ useEffect(() => {
       } catch (error) {
         console.error('Error fetching messages:', error);
       }
-      
-      // 사용자 목록 업데이트
-      // await getMessage();
-      
-      setShowMessagePopup(false);
-
     } catch (error) {
       console.error('Error sending message:', error);
-      // 에러 처리 (예: 알림 표시)
     }
   };
  
+//새로운 사람 새로 getMessage() 호출안하는 거
+  // const handleSendMessage = async () => {
+  //   try {
+  //     const data = {
+  //       creatorId: user.id,  // 보내는 사람 ID (현재 로그인한 사용자)
+  //       recipientId: selectedPersonId, // 받는 사람 ID
+  //       messageContent: newMessage  // 메시지 내용
+  //     }
+  //     console.log("data", data);
+  //     const response = await axios.post('/message', data);
+  
+  //     console.log('Message sent:', response.data);
+      
+  //     // 메시지 전송 후 입력창 초기화
+  //     setNewMessage('');
+      
+  //     // 새로운 메시지 목록을 가져오기
+  //     try {
+  //       const messageResponse = await axios.get('/message', {
+  //         params: {
+  //           recipientId: selectedPersonId,
+  //           userId: user.id
+  //         }
+  //       });
+  //       setMessageList(messageResponse.data);
+  //     } catch (error) {
+  //       console.error('Error fetching messages:', error);
+  //     }
+      
+  //     // 사용자 목록 업데이트
+  //     // await getMessage();
+      
+  //     setShowMessagePopup(false);
+
+  //   } catch (error) {
+  //     console.error('Error sending message:', error);
+  //     // 에러 처리 (예: 알림 표시)
+  //   }
+  // };
+
 
   return (
     <>
@@ -205,7 +268,7 @@ useEffect(() => {
                 }
               }}
             />
-            <SendMessageButton onClick={handleSendMessage}>
+            <SendMessageButton type="button" onClick={handleSendMessage}>
               <FontAwesomeIcon icon={faPaperPlane} /> 보내기
             </SendMessageButton>
           </PopupContainer>

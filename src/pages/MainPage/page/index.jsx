@@ -128,13 +128,7 @@ const MainPage = () => {
     };
   
 
-    // const handleToggleChange = (newFeedType) => {
-    //   setFeedType(newFeedType); 
-    //   localStorage.setItem('feedType', newFeedType); 
-    //   console.log("현재 feedType:", newFeedType); 
-    //   navigate(location.pathname); 
-    // };
-  
+
 
     const handleModalClose = async () => {
       // setHasFinalizedProfile(true);
@@ -392,22 +386,7 @@ const MainPage = () => {
             // onLikeClick={handleLikeClick}
             onProjectClick={handleProjectClick}
           />
-          {/* <Section2 
-            projects={allProjects}
-            currentPage={currentPage}
-            projectsPerPage={projectsPerPage}
-            onPageChange={setCurrentPage}
-            onProjectClick={handleProjectClick}
-            onLikeClick={handleLikeClick}
-            // onApplyClick={(project) => {
-            //   setSelectedProject(project);
-            //   setIsRoleModalOpen(true);
-            // }}
-            onApplyClick={handleApplyClick} 
-            isLoggedIn={!!user}
-            userId={user?.id}
-          /> */}
-
+        
           <Section2 
             projects={allProjects}
             onProjectClick={handleProjectClick}

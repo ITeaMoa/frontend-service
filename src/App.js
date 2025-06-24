@@ -11,6 +11,7 @@ import { ThemeProvider } from 'styled-components';
 import theme from './components/Theme';
 import MessagePage from './pages/Messeage/page/MessagePage';
 import MainPage1 from './pages/MainPage/page/MainPage';
+import SearchPage1 from './pages/SearchPage/page/SearchPage';
 
 // import { useAtom } from 'jotai';
 // const [, setIsLoggedIn] = useAtom(IS_LOGGED_IN); // 로그인 상태를 위한 아톰
@@ -59,6 +60,7 @@ function App() {
               <Route path="WritePage" element={<WritePage />} />
               <Route path="ApplyPage/:projectId" element={<ApplyPage />} />
               <Route path="SearchPage" element={<SearchPage />} />
+              <Route path="SearchPage1" element={<SearchPage1 />} />
               <Route path="MyPage" element={<MyPage/>} />
               <Route path="LoginPage" element={<LoginPage />} />
               <Route path="SignupPage" element={<SignupPage />} />

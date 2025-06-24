@@ -1,9 +1,9 @@
 //바끤 피그마
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
-import { feedTypeAtom, selectedProjectDetailAtom } from '../../../Atoms.jsx/AtomStates';
+import { feedTypeAtom } from '../../../Atoms.jsx/AtomStates';
 import Footer from '../../../components/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
@@ -11,45 +11,13 @@ import { faSlidersH } from '@fortawesome/free-solid-svg-icons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';  
 import { ContentsWrap , MainContent} from '../../../assets/BusinessAnalysisStyle';
 import Nav from '../../../components/Nav';
-import NavigationBar from '../../../components/NavigationBar';
+import NavigationBar from '../components/NavigationBar';
 import PopularProject from '../components/PopularProject';
 import ProjectFeedCard from '../components/ProjectFeedCard';
-import axios from '../../../api/axios'
-import { useAuth } from '../../../context/AuthContext';
-import AlertModal from '../../../components/AlertModal';
-import Modal from '../../../components/Modal';
-import RoleSelectionModal from '../../../components/RoleSelectionModal';
-import Pagination from '../../../components/Pagination';
-import ProfileModal from '../../../components/ProfileModal';
-import MainCarousel from '../components/MainCarousel';
-
-
-
-
 
 const MainPage = () => {
-  const { isLoggedIn, user } = useAuth();
-  // const [isLoggedIn, setIsLoggedIn] = useAtom(IS_LOGGED_IN);
   const [feedType, setFeedType] = useAtom(feedTypeAtom);
-  const [selectedProjectDetail, setSelectedProjectDetail] = useAtom(selectedProjectDetailAtom);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [popularProjects, setPopularProjects] = useState([]);
-  const [allProjects, setAllProjects] = useState([]);
-  const [showApplyPopup, setShowApplyPopup] = useState('');
-  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
-  const [selectedRole, setSelectedRole] = useState('');
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [popupMessage, setPopupMessage] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [showAlertPopup, setShowAlertPopup] = useState('');
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  const [userProfile, setUserProfile] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [isUserProfileLoaded, setIsUserProfileLoaded] = useState(false);
-  const [modalOpenedOnce, setModalOpenedOnce] = useState(false);
-  const [hasProfileModalOpened, setHasProfileModalOpened] = useState(false);
-  // const [isProfileComplete, setIsProfileComplete] = useState(false);
-
   const navigate = useNavigate();
   
   const handleSearch = (e) => {
@@ -93,276 +61,152 @@ const MainPage = () => {
     // ... 여러 개 추가
   ];
 
-  // const popularProjects = [
-  //   {
-  //     title: '블록체인 Dapp 프로젝트',
-  //     deadlineTag: 'D-54',
-  //     description: '이번 블록체인 Dapp 프로젝트에서 백엔드를 맡아주실 개발자 분을 구하고 있습니다...',
-  //     recruitInfo: '모집 인원 | 3~4명',
-  //     deadlineInfo: '마감일 25.03.15',
-  //     tags: ['AWS', 'Blockchain', 'React']
-  //   },
-  //   {
-  //     title: '하이브리드 웹 개발자 양성',
-  //     deadlineTag: 'D-64',
-  //     description: '안녕하세요! 저희는 이번에 하이브리드 웹 개발자 양성을 위하여 새로운 신입 멤버를 모집하고 있...',
-  //     recruitInfo: '모집 인원 | 3~4명',
-  //     deadlineInfo: '마감일 25.04.06',
-  //     tags: ['Hybrid', 'Web', 'front']
-  //   },
-  //   {
-  //     title: '알고리즘 프로젝트 모집!',
-  //     deadlineTag: 'D-70',
-  //     description: '안녕하세요 저희는 뉴알고리즘을 만들고자 새로운 능력자분을 모시고 있습니다 저희는 디앱 기반 ...',
-  //     recruitInfo: '모집 인원 | 5~7명',
-  //     deadlineInfo: '마감일 25.04.30',
-  //     tags: ['Newproject', 'Algorithm', 'AWS']
-  //   }
-  // ];
-
-  
-
-
-
-  const handleModalClose = async () => {
-    // setHasFinalizedProfile(true);
-    setIsProfileModalOpen(false);
-  };
-  
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        if (user && user.id) {
-          const response = await axios.get(`/my/profile/${user.id}`);
-          console.log('사용자 프로필:', response.data);
-          if (response.data) {
-            setUserProfile(response.data);
-            setIsUserProfileLoaded(true);
-          } else {
-            setUserProfile({
-              avatarUrl: '',
-              headLine: '',
-              tags: [],
-              experiences: [],
-              educations: [],
-              personalUrl: ''
-            });
-            setIsUserProfileLoaded(true);
-          }
-        }
-      } catch (error) {
-        console.error('사용자 프로필 조회 중 오류 발생:', error);
-      }
+  const popularProjects = [
+    {
+      title: '블록체인 Dapp 프로젝트',
+      deadlineTag: 'D-54',
+      description: '이번 블록체인 Dapp 프로젝트에서 백엔드를 맡아주실 개발자 분을 구하고 있습니다...',
+      recruitInfo: '모집 인원 | 3~4명',
+      deadlineInfo: '마감일 25.03.15',
+      tags: ['AWS', 'Blockchain', 'React']
+    },
+    {
+      title: '하이브리드 웹 개발자 양성',
+      deadlineTag: 'D-64',
+      description: '안녕하세요! 저희는 이번에 하이브리드 웹 개발자 양성을 위하여 새로운 신입 멤버를 모집하고 있...',
+      recruitInfo: '모집 인원 | 3~4명',
+      deadlineInfo: '마감일 25.04.06',
+      tags: ['Hybrid', 'Web', 'front']
+    },
+    {
+      title: '알고리즘 프로젝트 모집!',
+      deadlineTag: 'D-70',
+      description: '안녕하세요 저희는 뉴알고리즘을 만들고자 새로운 능력자분을 모시고 있습니다 저희는 디앱 기반 ...',
+      recruitInfo: '모집 인원 | 5~7명',
+      deadlineInfo: '마감일 25.04.30',
+      tags: ['Newproject', 'Algorithm', 'AWS']
     }
-
-    fetchUserProfile(); // 사용자 정보가 있을 때 프로필을 가져옴
-  }, [user]); // user가 변경될 때마다 실행
-
-  const isProfileComplete = () => {
-    const headLine = userProfile.headLine ? userProfile.headLine.trim() : "";
-    const tags = userProfile.tags || [];
-    return headLine.length > 0 && tags.length > 0;
-  };
- 
-//app.js에서 체크하며 어떨까.
-  useEffect(() => {
-    // 로그인하지 않은 경우 (user가 null) 함수 즉시 종료
-    if(!user) return;
-
-    // 프로필 데이터가 완전히 로딩되지 않았다면 아래 로직 실행하지 않음
-    if (!isUserProfileLoaded) return;
-  
-    // 이미 모달이 열렸던 적이 없고, 사용자가 로그인 상태일 때만 진행
-    if (!modalOpenedOnce) {
-      // 프로필이 미완성일 경우에만 모달을 강제로 열어줍니다.
-      if (!isProfileComplete()) {
-        console.log("모달을 열어야 합니다.");
-        setIsProfileModalOpen(true);
-        modalOpenedOnce = true;
-        setHasProfileModalOpened(true);
-      }
-  
-    }
-  }, [user, userProfile, isProfileModalOpen, isUserProfileLoaded, modalOpenedOnce]);
-
-
+  ];
 
   const slideCount = 3; // 슬라이드 개수(캐러셀 아이템 개수와 맞추세요)
 
-  useEffect(() => {
-    const fetchPopularProjects = async () => {
-      try {
-        const response = await axios.get(`/main/liked?feedType=${feedType}`);
-  
-        if (!response.data || response.data.length === 0) {
-          console.warn('프로젝트 데이터가 없습니다.');
-          setPopularProjects([]);
-          return;
-        }
-
-        setPopularProjects(response.data);
-      } catch (error) {
-        console.error('Error fetching popular projects:', error);
-        
-        // Network error handling - set empty array as fallback
-        if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
-          console.warn('API 서버에 연결할 수 없습니다. 네트워크 연결 또는 서버 상태를 확인해주세요.');
-          setPopularProjects([]); // Set empty array as fallback
-        } else {
-          console.error('API 요청 중 오류가 발생했습니다:', error.message);
-          setPopularProjects([]);
-        }
-      }
-    };
-  
-    fetchPopularProjects();
-  }, [feedType]);
-
-  const handleProjectClick = (project) => {
-    console.log("mainprojecttodetail", project)
-    navigate(`/ApplyPage/${project.pk}`);
-    setSelectedProjectDetail(project);
-  };
-
-
-  
-  
-  useEffect(() => {
-    const fetchAllProjects = async () => {
-      try {
-        const response = await axios.get(`/main?feedType=${feedType}`);
-        if (!response.data || response.data.length === 0) {
-          setAllProjects([]);
-          return;
-        }
-        console.log('모든 게시물:', response.data);
-  
-        setAllProjects(response.data);
-      } catch (error) {
-        console.error('프로젝트 가져오기 실패:', error);
-        
-        // Network error handling - set empty array as fallback
-        if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
-          console.warn('API 서버에 연결할 수 없습니다. 네트워크 연결 또는 서버 상태를 확인해주세요.');
-          setAllProjects([]); // Set empty array as fallback
-        } else {
-          console.error('API 요청 중 오류가 발생했습니다:', error.message);
-          setAllProjects([]);
-        }
-      }
-    };
-  
-    fetchAllProjects();
-  }, [feedType]);
-
-
-  
-
-  const handleApplyClick = async (project) => {
-    if (!user) { 
-      setPopupMessage("로그인 후에 신청할 수 있습니다."); 
-      setIsSubmitted(true); 
-      return; 
-    }
-
-    // 자신이 작성한 게시글인지 확인
-    if (project && project.creatorId === user.id) {
-      // alert("자신이 작성한 게시글에는 신청할 수 없습니다."); 
-      setShowAlertPopup("자신이 작성한 게시글에는 신청할 수 없습니다.");
-      return; 
-    }
-  
-    try {
-      const response = await axios.get('/feed/applications', {
-        params: {
-          userId: user.id,
-        }
-      });
-  
-      const appliedProjects = response.data.map(app => app.feedId); // 신청한 프로젝트의 feedId 목록
-  
-      // 선택한 프로젝트의 pk와 비교
-      const isAlreadyApplied = appliedProjects.includes(project.pk);
-      if (isAlreadyApplied) {
-        setShowApplyPopup("이미 신청한 프로젝트입니다."); 
-        // setPopupMessage("이미 신청한 프로젝트입니다."); // 이미 신청한 경우 메시지 설정
-        // setIsSubmitted(true); // 제출 확인 팝업 표시
-        return; // Exit the function if already applied
-      }
-    } catch (error) {
-      console.error("신청 여부 확인 실패:", error);
-    }
-  
-    // setProject(project); // 선택한 프로젝트 상태 저장
-    setSelectedProject(project);
-    setIsRoleModalOpen(true); // 역할 선택 모달 열기
-  };
-  
-
-  // 프로젝트 신청 처리
-  const handleApplySubmit = async (project, role) => {
-    if (!user) {
-      setPopupMessage("로그인 후에 신청할 수 있습니다.");
-      setIsSubmitted(true);
-      return;
-    }
-   
-    try {
-      const applicationData = {
-        pk: user.id,
-        sk: selectedProject.pk,
-        part: selectedRole,
-        feedType: feedType
-      };
-      console.log('applicationData:', applicationData);
-      await axios.post('/main/application', applicationData);
-      setShowApplyPopup("신청이 완료되었습니다.");
-      setIsRoleModalOpen(false);
-    } catch (error) {
-      console.error("신청 실패:", error);
-      setShowApplyPopup("신청에 실패했습니다.");
-    }
-  };
-
-  const handleRoleSelect = (role) => {
-    setSelectedRole(role);
-  };
-  
-
-  const projectsPerPage = 6;
-  const [currentPage, setCurrentPage] = useState(1);
-  // const [projectsPerPage] = useState(6); 
-
-  //페이지네이션방법 1
-  // const indexOfLastProject = currentPage * projectsPerPage;
-  // const indexOfFirstProject = indexOfLastProject - projectsPerPage;
-  // const currentProjects = projects.slice(indexOfFirstProject, indexOfLastProject);
-
-    //페이지네이션방법 2
-  const currentProjects = allProjects.slice(
-    (currentPage - 1) * projectsPerPage,
-    currentPage * projectsPerPage
-  );
-
-  
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
+  // // 2. 카드 컴포넌트
+  // const ProjectFeedCard = ({ project }) => (
+  //   <ProjectCard>
+  //     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+  //       <div style={{ display: "flex", alignItems: "center" }}>
+  //         <img src={project.profile} alt="profile" style={{ width: 32, height: 32, borderRadius: "50%", marginRight: 8, objectFit: "cover" }} />
+  //         <span style={{ fontWeight: 600 }}>{project.nickname}</span>
+  //       </div>
+  //       <span style={{ color: "#b0b0b0", fontSize: 15 }}>👁 {project.views}</span>
+  //     </div>
+  //     <ProjectTitle style={{ fontSize: 18, fontWeight: 700, margin: "8px 0 10px 0" }}>{project.title}</ProjectTitle>
+  //     <div style={{ marginBottom: 8 }}>
+  //       {project.tags.map(tag => (
+  //         <ProjectTag key={tag}>{tag}</ProjectTag>
+  //       ))}
+  //     </div>
+  //     <ProjectDescription style={{
+  //       fontSize: 14,
+  //       color: "#666",
+  //       marginBottom: 16,
+  //       overflow: "hidden",
+  //       textOverflow: "ellipsis",
+  //       display: "-webkit-box",
+  //       WebkitLineClamp: 2,
+  //       WebkitBoxOrient: "vertical"
+  //     }}>{project.description}</ProjectDescription>
+  //     <div style={{ display: "flex", textAlign: "left", marginBottom: 8, flexDirection: "column", gap: 8 }}>
+  //       <ProjectDetail>모집인원 | {project.people}</ProjectDetail>
+  //       <ProjectDetail>마감일 | {project.date}</ProjectDetail>
+  //     </div>
+  //     <div style={{ display: "flex", alignItems: "center" }}>
+  //       <VerticalLikeButton>
+  //         <svg width="18" height="18" viewBox="0 0 20 20" fill="#222" xmlns="http://www.w3.org/2000/svg">
+  //           <path d="M10 17.5l-1.45-1.32C4.4 12.36 2 10.28 2 7.5 2 5.5 3.5 4 5.5 4c1.04 0 2.09.54 2.7 1.44C8.41 5.54 9.46 5 10.5 5 12.5 5 14 6.5 14 8.5c0 2.78-2.4 4.86-6.55 8.68L10 17.5z"/>
+  //         </svg>
+  //         <span>2</span>
+  //       </VerticalLikeButton>
+  //       <ApplyButton>신청하기</ApplyButton>
+  //     </div>
+  //   </ProjectCard>
+  // );
 
   return (
-    <>
     <ContentsWrap>
     {/* <PageContainer> */}
     {/* <Nav/> */}
     <MainContent Wide1030>
       {/* Header with Logo and Search */}
       <NavigationBar 
-
+        handleSearch={handleSearch} 
+        handleAddButtonClick={handleAddButtonClick} 
       />
 
-      {/* Carousel Section */}
-      <MainCarousel currentSlide={currentSlide} setCurrentSlide={setCurrentSlide} slideCount={slideCount} />
+<>
+<CarouselWrapper>
+        <CarouselArrow
+          style={{ left: -18 }}
+          onClick={() => setCurrentSlide((prev) => prev > 0 ? prev - 1 : slideCount - 1)}
+          aria-label="이전"
+        >
+          {/* 왼쪽 화살표 SVG */}
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M13 16L8 10L13 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </CarouselArrow>
+
+        <CarouselSection $currentSlide={currentSlide}>
+          <CarouselItem>
+            <CarouselContent purple>
+              <CarouselTextContent>
+                <CarouselSubtitle>일 잘하는 사람들을 위한</CarouselSubtitle>
+                <CarouselTitle>인기있는 프로젝트<br/>모아보기</CarouselTitle>
+              </CarouselTextContent>
+              <CarouselImage>
+                <img src="/images/code_graphic.png" alt="Code graphic" />
+              </CarouselImage>
+              <CtaButton>바로가기</CtaButton>
+            </CarouselContent>
+          </CarouselItem>
+
+          <CarouselItem>
+            <CarouselContent primary>
+              <CarouselTextContent>
+                <CarouselSubtitle>2025 트렌드가 궁금하다면?</CarouselSubtitle>
+                <CarouselTitle>IT 최신 트렌드<br/>한눈에 살펴보기</CarouselTitle>
+              </CarouselTextContent>
+              <CarouselImage>
+                {/* <img src="/images/laptop_it.png" alt="Laptop IT" />
+                <img src="/images/bulb_3d.png" alt="Bulb 3D" /> */}
+              </CarouselImage>
+              <CtaButton blue>바로가기</CtaButton>
+              <SlideIndicator>01 / 04</SlideIndicator>
+            </CarouselContent>
+          </CarouselItem>
+
+          <CarouselItem>
+            <CarouselContent blue>
+              <CarouselTextContent>
+                <CarouselSubtitle>시간과 비용을 절약하고 싶다면?</CarouselSubtitle>
+                <CarouselTitle>개발자들 몰래 보는<br/>꿀팁 사이트 보러가기</CarouselTitle>
+              </CarouselTextContent>
+              <CarouselImage>
+                <img src="/images/developer_image.png" alt="Developer" />
+              </CarouselImage>
+              <CtaButton white>바로가기</CtaButton>
+            </CarouselContent>
+          </CarouselItem>
+        </CarouselSection>
+
+        <CarouselArrow
+          style={{ right: -18 }}
+          onClick={() => setCurrentSlide((prev) => prev < slideCount - 1 ? prev + 1 : 0)}
+          aria-label="다음"
+        >
+          {/* 오른쪽 화살표 SVG */}
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M7 4L12 10L7 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </CarouselArrow>
+      </CarouselWrapper>
+</>
 
       {/* Popular Projects Section */}
       <SectionHeader>
@@ -373,9 +217,69 @@ const MainPage = () => {
           {/* <ArrowIcon src="/images/arrow_up.svg" alt="Arrow" /> */}
         </ViewMoreLink>
       </SectionHeader>
+{/* 
+      <PopularProjectsGrid>
+        <PopularProjectCard>
+          <PopularProjectHeader>
+            <PopularProjectTitle>블록체인 Dapp 프로젝트</PopularProjectTitle>
+            <PopularDeadlineTag>D-54</PopularDeadlineTag>
+          </PopularProjectHeader>
+          <PopularProjectDescription>
+            이번 블록체인 Dapp 프로젝트에서 백엔드를
+            맡아주실 개발자 분을 구하고 있습니다...
+          </PopularProjectDescription>
+          <PopularProjectInfo>
+            <PopularProjectDetail>모집 인원 | 3~4명</PopularProjectDetail>
+            <PopularProjectDetail>마감일 25.03.15</PopularProjectDetail>
+          </PopularProjectInfo>
+          <PopularProjectTags>
+            <PopularProjectTag>AWS</PopularProjectTag>
+            <PopularProjectTag>Blockchain</PopularProjectTag>
+            <PopularProjectTag>React</PopularProjectTag>
+          </PopularProjectTags>
+        </PopularProjectCard>
 
+        <PopularProjectCard>
+          <PopularProjectHeader>
+            <PopularProjectTitle>하이브리드 웹 개발자 양성</PopularProjectTitle>
+            <PopularDeadlineTag>D-64</PopularDeadlineTag>
+          </PopularProjectHeader>
+          <PopularProjectDescription>
+            안녕하세요! 저희는 이번에 하이브리드 웹 개발자
+            양성을 위하여 새로운 신입 멤버를 모집하고 있...
+          </PopularProjectDescription>
+          <PopularProjectInfo>
+            <PopularProjectDetail>모집 인원 | 3~4명</PopularProjectDetail>
+            <PopularProjectDetail>마감일 25.04.06</PopularProjectDetail>
+          </PopularProjectInfo>
+          <PopularProjectTags>
+            <PopularProjectTag>Hybrid</PopularProjectTag>
+            <PopularProjectTag>Web</PopularProjectTag>
+            <PopularProjectTag>front</PopularProjectTag>
+          </PopularProjectTags>
+        </PopularProjectCard>
 
-      <PopularProject projects={popularProjects} handleProjectClick={handleProjectClick} />
+        <PopularProjectCard>
+          <PopularProjectHeader>
+            <PopularProjectTitle>알고리즘 프로젝트 모집!</PopularProjectTitle>
+            <PopularDeadlineTag>D-70</PopularDeadlineTag>
+          </PopularProjectHeader>
+          <PopularProjectDescription>
+            안녕하세요 저희는 뉴알고리즘을 만들고자 새로운
+            능력자분을 모시고 있습니다 저희는 디앱 기반 ...
+          </PopularProjectDescription>
+          <PopularProjectInfo>
+            <PopularProjectDetail>모집 인원 | 5~7명</PopularProjectDetail>
+            <PopularProjectDetail>마감일 25.04.30</PopularProjectDetail>
+          </PopularProjectInfo>
+          <PopularProjectTags>
+            <PopularProjectTag>Newproject</PopularProjectTag>
+            <PopularProjectTag>Algorithm</PopularProjectTag>
+            <PopularProjectTag>AWS</PopularProjectTag>
+          </PopularProjectTags>
+        </PopularProjectCard>
+      </PopularProjectsGrid> */}
+      <PopularProject projects={popularProjects} />
 
       {/* Project Feed Toggle */}
       <FeedToggleSection>
@@ -411,69 +315,16 @@ const MainPage = () => {
         gap: "32px",
         marginBottom: "32px"
       }}>
-        {currentProjects.map(project => (
-          <ProjectFeedCard
-            key={project.id}
-            project={project}
-            handleProjectClick={handleProjectClick}
-            onApplyClick={handleApplyClick}
-          />
+        {projectList.map(project => (
+          <ProjectFeedCard key={project.id} project={project} />
         ))}
       </ProjectFeed>
-
-      <div style={{ display: "flex", justifyContent: "center", margin: "32px 0" }}>
-        <Pagination
-          currentPage={currentPage}
-          projectsPerPage={projectsPerPage}
-          totalProjects={allProjects.length}
-          onPageChange={handlePageChange}
-        />
-      </div>
 
       {/* Footer */}
       {/* <Footer /> */}
       </MainContent>
     {/* </PageContainer> */}
     </ContentsWrap>
-
-    {(isProfileModalOpen) &&  (
-        <ProfileModal 
-          isOpen={ isProfileModalOpen}
-          onClose={handleModalClose} 
-          userProfile={userProfile} 
-          setUserProfile={setUserProfile} 
-          selectedFile={selectedFile} 
-          setSelectedFile={setSelectedFile}
-        />
-      )}
-
-
-    <RoleSelectionModal
-        isOpen={isRoleModalOpen}
-        onClose={() => setIsRoleModalOpen(false)}
-        project={selectedProject}
-        selectedRole={selectedRole}
-        handleRoleSelect={handleRoleSelect}
-        handleApplySubmit={handleApplySubmit}
-      />
-
-<AlertModal
-isOpen={!!showAlertPopup}
-message={showAlertPopup}
-onClose={() => setShowAlertPopup(false)}
-/>
-
-{showApplyPopup && (
-<Modal isOpen={showApplyPopup} onClose={() => setShowApplyPopup(false)}>
-      <h3 style={{ textAlign: 'center',fontSize:'16px' }}>{showApplyPopup}</h3>
-      <ButtonContainer>
-        <ModalButton onClick={() => setShowApplyPopup(false)}>확인</ModalButton>
-        {/* <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton> */}
-      </ButtonContainer>
-    </Modal>  
-
-)}
-</>
   );
 };
 
@@ -593,9 +444,6 @@ const Tag = styled.div`
 const CarouselWrapper = styled.div`
   position: relative;
   width: 100%;
-  // overflow: hidden;
-  max-width: 900px;
-  margin: 0 auto 32px auto;
 `;
 
 const CarouselArrow = styled.button`
@@ -624,25 +472,27 @@ const CarouselArrow = styled.button`
 
 const CarouselSection = styled.section`
   display: flex;
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  transform: translateX(-${props => props.$currentSlide * 100}%);
-  width: 100%;
+  gap: 24px;
+  margin-bottom: 32px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const CarouselItem = styled.div`
-  flex: 0 0 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  display: flex;
-  justify-content: center;
+  flex: 0 0 auto;
+  opacity: ${props => props.active ? 1 : 0.8};
 `;
 
 const CarouselContent = styled.div`
   position: relative;
   border-radius: 28px;
   padding: 40px;
-  height: 200px;
-  width: 80%;
+  height: 250px;
+  width: 480px;
   background-color: ${props => props.purple ? '#662CC2' : props.blue ? '#00AEFF' : '#1A1A1A'};
   display: flex;
   flex-direction: column;
@@ -664,7 +514,7 @@ const CarouselSubtitle = styled.h3`
 `;
 
 const CarouselTitle = styled.h2`
-  font-size: 36px;
+  font-size: 48px;
   font-weight: 700;
   color: white;
   margin: 0;
@@ -679,21 +529,21 @@ const CarouselImage = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: flex-end;
+  
   img {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
-    display: block;
   }
 `;
 
 const CtaButton = styled.button`
   position: absolute;
-  bottom: 20px;
-  left: 20px;
+  bottom: 40px;
+  left: 40px;
   border-radius: 100px;
   padding: 16px 36px;
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 600;
   background-color: ${props => props.blue ? '#00AEFF' : props.white ? '#FFFFFF' : '#FFFFFF'};
   color: ${props => props.white ? '#00AEFF' : props.blue ? '#FFFFFF' : '#662CC2'};
@@ -1010,27 +860,5 @@ const VerticalLikeButton = styled.button`
 //   transform: scale(0.9);
 //   transform-origin: top center;
 // `;
-
-
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 20px;
-`;
-
-const ModalButton = styled.button`
-  background-color: #3563E9;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #a0dafb;
-  }
-`;
-
 
 export default MainPage; 

@@ -8,17 +8,18 @@ import styled from 'styled-components';
 // import axios from 'axios';
 import axios from '../api/axios'
 import { useAtom } from 'jotai';
-import { likedProjectsAtom, IS_LOGGED_IN, USER} from '../Atoms.jsx/AtomStates';  
+import { likedProjectsAtom, IS_LOGGED_IN, USER, feedTypeAtom } from '../Atoms.jsx/AtomStates';  
 import { useAuth } from '../context/AuthContext'; // AuthContext에서 useAuth 가져오기
 
 
-const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle, userId, sk, feedType }) => {
+const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle, userId, sk,  }) => {
   const [liked, setLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
   // const [isLoggedIn, setIsLoggedIn] = useAtom(IS_LOGGED_IN);
   const { isLoggedIn: authIsLoggedIn } = useAuth(); // AuthContext에서 isLoggedIn 가져오기 //나중에 넣기
   // const [user, setUser] = useAtom(USER);
   const [likedProjects, setLikedProjects] = useAtom(likedProjectsAtom);
+  const [feedType, setFeedType] = useAtom(feedTypeAtom);
   const [allProjects, setAllProjects] = useState([]);
   const { user } = useAuth();
   const location = useLocation(); // 현재 경로를 가져옵니다.

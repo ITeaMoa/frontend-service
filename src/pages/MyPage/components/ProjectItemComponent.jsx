@@ -68,7 +68,7 @@ const ProjectItemComponent = ({ project, user, handleCancelApplication, isProjec
       
       {!isSaved && (
         <AdditionalInfo>
-          <span>지원분야&nbsp;| {project.part}</span>
+          {(!isDisabled) && <span>지원분야&nbsp;| {project.part}</span>}
           <span>모집현황&nbsp;| {project.recruitmentNum}명</span>
           <span>마감일자&nbsp;| {new Date(project.deadline).toLocaleDateString()}</span>
           <span>진행기간&nbsp;| {project.period ? `${project.period}개월` : '정보없음'}</span>

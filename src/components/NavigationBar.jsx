@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faSlidersH, faCommentDots, faBell, faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const tagOptions = [
   "AWS", "Blockchain", "NodeJS", "React", "Java", "Dapp", "Git", "Backend"
@@ -13,6 +14,7 @@ const NavigationBar = () => {
   const [searchValue, setSearchValue] = useState("");
   const [selectedTags, setSelectedTags] = useState([]);
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
 
   // 검색 입력 핸들러
   const handleChange = (e) => {
@@ -45,51 +47,69 @@ const NavigationBar = () => {
 
   return (
     <>
-      <IconBar>
-        <FontAwesomeIcon icon={faCommentDots} size="2x" color="#e0dfdb" />
-        <FontAwesomeIcon icon={faBell} size="2x" color="#e0dfdb" />
-        <IconWrap>
-          <FontAwesomeIcon icon={faUserCircle} size="2x" color="#e0dfdb" />
-          <RedDot />
-        </IconWrap>
-      </IconBar>
-      <Header>
-        <Logo>ITEAMOA</Logo>
-        <SearchContainer>
-          <SearchBar>
-            <FontAwesomeIcon icon={faSearch} />
-            <SearchInput
-              value={searchValue}
-              onChange={handleChange}
-              onKeyDown={handleChange}
-              placeholder="Search projects"
-            />
-          </SearchBar>
-          <FilterButton>
-            <FontAwesomeIcon icon={faSlidersH} />
-          </FilterButton>
-          <SearchButton onClick={handleAddButtonClick}>
-            <FontAwesomeIcon icon={faSearch} style={{ color: 'white' }} />
-          </SearchButton>
-        </SearchContainer>
-        <TagsRow>
-          {tagOptions.map(tag => (
-            <Tag
-              key={tag}
-              selected={selectedTags.includes(tag)}
-              onClick={() => handleTagSelect(tag)}
-            >
-              {tag}
-              {selectedTags.includes(tag) && (
-                <CloseButton onClick={e => { e.stopPropagation(); handleTagRemove(tag); }}>×</CloseButton>
-              )}
-            </Tag>
-          ))}
-          {selectedTags.length > 0 && (
-            <ResetButton onClick={handleResetTags}>초기화</ResetButton>
+      <NavigationBarWrapper>
+        <IconBar>
+          {isLoggedIn ? (
+            <>
+              <FontAwesomeIcon icon={faCommentDots} onClick={() => navigate('/MessagePage')} size="xl" color="#e0dfdb" />
+              <FontAwesomeIcon icon={faBell} size="xl" color="#e0dfdb" />
+              <IconWrap>
+                <FontAwesomeIcon icon={faUserCircle} onClick={() => navigate('/MyPage')} size="xl" color="#e0dfdb" />
+                <RedDot />
+              </IconWrap>
+            </>
+          ) : (
+            <>
+              <AuthButton onClick={() => navigate('/SignupPage')}>SignUp</AuthButton>
+              <AuthButton onClick={() => navigate('/LoginPage')}>Login</AuthButton>
+            </>
           )}
-        </TagsRow>
-      </Header>
+        </IconBar>
+        <NavContent>
+          <Logo>
+            <img
+              alt="Logo"
+              src="/images/logo1.png"
+              onClick={() => (window.location.href = "/")}
+            />
+          </Logo>
+          <SearchContainer>
+            <SearchBar>
+              <FontAwesomeIcon icon={faSearch} style={{marginRight: '10px'}}/>
+              <SearchInput
+                value={searchValue}
+                onChange={handleChange}
+                onKeyDown={handleChange}
+                placeholder="Search projects"
+              />
+            </SearchBar>
+            <FilterButton>
+              <FontAwesomeIcon icon={faSlidersH} style={{ color: '#C3C3C3' }} />
+            </FilterButton>
+            <SearchButton onClick={handleAddButtonClick}>
+              <FontAwesomeIcon icon={faSearch} style={{ color: 'white' }} />
+            </SearchButton>
+          </SearchContainer>
+          <TagsRow>
+            {tagOptions.map(tag => (
+              <Tag
+                key={tag}
+                selected={selectedTags.includes(tag)}
+                onClick={() => handleTagSelect(tag)}
+              >
+                {tag}
+                {selectedTags.includes(tag) && (
+                  <CloseButton onClick={e => { e.stopPropagation(); handleTagRemove(tag); }}>×</CloseButton>
+                )}
+              </Tag>
+            ))}
+            {selectedTags.length > 0 && (
+              <ResetButton onClick={handleResetTags}>초기화</ResetButton>
+            )}
+          </TagsRow>
+        </NavContent>
+      </NavigationBarWrapper>
+      <NavBarPlaceholder />
     </>
   );
 };
@@ -98,28 +118,82 @@ const NavigationBar = () => {
 
 export default NavigationBar;
 
-const Header = styled.header`
+const NavigationBarWrapper = styled.div`
   position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  z-index: 200;
+  background: #fff;
+  // box-shadow: 0 2px 8px rgba(0,0,0,0.04);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  padding-bottom: 0;
+`;
+
+const NavContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 100%;
-  margin-bottom: 32px;
-  position: relative;
+  margin-top: 80px;
 `;
 
-const Logo = styled.h1`
-  font-family: 'Protest Strike', cursive;
-  font-size: 56px;
-  color: #00AEFF;
-  margin: 0;
+const NavBarPlaceholder = styled.div`
+  height: 250px; /* Adjust this value to match the NavigationBar's total height */
 `;
 
+const IconBar = styled.div`
+  position: absolute;
+  top: 24px;
+  right: 200px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  z-index: 201;
+`;
+
+const Header = styled.header`
+  display: none;
+`;
+
+// const Logo = styled.h1`
+//   font-family: 'Protest Strike', cursive;
+//   font-size: 56px;
+//   color: #00AEFF;
+//   margin: 0 0 12px 0;
+//   text-align: center;
+//   img {
+//     width: 180px;
+//     height: auto;
+//     margin-bottom: 8px;
+//     cursor: pointer;
+//     display: block;
+//     margin-left: auto;
+//     margin-right: auto;
+//   }
+// `;
+
+
+const Logo = styled.div`
+  img {
+    width: 100%; 
+    max-width: 250px;
+    cursor: pointer;
+  }
+    margin-top: ${({ simple }) => (simple ? '50px' : '-50px')}; 
+
+   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+   margin-top: 20px;
+  }
+`;
 const SearchContainer = styled.div`
   display: flex;
   align-items: flex-end;
   width: 100%;
+  max-width: 1030px;
+  margin: 0 auto 8px auto;
   gap: 8px;
 `;
 
@@ -128,8 +202,9 @@ const SearchBar = styled.div`
   align-items: center;
   background-color: #F3F0F0;
   border-radius: 8px;
-  padding: 9px 16px;
+  padding: 0 16px;
   flex-grow: 1;
+  height: 44px;
 `;
 
 // const SearchIcon = styled.img`
@@ -153,13 +228,15 @@ const SearchIcon = styled.span`
 const SearchInput = styled.input`
   border: none;
   background: transparent;
-  font-size: 20px;
+  font-size: 15px;
   color: #858585;
   width: 100%;
   outline: none;
+  padding : 4px 0px;
   
   &::placeholder {
     color: #858585;
+    font-size: 15px;
   }
 `;
 
@@ -167,20 +244,32 @@ const FilterButton = styled.button`
   background-color: #F3F0F0;
   border: none;
   border-radius: 8px;
-  padding: 13px 17px;
-  cursor: pointer;
+  height: 44px;
+  width: 44px;
+  min-width: 44px;
+  min-height: 44px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 20px;
+  // margin-left: 8px;
 `;
 
 const SearchButton = styled.button`
   background-color: #00AEFF;
   border: none;
   border-radius: 8px;
-  padding: 13px 17px;
-  cursor: pointer;
+  height: 44px;
+  width: 44px;
+  min-width: 44px;
+  min-height: 44px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 20px;
+  // margin-left: 8px;
 `;
 
 const TagsRow = styled.div`
@@ -188,7 +277,11 @@ const TagsRow = styled.div`
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-  margin-top: 12px;
+  margin-top: 8px;
+  width: 100%;
+  max-width: 1030px;
+  margin-left: auto;
+  margin-right: auto;
 `;
 
 const Tag = styled.div`
@@ -213,16 +306,6 @@ const Tag = styled.div`
   }
 `;
 
-const IconBar = styled.div`
-  position: fixed;
-  top: 24px;
-  right: 32px;
-  display: flex;
-  align-items: center;
-  gap: 32px;
-  z-index: 100;
-`;
-
 const IconWrap = styled.div`
   position: relative;
   display: flex;
@@ -233,8 +316,8 @@ const RedDot = styled.div`
   position: absolute;
   top: 0;
   right: 0;
-  width: 16px;
-  height: 16px;
+  width: 10px;
+  height: 10px;
   background: #ff2222;
   border-radius: 50%;
   border: 2px solid #fff;
@@ -254,4 +337,21 @@ const ResetButton = styled.button`
   background-color: transparent;
   cursor: pointer;
   margin-left: 10px;
+`;
+
+const AuthButton = styled.button`
+  background: #fff;
+  color: #00AEFF;
+  border: 1px solid #00AEFF;
+  border-radius: 20px;
+  padding: 6px 18px;
+  font-size: 15px;
+  font-weight: 500;
+  margin-left: 8px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  &:hover {
+    background: #00AEFF;
+    color: #fff;
+  }
 `;

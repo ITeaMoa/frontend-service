@@ -63,27 +63,28 @@ export default PopularProject;
 
 const PopularProjectsGrid = styled.div`
   display: flex;
-  justify-content: center;
-//   justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 48px;
-   max-width: 100%;
+  gap: 24px;
+  width: 100%;
+  max-width: 1030px;
+  margin: 0 auto 48px auto;
 `;
 
 const PopularProjectCard = styled.div`
   background: linear-gradient(135deg, #eaf6ff 80%, #f6fbff 100%);
   border-radius: 16px;
   padding: 24px 20px 18px 20px;
-  // min-width: 300px;
-  max-width: 33%;
-  min-height: 200px;
-  // max-width: 100%;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: none;
+  min-height: 250px;
   box-shadow: none;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   cursor: pointer;
   position: relative;
+  box-sizing: border-box;
+  margin: 0;
 `;
 
 const PopularProjectHeader = styled.div`

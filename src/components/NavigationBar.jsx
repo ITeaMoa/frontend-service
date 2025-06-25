@@ -14,7 +14,10 @@ const NavigationBar = () => {
   const [searchValue, setSearchValue] = useState("");
   const [selectedTags, setSelectedTags] = useState([]);
   const navigate = useNavigate();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn ,authIsLoggedIn} = useAuth();
+  const [showAlert, setShowAlert] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+  const [alarms, setAlarms] = useState([]);
 
   // 검색 입력 핸들러
   const handleChange = (e) => {
@@ -45,6 +48,25 @@ const NavigationBar = () => {
     setSelectedTags([]);
   };
 
+  // useEffect(() => {
+  //   if (showAlert && authIsLoggedIn) {
+  //     fetchAlarms();
+  //   }
+  // }, [showAlert, authIsLoggedIn]);
+
+  const handleAlertToggle = () => {
+    if (showAlert) {
+      setIsClosing(true);
+      setTimeout(() => { 
+        setShowAlert(false);
+        setIsClosing(false);
+      }, 300); // 애니메이션 시간
+    } else {
+      setShowAlert(true);
+    }
+  };
+
+
   return (
     <>
       <NavigationBarWrapper>
@@ -52,7 +74,7 @@ const NavigationBar = () => {
           {isLoggedIn ? (
             <>
               <FontAwesomeIcon icon={faCommentDots} onClick={() => navigate('/MessagePage')} size="xl" color="#e0dfdb" />
-              <FontAwesomeIcon icon={faBell} size="xl" color="#e0dfdb" />
+              <FontAwesomeIcon icon={faBell} size="xl" color="#e0dfdb" onClick={handleAlertToggle} />
               <IconWrap>
                 <FontAwesomeIcon icon={faUserCircle} onClick={() => navigate('/MyPage')} size="xl" color="#e0dfdb" />
                 <RedDot />
@@ -110,6 +132,49 @@ const NavigationBar = () => {
         </NavContent>
       </NavigationBarWrapper>
       <NavBarPlaceholder />
+
+      {showAlert && (
+        <AlertToggle className={isClosing ? "closing" : ""}>
+          <AlertHeader>알림</AlertHeader>
+          <AlertContent>
+            {!authIsLoggedIn ? (
+              <MessageBox NoAlarm>
+                <h2 color="gray500">알림은 로그인 후, 확인 가능합니다.</h2>
+              </MessageBox>
+            ) : alarms.length === 0 ? (
+              <MessageBox NoAlarm>
+                <>
+                  {/* <img src={images.NoAlarm} alt="" /> */}
+                  <p>알림이 없습니다.</p>
+                </>
+              </MessageBox>
+            ) : (
+              <React.Fragment>
+                {alarms.map((item, index) => (
+                  <MessageBox key={index}>
+                    {/* <img src={images.CheckMark} alt="" /> */}
+                    <Message>
+                      <MessageContent>
+                        <p>{item.title}</p>
+                        <span>
+                          {new Date(item.createTime).toLocaleString()}
+                        </span>
+                      </MessageContent>
+                      {/* {item.linkText && (
+                        <ButtonWrap>
+                          <Button onClick={() => handleLinkNavigation(item)}>
+                            {item.linkText}
+                          </Button>
+                        </ButtonWrap>
+                      )} */}
+                    </Message>
+                  </MessageBox>
+                ))}
+              </React.Fragment>
+            )}
+          </AlertContent>
+        </AlertToggle>
+      )}
     </>
   );
 };
@@ -353,5 +418,74 @@ const AuthButton = styled.button`
   &:hover {
     background: #00AEFF;
     color: #fff;
+  }
+`;
+
+
+// 스타일 컴포넌트 추가
+const AlertToggle = styled.div`
+  // position: absolute;
+  position: fixed;
+  top: 50px;
+  right:300px;
+  width: 300px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  transition: opacity 0.3s ease;
+
+  &.closing {
+    opacity: 0;
+  }
+  
+   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+   left: 180px;
+   top: 80px;
+  }
+`;
+
+const AlertHeader = styled.div`
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  font-weight: bold;
+  font-size: 15px;
+`;
+
+const AlertContent = styled.div`
+  max-height: 400px;
+  overflow-y: auto;
+  // max-height: 460px;
+`;
+
+const MessageBox = styled.div`
+  display: flex;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  ${props => props.NoAlarm && `
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 100px;
+  `}
+
+  h2 {
+    font-size: 12px;
+    color: #666;
+  }
+`;
+
+const Message = styled.div`
+  flex: 1;
+  margin-left: 10px;
+`;
+
+const MessageContent = styled.div`
+  p {
+    margin: 0 0 5px 0;
+  }
+  span {
+    font-size: 12px;
+    color: #666;
   }
 `;

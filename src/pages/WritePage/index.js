@@ -142,6 +142,8 @@ useEffect(() => {
         setShowAlertPopup('로그인 상태가 아닙니다. 로그인 후 다시 시도해주세요.');
         return;
     }
+    console.log("isTemporary", isTemporary);
+    //임시저장 ->게시물 : postStatus = true, savedFeed = false
 
     const missingFields = [];
 
@@ -202,6 +204,21 @@ useEffect(() => {
     formData.append('feed', JSON.stringify(dataToSend));
    
     try {
+      if(Object.keys(selectedSavedProject).length > 0){
+        await axios.patch(
+          `/feed/temp`,
+          formData,
+          {
+            params: {
+              feedType: feedType,
+              userId: user.id
+            },
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          }
+        )
+      }else{
       await axios.post(
         '/feed/create',
         formData,
@@ -219,6 +236,7 @@ useEffect(() => {
         }
       );
       console.log('업로드 성공!');
+      }
       navigate('/');
     } catch (error) {
       console.log('업로드 실패!');

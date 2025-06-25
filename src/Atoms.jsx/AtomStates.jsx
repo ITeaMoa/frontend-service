@@ -14,7 +14,7 @@ import { atom } from "jotai";
    });
 
    export const savedProjectsAtom = atom([]);
-   export const selectedSavedProjectAtom = atom([]);
+   export const selectedSavedProjectAtom = atom({});
 
    export const IS_LOGGED_IN = atom(false);
    export const USER = atom({

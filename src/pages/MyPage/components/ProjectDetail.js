@@ -14,37 +14,29 @@ import { useNavigate } from 'react-router-dom';
 const ProjectDetail = ({ project, onBack, onClose}) => {
     const navigate = useNavigate();
     const [applicants, setApplicants] = useAtom(currentApplicantsAtom);
-
     const [visibleButtons, setVisibleButtons] = useState({});
     const [clickedButtons, setClickedButtons] = useState({});
     const [selectedField, setSelectedField] = useState('전체');
-
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // Add state for modal visibility
-
     const [currentPage, setCurrentPage] = useState(1);
     const applicantsPerPage = 5;
-
     // 모집 완료 버튼 상태 추가
     const [isClosed, setIsClosed] = useState(false);
     // const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
-
-
     // 팝업 상태 추가
     const [isPopupVisible, setIsPopupVisible] = useState(false);
     const [selectedApplicant, setSelectedApplicant] = useState(null);
     const [newStatus, setNewStatus] = useState('');
-    
     // 버튼 비활성화 상태 추가
     const [disabledButtons, setDisabledButtons] = useState({});
-
+    const [currentApplicants, setCurrentApplicants] = useState([]);
 
     // 역할 목록 정의
     const roles = project && project.roles ? 
         ['전체', ...Object.entries(project.roles).map(([roleName, count]) => ({ name: roleName, count }))] : 
         []; // roles가 정의되지 않았을 경우 빈 배열로 초기화
 
-    // roles 정보를 콘솔에 출력
-    console.log("Roles 정보:", roles);
+
 
     const fetchApplications = useCallback(async (feedId) => {
         if (!feedId) {
@@ -70,11 +62,13 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
         }
     }, [setApplicants]);
 
+
     useEffect(() => {
         if (project?.pk) {
             fetchApplications(project.pk); // 프로젝트 pk로 fetchApplications 호출
         }
     }, [fetchApplications, project]); // fetchApplications를 의존성 배열에 추가
+
 
     useEffect(() => {
         // 로컬 스토리지에서 초기 상태를 가져오는 함수
@@ -86,6 +80,7 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
         }
     }, [project.pk]); // project.pk에 의존
 
+
     useEffect(() => {
         console.log("Project 정보:", project); // project 정보를 콘솔에 출력
     }, [project]); // project가 변경될 때마다 실행
@@ -94,28 +89,21 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
         console.log("Current project:", project); // project의 현재 상태를 로그로 출력
     }, [project]);
 
-    // const applicants = project.applicants || [];
-    // const filteredApplicants = selectedField === '전체'
-    //     ? applicants
-    //     : applicants.filter(applicant => applicant.field === selectedField);
 
-    // const indexOfLastApplicant = currentPage * applicantsPerPage;
-    // const indexOfFirstApplicant = indexOfLastApplicant - applicantsPerPage;
-    // const currentApplicants = filteredApplicants.slice(indexOfFirstApplicant, indexOfLastApplicant);
-    // // const totalPages = Math.ceil(filteredApplicants.length / applicantsPerPage);
-    // const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-
-     // Pagination 로직
-    //  const indexOfLastApplicant = currentPage * applicantsPerPage;
-    //  const indexOfFirstApplicant = indexOfLastApplicant - applicantsPerPage;
-     console.log("Applicants:", applicants); // applicants 상태 확인
-     const currentApplicants = selectedField === '전체' 
-        ? applicants || [] 
-        : applicants.filter(applicant => applicant.part === selectedField);
+    //useffect사용안한거
+    // const currentApplicants = selectedField === '전체' 
+    // ? applicants || [] 
+    // : applicants.filter(applicant => applicant.part === selectedField);
+     useEffect(() => {
+        if (selectedField === '전체') {
+            setCurrentApplicants(applicants || []);
+        } else {
+            setCurrentApplicants(applicants.filter(applicant => applicant.part === selectedField));
+        }
+    }, [selectedField, applicants]);
      
-     console.log("Current Applicants:", currentApplicants);
-     console.log("Is Current Applicants an array?", Array.isArray(currentApplicants)); // 배열인지 확인
+  
+    //  console.log("Is Current Applicants an array?", Array.isArray(currentApplicants)); // 배열인지 확인
      const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     currentApplicants.forEach((applicant, index) => {
@@ -320,7 +308,7 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
                                 <StyledApplicantWrapper key={index}>
                                     <Applicant>
                                     <FontAwesomeIcon icon={faComment} onClick={() => navigate(`/messagePage`, { state: { selectedPersonId: applicant.pk } })} style={{ color: '#62b9ec', fontSize: '24px', marginLeft: '20px' }} />
-                                    <ApplicantName>{applicant.nickname}</ApplicantName>
+                                    <ApplicantName >{applicant.nickname}</ApplicantName>
                                     <Tags2>
                                 
                                             {/* 태그가 있을 경우 추가 */}
@@ -575,8 +563,8 @@ const ApplicantName = styled.span`
     font-weight: bold;
     // margin-left: px;
     font-size: 18px;
-    margin-left: -120px;
-    min-width: 100px;
+    margin-left: -80px;
+    min-width: 120px;
     
 `;
 
@@ -762,6 +750,7 @@ const ButtonContainer = styled.div`
   gap: 20px;
   margin-top: 10px;
   margin-bottom: 10px;
+  justify-content: center;
 //   margin-right: 10px;
 margin-left: 10px;
   min-width: 150px;

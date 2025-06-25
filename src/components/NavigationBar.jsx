@@ -4,6 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faSlidersH, faCommentDots, faBell, faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import messageImg from '../assets/Image/message.png';
+import bellImg from '../assets/Image/Bell.png';
 
 const tagOptions = [
   "AWS", "Blockchain", "NodeJS", "React", "Java", "Dapp", "Git", "Backend"
@@ -73,10 +75,22 @@ const NavigationBar = () => {
         <IconBar>
           {isLoggedIn ? (
             <>
-              <FontAwesomeIcon icon={faCommentDots} onClick={() => navigate('/MessagePage')} size="xl" color="#e0dfdb" />
-              <FontAwesomeIcon icon={faBell} size="xl" color="#e0dfdb" onClick={handleAlertToggle} />
+              {/* <FontAwesomeIcon icon={faCommentDots} onClick={() => navigate('/MessagePage')} size="xl" color="#e0dfdb" />
+              <FontAwesomeIcon icon={faBell} size="xl" color="#e0dfdb" onClick={handleAlertToggle} /> */}
+              <img
+                src={messageImg}
+                alt="Message"
+                onClick={() => navigate('/MessagePage')}
+                style={{ width: 30  , height: 30, cursor: 'pointer' }}
+              />
+              <img
+                src={bellImg}
+                alt="Bell"
+                onClick={handleAlertToggle}
+                style={{ width: 30, height: 30, cursor: 'pointer', }}
+              />
               <IconWrap>
-                <FontAwesomeIcon icon={faUserCircle} onClick={() => navigate('/MyPage')} size="xl" color="#e0dfdb" />
+                <FontAwesomeIcon style={{cursor: 'pointer'}} icon={faUserCircle} onClick={() => navigate('/MyPage')} size="xl" color="#e0dfdb" />
                 <RedDot />
               </IconWrap>
             </>
@@ -215,7 +229,7 @@ const IconBar = styled.div`
   right: 200px;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 15px;
   z-index: 201;
 `;
 

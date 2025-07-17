@@ -367,19 +367,20 @@ const MainPage = () => {
       {/* Popular Projects Section */}
       <SectionHeader>
         <SectionTitle>인기 프로젝트</SectionTitle>
-        <ViewMoreLink>
-          자세히 알아보기 
-          <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M7 4L12 10L7 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          {/* <ArrowIcon src="/images/arrow_up.svg" alt="Arrow" /> */}
-        </ViewMoreLink>
+       
       </SectionHeader>
 
+      {/* <ViewMoreLink>
+          자세히 알아보기 
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M7 4L12 10L7 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+   
+        </ViewMoreLink> */}
 
       <PopularProject projects={popularProjects} handleProjectClick={handleProjectClick} />
 
       {/* Project Feed Toggle */}
       <FeedToggleSection>
-        <SectionTitle>프로젝트 목록</SectionTitle>
+        <SectionTitle>피드</SectionTitle>
         <ToggleContainer>
           <ToggleOption 
             active={feedType === 'STUDY'} 

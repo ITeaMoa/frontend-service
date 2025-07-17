@@ -31,7 +31,7 @@ const WritePage = () => {
   const [selectedSavedProject] = useAtom(selectedSavedProjectAtom); // 아톰에서 프로젝트 정보 가져오기
   // const [selectedRoles, setSelectedRoles] = useState(selectedSavedProject ? selectedSavedProject.roles : []);
   const [selectedRoles, setSelectedRoles] = useState([]); // 반드시 배열!
-  const [selectedTags, setSelectedTags] = useState(selectedSavedProject.length > 0 ? selectedSavedProject.tags : []);
+  const [selectedTags, setSelectedTags] = useState(['AWS', 'Blockchain']);
   // const [period, setPeriod] = useState('');
   console.log('selectedSavedProject', selectedSavedProject);
 
@@ -146,13 +146,14 @@ useEffect(() => {
   const handleSubmit = async (e, isTemporary) => {
     e.preventDefault();
 
+console.log("isTemporary", isTemporary);
+//임시저장 ->게시물 : postStatus = true, savedFeed = false
     // user가 존재하는지 확인
     if (!user || !user.id) {
         setShowAlertPopup('로그인 상태가 아닙니다. 로그인 후 다시 시도해주세요.');
         return;
     }
-    console.log("isTemporary", isTemporary);
-    //임시저장 ->게시물 : postStatus = true, savedFeed = false
+    
 
     const missingFields = [];
 
@@ -483,6 +484,7 @@ const handleImageRemove = () => {
             <TagAdd onClick={handleAddTagClick}>+ 추가하기</TagAdd>
           </TagRow>
 
+         
           <TitleInput>
             <InputField
               value={title}
@@ -574,12 +576,25 @@ const handleImageRemove = () => {
           />
 
           <ButtonRow>
-            <SaveButton gray>임시 저장</SaveButton>
-            <SaveButton>게시하기</SaveButton>
+            <SaveButton gray onClick={(e) => handleSubmit(e, true)}>임시 저장</SaveButton>
+            <SaveButton onClick={(e) => handleSubmit(e, false)}>게시하기</SaveButton>
           </ButtonRow>
         {/* </WriteFormWrap> */}
       </MainContent>
     </ContentsWrap>
+
+    <Modal isOpen={isModalOpen} onClose={closeModal}>
+            <Dropdown 
+              options={option3}
+              placeholder="태그를 선택하시오"
+              dropdownType="tags"
+              onTagSelect={selectedTag => {
+                handleTagSelect(selectedTag);
+                console.log('Tag selected:', selectedTag.label);
+              }}
+            />
+          </Modal>
+
     </>
 
     
@@ -647,7 +662,7 @@ const TitleInput = styled.div`
   background: #f7f7f7;
   border-radius: 8px;
   padding: 18px 20px;
-  margin-bottom: 24px;
+  margin-bottom: 80px;
   position: relative;
   border: 1.5px solid #ededed;
 `;
@@ -732,13 +747,14 @@ const Input = styled.input`
 
 const TextArea = styled.textarea`
   width: 100%;
-  min-height: 220px;
+  height: 500px;
   border: none;
   border-radius: 16px;
+//   margin-top: 1000px;
   background: #f5f5f5;
   font-size: 17px;
   padding: 18px 14px;
-  margin: 24px 0 32px 0;
+  margin: 50px 0 32px 0;
   resize: none;
   &::placeholder { color: #bbb; }
 `;

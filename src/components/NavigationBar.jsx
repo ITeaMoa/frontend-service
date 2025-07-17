@@ -150,7 +150,7 @@ const NavigationBar = ({showSearch}) => {
           
         </NavContent>
       </NavigationBarWrapper>
-      <NavBarPlaceholder />
+      <NavBarPlaceholder showSearch={showSearch} />
 
       {showAlert && (
         <AlertToggle className={isClosing ? "closing" : ""}>
@@ -224,9 +224,9 @@ const NavContent = styled.div`
   margin-top: 80px;
 `;
 
-const NavBarPlaceholder = styled.div`
-  height: 250px; /* Adjust this value to match the NavigationBar's total height */
-`;
+  const NavBarPlaceholder = styled.div`
+    height: ${({ showSearch }) => showSearch ? '250px' : '150px'}; /* Adjust this value to match the NavigationBar's total height */
+  `;
 
 const IconBar = styled.div`
   position: absolute;

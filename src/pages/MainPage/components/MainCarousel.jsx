@@ -5,63 +5,92 @@ const MainCarousel = ({ currentSlide, setCurrentSlide, slideCount }) => (
   <CarouselWrapper>
     <CarouselSection $currentSlide={currentSlide}>
       <CarouselItem>
-        <CarouselContent purple>
-          <ArrowButtonLeft onClick={() => setCurrentSlide((prev) => prev > 0 ? prev - 1 : slideCount - 1)} aria-label="이전">
-            <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M13 16L8 10L13 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        <CarouselContent purple style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 0 }}>
+          <ArrowButtonLeft
+            onClick={() => setCurrentSlide((prev) => prev > 0 ? prev - 1 : slideCount - 1)}
+            aria-label="이전"
+          >
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+              <path d="M13 16L8 10L13 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </ArrowButtonLeft>
-          <CarouselTextContent>
-            <CarouselSubtitle>일 잘하는 사람들을 위한</CarouselSubtitle>
-            <CarouselTitle>인기있는 프로젝트<br/>모아보기</CarouselTitle>
-          </CarouselTextContent>
-          <CarouselImage>
-            <img src="/images/code_graphic.png" alt="Code graphic" />
-          </CarouselImage>
-          <CtaButton>바로가기</CtaButton>
-          <ArrowButtonRight onClick={() => setCurrentSlide((prev) => prev < slideCount - 1 ? prev + 1 : 0)} aria-label="다음">
-            <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M7 4L12 10L7 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          
+          <img
+            src="/images/ad 1.svg"
+            alt="광고 이미지"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '28px' }}
+          />
+
+          <ArrowButtonRight
+            onClick={() => setCurrentSlide((prev) => prev < slideCount - 1 ? prev + 1 : 0)}
+            aria-label="다음"
+          >
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+              <path d="M7 4L12 10L7 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </ArrowButtonRight>
-          <SlideIndicator>{String(currentSlide + 1).padStart(2, '0')} / {String(slideCount).padStart(2, '0')}</SlideIndicator>
+          
+          <SlideIndicator>
+            {String(currentSlide + 1).padStart(2, '0')} / {String(slideCount).padStart(2, '0')}
+          </SlideIndicator>
         </CarouselContent>
       </CarouselItem>
 
       <CarouselItem>
-        <CarouselContent primary>
-          <ArrowButtonLeft onClick={() => setCurrentSlide((prev) => prev > 0 ? prev - 1 : slideCount - 1)} aria-label="이전">
-            <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M13 16L8 10L13 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        <CarouselContent primary style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 0 }}>
+          <ArrowButtonLeft
+            onClick={() => setCurrentSlide((prev) => prev > 0 ? prev - 1 : slideCount - 1)}
+            aria-label="이전"
+          >
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+              <path d="M13 16L8 10L13 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </ArrowButtonLeft>
-          <CarouselTextContent>
-            <CarouselSubtitle>2025 트렌드가 궁금하다면?</CarouselSubtitle>
-            <CarouselTitle>IT 최신 트렌드<br/>한눈에 살펴보기</CarouselTitle>
-          </CarouselTextContent>
-          <CarouselImage>
-            {/* <img src="/images/laptop_it.png" alt="Laptop IT" />
-            <img src="/images/bulb_3d.png" alt="Bulb 3D" /> */}
-          </CarouselImage>
-          <CtaButton blue>바로가기</CtaButton>
-          <ArrowButtonRight onClick={() => setCurrentSlide((prev) => prev < slideCount - 1 ? prev + 1 : 0)} aria-label="다음">
-            <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M7 4L12 10L7 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          <img
+            src="/images/ad 2.svg"
+            alt="광고 이미지2"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '28px' }}
+          />
+          <ArrowButtonRight
+            onClick={() => setCurrentSlide((prev) => prev < slideCount - 1 ? prev + 1 : 0)}
+            aria-label="다음"
+          >
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+              <path d="M7 4L12 10L7 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </ArrowButtonRight>
-          <SlideIndicator>{String(currentSlide + 1).padStart(2, '0')} / {String(slideCount).padStart(2, '0')}</SlideIndicator>
+          <SlideIndicator>
+            {String(currentSlide + 1).padStart(2, '0')} / {String(slideCount).padStart(2, '0')}
+          </SlideIndicator>
         </CarouselContent>
       </CarouselItem>
 
       <CarouselItem>
-        <CarouselContent blue>
-          <ArrowButtonLeft onClick={() => setCurrentSlide((prev) => prev > 0 ? prev - 1 : slideCount - 1)} aria-label="이전">
-            <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M13 16L8 10L13 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        <CarouselContent blue style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 0 }}>
+          <ArrowButtonLeft
+            onClick={() => setCurrentSlide((prev) => prev > 0 ? prev - 1 : slideCount - 1)}
+            aria-label="이전"
+          >
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+              <path d="M13 16L8 10L13 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </ArrowButtonLeft>
-          <CarouselTextContent>
-            <CarouselSubtitle>시간과 비용을 절약하고 싶다면?</CarouselSubtitle>
-            <CarouselTitle>개발자들 몰래 보는<br/>꿀팁 사이트 보러가기</CarouselTitle>
-          </CarouselTextContent>
-          <CarouselImage>
-            <img src="/images/developer_image.png" alt="Developer" />
-          </CarouselImage>
-          <CtaButton white>바로가기</CtaButton>
-          <ArrowButtonRight onClick={() => setCurrentSlide((prev) => prev < slideCount - 1 ? prev + 1 : 0)} aria-label="다음">
-            <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M7 4L12 10L7 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          <img
+            src="/images/ad 3.svg"
+            alt="광고 이미지3"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '28px' }}
+          />
+          <ArrowButtonRight
+            onClick={() => setCurrentSlide((prev) => prev < slideCount - 1 ? prev + 1 : 0)}
+            aria-label="다음"
+          >
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+              <path d="M7 4L12 10L7 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </ArrowButtonRight>
-          <SlideIndicator>{String(currentSlide + 1).padStart(2, '0')} / {String(slideCount).padStart(2, '0')}</SlideIndicator>
+          <SlideIndicator>
+            {String(currentSlide + 1).padStart(2, '0')} / {String(slideCount).padStart(2, '0')}
+          </SlideIndicator>
         </CarouselContent>
       </CarouselItem>
     </CarouselSection>
@@ -98,8 +127,8 @@ const CarouselContent = styled.div`
   position: relative;
   border-radius: 28px;
   padding: 40px;
-  height: 200px;
-  width: 90%;
+  height: 100%;
+  width: 100%;
   background-color: ${props => props.purple ? '#662CC2' : props.blue ? '#00AEFF' : '#1A1A1A'};
   display: flex;
   flex-direction: column;

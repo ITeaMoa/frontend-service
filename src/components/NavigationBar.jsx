@@ -12,7 +12,7 @@ const tagOptions = [
   // 필요시 더 추가
 ];
 
-const NavigationBar = () => {
+const NavigationBar = ({showSearch}) => {
   const [searchValue, setSearchValue] = useState("");
   const [selectedTags, setSelectedTags] = useState([]);
   const navigate = useNavigate();
@@ -109,6 +109,7 @@ const NavigationBar = () => {
               onClick={() => (window.location.href = "/")}
             />
           </Logo>
+          {showSearch && (
           <SearchContainer>
             <SearchBar>
               <FontAwesomeIcon icon={faSearch} style={{marginRight: '10px'}}/>
@@ -126,6 +127,8 @@ const NavigationBar = () => {
               <FontAwesomeIcon icon={faSearch} style={{ color: 'white' }} />
             </SearchButton>
           </SearchContainer>
+          )}
+          {showSearch && (
           <TagsRow>
             {tagOptions.map(tag => (
               <Tag
@@ -143,6 +146,8 @@ const NavigationBar = () => {
               <ResetButton onClick={handleResetTags}>초기화</ResetButton>
             )}
           </TagsRow>
+          )}
+          
         </NavContent>
       </NavigationBarWrapper>
       <NavBarPlaceholder />

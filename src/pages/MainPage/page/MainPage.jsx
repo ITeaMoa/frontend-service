@@ -357,7 +357,7 @@ const MainPage = () => {
     {/* <Nav/> */}
     <MainContent Wide1030>
       {/* Header with Logo and Search */}
-      <NavigationBar 
+      <NavigationBar showSearch={true}
 
       />
 

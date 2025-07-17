@@ -726,9 +726,9 @@ const ButtonGroup = styled.div`
 `;
 
 const ToggleButton = styled.button`
-  background: ${({ active }) => (active ? '#00aeff' : '#f5f5f5')};
+  background: ${({ active }) => (active ? '#00aeff' : 'none')};
   color: ${({ active }) => (active ? '#fff' : '#222')};
-  border: none;
+  border: ${({ active }) => (active ? 'none' : '1px solid #858585')};
   border-radius: 16px;
   padding: 8px 18px;
   font-size: 15px;
@@ -767,11 +767,11 @@ const ButtonRow = styled.div`
 `;
 
 const SaveButton = styled.button`
-  background: ${({ gray }) => (gray ? '#e0e0e0' : '#222')};
+  background: ${({ gray }) => (gray ? '#e0e0e0' : '#3D3D3F')};
   color: ${({ gray }) => (gray ? '#888' : '#fff')};
   border: none;
   border-radius: 10px;
-  padding: 14px 38px;
+  padding: 14px 100px;
   font-size: 18px;
   font-weight: 600;
   cursor: pointer;

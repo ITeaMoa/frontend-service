@@ -10,45 +10,55 @@ console.log("projects", projects)
    
     <PopularProjectsGrid>
       {projects && projects.length > 0 ? (
-        projects.map((project, idx) => (
-          <PopularProjectCard key={idx} onClick={() => handleProjectClick && handleProjectClick(project)}>
-            <PopularProjectHeader>
-              <PopularProjectTitle>{project.title}</PopularProjectTitle>
-              <PopularDeadlineTag>
-                {project.deadline ? `D-${getDDay(project.deadline)}` : ''}
-              </PopularDeadlineTag>
-            </PopularProjectHeader>
-            <PopularProjectDescription>
-              {project.content}
-            </PopularProjectDescription>
-            <PopularProjectInfo>
-              <PopularProjectDetail>모집 인원 | {project.recruitmentNum}명</PopularProjectDetail>
-              <PopularProjectDetail>
-                마감일 | {formatDate(project.deadline)}
-              </PopularProjectDetail>
-              {/* <PopularProjectDetail>
-                기간 | {project.period}주
-              </PopularProjectDetail> */}
-              {/* <PopularProjectDetail>
-                장소 | {project.place}
-              </PopularProjectDetail> */}
-            </PopularProjectInfo>
-            <PopularProjectTags>
-              {project.tags && project.tags.map((tag, i) => (
-                <PopularProjectTag key={i}>{tag}</PopularProjectTag>
-              ))}
-            </PopularProjectTags>
-            <ArrowCircle>
-              <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-                <path d="M7 4L12 10L7 16" stroke="#00AEFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </ArrowCircle>
-            {/* <div style={{ marginTop: 8, fontSize: 13, color: '#888' }}>
-              <span>❤️ {project.likesCount}</span>
-              <span style={{ marginLeft: 12 }}>작성자: {project.nickname}</span>
-            </div> */}
-          </PopularProjectCard>
-        ))
+        <>
+          {projects.map((project, idx) => (
+            <PopularProjectCard key={idx} onClick={() => handleProjectClick && handleProjectClick(project)}>
+              <PopularProjectHeader>
+                <PopularProjectTitle>{project.title}</PopularProjectTitle>
+                <PopularDeadlineTag>
+                  {project.deadline
+                    ? getDDay(project.deadline) === 0
+                      ? '마감'
+                      : `D-${getDDay(project.deadline)}`
+                    : ''}
+                </PopularDeadlineTag>
+              </PopularProjectHeader>
+              <PopularProjectDescription>
+                {project.content}
+              </PopularProjectDescription>
+              <PopularProjectInfo>
+                <PopularProjectDetail>모집 인원 | {project.recruitmentNum}명</PopularProjectDetail>
+                <PopularProjectDetail>
+                  마감일 | {formatDate(project.deadline)}
+                </PopularProjectDetail>
+                {/* <PopularProjectDetail>
+                  기간 | {project.period}주
+                </PopularProjectDetail> */}
+                {/* <PopularProjectDetail>
+                  장소 | {project.place}
+                </PopularProjectDetail> */}
+              </PopularProjectInfo>
+              <PopularProjectTags>
+                {project.tags && project.tags.map((tag, i) => (
+                  <PopularProjectTag key={i}>{tag}</PopularProjectTag>
+                ))}
+              </PopularProjectTags>
+              <ArrowCircle>
+                <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                  <path d="M7 4L12 10L7 16" stroke="#00AEFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </ArrowCircle>
+              {/* <div style={{ marginTop: 8, fontSize: 13, color: '#888' }}>
+                <span>❤️ {project.likesCount}</span>
+                <span style={{ marginLeft: 12 }}>작성자: {project.nickname}</span>
+              </div> */}
+            </PopularProjectCard>
+          ))}
+          {/* 빈 카드로 3개 맞추기 */}
+          {Array.from({ length: 3 - projects.length }).map((_, i) => (
+            <PopularProjectCard key={`dummy-${i}`} style={{ visibility: 'hidden' }} />
+          ))}
+        </>
       ) : (
         <div>인기 프로젝트가 없습니다.</div>
       )}
@@ -85,6 +95,9 @@ const PopularProjectCard = styled.div`
   position: relative;
   box-sizing: border-box;
   margin: 0;
+  /* 카드가 3개일 때와 동일한 크기 보장 */
+  flex-basis: calc((100% - 48px) / 3);
+  max-width: calc((100% - 48px) / 3);
 `;
 
 const PopularProjectHeader = styled.div`

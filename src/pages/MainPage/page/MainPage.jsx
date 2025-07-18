@@ -17,6 +17,7 @@ import ProjectFeedCard from '../components/ProjectFeedCard';
 import axios from '../../../api/axios'
 import { useAuth } from '../../../context/AuthContext';
 import AlertModal from '../../../components/AlertModal';
+import AuthModal from '../../../components/AuthModal';
 import Modal from '../../../components/Modal';
 import RoleSelectionModal from '../../../components/RoleSelectionModal';
 import Pagination from '../../../components/Pagination';
@@ -62,11 +63,22 @@ const MainPage = () => {
     setFeedType(type);
   };
 
+  // const handleAddButtonClick = () => {
+  //   const tagsQuery = selectedTags.length > 0 ? `&tags=${selectedTags.join(',')}` : '';
+  //   // const feedType = toggleActive ? 'PROJECT' : 'STUDY'; // 현재의 토글 값에 따라 feedType 설정
+  //   navigate(`/SearchPage?q=${searchValue}${tagsQuery}&feedType=${feedType}`); // 검색어, 선택된 태그, feedType을 URL로 전달
+  // };
+
   const handleAddButtonClick = () => {
-    const tagsQuery = selectedTags.length > 0 ? `&tags=${selectedTags.join(',')}` : '';
-    // const feedType = toggleActive ? 'PROJECT' : 'STUDY'; // 현재의 토글 값에 따라 feedType 설정
-    navigate(`/SearchPage?q=${searchValue}${tagsQuery}&feedType=${feedType}`); // 검색어, 선택된 태그, feedType을 URL로 전달
+    if (!user) { 
+      setPopupMessage("로그인 후에 이용할 수 있습니다."); 
+      setIsSubmitted(true); 
+      return; 
+    }
+    // navigate(`/WritePage?feedType=${feedType}`); 
+    navigate(`/WritePage1`); 
   };
+
   const [searchValue, setSearchValue] = useState("");
   const [selectedTags, setSelectedTags] = useState([]); // 선택된 태그 상태 추가
 
@@ -423,6 +435,12 @@ const MainPage = () => {
       </ProjectFeed>
 
       <div style={{ display: "flex", justifyContent: "center", margin: "32px 0" }}>
+        <AddButton onClick={handleAddButtonClick} >
+          피드 작성하기
+        </AddButton>
+      </div>
+
+      <div style={{ display: "flex", justifyContent: "center", margin: "32px 0" }}>
         <Pagination
           currentPage={currentPage}
           projectsPerPage={projectsPerPage}
@@ -431,8 +449,7 @@ const MainPage = () => {
         />
       </div>
 
-      {/* Footer */}
-      {/* <Footer /> */}
+  
       </MainContent>
     {/* </PageContainer> */}
     </ContentsWrap>
@@ -463,6 +480,13 @@ isOpen={!!showAlertPopup}
 message={showAlertPopup}
 onClose={() => setShowAlertPopup(false)}
 />
+
+<AuthModal 
+        isOpen={isSubmitted}
+        onClose={() => setIsSubmitted(false)}
+        handleSignUp={() => navigate('/SignupPage')}
+        handleLogin={() => navigate('/LoginPage')}
+      />
 
 {showApplyPopup && (
 <Modal isOpen={showApplyPopup} onClose={() => setShowApplyPopup(false)}>
@@ -1030,6 +1054,56 @@ const ModalButton = styled.button`
 
   &:hover {
     background-color: #a0dafb;
+  }
+`;
+
+const AddButton = styled.button`
+  background: #00aeff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 28px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: background 0.15s;
+  &:hover:enabled {
+    background: #0090d9;
+  }
+  &:disabled {
+    background: #e0e0e0;
+    color: #aaa;
+    cursor: not-allowed;
+  }
+    position: fixed;
+  right: 100px;
+  bottom: 50px;
+  
+`;
+
+const AddButtonFixed = styled.button`
+  position: fixed;
+  right: 40px;
+  bottom: 40px;
+  z-index: 100;
+  background: #00aeff;
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 18px 36px;
+  font-size: 18px;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: background 0.15s;
+  &:hover:enabled {
+    background: #0090d9;
+  }
+  &:disabled {
+    background: #e0e0e0;
+    color: #aaa;
+    cursor: not-allowed;
   }
 `;
 

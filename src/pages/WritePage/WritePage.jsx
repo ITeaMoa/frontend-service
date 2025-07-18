@@ -380,6 +380,10 @@ useEffect(() => {
   
 }, [selectedSavedProject]);
 
+useEffect(() => {
+  window.scrollTo(0, 0);
+}, []);
+
 
 const handleAddTagClick = () => {
     setIsModalOpen(true); 

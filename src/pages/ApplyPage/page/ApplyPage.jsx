@@ -17,6 +17,8 @@ import AuthModal from '../../../components/AuthModal';
 import { useAtom } from 'jotai';
 import {  selectedProjectDetailAtom, selectedSavedProjectAtom,  } from '../../../Atoms.jsx/AtomStates';
 import AlertModal from '../../../components/AlertModal';
+import { ContentsWrap , MainContent} from '../../../assets/BusinessAnalysisStyle';
+import NavigationBar from '../../../components/NavigationBar';
 
 
 
@@ -47,29 +49,7 @@ const ApplyPage = () => {
 
 
 
-  // // fetchProjectDetails를 useCallback으로 래핑하여 메모이제이션
-  // const fetchProjectDetails = useCallback(async () => {
-  //   try {
-  //     const response = await axios.get('/data.json'); // 데이터 가져오기
-  //     const selectedProject = response.data.find(item => item.pk === projectId); // 특정 프로젝트 찾기
-      
-  //     if (selectedProject) {
-  //       setProject(selectedProject);
-  //       setLikesCount(selectedProject.likesCount || 0); // 초기 좋아요 수 설정
-  //     } else {
-  //       console.error("Project not found for projectId:", projectId);
-  //       setProject(null);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching project details:", error);
-  //     setProject(null); 
-  //   }
-  // }, [projectId]);
 
-
-  // useEffect(() => {
-  //   fetchProjectDetails(); // 프로젝트 세부 정보를 가져옵니다.
-  // }, [fetchProjectDetails]); // 의존성 배열에 fetchProjectDetails 추가
 //============================================================
 //존 프로젝트 진짜 api연결하는거 
   // const fetchProjectDetails = useCallback(async () => {
@@ -95,10 +75,6 @@ useEffect(() => {
 }, [selectedProjectDetail]);
   // setProject(selectedProjectDetail);   -> d아톰 이용    댓글 바뀔때도 리렌더링 되게 해야함 
 
-  
-  // useEffect(() => {
-  //   fetchProjectDetails(); // 프로젝트 세부 정보를 가져옵니다.
-  // }, [fetchProjectDetails]); // 의존성 배열에 fetchProjectDetails 추가
 
 
 
@@ -266,9 +242,11 @@ const handleChatClick = () => {
 
   return (
     <>
-      {/* <Nav showSearch={showSearch} onToggleChange={handleToggleChange} /> */}
-      <Nav showSearch={showSearch}  />
-      <Container>
+    <ContentsWrap>
+    <MainContent Wide1030>
+      <NavigationBar showSearch={true}/>
+
+
         <BackButton onClick={() => navigate(-1)} style={{ display: 'flex', alignItems: 'center' }}>
           <FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: '5px' }} />
           이전
@@ -361,7 +339,12 @@ const handleChatClick = () => {
           // fetchProjectDetails={fetchProjectDetails} 
           
         />
-      </Container>
+      {/* </Container> */}
+
+       
+      </MainContent>
+    {/* </PageContainer> */}
+    </ContentsWrap>
 
 
         <RoleSelectionModal 
@@ -444,8 +427,8 @@ const TopBox = styled.div`
 const TopTitleRow = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 18px;
+//   justify-content: space-between;
+  margin-bottom: 30px;
 `;
 
 const TopTitle = styled.h2`
@@ -453,6 +436,7 @@ const TopTitle = styled.h2`
   font-weight: bold;
   color: #222;
   margin: 0;
+  margin-right: 30px;
 `;
 
 const TagRow = styled.div`
@@ -472,7 +456,7 @@ const Tag = styled.div`
 const InfoTable = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 25px;
 `;
 
 const InfoRow = styled.div`

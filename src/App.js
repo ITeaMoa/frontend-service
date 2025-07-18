@@ -13,7 +13,7 @@ import MessagePage from './pages/Messeage/page/MessagePage';
 import MainPage1 from './pages/MainPage/page/MainPage';
 import SearchPage1 from './pages/SearchPage/page/SearchPage';
 import WritePage1 from './pages/WritePage/WritePage';
-// import ApplyPage1 from './pages/ApplyPage/ApplyPage';
+import ApplyPage1 from './pages/ApplyPage/page/ApplyPage';
 
 // import { useAtom } from 'jotai';
 // const [, setIsLoggedIn] = useAtom(IS_LOGGED_IN); // 로그인 상태를 위한 아톰
@@ -69,7 +69,7 @@ function App() {
               <Route path="MessagePage" element={<MessagePage />} />
               <Route path="MainPage1" element={<MainPage1 />} />
               <Route path="WritePage1" element={<WritePage1 />} />
-              {/* <Route path="ApplyPage1/:projectId" element={<ApplyPage1 />} /> */}
+              <Route path="ApplyPage1/:projectId" element={<ApplyPage1 />} />
 
             </Route>
           </Routes>

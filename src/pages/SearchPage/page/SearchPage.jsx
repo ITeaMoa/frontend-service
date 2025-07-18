@@ -63,6 +63,10 @@ const MainPage = () => {
 
   useEffect(() => {
     const fetchSearchItems = async () => {
+        if ((!searchTerm || searchTerm.trim() === '') && (!tags || tags.trim() === '')) {
+          setSearchResults([]); // 아무것도 안 보여줌
+          return;
+        }
         try {
             // 태그가 있을 경우, search-tags API 호출
             const apiUrl = tags 

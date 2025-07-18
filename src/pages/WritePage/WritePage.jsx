@@ -214,9 +214,42 @@ console.log("isTemporary", isTemporary);
     formData.append('feed', JSON.stringify(dataToSend));
    
     try {
-      if(Object.keys(selectedSavedProject).length > 0){
-        await axios.patch(
-          `/feed/temp`,
+      if (Object.keys(selectedSavedProject).length > 0) {
+        if (isTemporary) {
+          // 임시저장 PATCH
+          await axios.patch(
+            `/feed/temp`,
+            formData,
+            {
+              params: {
+                feedType: feedType,
+                userId: user.id
+              },
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }
+          );
+        } else {
+          // 수정(업데이트) PUT 또는 PATCH
+          await axios.post(
+            '/feed/create',
+            formData,
+            {
+              params: {
+                feedType: feedType,
+                userId: user.id
+              },
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }
+          );
+        }
+      } else {
+        // 새로 생성
+        await axios.post(
+          '/feed/create',
           formData,
           {
             params: {
@@ -227,32 +260,13 @@ console.log("isTemporary", isTemporary);
               'Content-Type': 'multipart/form-data'
             }
           }
-        )
-      }else{
-      await axios.post(
-        '/feed/create',
-        formData,
-        {
-          params: {
-            feedType: feedType,
-            userId: user.id
-          },
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        //   headers: {
-        //     'Content-Type': 'application/json'  // multipart/form-data 대신 application/json 사용
-        // }
-        }
-      );
-      console.log('업로드 성공!');
+        );
       }
       navigate('/');
     } catch (error) {
       console.log('업로드 실패!');
     }
   };
-
 //업데이트
   // const handleSubmit = async (e, isTemporary) => {
   //   e.preventDefault();

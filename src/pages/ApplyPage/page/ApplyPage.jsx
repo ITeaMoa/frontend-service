@@ -254,12 +254,14 @@ const handleChatClick = () => {
 
         <TopBox>
           <TopTitleRow>
-            <TopTitle>{project.title}</TopTitle>
-            <TagRow>
-              {project.tags?.map((tag, i) => (
-                <Tag key={i}>{tag}</Tag>
-              ))}
-            </TagRow>
+            <div>
+              <TopTitle>{project.title}</TopTitle>
+              <TagRow>
+                {project.tags?.map((tag, i) => (
+                  <Tag key={i}>{tag}</Tag>
+                ))}
+              </TagRow>
+            </div>
           </TopTitleRow>
           <InfoTable>
             <InfoRow>
@@ -426,8 +428,8 @@ const TopBox = styled.div`
 
 const TopTitleRow = styled.div`
   display: flex;
-  align-items: center;
-//   justify-content: space-between;
+  flex-direction: column;
+  align-items: flex-start;
   margin-bottom: 30px;
 `;
 
@@ -437,6 +439,7 @@ const TopTitle = styled.h2`
   color: #222;
   margin: 0;
   margin-right: 30px;
+  margin-bottom:20px;
 `;
 
 const TagRow = styled.div`

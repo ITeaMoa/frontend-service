@@ -232,7 +232,7 @@ const MainPage = () => {
 
   const handleProjectClick = (project) => {
     console.log("mainprojecttodetail", project)
-    navigate(`/ApplyPage/${project.pk}`);
+    navigate(`/ApplyPage1/${project.pk}`);
     setSelectedProjectDetail(project);
   };
 
@@ -378,7 +378,10 @@ const MainPage = () => {
 
       {/* Popular Projects Section */}
       <SectionHeader>
-        <SectionTitle>인기 프로젝트</SectionTitle>
+      
+      <SectionTitle>
+        {feedType === 'STUDY' ? '인기 스터디' : '인기 프로젝트'}
+      </SectionTitle>
        
       </SectionHeader>
 

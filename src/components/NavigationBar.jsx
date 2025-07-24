@@ -17,6 +17,7 @@ const NavigationBar = ({showSearch}) => {
   const [selectedTags, setSelectedTags] = useState([]);
   const navigate = useNavigate();
   const { isLoggedIn ,authIsLoggedIn} = useAuth();
+  const { logout } = useAuth(); // logout 함수 가져오기
   const [showAlert, setShowAlert] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [alarms, setAlarms] = useState([]);
@@ -48,6 +49,9 @@ const NavigationBar = ({showSearch}) => {
   // 태그 전체 초기화
   const handleResetTags = () => {
     setSelectedTags([]);
+  };
+  const handleLogout = () => {
+    logout(navigate); // logout 호출 시 navigate 전달
   };
 
   // useEffect(() => {
@@ -91,8 +95,10 @@ const NavigationBar = ({showSearch}) => {
               />
               <IconWrap>
                 <FontAwesomeIcon style={{cursor: 'pointer'}} icon={faUserCircle} onClick={() => navigate('/MyPage')} size="xl" color="#e0dfdb" />
-                <RedDot />
+                {/* <RedDot /> */}
               </IconWrap>
+
+              <LogoutButton onClick={() => { handleLogout(); window.location.reload(); }}>Logout</LogoutButton>
             </>
           ) : (
             <>
@@ -506,5 +512,22 @@ const MessageContent = styled.div`
   span {
     font-size: 12px;
     color: #666;
+  }
+`;
+
+const LogoutButton = styled.div`
+ 
+
+    border: 1px none #0080ff;
+  background-color: #3563E9;  
+  margin: 0 10px;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
+
+  &:hover {
+    color: #0080ff;
   }
 `;

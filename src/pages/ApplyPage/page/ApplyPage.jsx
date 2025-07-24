@@ -17,7 +17,7 @@ import AuthModal from '../../../components/AuthModal';
 import { useAtom } from 'jotai';
 import {  selectedProjectDetailAtom, selectedSavedProjectAtom,  } from '../../../Atoms.jsx/AtomStates';
 import AlertModal from '../../../components/AlertModal';
-import { ContentsWrap , MainContent} from '../../../assets/BusinessAnalysisStyle';
+// import { ContentsWrap , MainContent} from '../../../assets/BusinessAnalysisStyle';
 import NavigationBar from '../../../components/NavigationBar';
 
 
@@ -133,6 +133,7 @@ useEffect(() => {
       setShowAlertPopup("역할을 선택하세요.");
       return;
     }
+
 
     try {
      
@@ -358,6 +359,12 @@ const handleChatClick = () => {
           handleApplySubmit={handleApplySubmit} 
         />
 
+<AlertModal
+  isOpen={!!showAlertPopup}
+  message={showAlertPopup}
+  onClose={() => setShowAlertPopup(false)}
+/>
+
 
       {isAuthModalOpen && (
         <AuthModal
@@ -390,6 +397,41 @@ const handleChatClick = () => {
 };
 
 export default ApplyPage;
+
+ const ContentsWrap = styled.div`
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: ${(props) => (props.isMobile ? "column" : "row")};
+  gap: ${(props) => (props.isMobile ? "20px" : "40px")};
+  padding: ${(props) => (props.isMobile ? "20px" : "0 4px 0 0")};
+  min-height: 100vh;
+  // overflow: ${({ noScroll }) => (noScroll ? "hidden" : "auto")};
+  // transform: scale(0.9);
+  // transform-origin: top center;
+`;
+
+ const MainContent = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-width: ${(props) =>
+    props.Wide
+      ? "1024px"
+      : props.Wide1030
+      ? "1030px"
+      : props.Wide1240
+      ? "1240px"
+      : "820px"};
+  // max-width: 1024px;
+  // min-height: 100vh;
+  width: 100%;
+  justify-content: flex-start;
+  padding: 57px 0 40px;
+  margin: 0 auto;
+  // padding: ${(props) => (props.isMobile ? "0" : "0 20px")};
+`;
+
 
 const Container = styled.div`
   position: relative;

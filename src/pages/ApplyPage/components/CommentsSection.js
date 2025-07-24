@@ -465,6 +465,7 @@ const Container = styled.div`
   margin-top: 20px;
   padding-top: 20px;
   margin-bottom: 20px;
+  // background: #EDEDED;
 `;
 
 const CommentsTitle = styled.h3`

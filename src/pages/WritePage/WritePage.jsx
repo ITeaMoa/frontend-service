@@ -20,12 +20,13 @@ const recruitTypes = ['프로젝트', '스터디'];
 const peopleOptions = ['1명', '2명', '3명', '4명', '5명 이상'];
 const roles = ['프론트엔드', '백엔드', '디자이너'];
 const places = ['서울', '경기', '인천', '비대면', '기타'];
+const during =  ['1개월', '2개월', '3개월', '4개월', '5개월','기간 미정'];
 
 const WritePage = () => {
   // const location = useLocation();
   // const query = new URLSearchParams(location.search);
   // const feedTypeFromQuery = query.get('feedType'); // 쿼리 파라미터에서 feedType 가져오기
-  const [feedType, ] = useAtom(feedTypeAtom);
+  const [feedType, setFeedType] = useAtom(feedTypeAtom);
 
   // const [feedType, setFeedType] = useState(feedTypeFromQuery || initialFeedType || 'PROJECT'); // 쿼리 파라미터가 없으면 초기값 사용
   const [selectedSavedProject] = useAtom(selectedSavedProjectAtom); // 아톰에서 프로젝트 정보 가져오기
@@ -56,6 +57,7 @@ const WritePage = () => {
   const [people, setPeople] = useState(null);
   const [role, setRole] = useState(null);
   const [place, setPlace] = useState(null);
+
   
 
   const option1 = [
@@ -156,7 +158,7 @@ console.log("isTemporary", isTemporary);
     
 
     const missingFields = [];
-
+    console.log(missingFields)
     // 각 필드가 존재하는지 먼저 확인
     if (!title || !title.trim()) {
         missingFields.push('제목');
@@ -180,6 +182,7 @@ console.log("isTemporary", isTemporary);
         missingFields.push('진행기간');
     }
 
+    console.log('mssing', missingFields)
     if (missingFields.length > 0) {
           setShowAlertPopup(`다음 필드를 올바르게 입력해주세요: ${missingFields.join(', ')}`);
         return;
@@ -211,6 +214,7 @@ console.log("isTemporary", isTemporary);
         nickname
     };
 
+   
     formData.append('feed', JSON.stringify(dataToSend));
    
     try {
@@ -521,8 +525,8 @@ const handleImageRemove = () => {
                 {recruitTypes.map(type => (
                   <ToggleButton
                     key={type}
-                    active={recruitType === type}
-                    onClick={() => setRecruitType(recruitType === type ? null : type)}
+                    active={feedType === type}
+                    onClick={() => setFeedType(feedType === type ? null : type)}
                   >
                     {type}
                   </ToggleButton>
@@ -530,8 +534,12 @@ const handleImageRemove = () => {
               </ButtonGroup>
             </GridCol>
             <GridCol>
-              <Label>모집 마감</Label>
-              <Input type="text" placeholder="20XX.XX.XX" />
+              <Label>마감 일자</Label>
+              <Input
+            type="date"
+            value={deadline}
+            onChange={handleDeadlineChange}
+          />
             </GridCol>
           </GridRow>
 
@@ -552,7 +560,17 @@ const handleImageRemove = () => {
             </GridCol>
             <GridCol>
               <Label>진행 기간</Label>
-              <Input type="text" placeholder="20XX.XX.XX ~ 20XX.XX.XX" />
+              <ButtonGroup>
+                {during.map(opt => (
+                  <ToggleButton
+                    key={opt}
+                    active={period === opt}
+                    onClick={() => setPeriod(period === opt ? null : opt)}
+                  >
+                    {opt}
+                  </ToggleButton>
+                ))}
+                </ButtonGroup>
             </GridCol>
           </GridRow>
 
@@ -563,8 +581,8 @@ const handleImageRemove = () => {
                 {roles.map(r => (
                   <ToggleButton
                     key={r}
-                    active={role === r}
-                    onClick={() => setRole(role === r ? null : r)}
+                    active={selectedRoles === r}
+                    onClick={() => setSelectedRoles(selectedRoles === r ? null : r)}
                   >
                     {r}
                   </ToggleButton>
@@ -577,8 +595,8 @@ const handleImageRemove = () => {
                 {places.map(p => (
                   <ToggleButton
                     key={p}
-                    active={place === p}
-                    onClick={() => setPlace(place === p ? null : p)}
+                    active={progress === p}
+                    onClick={() => setProgress(progress === p ? null : p)}
                   >
                     {p}
                   </ToggleButton>
@@ -612,6 +630,13 @@ const handleImageRemove = () => {
               }}
             />
           </Modal>
+
+
+      <AlertModal
+  isOpen={!!showAlertPopup}
+  message={showAlertPopup}
+  onClose={() => setShowAlertPopup(false)}
+/>
 
     </>
 

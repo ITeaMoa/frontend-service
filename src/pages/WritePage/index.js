@@ -205,37 +205,24 @@ useEffect(() => {
    
     try {
       if (Object.keys(selectedSavedProject).length > 0) {
-        if (isTemporary) {
+  console.log("heelol")
           // 임시저장 PATCH
           await axios.patch(
-            `/feed/temp`,
+            `/my/temp`,
             formData,
+            
             {
               params: {
-                feedType: feedType,
-                userId: user.id
+                creatorId : user.id,
+                feedType: selectedSavedProject.sk,
+              
               },
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
+              // headers: {
+              //   'Content-Type': 'multipart/form-data'
+              // }
             }
           );
-        } else {
-          // 수정(업데이트) PUT 또는 PATCH
-          await axios.post(
-            '/feed/create',
-            formData,
-            {
-              params: {
-                feedType: feedType,
-                userId: user.id
-              },
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            }
-          );
-        }
+        
       } else {
         // 새로 생성
         await axios.post(
@@ -258,113 +245,121 @@ useEffect(() => {
     }
   };
 
-//업데이트
-  // const handleSubmit = async (e, isTemporary) => {
-  //   e.preventDefault();
+// //업데이트
+//   const handleSubmit = async (e, isTemporary) => {
+//     e.preventDefault();
 
-  //   // user가 존재하는지 확인
-  //   if (!user || !user.id) {
-  //       setShowAlertPopup('로그인 상태가 아닙니다. 로그인 후 다시 시도해주세요.');
-  //       return;
-  //   }
+//     // user가 존재하는지 확인
+//     if (!user || !user.id) {
+//         setShowAlertPopup('로그인 상태가 아닙니다. 로그인 후 다시 시도해주세요.');
+//         return;
+//     }
 
-  //   const missingFields = [];
+//     const missingFields = [];
 
-  //   // 각 필드가 존재하는지 먼저 확인
-  //   if (!title || !title.trim()) {
-  //       missingFields.push('제목');
-  //   }
-  //   if (!description || !description.trim()) {
-  //       missingFields.push('본문');
-  //   }
-  //   if (!deadline) {
-  //       missingFields.push('마감일자');
-  //   }
-  //   if (!progress || !progress.trim()) {
-  //       missingFields.push('진행장소');
-  //   }
-  //   if (!selectedRoles || selectedRoles.length === 0) {
-  //       missingFields.push('모집 역할');
-  //   }
-  //   if (!selectedTags || selectedTags.length === 0) {
-  //       missingFields.push('태그');
-  //   }
-  //   if (!period) {
-  //       missingFields.push('진행기간');
-  //   }
+//     // 각 필드가 존재하는지 먼저 확인
+//     if (!title || !title.trim()) {
+//         missingFields.push('제목');
+//     }
+//     if (!description || !description.trim()) {
+//         missingFields.push('본문');
+//     }
+//     if (!deadline) {
+//         missingFields.push('마감일자');
+//     }
+//     if (!progress || !progress.trim()) {
+//         missingFields.push('진행장소');
+//     }
+//     if (!selectedRoles || selectedRoles.length === 0) {
+//         missingFields.push('모집 역할');
+//     }
+//     if (!selectedTags || selectedTags.length === 0) {
+//         missingFields.push('태그');
+//     }
+//     if (!period) {
+//         missingFields.push('진행기간');
+//     }
 
-  //   if (missingFields.length > 0) {
-  //         setShowAlertPopup(`다음 필드를 올바르게 입력해주세요: ${missingFields.join(', ')}`);
-  //       return;
-  //   }
+//     if (missingFields.length > 0) {
+//           setShowAlertPopup(`다음 필드를 올바르게 입력해주세요: ${missingFields.join(', ')}`);
+//         return;
+//     }
 
-  //   const deadlineISO = new Date(deadline).toISOString();
-  //   const periodValue = parseInt(period, 10);
+//     const deadlineISO = new Date(deadline).toISOString();
+//     const periodValue = parseInt(period, 10);
 
-  //   const formData = new FormData();
-  //   if (image) {
-  //     formData.append('image', image);
-  //   }
+//     const formData = new FormData();
+//     if (image) {
+//       formData.append('image', image);
+//     }
 
-  //   const dataToSend = {
-  //       title,
-  //       content: description,
-  //       postStatus: !isTemporary,
-  //       savedFeed: isTemporary,
-  //       tags: selectedTags,
-  //       recruitmentNum: recruitmentNum > 0 ? recruitmentNum : 1,
-  //       deadline: deadlineISO,
-  //       place: progress,
-  //       period: periodValue,
-  //       roles: selectedRoles.length > 0 ? selectedRoles.reduce((acc, role) => {
-  //           acc[role.role.toLowerCase()] = role.count;
-  //           return acc;
-  //       }, {}) : {},
-  //       creatorId: user ? user.id : 'Unknown',
-  //       nickname
-  //   };
+//     const dataToSend = {
+//         title,
+//         content: description,
+//         postStatus: !isTemporary,
+//         savedFeed: isTemporary,
+//         tags: selectedTags,
+//         recruitmentNum: recruitmentNum > 0 ? recruitmentNum : 1,
+//         deadline: deadlineISO,
+//         place: progress,
+//         period: periodValue,
+//         roles: selectedRoles.length > 0 ? selectedRoles.reduce((acc, role) => {
+//             acc[role.role.toLowerCase()] = role.count;
+//             return acc;
+//         }, {}) : {},
+//         creatorId: user ? user.id : 'Unknown',
+//         nickname
+//     };
 
-  //   formData.append('feed', JSON.stringify(dataToSend));
+//     formData.append('feed', JSON.stringify(dataToSend));
+//     // if  (Object.keys(selectedSavedProject).length > 0) {
+//     //   formData.append('feedType', JSON.stringify(feedType));
+//     //   formData.append('userId', JSON.stringify(user.id));}
    
-  //   try {
-  //     if (selectedSavedProject) {
-  //       // 수정(업데이트) API 호출
-  //       await axios.put(
-  //         `/feed/update/${selectedSavedProject.id}`, // 또는 PATCH, 엔드포인트는 서버에 맞게
-  //         formData,
-  //         {
-  //           params: {
-  //             feedType: feedType,
-  //             userId: user.id
-  //           },
-  //           headers: {
-  //             'Content-Type': 'multipart/form-data'
-  //           }
-  //         }
-  //       );
-  //       console.log('수정 성공!');
-  //     } else {
-  //       // 새로 생성
-  //       await axios.post(
-  //         '/feed/create',
-  //         formData,
-  //         {
-  //           params: {
-  //             feedType: feedType,
-  //             userId: user.id
-  //           },
-  //           headers: {
-  //             'Content-Type': 'multipart/form-data'
-  //           }
-  //         }
-  //       );
-  //       console.log('업로드 성공!');
-  //     }
-  //     navigate('/');
-  //   } catch (error) {
-  //     console.log('업로드/수정 실패!');
-  //   }
-  // };
+//     try {
+      
+//       if (Object.keys(selectedSavedProject).length > 0) {
+//         formData.append('feedType', JSON.stringify(feedType));
+//         formData.append('userId', JSON.stringify(user.id));
+//         // 수정(업데이트) API 호출
+      
+//         await axios.put(
+//           `/feed/${selectedSavedProject.pk}`, // 또는 PATCH, 엔드포인트는 서버에 맞게
+//           formData,
+//           {
+//             // params: {
+//             //   feedType: feedType,
+//             //   userId: user.id
+//             // },
+//             headers: {
+//               'Content-Type': 'multipart/form-data'
+//             }
+//           }
+//         );
+//         console.log('수정 성공!');
+//       } else {
+//         // 새로 생성
+    
+//         await axios.post(
+//           '/feed/create',
+//           formData,
+//           {
+//             params: {
+//               feedType: feedType,
+//               userId: user.id
+//             },
+//             headers: {
+//               'Content-Type': 'multipart/form-data'
+//             }
+//           }
+//         );
+//         console.log('업로드 성공!');
+//       }
+//       navigate('/');
+//     } catch (error) {
+//       console.log('업로드/수정 실패!');
+//     }
+//   };
 
 useEffect(() => {
   if (selectedSavedProject && selectedSavedProject.roles) {

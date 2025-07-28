@@ -209,7 +209,7 @@ useEffect(() => {
           // 임시저장 PATCH
           await axios.patch(
             `/my/temp`,
-            formData,
+            dataToSend,
             
             {
               params: {

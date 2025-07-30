@@ -57,7 +57,7 @@ const MessageList = () => {
   const handleDeleteMessage = async (id) => {
     try {
       const currentTime = new Date().toISOString();  // "2025-04-14T18:57:57.712644" 형식
-  console.log("id",id)
+
       await axios.delete('/message', {
         data: {
           pk: id,
@@ -71,7 +71,8 @@ const MessageList = () => {
       console.error('메시지 삭제 오류:', error);
     }
   };
-console.log("messageList",messageList)
+  console.log("messageList",messageList)
+
   return (
     <>
       {/* <MessageContainer>

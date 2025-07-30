@@ -200,16 +200,20 @@ useEffect(() => {
         creatorId: user ? user.id : 'Unknown',
         nickname
     };
-
+    const finalDataToSend = {
+      ...selectedSavedProject, // seletsavedproject의 모든 속성을 먼저 포함
+      ...dataToSend         // dataToSend의 속성으로 중복되는 키를 덮어씀
+  };
+  // console.log("finalDataToSend",finalDataToSend)
     formData.append('feed', JSON.stringify(dataToSend));
    
     try {
       if (Object.keys(selectedSavedProject).length > 0) {
-  console.log("heelol")
+
           // 임시저장 PATCH
           await axios.patch(
             `/my/temp`,
-            dataToSend,
+            finalDataToSend,
             
             {
               params: {

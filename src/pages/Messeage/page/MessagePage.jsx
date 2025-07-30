@@ -130,6 +130,7 @@ useEffect(() => {
 }, [user?.id,]);
 
   const handleSendMessage = async () => {
+
     if (!selectedPersonId) return;
     try {
       const data = {
@@ -302,9 +303,15 @@ const Container = styled.div`
 const LeftPanel = styled.div`
   width: 300px;
   border: 1px solid #BDBDBD;
+  border-right: none;
 //   padding: 20px;
-  margin-right: 20px;
-  border-radius: 10px;
+  // margin-right: 20px;
+  // border-radius: 10px;
+    border-top-left-radius: 10px;     // 왼쪽 위
+  border-bottom-left-radius: 10px;  // 왼쪽 아래
+  border-top-right-radius: 0;      // 오른쪽 위를 0으로
+  border-bottom-right-radius: 0;   // 오른쪽 아래를 0으로
+  background : rgba(237, 237, 237, 0.5);
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     width: 20%;
@@ -317,7 +324,11 @@ const LeftPanel = styled.div`
 const RightPanel = styled.div`
   flex: 1;
   border: 1px solid #BDBDBD;
-  border-radius: 10px;
+  // border-radius: 10px;
+  border-top-left-radius: 0px;     // 왼쪽 위
+  border-bottom-left-radius: 0px;  // 왼쪽 아래
+  border-top-right-radius: 10px;      // 오른쪽 위를 0으로
+  border-bottom-right-radius: 10px;   // 오른쪽 아래를 0으로
   padding: 20px;
   overflow-y: auto;
   position: relative;

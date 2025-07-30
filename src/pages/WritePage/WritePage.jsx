@@ -145,132 +145,120 @@ useEffect(() => {
   console.log('현재 선택된 역할:', selectedRoles);
 }, [selectedRoles]);
 
-  const handleSubmit = async (e, isTemporary) => {
-    e.preventDefault();
+const handleSubmit = async (e, isTemporary) => {
+  e.preventDefault();
 
-console.log("isTemporary", isTemporary);
-//임시저장 ->게시물 : postStatus = true, savedFeed = false
-    // user가 존재하는지 확인
-    if (!user || !user.id) {
-        setShowAlertPopup('로그인 상태가 아닙니다. 로그인 후 다시 시도해주세요.');
-        return;
-    }
-    
+  // user가 존재하는지 확인
+  if (!user || !user.id) {
+      setShowAlertPopup('로그인 상태가 아닙니다. 로그인 후 다시 시도해주세요.');
+      return;
+  }
+  console.log("isTemporary", isTemporary);
+  //임시저장 ->게시물 : postStatus = true, savedFeed = false
 
-    const missingFields = [];
-    console.log(missingFields)
-    // 각 필드가 존재하는지 먼저 확인
-    if (!title || !title.trim()) {
-        missingFields.push('제목');
-    }
-    if (!description || !description.trim()) {
-        missingFields.push('본문');
-    }
-    if (!deadline) {
-        missingFields.push('마감일자');
-    }
-    if (!progress || !progress.trim()) {
-        missingFields.push('진행장소');
-    }
-    if (!selectedRoles || selectedRoles.length === 0) {
-        missingFields.push('모집 역할');
-    }
-    if (!selectedTags || selectedTags.length === 0) {
-        missingFields.push('태그');
-    }
-    if (!period) {
-        missingFields.push('진행기간');
-    }
+  const missingFields = [];
 
-    console.log('mssing', missingFields)
-    if (missingFields.length > 0) {
-          setShowAlertPopup(`다음 필드를 올바르게 입력해주세요: ${missingFields.join(', ')}`);
-        return;
-    }
+  // 각 필드가 존재하는지 먼저 확인
+  if (!title || !title.trim()) {
+      missingFields.push('제목');
+  }
+  if (!description || !description.trim()) {
+      missingFields.push('본문');
+  }
+  if (!deadline) {
+      missingFields.push('마감일자');
+  }
+  if (!progress || !progress.trim()) {
+      missingFields.push('진행장소');
+  }
+  if (!selectedRoles || selectedRoles.length === 0) {
+      missingFields.push('모집 역할');
+  }
+  if (!selectedTags || selectedTags.length === 0) {
+      missingFields.push('태그');
+  }
+  if (!period) {
+      missingFields.push('진행기간');
+  }
 
-    const deadlineISO = new Date(deadline).toISOString();
-    const periodValue = parseInt(period, 10);
+  if (missingFields.length > 0) {
+        setShowAlertPopup(`다음 필드를 올바르게 입력해주세요: ${missingFields.join(', ')}`);
+      return;
+  }
 
-    const formData = new FormData();
-    if (image) {
-      formData.append('image', image);
-    }
+  const deadlineISO = new Date(deadline).toISOString();
+  const periodValue = parseInt(period, 10);
 
-    const dataToSend = {
-        title,
-        content: description,
-        postStatus: !isTemporary,
-        savedFeed: isTemporary,
-        tags: selectedTags,
-        recruitmentNum: recruitmentNum > 0 ? recruitmentNum : 1,
-        deadline: deadlineISO,
-        place: progress,
-        period: periodValue,
-        roles: selectedRoles.length > 0 ? selectedRoles.reduce((acc, role) => {
-            acc[role.role.toLowerCase()] = role.count;
-            return acc;
-        }, {}) : {},
-        creatorId: user ? user.id : 'Unknown',
-        nickname
-    };
+  const formData = new FormData();
+  if (image) {
+    formData.append('image', image);
+  }
 
-   
-    formData.append('feed', JSON.stringify(dataToSend));
-   
-    try {
-      if (Object.keys(selectedSavedProject).length > 0) {
-        if (isTemporary) {
-          // 임시저장 PATCH
-          await axios.patch(
-            `/feed/temp`,
-            formData,
-            {
-              params: {
-                feedType: feedType,
-                userId: user.id
-              },
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            }
-          );
-        } else {
-          // 수정(업데이트) PUT 또는 PATCH
-          await axios.post(
-            '/feed/create',
-            formData,
-            {
-              params: {
-                feedType: feedType,
-                userId: user.id
-              },
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            }
-          );
-        }
-      } else {
-        // 새로 생성
-        await axios.post(
-          '/feed/create',
-          formData,
+  const dataToSend = {
+      title,
+      content: description,
+      postStatus: !isTemporary,
+      savedFeed: isTemporary,
+      tags: selectedTags,
+      recruitmentNum: recruitmentNum > 0 ? recruitmentNum : 1,
+      deadline: deadlineISO,
+      place: progress,
+      period: periodValue,
+      roles: selectedRoles.length > 0 ? selectedRoles.reduce((acc, role) => {
+          acc[role.role.toLowerCase()] = role.count;
+          return acc;
+      }, {}) : {},
+      creatorId: user ? user.id : 'Unknown',
+      nickname
+  };
+  const finalDataToSend = {
+    ...selectedSavedProject, // seletsavedproject의 모든 속성을 먼저 포함
+    ...dataToSend         // dataToSend의 속성으로 중복되는 키를 덮어씀
+};
+// console.log("finalDataToSend",finalDataToSend)
+  formData.append('feed', JSON.stringify(dataToSend));
+ 
+  try {
+    if (Object.keys(selectedSavedProject).length > 0) {
+
+        // 임시저장 PATCH
+        await axios.patch(
+          `/my/temp`,
+          finalDataToSend,
+          
           {
             params: {
-              feedType: feedType,
-              userId: user.id
+              creatorId : user.id,
+              feedType: selectedSavedProject.sk,
+            
             },
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
+            // headers: {
+            //   'Content-Type': 'multipart/form-data'
+            // }
           }
         );
-      }
-      navigate('/');
-    } catch (error) {
-      console.log('업로드 실패!');
+      
+    } else {
+      // 새로 생성
+      await axios.post(
+        '/feed/create',
+        formData,
+        {
+          params: {
+            feedType: feedType,
+            userId: user.id
+          },
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
     }
-  };
+    navigate('/');
+  } catch (error) {
+    console.log('업로드 실패!');
+  }
+};
 //업데이트
   // const handleSubmit = async (e, isTemporary) => {
   //   e.preventDefault();

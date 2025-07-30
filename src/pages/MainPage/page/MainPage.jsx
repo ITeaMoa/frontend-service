@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
-import { feedTypeAtom, selectedProjectDetailAtom } from '../../../Atoms.jsx/AtomStates';
+import { feedTypeAtom, selectedProjectDetailAtom ,selectedSavedProjectAtom} from '../../../Atoms.jsx/AtomStates';
 import Footer from '../../../components/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
@@ -50,6 +50,8 @@ const MainPage = () => {
   const [modalOpenedOnce, setModalOpenedOnce] = useState(false);
   const [hasProfileModalOpened, setHasProfileModalOpened] = useState(false);
   // const [isProfileComplete, setIsProfileComplete] = useState(false);
+  const [selectedSavedProject,setSelectedSavedProject] = useAtom(selectedSavedProjectAtom); // 아톰에서 프로젝트 정보 가져오기
+
 
   const navigate = useNavigate();
   
@@ -180,6 +182,7 @@ const MainPage = () => {
   useEffect(() => {
     // 로그인하지 않은 경우 (user가 null) 함수 즉시 종료
     if(!user) return;
+    setSelectedSavedProject({})
 
     // 프로필 데이터가 완전히 로딩되지 않았다면 아래 로직 실행하지 않음
     if (!isUserProfileLoaded) return;

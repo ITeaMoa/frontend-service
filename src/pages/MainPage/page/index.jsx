@@ -14,7 +14,8 @@ import { useAuth } from '../../../context/AuthContext'
 import ProfileModal from '../../../components/ProfileModal'; // ProfileModal 컴포넌트 추가
 import AuthModal from '../../../components/AuthModal';
 import { useAtom } from 'jotai';
-import { feedTypeAtom, selectedProjectDetailAtom, likedProjectsAtom, USER_PROFILE } from '../../../Atoms.jsx/AtomStates';
+import { feedTypeAtom, selectedProjectDetailAtom, likedProjectsAtom, USER_PROFILE ,selectedSavedProjectAtom} from '../../../Atoms.jsx/AtomStates';
+
 // import MainPageComponent from '../MainPage';
 import AlertModal from '../../../components/AlertModal';
 
@@ -114,6 +115,7 @@ const MainPage = () => {
     // const initialFeedType = localStorage.getItem('feedType') || 'PROJECT'; 
     // const [feedType, setFeedType] = useState(initialFeedType); 
     const [feedType, ] = useAtom(feedTypeAtom);
+    const [selectedSavedProject,setSelectedSavedProject] = useAtom(selectedSavedProjectAtom); // 아톰에서 프로젝트 정보 가져오기
 
 
 
@@ -154,6 +156,7 @@ const MainPage = () => {
                 personalUrl: ''
               });
               setIsUserProfileLoaded(true);
+              
             }
           }
         } catch (error) {
@@ -174,6 +177,7 @@ const MainPage = () => {
     useEffect(() => {
       // 로그인하지 않은 경우 (user가 null) 함수 즉시 종료
       if(!user) return;
+      setSelectedSavedProject({})
 
       // 프로필 데이터가 완전히 로딩되지 않았다면 아래 로직 실행하지 않음
       if (!isUserProfileLoaded) return;

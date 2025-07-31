@@ -98,6 +98,10 @@ const PopularProjectCard = styled.div`
   /* 카드가 3개일 때와 동일한 크기 보장 */
   flex-basis: calc((100% - 48px) / 3);
   max-width: calc((100% - 48px) / 3);
+
+  &:hover {
+    border:1px solid #62b9ec;
+  }
 `;
 
 const PopularProjectHeader = styled.div`

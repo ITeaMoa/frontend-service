@@ -84,8 +84,9 @@ const LikeButtonColumn = ({ initialLiked, initialLikesCount, onLikeChange, userI
 };
 
 const LikeBox = styled.div`
-  width: 44px;
-  height: 44px;
+  min-width: 50px;
+  min-height: 44px;
+  max-height:44px;
   background: #f5f5f5;
   border-radius: 8px;
   display: flex;

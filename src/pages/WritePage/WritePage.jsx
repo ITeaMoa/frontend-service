@@ -57,7 +57,7 @@ const WritePage = () => {
   const [people, setPeople] = useState(null);
   const [role, setRole] = useState(null);
   const [place, setPlace] = useState(null);
-
+  const [popupMessage, setPopupMessage] = useState(''); // 팝업 메시지 상태
   
 
   const option1 = [
@@ -478,6 +478,28 @@ const handleImageRemove = () => {
   setImagePreview(null);
 };
 
+const handleDelete = async () => {
+  try {
+    await axios.delete(
+      `/feed/${selectedSavedProject.pk}`,
+      {
+        params: {
+          feedType: selectedSavedProject.sk,
+          userId: user.id
+        }
+      }
+    );
+    // 삭제 성공 후 원하는 동작 (예: 메인 페이지로 이동)
+    setShowAlertPopup('게시물이 삭제되었습니다.');
+    setPopupMessage(false);
+    navigate('/');
+    // 예시: navigate('/') 또는 window.location.href = '/'
+  } catch (error) {
+    console.error('게시물 삭제 실패:', error);
+    setShowAlertPopup('게시물 삭제에 실패했습니다.');
+  }
+};
+
   return (
     <>
      <ContentsWrap>
@@ -565,7 +587,7 @@ const handleImageRemove = () => {
           <GridRow>
             <GridCol>
               <Label>모집 역할</Label>
-              <ButtonGroup>
+              {/* <ButtonGroup>
                 {roles.map(r => (
                   <ToggleButton
                     key={r}
@@ -575,7 +597,15 @@ const handleImageRemove = () => {
                     {r}
                   </ToggleButton>
                 ))}
-              </ButtonGroup>
+              </ButtonGroup> */}
+                  <Dropdown 
+            options={option2} 
+            placeholder={"프론트엔드,백엔드..."} 
+            showCountButtons={true}
+            value={selectedRoles}
+            onTagSelect={handleRoleSelect} // 역할과 카운트를 직접 전달
+            dropdownType="roles"
+        />
             </GridCol>
             <GridCol>
               <Label>진행 장소</Label>
@@ -605,6 +635,12 @@ const handleImageRemove = () => {
           </ButtonRow>
         {/* </WriteFormWrap> */}
       </MainContent>
+
+      {Object.keys(selectedSavedProject).length > 0 && (
+                    <AuthorActions>
+                    <ActionButton onClick={() => setPopupMessage(true)}>삭제</ActionButton>
+                  </AuthorActions>
+)}
     </ContentsWrap>
 
     <Modal isOpen={isModalOpen} onClose={closeModal}>
@@ -625,6 +661,19 @@ const handleImageRemove = () => {
   message={showAlertPopup}
   onClose={() => setShowAlertPopup(false)}
 />
+
+
+{popupMessage && (
+    <Modal
+      isOpen={!!popupMessage}
+      onClose={() => setPopupMessage('')}
+    showFooter={true}
+    onConfirm={handleDelete}
+    >
+     <h3 style={{ textAlign: 'center' }}>정말로 삭제 하시겠습니까?</h3>
+      
+    </Modal>
+  )}
 
     </>
 
@@ -806,4 +855,25 @@ const SaveButton = styled.button`
   font-size: 18px;
   font-weight: 600;
   cursor: pointer;
+`;
+
+const AuthorActions = styled.div`
+  display: flex;
+  gap: 8px;
+  position: absolute;
+ right: 5%;
+ top: 82%;
+`;
+
+const ActionButton = styled.button`
+  padding: 5px 12px;
+  border: none;
+  border-radius: 5px;
+  background-color: #62b9ec;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  &:hover {
+    background-color: #a0dafb;
+  }
 `;

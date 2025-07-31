@@ -6,14 +6,6 @@ import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => {}, dropdownType, customInputStyle, value}) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOptions, setSelectedOptions] = useState([]);
-    console.log('selectedOptions', selectedOptions);
-    // const [selectedOptions, setSelectedOptions] = useState(
-    //     value
-    //       ? Array.isArray(value)
-    //         ? value
-    //         : [value]
-    //       : []
-    //   );
     const [searchTerm, setSearchTerm] = useState('');
     const [isFocused, setIsFocused] = useState(false);
     const [peopleCounts, setPeopleCounts] = useState({}); // 각 옵션에 대한 인원수 상태 추가
@@ -51,41 +43,18 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
     };
 
       // value(selectedRoles)가 바뀔 때 peopleCounts도 동기화
-  useEffect(() => {
-    if (value && Array.isArray(value)) {
-      const counts = {};
-      value.forEach(roleObj => {
-        counts[roleObj.role] = roleObj.count;
-      });
-      setPeopleCounts(counts);
-    }
-  }, [value]);
+    useEffect(() => {
+        if (value && Array.isArray(value)) {
+        const counts = {};
+        value.forEach(roleObj => {
+            counts[roleObj.role] = roleObj.count;
+        });
+        setPeopleCounts(counts);
+        }
+    }, [value]);
 
     // 카운트 버튼 클릭 핸들러
-    // const handleCountChange = (option, change) => {
-    //     setPeopleCounts(prevCounts => {
-    //         const currentCount = prevCounts[option.label] || 0; // 현재 카운트 가져오기
-    //         const newCount = currentCount + change; // 새로운 카운트 계산
-
-    //         if (newCount > 0) {
-    //             onTagSelect(option, newCount); // 부모에게 새로운 카운트 전달
-    //             return {
-    //                 ...prevCounts,
-    //                 [option.label]: newCount // 새로운 카운트 설정
-    //             };
-    //         } else {
-    //             // 카운트가 0이 되면 선택 해제 및 peopleCounts에서 제거
-    //             onTagSelect(option, 0);
-    //             setSelectedOptions(prevSelected => prevSelected.filter(selected => selected !== option.label));
-    //             // peopleCounts에서 해당 항목 삭제
-    //             const { [option.label]: _, ...rest } = prevCounts;
-    //             return rest;
-    //         }
-
-          
-    //     });
-    // };
-
+   
       // count 변경 핸들러
   const handleCountChange = (option, change) => {
     const currentCount = peopleCounts[option.label] || 0;
@@ -108,23 +77,8 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
         setSearchTerm(e.target.value);
     };
  
-    // console.log('value', value);
-    // //   useEffect(() => {
-    // //     if (value) {
-    // //       setSelectedOptions([value]);
-    // //     }
-    // //   }, [value]);
-    // console.log('selectedOptions', selectedOptions);
-    // const getPlaceholderText = () => {
-    //     if (selectedOptions.length === 0) return placeholder;
-    //     if (selectedOptions.length > 8) {
-    //         return `${selectedOptions.slice(0, 8).join(', ')}...`;
-    //     }
-    //     return selectedOptions.join(', ');
-    // };
+  
 
-
-    
       useEffect(() => {
         if (value) {
             if (dropdownType === "profile") {
@@ -285,7 +239,8 @@ const DropdownHeader = styled.div`
 
 const DropdownList = styled.div`
     position: absolute;
-    border: 2px solid #A0DAFB;
+    // border: 2px solid #A0DAFB;
+    border :  ${({ dropdownType }) => (dropdownType === 'roles' ? ' 2px solid #858585' : '2px solid #A0DAFB')};
     border-radius: 15px;
     background: white;
     width: 92%;

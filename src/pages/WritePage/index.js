@@ -46,7 +46,7 @@ const WritePage = () => {
   const [recruitmentNum, setRecruitmentNum] = useState(0); // recruitmentNum 상태 추가
   const [showAlertPopup, setShowAlertPopup] = useState(false); // 경고 모달 상태 추가
   // const [isProject, setIsProject] = useState(true); // 프로젝트 여부 상태 추가
-
+  const [popupMessage, setPopupMessage] = useState(''); // 팝업 메시지 상태
   
 
   const option1 = [
@@ -486,6 +486,30 @@ const handleImageRemove = () => {
   setImagePreview(null);
 };
 
+
+
+const handleDelete = async () => {
+  try {
+    await axios.delete(
+      `/feed/${selectedSavedProject.pk}`,
+      {
+        params: {
+          feedType: selectedSavedProject.sk,
+          userId: user.id
+        }
+      }
+    );
+    // 삭제 성공 후 원하는 동작 (예: 메인 페이지로 이동)
+    setShowAlertPopup('게시물이 삭제되었습니다.');
+    setPopupMessage(false);
+    navigate('/');
+    // 예시: navigate('/') 또는 window.location.href = '/'
+  } catch (error) {
+    console.error('게시물 삭제 실패:', error);
+    setShowAlertPopup('게시물 삭제에 실패했습니다.');
+  }
+};
+
   return (
     <>
       <Nav showSearch={showSearch}/>
@@ -539,12 +563,6 @@ const handleImageRemove = () => {
           <InputWrapper>   
           <Label >모집 역할</Label>
   
-          {/* <Dropdown 
-            options={option2} 
-            placeholder={"프론트엔드,백엔드..."} 
-            showCountButtons={true}
-            onTagSelect={(role, count) => handleRoleSelect(role, count)} // 매개변수 전달
-          /> */}
           <Dropdown 
             options={option2} 
             placeholder={"프론트엔드,백엔드..."} 
@@ -582,17 +600,7 @@ const handleImageRemove = () => {
             ))}
             <TagAdd onClick={handleAddTagClick}>+ 태그 추가하기</TagAdd>
 
-{/*              
-            <Dropdown 
-                options={option3} 
-                placeholder={"태그를 선택하시오"}
-                dropdownType = "main"
-                onTagSelect={(selectedTags) => setUserProfile(prevState => ({
-                  ...prevState,
-                  tags: selectedTags 
-                }))}
-              
-            /> */}
+
             
             <Modal isOpen={isModalOpen} onClose={closeModal}>
                 {/* <TagDropdown onTagSelect={handleTagSelect} /> */}
@@ -606,6 +614,16 @@ const handleImageRemove = () => {
         }}
     />
             </Modal>
+
+           {Object.keys(selectedSavedProject).length > 0 && (
+                    <AuthorActions>
+                    <ActionButton onClick={() => setPopupMessage(true)}>삭제</ActionButton>
+                  </AuthorActions>
+)}
+       
+            
+          
+          
         </TagsSection>
 
         </Container>
@@ -679,6 +697,18 @@ const handleImageRemove = () => {
   message={showAlertPopup}
   onClose={() => setShowAlertPopup(false)}
 />
+
+{popupMessage && (
+    <Modal
+      isOpen={!!popupMessage}
+      onClose={() => setPopupMessage('')}
+    showFooter={true}
+    onConfirm={handleDelete}
+    >
+     <h3 style={{ textAlign: 'center' }}>정말로 삭제 하시겠습니까?</h3>
+      
+    </Modal>
+  )}
     </>
 
     
@@ -799,6 +829,8 @@ const Title = styled.label`
 
 
 
+
+
 const InputBox = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -907,6 +939,27 @@ const TagAdd = styled.button`
 
 `;
 
+
+const AuthorActions = styled.div`
+  display: flex;
+  gap: 8px;
+  position: absolute;
+ right: 5%;
+ top: 82%;
+`;
+
+const ActionButton = styled.button`
+  padding: 5px 12px;
+  border: none;
+  border-radius: 5px;
+  background-color: #62b9ec;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  &:hover {
+    background-color: #a0dafb;
+  }
+`;
 
 const TextArea = styled.textarea`
   border: none;

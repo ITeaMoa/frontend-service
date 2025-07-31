@@ -77,6 +77,10 @@ flex-direction: column;
 min-height: 350px;
 justify-content: space-between;
 border: 1px solid #e6eaf2;
+ cursor: pointer;
+ &:hover {
+    border:1px solid #62b9ec;
+  }
 
 `;
 

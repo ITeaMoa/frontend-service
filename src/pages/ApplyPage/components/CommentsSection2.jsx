@@ -502,6 +502,7 @@ const CommentsContainer = styled.div`
 const CommentsTitle = styled.h3`
   position: absolute;
   font-size: 20px;
+  margin-bottom:20px;
 `;
 
 const CommentsList = styled.div`
@@ -539,7 +540,7 @@ const Comments = styled.div`
 `;
 
 const CommentInputWrapper = styled.div`
-  margin-top: 60px;
+  margin-top: 80px;
   display: flex;
   flex-direction: column;
   // align-items: center;

@@ -129,14 +129,14 @@ useEffect(() => {
   getMessage();
 }, [user?.id,]);
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = async (messageContent) => {
 
     if (!selectedPersonId) return;
     try {
       const data = {
         creatorId: user.id,
         recipientId: selectedPersonId,
-        messageContent: newMessage
+        messageContent: messageContent
       };
       await axios.post('/message', data);
       setNewMessage('');
@@ -234,12 +234,12 @@ useEffect(() => {
             <>
               {/* <MessageList messages={messagesByPerson[selectedPerson] || []} /> */}
               {/* <MessageList id={selectedPerson} /> */}
-              <MessageList />  
+              <MessageList onSendMessage={handleSendMessage} />  
          
-              <SendButton onClick={handleSendClick}>
+              {/* <SendButton onClick={handleSendClick}>
                 <FontAwesomeIcon icon={faPaperPlane} />
               </SendButton>
-            
+             */}
             </>
           ) : (
             <EmptyRightPanel> 
@@ -249,7 +249,7 @@ useEffect(() => {
         </RightPanel>
       </Container> 
 
-      {showMessagePopup && (
+      {/* {showMessagePopup && (
         <PopupOverlay>
           <PopupContainer>
             <PopupHeader>
@@ -274,7 +274,7 @@ useEffect(() => {
             </SendMessageButton>
           </PopupContainer>
         </PopupOverlay>
-      )}
+      )} */}
     </>
   );
 };
@@ -329,8 +329,11 @@ const RightPanel = styled.div`
   border-bottom-left-radius: 0px;  // 왼쪽 아래
   border-top-right-radius: 10px;      // 오른쪽 위를 0으로
   border-bottom-right-radius: 10px;   // 오른쪽 아래를 0으로
-  padding: 20px;
-  overflow-y: auto;
+  // padding: 20px;
+  padding-left:20px;
+  // overflow-y: auto;
+  // height: 100%;         /* 부모가 높이 지정 필요 */
+  overflow: hidden;    
   position: relative;
 `;
 

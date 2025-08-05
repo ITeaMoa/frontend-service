@@ -1,17 +1,18 @@
-import React, { useState, useEffect, useLocation } from 'react';
+import React, { useState, useEffect, useLocation, useRef } from 'react';
 import styled from 'styled-components';
 import axios from '../../../api/axios';
 import { useAtom } from 'jotai';
 import { MESSAGE_LIST } from '../../../Atoms.jsx/AtomStates';
 import { useAuth } from '../../../context/AuthContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPaperPlane, faTimes } from '@fortawesome/free-solid-svg-icons';
 
-const MessageList = () => {
+const MessageList = ({ onSendMessage }) => {
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [messages, setMessages] = useState([]);
   const [messageList, setMessageList] = useAtom(MESSAGE_LIST);
   const { user } = useAuth();
-
-
+  const [inputValue, setInputValue] = useState('');
 
 
   const handleClosePopup = () => {
@@ -73,62 +74,111 @@ const MessageList = () => {
   };
   console.log("messageList",messageList)
 
+  function formatFullDateTime(dateString) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const week = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
+    let hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const isAM = hours < 12;
+    const ampm = isAM ? '오전' : '오후';
+    if (!isAM) hours = hours === 12 ? 12 : hours - 12;
+    if (hours === 0) hours = 12;
+    return `${year}년 ${month}월 ${day}일 (${week}) ${ampm} ${hours}:${minutes}`;
+  }
+
+  function formatTime(dateString) {
+    const date = new Date(dateString);
+    let hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const isAM = hours < 12;
+    const ampm = isAM ? '오전' : '오후';
+    if (!isAM) hours = hours === 12 ? 12 : hours - 12;
+    if (hours === 0) hours = 12;
+    return `${ampm} ${hours}:${minutes}`;
+  }
+
+  const orderedMessages = [...messageList].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+  const messageEndRef = useRef(null);
+
+  useEffect(() => {
+    if (messageEndRef.current) {
+      messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messageList]);
+
+  let lastDate = null;
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  const handleSend = () => {
+    if (!inputValue.trim()) return;
+    // console.log("ddddupupth", inputValue)
+    onSendMessage(inputValue); // 입력값을 부모로 전달
+    setInputValue('');
+
+  };
+
   return (
     <>
-      {/* <MessageContainer>
-        {messageList.map((message, index) => (
-          <MessageCard 
-            key={index}
-            onClick={() => setSelectedMessage(message)}
-          >
-            <MessageHeader>
-              <MessageTitle type={message.type}>{message.title}</MessageTitle>
-              <MessageDate>
-                {message.date} 
-                <DeleteButton onClick={(e) => {
-                  e.stopPropagation();
-                  handleDeleteMessage(message.id);
-                }}>삭제</DeleteButton>
-              </MessageDate>
-            </MessageHeader>
-            <MessageContent>{message.content}</MessageContent>
-          </MessageCard>
-        ))}
-      </MessageContainer> */}
-       <MessageContainer>
-        {
-          messageList.length > 0 ? (
-            messageList.map((message, index) => (
-              <MessageCard 
-          key={message.sk}  // timestamp를 key로 사용
-          onClick={() => setSelectedMessage(message)}
-        >
-          <MessageHeader>
-            <MessageTitle>
-              {message.creatorId === user.id ? "보낸 쪽지" : "받은 쪽지"}
-            </MessageTitle>
-            <MessageDate>
-              {new Date(message.timestamp).toLocaleString()} 
-              <DeleteButton onClick={(e) => {
-                e.stopPropagation();
-                handleDeleteMessage(message.pk);  // pk와 sk 전달
-              }}>삭제</DeleteButton>
-            </MessageDate>
-          </MessageHeader>
-          <MessageContent>
-            {message.messageContent}
-            {/* {!message.messageStatus && message.recipientId === user.id && 
-              <UnreadBadge>안읽음</UnreadBadge>
-            } */}
-          </MessageContent>
-        </MessageCard>
-      ))
+     
+       <ChatWrapper>
+  <MessageContainer>
+    {orderedMessages.length > 0 ? (
+        orderedMessages.map((message, idx) => {
+          const dateObj = new Date(message.timestamp);
+          const dateStr = `${dateObj.getFullYear()}.${dateObj.getMonth() + 1}.${dateObj.getDate()}`;
+          const showDate = idx === 0 || lastDate !== dateStr;
+          lastDate = dateStr;
+          const isSent = message.creatorId === user.id;
+          return (
+            <React.Fragment key={message.sk}>
+              {showDate && (
+                <DateDivider>
+                  {formatFullDateTime(message.timestamp)}
+                </DateDivider>
+              )}
+              <MessageCard isSent={isSent}>
+                <MessageBubble isSent={isSent}>
+                  {message.messageContent}
+                </MessageBubble>
+                <MessageMeta isSent={isSent}>
+                  {formatTime(message.timestamp)}
+                </MessageMeta>
+              </MessageCard>
+            </React.Fragment>
+          );
+        })
       ) : (
-        <MessageCard>
-          쪽지가 없습니다.쪽지를 보내주세요.
-        </MessageCard>
+        <MessageCard>쪽지가 없습니다. 쪽지를 보내주세요.</MessageCard>
       )}
-    </MessageContainer>
+      <div ref={messageEndRef} />
+
+<ChatInputBar>
+  {/* <AvatarBox /> */}
+  <InputWrapper>
+    <Input
+      type="text"
+      placeholder="내용을 입력해주세요"
+      value={inputValue}
+      onChange={e => setInputValue(e.target.value)}
+      onKeyDown={handleKeyDown}
+    />
+    <SendButton onClick={handleSend}>
+      {/* 예시: > 또는 아이콘 */}
+      <FontAwesomeIcon icon={faPaperPlane} /> 
+      {/* <span style={{ color: "#fff", fontSize: 20, fontWeight: "bold" }}>{'>'}</span> */}
+    </SendButton>
+  </InputWrapper>
+</ChatInputBar>
+  </MessageContainer>
+</ChatWrapper>
 
 
       {selectedMessage && (
@@ -149,23 +199,48 @@ const MessageList = () => {
   );
 };
 
-const MessageContainer = styled.div`
-//   padding: 20px;
+const ChatWrapper = styled.div`
   position: relative;
-  height: 100%;
+  // height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  overflow: hidden; /* 전체 스크롤 막기 */
+    height: 100%;   
+`;
+
+const MessageContainer = styled.div`
+  flex: 1 1 auto;
+  overflow-y: auto;
+  // height: calc(100% - 700px); /* 입력창 높이만큼 빼기 */
+  padding-right: 12px;        /* 스크롤바와 내용 사이 여백 */
+  /* 필요시 min-height: 0; 추가 */
+   padding-bottom: 60px; 
 `;
 
 const MessageCard = styled.div`
-  background-color: white;
-  border-bottom: 1px solid #e0e0e0;
-  padding: 20px;
-  margin-bottom: 20px;
-  cursor: pointer;
-  transition: transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: ${({ isSent }) => (isSent ? 'flex-end' : 'flex-start')};
+  margin-bottom: 10px;
+`;
 
-  // &:hover {
-  //   transform: translateY(-2px);
-  // }
+const MessageBubble = styled.div`
+  background-color: ${({ isSent }) => (isSent ? '#e5f6ff' : '#ededed')};
+  color: #222;
+  padding: 16px 18px;
+  border-radius: 16px;
+  max-width: 60%;
+  word-break: break-all;
+  margin-bottom: 4px;
+  align-self: ${({ isSent }) => (isSent ? 'flex-end' : 'flex-start')};
+`;
+
+const MessageMeta = styled.div`
+  font-size: 13px;
+  color: #888;
+  margin: 2px 8px 10px 8px;
+  align-self: ${({ isSent }) => (isSent ? 'flex-end' : 'flex-start')};
 `;
 
 const MessageHeader = styled.div`
@@ -295,4 +370,72 @@ const UnreadBadge = styled.span`
   font-size: 12px;
   margin-left: 8px;
 `;
+
+const DateDivider = styled.div`
+  text-align: center;
+  color: #888;
+  font-size: 15px;
+  margin: 18px 0 8px 0;
+  font-weight: 500;
+`;
+
+const ChatInputBar = styled.div`
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  padding-top: 5px;
+  z-index: 10;
+  height: 50px; /* 입력창 높이와 MessageContainer의 height 계산이 일치해야 함 */
+`;
+
+const AvatarBox = styled.div`
+  width: 48px;
+  height: 48px;
+  background: #ddd;
+  border-radius: 12px;
+  margin-right: 16px;
+`;
+
+const InputWrapper = styled.div`
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 8px;
+  border: 1.5px solid #ededed;
+  padding: 0 16px;
+  height: 30px;
+  margin-right:20px;
+`;
+
+const Input = styled.input`
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 18px;
+  background: transparent;
+  color: #222;
+  &::placeholder {
+    color: #ccc;
+    font-size: 18px;
+  }
+`;
+
+const SendButton = styled.button`
+  width: 24px;
+  height: 24px;
+  background: #00baff;
+  border: none;
+  border-radius: 50%;
+  margin-left: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+// SendButton 안에 아이콘(예: > 또는 FontAwesome paper-plane) 넣으세요.
 export default MessageList;

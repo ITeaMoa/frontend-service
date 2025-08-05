@@ -13,11 +13,12 @@ const MessagePeople = ({ name, messageCount, isSelected, onClick }) => {
   return (
     <PersonContainer onClick={handleClick} isSelected={isSelected}>
       <PersonInfo>
+      <MessageCount messageCount={isSelected ? 0 : messageCount} isSelected={isSelected} />
         <FontAwesomeIcon icon={regularUser} size="15px" />
         <Name>{name}</Name>
       </PersonInfo>
       {/* <MessageCount>{isSelected ? "0" : messageCount}</MessageCount> */}
-      <MessageCount messageCount={isSelected ? 0 : messageCount} isSelected={isSelected} />
+    
     </PersonContainer>
   );
 };

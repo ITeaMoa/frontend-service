@@ -202,7 +202,7 @@ const SlideIndicator = styled.div`
 
 const ArrowButtonLeft = styled.button`
   position: absolute;
-  left: 0;
+  left: 2%;
   top: 50%;
   transform: translateY(-50%);
   z-index: 2;
@@ -227,7 +227,7 @@ const ArrowButtonLeft = styled.button`
 
 const ArrowButtonRight = styled.button`
   position: absolute;
-  right: 0;
+  right: 2%;
   top: 50%;
   transform: translateY(-50%);
   z-index: 2;

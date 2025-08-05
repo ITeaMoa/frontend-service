@@ -8,7 +8,7 @@ import { useAtom } from 'jotai';
 import Modal from '../../../components/Modal';
 import AlertModal from '../../../components/AlertModal';
 
-const CommentsSection = ({ commentInput, setCommentInput, user, projectId }) => {
+const CommentsSection2= ({ commentInput, setCommentInput, user, projectId }) => {
   const [replyInput, setReplyInput] = useState({});
   const [showReplyInput, setShowReplyInput] = useState({});
   // const [isEditing, setIsEditing] = useState(false);
@@ -289,14 +289,20 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
   
   return (
     <Container>
+      <CommentsContainer>
       <CommentsTitle>댓글 ({comments ? comments.length : 0})</CommentsTitle>
       <CommentInputWrapper>
+      <UserSection>
+                  <FontAwesomeIcon icon={faUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px',  }} />
+                 <strong>{user.nickname}</strong>
+                </UserSection>
         <CommentInput
+          as="textarea"
           value={commentInput}
           onChange={(e) => setCommentInput(e.target.value)}
           placeholder="댓글을 입력해 주세요."
         />
-        <CommentButton onClick={handleCommentSubmit}>등록</CommentButton>
+        <CommentButton onClick={handleCommentSubmit}>등록하기</CommentButton>
       </CommentInputWrapper>
       <CommentsList>
         {comments && Array.isArray(comments) ? (
@@ -315,6 +321,11 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
                       {formattedDate} {formattedTime}
                     </span>
                   </Timestamp>
+                  {/* <CommentDate>
+                  <span style={{ fontSize: 'small', color: '#aaa', marginLeft: '10px' }}>
+                      {formattedDate} {formattedTime}
+                    </span>
+                  </CommentDate> */}
                 </Users>
                 {/* <Comments>{comment.comment}</Comments> */}
                 <Comments>
@@ -329,6 +340,9 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
                   ) : (
                    
                     comment.comment
+
+          
+                    
                   )}
                 </Comments>
                 
@@ -447,6 +461,7 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
   onClose={() => setShowAlertPopup(false)}
 />
       </CommentsList>
+      </CommentsContainer>
     </Container>
    
   );
@@ -455,18 +470,33 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
 };
 
 
-export default CommentsSection;
+export default CommentsSection2;
 
 // Styled Components
 const Container = styled.div`
   position: relative;
-  width: calc(100% / 2 + 80px);
+  width: 100%;
+  // width: calc(100% / 2 + 80px);
+  // border-top: 1px solid #ddd;
+  padding-bottom: 20px;
+  // margin-bottom: 20px;
+  background: rgba(237, 237, 237, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center; /* 필요에 따라 제거 가능 */
+`;
 
-  border-top: 1px solid #ddd;
-  margin-top: 20px;
+const CommentsContainer = styled.div`
+  position: relative;
+  // width: calc(100% / 2 + 350px);
+  align-items: center;
   padding-top: 20px;
-  margin-bottom: 20px;
-  // background: #EDEDED;
+  // margin-bottom: 20px;
+  background:rgba(237, 237, 237, 0);
+  width: 100%;
+   max-width: 1030px;
+  box-sizing: border-box;
+
 `;
 
 const CommentsTitle = styled.h3`
@@ -477,14 +507,18 @@ const CommentsTitle = styled.h3`
 const CommentsList = styled.div`
   margin-top: 20px;
   width: 100%;
+  box-sizing: border-box;
 `;
 
 const Comment = styled.div`
   margin: 5px 0;
-  padding: 14px;
-  padding-left: 20px;
+  padding: 14px 12px; // CommentInput과 동일하게!
   border: none;
-  border-bottom: 2px solid rgba(160, 218, 251);
+  border-top: #EDEDED;
+  border-bottom: 2px solid #EDEDED;
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
 `;
 
 const Users = styled.div`
@@ -507,30 +541,55 @@ const Comments = styled.div`
 const CommentInputWrapper = styled.div`
   margin-top: 60px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  // align-items: center;
+  margin-left:20px;
+   border-bottom: 2px solid #EDEDED;
+
 `;
 
-const CommentInput = styled.input`
-  flex: 1;
-  padding: 15px;
-  border: 3px solid #62b9ec;
-  border-radius: 15px;
-  margin-right: 10px;
+const CommentInput = styled.textarea`
+  width: 100%;
+  height: 80px;
+  resize: none;
+  padding: 14px 12px; // Comment와 동일하게!
+  font-size: 16px;
+  box-sizing: border-box;
+  border: 1.5px solid #ededed;   // 테두리 색 고정
+  outline: none;                  // 기본 outline 제거
   background-color: white;
+
+  &::placeholder {
+    text-align: left;
+    vertical-align: top;
+    transform: translateY(-2px);
+    color: #bdbdbd; // placeholder 색상은 필요시 조정
+  }
+
+  &:focus {
+    border: 1.5px solid #ededed; // 포커스 시에도 테두리 색 고정
+    outline: none;
+  }
 `;
 
 const CommentButton = styled.button`
   padding: 10px 20px;
+  margin-top:20px;
+  margin-bottom: 20px;
   border: none;
-  border-radius: 15px;
-  background-color: #62b9ec;
+  border-radius: 6px;
+  background-color: #3D3D3F;
   color: white;
   font-weight: bold;
   cursor: pointer;
+  // width:80px;
 
-  &:hover {
-    background-color: #a0dafb;
-  }
+  align-self: flex-end;  /* 오른쪽 끝 정렬 */
+  // margin-right:15px;
+
+  // &:hover {
+  //   background-color: #a0dafb;
+  // }
 `;
 
 const Actions = styled.div`
@@ -543,15 +602,15 @@ const ActionButton = styled.button`
   padding: 5px 10px;
   border: none;
   border-radius: 5px;
-  background-color: #62b9ec;
+ background-color: #3D3D3F;
   color: white;
   font-weight: bold;
   cursor: pointer;
   margin-left: 5px;
 
-  &:hover {
-    background-color: #a0dafb;
-  }
+  // &:hover {
+  //   background-color: #a0dafb;
+  // }
 `; 
 
 const DeletedBox = styled.div`
@@ -565,10 +624,12 @@ const DeletedBox = styled.div`
 const ReplyBox = styled.div`
   margin-left: 32px;
   margin-top: 8px;
-  background: #f8fafd;
+  // background: #f8fafd;
+  background: white;
   border-radius: 8px;
   padding: 10px 10px 10px 16px;
-  border-left: 3px solid #a0dafb;
+  // border-left: 3px solid #a0dafb;
+   border-left: 3px solid #3D3D3F;
 `;
 
 const ReplyInputWrapper = styled(CommentInputWrapper)`
@@ -576,10 +637,22 @@ const ReplyInputWrapper = styled(CommentInputWrapper)`
   margin-top: 10px;
 `
 const CommentEditInput = styled(CommentInput)`
-  border: 3px solid #62b9ec;
-  border-radius: 15px;
+  border: 2px solid #ededed;
+  // border-radius: 15px;
   margin-right: 10px;
   background-color: white;
   width: 88%;
 `;
 
+const UserSection = styled.div`
+  display: flex;
+  margin-bottom: 10px;
+`;
+
+const CommentDate = styled.span`
+  position: absolute;
+  right: 12px;
+  bottom: 120px;
+  font-size: small;
+  color: #aaa;
+`;

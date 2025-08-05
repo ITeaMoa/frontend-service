@@ -361,10 +361,10 @@ const handleChatClick = () => {
             <FontAwesomeIcon icon={faComment} onClick={() => handleChatClick()}/>
           </ChatButton>
 
-          <AuthorID>
+         <AuthorID>
             <FontAwesomeIcon icon={faUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
             작성자: {project.nickname}
-          </AuthorID>
+          </AuthorID> 
         
           </AuthorSection>
         

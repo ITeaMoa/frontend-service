@@ -6,12 +6,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft,faComment } from '@fortawesome/free-solid-svg-icons';
 import { faUser } from '@fortawesome/free-regular-svg-icons';
 // import axios from 'axios';
-import LikeButton from '../../../components/LikeButton';
+import ApplyLikeButton from '../../../components/ApplyLikeButton';
 import Modal from '../../../components/Modal'; // 모달 컴포넌트 import
 import axios from '../../../api/axios'
 import { useAuth } from '../../../context/AuthContext'
 // import items from '../../data'; // items를 import 추가
-import CommentsSection from '../components/CommentsSection'; // CommentsSection import 추가
+import CommentsSection2 from '../components/CommentsSection2'; // CommentsSection import 추가
 import RoleSelectionModal from '../../../components/RoleSelectionModal';
 import AuthModal from '../../../components/AuthModal';
 import { useAtom } from 'jotai';
@@ -303,16 +303,14 @@ const handleChatClick = () => {
         </PostDescription>
 
         <BottomRow>
-          <LikeButton 
-            initialLikesCount={project.likesCount} 
-            buttonStyle="apply"
-            sk={project.pk}
-            feedType={project.sk} 
-          />
+        
           <BottomInfo>
-            <span style={{ color: '#00aeff', marginRight: 16 }}>
-              좋아요 {project.likesCount ?? 0}
-            </span>
+            <ApplyLikeButton 
+              initialLikesCount={project.likesCount} 
+              buttonStyle="apply"
+              sk={project.pk}
+              feedType={project.sk} 
+            />
             <span style={{ color: '#888' }}>
               조회 {project.views ?? 0}
             </span>
@@ -320,19 +318,22 @@ const handleChatClick = () => {
         </BottomRow>
 
         <AuthorSection>
+        <AuthorID>
+            <FontAwesomeIcon icon={faUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
+            작성자: {project.nickname}
+          </AuthorID>
           <ChatButton>
             <FontAwesomeIcon icon={faComment} onClick={() => handleChatClick()}/>
           </ChatButton>
 
-          <AuthorID>
-            <FontAwesomeIcon icon={faUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px' }} />
-            작성자: {project.nickname}
-          </AuthorID>
+         
         
           </AuthorSection>
         
-
-        <CommentsSection 
+          </MainContent>
+    {/* </PageContainer> */}
+    </ContentsWrap>
+        <CommentsSection2
           comments={project.comments} 
           commentInput={commentInput} 
           setCommentInput={setCommentInput} 
@@ -344,11 +345,7 @@ const handleChatClick = () => {
         />
       {/* </Container> */}
 
-       
-      </MainContent>
-    {/* </PageContainer> */}
-    </ContentsWrap>
-
+      
 
         <RoleSelectionModal 
           isOpen={isRoleModalOpen} 
@@ -406,9 +403,7 @@ export default ApplyPage;
   gap: ${(props) => (props.isMobile ? "20px" : "40px")};
   padding: ${(props) => (props.isMobile ? "20px" : "0 4px 0 0")};
   min-height: 100vh;
-  // overflow: ${({ noScroll }) => (noScroll ? "hidden" : "auto")};
-  // transform: scale(0.9);
-  // transform-origin: top center;
+
 `;
 
  const MainContent = styled.div`
@@ -423,8 +418,6 @@ export default ApplyPage;
       : props.Wide1240
       ? "1240px"
       : "820px"};
-  // max-width: 1024px;
-  // min-height: 100vh;
   width: 100%;
   justify-content: flex-start;
   padding: 57px 0 40px;
@@ -464,7 +457,7 @@ const BackButton = styled.button`
 const TopBox = styled.div`
   background: #f5fbff;
   border-radius: 12px;
-  padding: 32px 32px 24px 32px;
+  padding: 32px 32px 32px 32px;
   margin-bottom: 32px;
 `;
 
@@ -659,13 +652,14 @@ position: absolute;
 
 
 const ChatButton = styled.button`
-position: absolute;
-right: 25%;
+// position: absolute;
+// left: 12%;
   background: none;
   border: none;
   cursor: pointer;
   color: #62b9ec;
-  font-size: 24px;
+  font-size: 20px;
+
 
   &:hover {
     color: #a0dafb;
@@ -677,226 +671,18 @@ const AuthorSection = styled.div`
   display: flex; 
   margin-top: 20px;
   margin-bottom: 20px;
+  
+
 `;
 
 const AuthorID = styled.div`
-  left:25%;
-  position: absolute;
+  // left:25%;
+  // position: absolute;
   font-size: 20px;
   color: black;
   font-weight: bold;
   
 `;
-
-// const CommentsSection = styled.div`
-//   position: relative;
-//   width: calc(100% / 2 + 80px);
-//   border-top: 1px solid #ddd;
-//   margin-top: 20px;
-//   padding-top: 20px;
-//   margin-bottom: 20px;
-// `;
-
-// const CommentsTitle = styled.h3`
-//   position: absolute;
-//   font-size: 20px;
-// `;
-
-// const CommentsList = styled.div`
-// margin-top: 20px;
-// // width: calc(100% / 2 + 80px);
-// width: 100%;
-
-// `;
-
-// const Comment = styled.div`
-//   margin: 5px 0;
-//   padding: 14px;
-//   padding-left: 20px;
-//    border: 1px solid #e0e0e0;
-//   text-align: left;
-//   border: none;
-//   border-bottom: 2px solid rgba(160, 218, 251);
-
-//   strong{
-//    margin-left: 15px;
-//   }
-//   span{
-//     margin-left: 15px;
-//   }
-// `;
-
-// const Users= styled.div`
-
-// display: flex;
-// `;
-
-// const Timestamp = styled.div`
-//   display: flex;
-//   // flex-direction: column;
-//   flex-direction: row;
-
-//   span{
-//     margin-top:2px;
-//   }
-// `;
-
-
-
-
-// const Comments = styled.div`
-//    margin: 10px 10px;
-
-// `;
-
-// const CommentInputWrapper = styled.div`
-//   margin-top: 60px;
-//   display: flex;
-//   align-items: center;
-// `;
-
-// const CommentInput = styled.input`
-//   flex: 1;
-//   padding: 15px;
-//   border: 3px solid #62b9ec;
-//   border-radius: 5px;
-//   margin-right: 10px;
-//   border-radius: 15px;
-//   background-color: white;
-
-//   // ::placeholder {
-//   //   color: #A7D6F2;
-//   //   opacity: 1; /* 크롬에서 기본 opacity가 0.5로 설정되어 있기 때문에 1로 설정 */
-//   // }
-
-
-// `;
-
-// const CommentButton = styled.button`
-//   padding: 10px 20px;
-//   border: none;
-//   border-radius: 15px;
-//   background-color: #62b9ec;
-//   color: white;
-//   font-weight: bold;
-//   cursor: pointer;
-
-//   &:hover {
-//     background-color: #a0dafb;
-//   }
-// `;
-
-// const RoleButton = styled.button`
-//   padding: 24px 25px;
-//   margin-bottom: 20px;
-//   border: 1px solid;
-//   border-radius: 14px 14px 1px 14px;
-//   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-//   border-color: rgba(160, 218, 251);
-//   background-color: ${({ isSelected }) => (isSelected ? 'rgba(160, 218, 251)' : 'white')};
-//   color: #0A8ED9;
-//   font-size: 16px;
-//   white-space: nowrap;
-//   font-size: 18px;
-//   min-width: 60%;
-//   padding: 10px 20px;
-
-//   &:hover {
-//     background-color: rgba(160, 218, 251);
-//   }
-// `;
-
-// const RoleButtonContainer = styled.div`
-//   // margin-top: -20px;
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   width: 100%;
-//   justify-content: space-between;
-//   max-height: 400px; // 최대 높이 설정
-//   overflow-y: auto; // 세로 스크롤 가능
-
-//   position: relative; // 위치 고정을 위한 설정
-
-//   h3 {
-//     font-size: 24px;
-//     margin-bottom: 40px;
-//     position: sticky; // 스크롤 시 고정
-//     top: 0; // 상단에 고정
-//     background-color: white; // 배경색 설정 (필요시)
-//     z-index: 1; // 다른 요소 위에 표시되도록 설정
-//     //  padding: 20px;
-//   }
-// `;
-
-// const SubmitButton = styled.button`
-//   border: none;
-//   border-radius: 15px;
-//   background-color: #62b9ec;
-//   color: white;
-//   font-weight: bold;
-//   cursor: pointer;
-//   padding: 10px 20px;
-//   margin-top: 70px;
-
-
-//   &:hover {
-//     background-color: #a0dafb;
-//   }
-// `;
-
-
-// const CloseButton = styled(SubmitButton)`
-//   margin-top: 20px; 
-
-// `;
-
-// const RoleButtonContainerStyled = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   width: 100%;
-//   justify-content: space-between;
-//   max-height: 400px; // 최대 높이 설정
-//   overflow-y: auto; // 세로 스크롤 가능
-//   // height: 800px;
-
-//   position: relative; // 위치 고정을 위한 설정
-
-// `;
-
-// const AuthButtonContainer = styled.div`
-//   display: flex;
-//   justify-content: space-between;
-//   margin-top: 80px;
-// `;
-
-// const AuthButton = styled.button`
-//     border: none;
-//   border-radius: 15px;
-//   background-color: #62b9ec;
-//   color: white;
-//   font-weight: bold;
-//   cursor: pointer;
-//   padding: 10px 20px;
-//   margin-left: 10px;
-
-//   &:hover {
-//     background-color: #a0dafb;
-//   }
-// `;
-
-// const AuthorSection = styled.div`
-//   display: flex;
-//   align-items: center;
-//   justify-content: space-between; // 버튼을 오른쪽 끝으로
-//   margin-top: 20px;
-// `;
-
-// const AuthorID = styled.div`
-//   display: flex;
-//   align-items: center;
-// `;
 
 const AuthorActions = styled.div`
   display: flex;

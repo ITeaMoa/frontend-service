@@ -235,7 +235,7 @@ const MainPage = () => {
 
   const handleProjectClick = (project) => {
     console.log("mainprojecttodetail", project)
-    navigate(`/ApplyPage/${project.pk}`);
+    navigate(`/ApplyPage1/${project.pk}`);
     setSelectedProjectDetail(project);
   };
 

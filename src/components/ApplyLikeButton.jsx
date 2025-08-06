@@ -56,31 +56,31 @@ const ApplyLikeButton = ({ initialLiked, initialLikesCount, onLikeChange, button
 //   setLikesCount(initialLikesCount);
 // }, [initialLikesCount]);
  // useCallback 없이 일반 함수로 작성 //uscecallback없이 작성성
-const fetchUserLikeStatus = async () => {
-  if (!user?.id || !sk) return;
-  try {
-    // 1. 내 좋아요 상태 확인
-    const likeResponse = await axios.get(`/main/like?userId=${user.id}`);
-    console.log('likeResponse:', likeResponse.data);
-    const userLiked = likeResponse.data.some(like => like.sk === sk);
-    setLiked(userLiked);
-
-    // 2. 전체 피드에서 해당 sk의 좋아요 수 찾기
-    const feedResponse = await axios.get(`/main?feedType=${feedType}`);
-    if (feedResponse.data ) {
-      const thisFeed = feedResponse.data.find(feed => feed.pk === sk);
-      if (thisFeed) {
-        setLikesCount(thisFeed.likesCount || 0);
-        // 디버깅용
-        console.log('likesCount:', thisFeed.likesCount, 'sk:', sk);
-      } else {
-        setLikesCount(0);
+ const fetchUserLikeStatus = async () => {
+    try {
+      // 1. 좋아요 수는 항상 가져옴
+      const feedResponse = await axios.get(`/main?feedType=${feedType}`);
+      if (feedResponse.data) {
+        const thisFeed = feedResponse.data.find(feed => feed.pk === sk);
+        if (thisFeed) {
+          setLikesCount(thisFeed.likesCount || 0);
+        } else {
+          setLikesCount(0);
+        }
       }
+
+      // 2. 로그인한 경우에만 내 좋아요 상태 확인
+      if (user && user.id) {
+        const likeResponse = await axios.get(`/main/like?userId=${user.id}`);
+        const userLiked = likeResponse.data.some(like => like.sk === sk);
+        setLiked(userLiked);
+      } else {
+        setLiked(false);
+      }
+    } catch (error) {
+      console.error('Error fetching like status:', error);
     }
-  } catch (error) {
-    console.error('Error fetching user like status:', error);
   }
-};
 
 useEffect(() => {
   fetchUserLikeStatus();

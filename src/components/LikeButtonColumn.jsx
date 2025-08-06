@@ -10,28 +10,21 @@ import { useAtom } from 'jotai';
 import { likedProjectsAtom, feedTypeAtom } from '../Atoms.jsx/AtomStates';  
 import { useAuth } from '../context/AuthContext';
 
-const LikeButtonColumn = ({ initialLiked, initialLikesCount, onLikeChange, userId, sk, feedType }) => {
+const LikeButtonColumn = ({ initialLiked, initialLikesCount, onLikeChange, userId, sk }) => {
   const [liked, setLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
   const { isLoggedIn: authIsLoggedIn } = useAuth();
   const [likedProjects, setLikedProjects] = useAtom(likedProjectsAtom);
-  const [globalFeedType] = useAtom(feedTypeAtom);
+  const [feedType, setFeedType] = useAtom(feedTypeAtom);
   const { user } = useAuth();
   const location = useLocation();
 
   // feedType prop 우선, 없으면 globalFeedType 사용
-  const effectiveFeedType = feedType || globalFeedType;
-
+  
   const fetchUserLikeStatus = async () => {
-    if (!user?.id || !sk) return;
     try {
-      // 1. 내 좋아요 상태 확인
-      const likeResponse = await axios.get(`/main/like?userId=${user.id}`);
-      const userLiked = likeResponse.data.some(like => like.sk === sk);
-      setLiked(userLiked);
-
-      // 2. 전체 피드에서 해당 sk의 좋아요 수 찾기
-      const feedResponse = await axios.get(`/main?feedType=${effectiveFeedType}`);
+      // 1. 좋아요 수는 항상 가져옴
+      const feedResponse = await axios.get(`/main?feedType=${feedType}`);
       if (feedResponse.data) {
         const thisFeed = feedResponse.data.find(feed => feed.pk === sk);
         if (thisFeed) {
@@ -40,20 +33,29 @@ const LikeButtonColumn = ({ initialLiked, initialLikesCount, onLikeChange, userI
           setLikesCount(0);
         }
       }
+
+      // 2. 로그인한 경우에만 내 좋아요 상태 확인
+      if (user && user.id) {
+        const likeResponse = await axios.get(`/main/like?userId=${user.id}`);
+        const userLiked = likeResponse.data.some(like => like.sk === sk);
+        setLiked(userLiked);
+      } else {
+        setLiked(false);
+      }
     } catch (error) {
-      console.error('Error fetching user like status:', error);
+      console.error('Error fetching like status:', error);
     }
   };
 
   useEffect(() => {
     fetchUserLikeStatus();
     // eslint-disable-next-line
-  }, [user, sk, authIsLoggedIn, effectiveFeedType, location.pathname]);
+  }, [user, sk, authIsLoggedIn, feedType, location.pathname]);
 
   const handleClick = async (e) => {
     if (!user) return;
     e.stopPropagation();
-    const likeData = { pk: user?.id, sk, feedType: effectiveFeedType };
+    const likeData = { pk: user?.id, sk, feedType: feedType };
     try {
       if (!liked) {
         // 좋아요 추가
@@ -78,7 +80,9 @@ const LikeButtonColumn = ({ initialLiked, initialLikesCount, onLikeChange, userI
         icon={liked ? faHeart : regularHeart}
         style={{ color: liked ? '#ff3b3b' : '#222', fontSize: 15, marginBottom: 2 }}
       />
-      <span style={{ fontSize: 15, color: '#222', fontWeight: 500 }}>{Math.abs(likesCount)}</span>
+      <span style={{ fontSize: 15, color: '#222', fontWeight: 500 }}>
+        {Math.abs(likesCount)}
+      </span>
     </LikeBox>
   );
 };

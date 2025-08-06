@@ -294,7 +294,7 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
       <CommentInputWrapper>
       <UserSection>
                   <FontAwesomeIcon icon={faUser} style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px',  }} />
-                 <strong>{user.nickname}</strong>
+                 <strong>{user?.nickname}</strong>
                 </UserSection>
         <CommentInput
           as="textarea"

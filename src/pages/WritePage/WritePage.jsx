@@ -20,13 +20,20 @@ const recruitTypes = ['프로젝트', '스터디'];
 const peopleOptions = ['1명', '2명', '3명', '4명', '5명 이상'];
 const roles = ['프론트엔드', '백엔드', '디자이너'];
 const places = ['서울', '경기', '인천', '비대면', '기타'];
-const during =  ['1개월', '2개월', '3개월', '4개월', '5개월','기간 미정'];
+const during = [
+
+  { value: 1, label: '1개월' },
+  { value: 2, label: '2개월' },
+  { value: 3, label: '3개월' },
+  { value: 4, label: '4개월' },
+  { value: 0, label: '기간 미정' },
+];
 
 const WritePage = () => {
   // const location = useLocation();
   // const query = new URLSearchParams(location.search);
   // const feedTypeFromQuery = query.get('feedType'); // 쿼리 파라미터에서 feedType 가져오기
-  const [feedType, setFeedType] = useAtom(feedTypeAtom);
+  
 
   // const [feedType, setFeedType] = useState(feedTypeFromQuery || initialFeedType || 'PROJECT'); // 쿼리 파라미터가 없으면 초기값 사용
   const [selectedSavedProject] = useAtom(selectedSavedProjectAtom); // 아톰에서 프로젝트 정보 가져오기
@@ -37,29 +44,25 @@ const WritePage = () => {
   console.log('selectedSavedProject', selectedSavedProject);
 
   const navigate = useNavigate();
+  const [feedType, setFeedType] = useState(selectedSavedProject ? selectedSavedProject.sk : '');
   const [title, setTitle] = useState(selectedSavedProject ? selectedSavedProject.title : ''); // 프로젝트 제목 초기화
   const [description, setDescription] = useState(selectedSavedProject ? selectedSavedProject.content : ''); // 프로젝트 내용 초기화
   const [progress, setProgress] = useState(selectedSavedProject ? selectedSavedProject.place : ''); // 진행 장소 초기화
   const [deadline, setDeadline] = useState(selectedSavedProject ? selectedSavedProject.deadline : ''); // 마감일 초기화
-  const [period, setPeriod] = useState(selectedSavedProject ? selectedSavedProject.period : ''); // 진행기간 초기화
+  const [period, setPeriod] = useState(selectedSavedProject ? selectedSavedProject.period : 0); // 기본값을 0으로 설정
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef();
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
   const nickname = user ? user.nickname : 'Unknown'; //사용자 닉네임 설정
   // const [participants, setParticipants] = useState(0);
-  const showSearch = false;
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열기 상태
   const [recruitmentNum, setRecruitmentNum] = useState(0); // recruitmentNum 상태 추가
   const [showAlertPopup, setShowAlertPopup] = useState(false); // 경고 모달 상태 추가
-  // const [isProject, setIsProject] = useState(true); // 프로젝트 여부 상태 추가
-  const [recruitType, setRecruitType] = useState(null);
   const [people, setPeople] = useState(null);
-  const [role, setRole] = useState(null);
-  const [place, setPlace] = useState(null);
   const [popupMessage, setPopupMessage] = useState(''); // 팝업 메시지 상태
   
-
+console.log(period)
   const option1 = [
     { value: '기간 미정', label: '기간 미정' },
     { value: '1개월', label: '1개월' },
@@ -140,10 +143,10 @@ const option3 = [
   { value: 'Solidity', label: 'Solidity' },
 ];
 
-// 선택된 역할 변경 시 로그 출력
-useEffect(() => {
-  console.log('현재 선택된 역할:', selectedRoles);
-}, [selectedRoles]);
+// // 선택된 역할 변경 시 로그 출력
+// useEffect(() => {
+//   console.log('현재 선택된 역할:', selectedRoles);
+// }, [selectedRoles]);
 
 const handleSubmit = async (e, isTemporary) => {
   e.preventDefault();
@@ -153,7 +156,7 @@ const handleSubmit = async (e, isTemporary) => {
       setShowAlertPopup('로그인 상태가 아닙니다. 로그인 후 다시 시도해주세요.');
       return;
   }
-  console.log("isTemporary", isTemporary);
+  // console.log("isTemporary", isTemporary);
   //임시저장 ->게시물 : postStatus = true, savedFeed = false
 
   const missingFields = [];
@@ -506,16 +509,7 @@ const handleDelete = async () => {
       <MainContent>
         <NavigationBar showSearch={false} />
         {/* <WriteFormWrap> */}
-          <TagRow>
-            {selectedTags.map(tag => (
-              <Tag key={tag}>
-                {tag}
-                <span className="delete-icon" onClick={() => handleTagDelete(tag)}>×</span>
-              </Tag>
-            ))}
-            <TagAdd onClick={handleAddTagClick}>+ 추가하기</TagAdd>
-          </TagRow>
-
+          
          
           <TitleInput>
             <InputField
@@ -528,6 +522,17 @@ const handleDelete = async () => {
             )}
           </TitleInput>
 
+          <TagRow>
+            {selectedTags.map(tag => (
+              <Tag key={tag}>
+                {tag}
+                <span className="delete-icon" onClick={() => handleTagDelete(tag)}>×</span>
+              </Tag>
+            ))}
+            <TagAdd onClick={handleAddTagClick}>+ 추가하기</TagAdd>
+          </TagRow>
+
+
           <GridRow>
             <GridCol>
               <Label>모집 구분</Label>
@@ -535,8 +540,8 @@ const handleDelete = async () => {
                 {recruitTypes.map(type => (
                   <ToggleButton
                     key={type}
-                    active={feedType === type}
-                    onClick={() => setFeedType(feedType === type ? null : type)}
+                    active={feedType === (type === '프로젝트' ? 'PROJECT' : 'STUDY')}
+                    onClick={() => setFeedType(type === '프로젝트' ? 'PROJECT' : 'STUDY')}
                   >
                     {type}
                   </ToggleButton>
@@ -573,11 +578,11 @@ const handleDelete = async () => {
               <ButtonGroup>
                 {during.map(opt => (
                   <ToggleButton
-                    key={opt}
-                    active={period === opt}
-                    onClick={() => setPeriod(period === opt ? null : opt)}
+                    key={opt.value}
+                    active={period === opt.value}
+                    onClick={() => setPeriod(opt.value)} // opt.value를 사용하여 설정
                   >
-                    {opt}
+                    {opt.label}
                   </ToggleButton>
                 ))}
                 </ButtonGroup>
@@ -598,7 +603,7 @@ const handleDelete = async () => {
                   </ToggleButton>
                 ))}
               </ButtonGroup> */}
-                  <Dropdown 
+            <Dropdown 
             options={option2} 
             placeholder={"프론트엔드,백엔드..."} 
             showCountButtons={true}
@@ -628,6 +633,39 @@ const handleDelete = async () => {
             onChange={e => setDescription(e.target.value)}
             placeholder="본문을 작성해주세요"
           />
+
+
+<div style={{ marginTop: '0px' }}>
+        <ImageButton type="button" onClick={handleImageButtonClick}>
+          파일 첨부
+        </ImageButton>
+        <input
+          ref={fileInputRef}
+          type="file"
+          // accept="image/*"
+            accept="image/jpeg,image/png,image/gif,application/pdf"
+          style={{ display: 'none' }}
+          onChange={handleImageChange}
+        />
+      </div>
+
+      {imagePreview && (
+  <ImagePreviewWrapper>
+    {imagePreview.type?.includes('image/') ? (
+      // 이미지 파일인 경우
+      <PreviewImage src={URL.createObjectURL(imagePreview)} alt="미리보기" />
+    ) : (
+      // PDF 등 다른 파일인 경우
+      <FilePreview>
+        <FontAwesomeIcon icon={faPaperclip} style={{ marginRight: '8px' }} />
+        <FileName>{imagePreview.name}</FileName>
+      </FilePreview>
+    )}
+    <RemoveButton type="button" onClick={handleImageRemove} aria-label="파일 삭제">
+      ×
+    </RemoveButton>
+  </ImagePreviewWrapper>
+)}
 
           <ButtonRow>
             <SaveButton gray onClick={(e) => handleSubmit(e, true)}>임시 저장</SaveButton>
@@ -707,7 +745,7 @@ const WriteFormWrap = styled.div`
 const TagRow = styled.div`
   display: flex;
   gap: 8px;
-  margin-bottom: 18px;
+  margin-bottom: 40px;
 `;
 
 const Tag = styled.div`
@@ -742,13 +780,14 @@ const TitleInput = styled.div`
   background: #f7f7f7;
   border-radius: 8px;
   padding: 18px 20px;
-  margin-bottom: 80px;
+  margin-bottom: 20px;
   position: relative;
   border: 1.5px solid #ededed;
+  width:100%;
 `;
 
 const InputField = styled.input`
-  flex: 1;
+  width:100%;
   border: none;
   background: transparent;
   font-size: 22px;
@@ -861,8 +900,8 @@ const AuthorActions = styled.div`
   display: flex;
   gap: 8px;
   position: absolute;
- right: 5%;
- top: 82%;
+ right: 25%;
+ top: 48%;
 `;
 
 const ActionButton = styled.button`
@@ -876,4 +915,65 @@ const ActionButton = styled.button`
   &:hover {
     background-color: #a0dafb;
   }
+`;
+
+const ImageButton = styled.button`
+  padding: 5px 12px;
+  border:1px solid #858585;
+  border-radius: 5px;
+  background-color: white;
+  border-radius: 16px;
+    color: black;
+  cursor: pointer;
+
+    padding: 8px 18px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+`;
+
+const ImagePreviewWrapper = styled.div`
+  margin-top: 12px;
+  position: relative;
+  display: inline-block;
+`;
+
+const PreviewImage = styled.img`
+  max-width: 300px;
+  max-height: 300px;
+  border-radius: 8px;
+`;
+
+const RemoveButton = styled.button`
+  position: absolute;
+  top: 5px; /* 위쪽 간격을 줄여서 사진과 가까이 위치 */
+  right: 400px; /* 오른쪽 간격을 줄여서 사진과 가까이 위치 */
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 28px;
+  text-align: center;
+  padding: 0;
+  z-index: 2;
+`;
+
+const FilePreview = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  width: 100%;
+`;
+
+const FileName = styled.span`
+  font-size: 14px;
+  color: #333;
+  word-break: break-all;
 `;

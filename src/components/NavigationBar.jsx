@@ -126,9 +126,9 @@ const NavigationBar = ({showSearch}) => {
                 placeholder="Search projects"
               />
             </SearchBar>
-            <FilterButton>
+            {/* <FilterButton>
               <FontAwesomeIcon icon={faSlidersH} style={{ color: '#C3C3C3' }} />
-            </FilterButton>
+            </FilterButton> */}
             <SearchButton onClick={handleAddButtonClick}>
               <FontAwesomeIcon icon={faSearch} style={{ color: 'white' }} />
             </SearchButton>
@@ -151,6 +151,9 @@ const NavigationBar = ({showSearch}) => {
             {selectedTags.length > 0 && (
               <ResetButton onClick={handleResetTags}>초기화</ResetButton>
             )}
+            <FilterButton>
+              <FontAwesomeIcon icon={faSlidersH} style={{ color: '#C3C3C3' }} />
+            </FilterButton>
           </TagsRow>
           )}
           
@@ -237,7 +240,7 @@ const NavContent = styled.div`
 const IconBar = styled.div`
   position: absolute;
   top: 24px;
-  right: 200px;
+  right:100px;
   display: flex;
   align-items: center;
   gap: 15px;
@@ -277,6 +280,8 @@ const Logo = styled.div`
    @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
    margin-top: 20px;
   }
+     z-index: 10; 
+
 `;
 const SearchContainer = styled.div`
   display: flex;
@@ -294,7 +299,7 @@ const SearchBar = styled.div`
   border-radius: 8px;
   padding: 0 16px;
   flex-grow: 1;
-  height: 44px;
+  height: 60px;
 `;
 
 // const SearchIcon = styled.img`
@@ -322,7 +327,8 @@ const SearchInput = styled.input`
   color: #858585;
   width: 100%;
   outline: none;
-  padding : 4px 0px;
+  padding: 8px 0; /* 위아래 패딩을 늘려서 높이 증가 */
+  height: 460px; /* 원하는 높이로 설정 */
   
   &::placeholder {
     color: #858585;
@@ -334,16 +340,17 @@ const FilterButton = styled.button`
   background-color: #F3F0F0;
   border: none;
   border-radius: 8px;
-  height: 44px;
-  width: 44px;
-  min-width: 44px;
-  min-height: 44px;
+  height: 20px;
+  width:20px;
+  min-width: 30px;
+  min-height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   font-size: 20px;
   // margin-left: 8px;
+  margin-bottom:8px;
 `;
 
 const SearchButton = styled.button`
@@ -360,6 +367,7 @@ const SearchButton = styled.button`
   cursor: pointer;
   font-size: 20px;
   // margin-left: 8px;
+  margin-bottom: 10px;
 `;
 
 const TagsRow = styled.div`

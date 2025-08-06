@@ -50,31 +50,12 @@ const ApplyPage = () => {
 
 
 
-//============================================================
-//존 프로젝트 진짜 api연결하는거 
-  // const fetchProjectDetails = useCallback(async () => {
-  //   try {
-  //     const response = await axios.get(`/main?feedType=${sk}`); // sk 값을 사용
-  //     const selectedProject = response.data.find(item => item.pk === projectId); // 특정 프로젝트 찾기
-      
-  //     if (selectedProject) {
-  //       console.log("Selected Project:", selectedProject); // 프로젝트 정보 콘솔로 출력
-  //       setProject(selectedProject);
-  //     } else {
-  //       setProject(null);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching project details:", error);
-  //     setProject(null); // 오류 발생 시 상태를 null로 설정
-  //   }
-  // }, [projectId, sk]); // sk를 의존성 배열에 추가
 
   //이것만 사용해도 될스도 있음. 위에거 삭제하고
 useEffect(() => {
   setProject(selectedProjectDetail);
 }, [selectedProjectDetail]);
   // setProject(selectedProjectDetail);   -> d아톰 이용    댓글 바뀔때도 리렌더링 되게 해야함 
-
 
 
 
@@ -197,7 +178,7 @@ useEffect(() => {
 
 const handleEdit = () => {
   setSelectedSavedProject(project);
-  navigate('/WritePage');
+  navigate('/WritePage1');
 };
 
 const handleDelete = async () => {
@@ -296,6 +277,17 @@ const handleChatClick = () => {
               </InfoCell>
             </InfoRow>
           </InfoTable>
+
+
+          {user && user.id === project.creatorId ? (
+                    <AuthorActions>
+                    <ActionButton onClick={handleEdit}>수정</ActionButton>
+                    <ActionButton onClick={() => setPopupMessage(true)}>삭제</ActionButton>
+                  </AuthorActions>
+          ) : (
+            <ApplyButton onClick={handleApplyClick}>신청하기</ApplyButton>
+          
+          )}
         </TopBox>
 
         <PostDescription>
@@ -457,7 +449,7 @@ const BackButton = styled.button`
 const TopBox = styled.div`
   background: #f5fbff;
   border-radius: 12px;
-  padding: 32px 32px 32px 32px;
+  padding: 32px 32px 60px 32px;
   margin-bottom: 32px;
 `;
 
@@ -636,7 +628,7 @@ const TagButton = styled.button`
 const ApplyButton = styled.button`
 position: absolute;
  right: 5%;
- top: 82%;
+ top: 55%;
   border: none;
   border-radius: 30px 30px 1px 30px;
   padding: 10px 30px;
@@ -689,7 +681,7 @@ const AuthorActions = styled.div`
   gap: 8px;
   position: absolute;
  right: 5%;
- top: 82%;
+ top: 55%;
 `;
 
 const ActionButton = styled.button`

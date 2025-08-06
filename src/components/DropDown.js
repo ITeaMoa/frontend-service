@@ -160,11 +160,11 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
                 />
                 <FontAwesomeIcon
                     icon={isOpen ? faChevronUp : faChevronDown} 
-                    style={{ color:  '#A0DAFB', fontSize:"1.2em" }}
+                    style={{ color:  '#858585', fontSize:"1.2em" }}
                 />
             </DropdownHeader>
             {isOpen && (
-                <DropdownList>
+                <DropdownList  dropdownType={dropdownType}>
                     {filteredOptions.length > 0 ? (
                         filteredOptions.map(option => (
                             <DropdownItem 
@@ -200,15 +200,23 @@ const DropdownWrapper = styled.div`
     ${({ dropdownType }) => dropdownType === 'main' && `
   
     width: 110%;
-        left: -30px;
+    left: -30px;
         
     `}
      ${({ dropdownType }) => dropdownType === 'profile' && `
   
     width: 100%;
-        left: -30px;
-        
-    `}
+    left: -30px;  `}
+
+    ${({ dropdownType }) => dropdownType === 'roles' && `
+    
+        width: 100%;
+            // left: -20px;
+            left:-20px;
+            
+
+            
+        `}
 
 
 
@@ -217,40 +225,33 @@ const DropdownWrapper = styled.div`
 `;
 
 const DropdownHeader = styled.div`
-    border: 2px solid ${({ isFocused, dropdownType }) => (dropdownType === 'main' || dropdownType === 'profile' ? 'transparent' : isFocused ? '#007BFF' : '#A0DAFB')};
-    border-radius: 15px;
-    padding: 8px;   
-    cursor: pointer;
-    background-color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-left: 20px;
-    font-size: 14px;
-    color: black;
-
-    
-
-   
-   
-   
+  border: 1px solid ${({ isFocused, dropdownType }) => 
+    dropdownType === 'roles' ? '#858585' : (isFocused ? '#007BFF' : '#A0DAFB')};
+  border-radius: 15px;
+  padding: 8px;   
+  cursor: pointer;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-left: 20px;
+  font-size: 14px;
+  color: black;
 
 `;
 
 const DropdownList = styled.div`
-    position: absolute;
-    // border: 2px solid #A0DAFB;
-    border :  ${({ dropdownType }) => (dropdownType === 'roles' ? ' 2px solid #858585' : '2px solid #A0DAFB')};
-    border-radius: 15px;
-    background: white;
-    width: 92%;
-    max-height: 250px;
-    overflow-y: auto;
-    z-index: 2000;
-    margin-top: 3px;
-    margin-left: 20px;
-
-
+  position: absolute;
+  border: 1px solid ${({ dropdownType }) => 
+    dropdownType === 'roles' ? '#858585' : '#A0DAFB'};
+  border-radius: 15px;
+  background: white;
+  width: 92%;
+  max-height: 250px;
+  overflow-y: auto;
+  z-index: 2000;
+  margin-top: 3px;
+  margin-left: 20px;
 `;
 
 const SearchInput = styled.input`
@@ -259,7 +260,8 @@ const SearchInput = styled.input`
     width: 100%;
     box-sizing: border-box;
     outline: none;
-    z-index: 1000;
+        // z-index: 1000;
+    z-index: 1;
 
     &::placeholder {
         color: ${({ isSelected }) => (isSelected ? 'black' : 'grey')};
@@ -273,7 +275,7 @@ const CountContainer = styled.div`
 `;
 
 const Button = styled.button`
-    border: 1px solid #A0DAFB;
+    border: 1px solid #858585;
     background: white;
     padding: 4px 8px;
     cursor: pointer;

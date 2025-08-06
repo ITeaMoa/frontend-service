@@ -103,11 +103,12 @@ const MessageList = ({ onSendMessage }) => {
   const orderedMessages = [...messageList].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
   const messageEndRef = useRef(null);
 
+  // 컴포넌트가 마운트될 때 스크롤을 아래로 내리기
   useEffect(() => {
     if (messageEndRef.current) {
-      messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      messageEndRef.current.scrollIntoView({ behavior: 'auto' }); // 'smooth' 대신 'auto'로 설정
     }
-  }, [messageList]);
+  }, []); // 처음 마운트될 때만 실행
 
   let lastDate = null;
   const handleKeyDown = (e) => {

@@ -1,4 +1,4 @@
-import MainPage from "./pages/MainPage/page";
+import MainPage1 from "./pages/MainPage/page";
 import WritePage from "./pages/WritePage";
 import ApplyPage from "./pages/ApplyPage/page";
 import SearchPage from "./pages/SearchPage/page";
@@ -10,7 +10,7 @@ import { AuthProvider } from './context/AuthContext'; // 경로를 맞춰주세�
 import { ThemeProvider } from 'styled-components';
 import theme from './components/Theme';
 import MessagePage from './pages/Messeage/page/MessagePage';
-import MainPage1 from './pages/MainPage/page/MainPage';
+import MainPage from './pages/MainPage/page/MainPage';
 import SearchPage1 from './pages/SearchPage/page/SearchPage';
 import WritePage1 from './pages/WritePage/WritePage';
 import ApplyPage1 from './pages/ApplyPage/page/ApplyPage';

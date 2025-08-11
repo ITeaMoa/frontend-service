@@ -1,18 +1,45 @@
 import React from 'react';
 import styled from 'styled-components';
 import LikeButtonColumn from '../../../components/LikeButtonColumn';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye } from '@fortawesome/free-solid-svg-icons';
+import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
+
 
 // 필요한 스타일드 컴포넌트 import 또는 아래처럼 정의
 // ProjectCard, ProjectTitle, ProjectTag, ProjectDescription, ProjectDetail, VerticalLikeButton, ApplyButton 등
 
-const ProjectFeedCard = ({ project, handleProjectClick, onApplyClick }) => (
+const ProjectFeedCard = ({ project, handleProjectClick, onApplyClick }) => {
+  // formatDate 함수를 컴포넌트 상단으로 이동
+  const formatDate = (dateStr) => {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+  };
+
+  return (
   <ProjectCard onClick={() => handleProjectClick && handleProjectClick(project)}>
     <CardHeader>
-      <ProfileWrap>
-        <ProfileImg src={project.profile || "/images/default_profile.png"} alt="profile" />
+    <ProfileWrap>
+        <ProfileCircle>
+          {project.avatarUrl || project.profile ? (
+            <ProfileImg
+              src={project.avatarUrl ? encodeURI(project.avatarUrl) : project.profile}
+              alt="profile"
+            />
+          ) : (
+            <FontAwesomeIcon
+              icon={regularUser}
+              style={{ fontSize: '22px', color: '#bbb' }}
+            />
+          )}
+        </ProfileCircle>
         <Nickname>{project.nickname}</Nickname>
       </ProfileWrap>
-      <Views>👁 {project.views ?? 0}</Views>
+      <Views>
+        <FontAwesomeIcon icon={faEye} style={{ marginRight: 4 }} />
+        {project.views ?? 0}
+      </Views>
     </CardHeader>
     <ProjectTitle>{project.title}</ProjectTitle>
     <ProjectTags>
@@ -47,6 +74,7 @@ const ProjectFeedCard = ({ project, handleProjectClick, onApplyClick }) => (
     </CardFooter>
   </ProjectCard>
 );
+};
 
 export default ProjectFeedCard;
 
@@ -77,23 +105,23 @@ const ProfileWrap = styled.div`
   align-items: center;
 `;
 
-const ProfileImg = styled.img`
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  margin-right: 8px;
-  object-fit: cover;
-`;
+// const ProfileImg = styled.img`
+//   width: 32px;
+//   height: 32px;
+//   border-radius: 50%;
+//   margin-right: 8px;
+//   object-fit: cover;
+// `;
 
-const Nickname = styled.span`
-  font-weight: 600;
-  font-size: 15px;
-`;
+// const Nickname = styled.span`
+//   font-weight: 600;
+//   font-size: 15px;
+// `;
 
-const Views = styled.span`
-  color: #b0b0b0;
-  font-size: 15px;
-`;
+// const Views = styled.span`
+//   color: #b0b0b0;
+//   font-size: 15px;
+// `;
 
 const ProjectTitle = styled.h3`
   font-size: 20px;
@@ -180,9 +208,32 @@ const ApplyButton = styled.button`
   }
 `;
 
-function formatDate(dateStr) {
-  if (!dateStr) return '';
-  const d = new Date(dateStr);
-  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
-}
 
+const ProfileCircle = styled.div`
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #f3f3f3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-right: 8px;
+`;
+
+const ProfileImg = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+`;
+
+const Nickname = styled.span`
+  font-weight: 600;
+  font-size: 15px;
+`;
+
+const Views = styled.span`
+  color: #b0b0b0;
+  font-size: 15px;
+`;

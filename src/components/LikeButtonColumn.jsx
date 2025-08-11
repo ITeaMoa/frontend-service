@@ -101,9 +101,13 @@ const LikeBox = styled.div`
   color: #222;
   box-shadow: none;
   padding: 0;
-  user-select: none;
+  user-select: none;//마우스 드래그 방지
   border: none;
   cursor: pointer;
+   transition: background 0.15s, border-color 0.15s; /* 테두리 색상 변경에 대한 전환 추가 */
+   &:hover {
+    border:1px solid #62b9ec;
+  }
 `;
 
 export default LikeButtonColumn;

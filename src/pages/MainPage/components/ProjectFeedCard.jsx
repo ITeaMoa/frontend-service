@@ -8,7 +8,13 @@ import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 // 필요한 스타일드 컴포넌트 import 또는 아래처럼 정의
 // ProjectCard, ProjectTitle, ProjectTag, ProjectDescription, ProjectDetail, VerticalLikeButton, ApplyButton 등
 
-const ProjectFeedCard = ({ project, handleProjectClick, onApplyClick }) => (
+const ProjectFeedCard = ({ project, handleProjectClick, onApplyClick }) => {
+  const formatDate = (dateStr) => {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+  };
+  return (
   <ProjectCard onClick={() => handleProjectClick && handleProjectClick(project)}>
     <CardHeader>
       <ProfileWrap>
@@ -61,7 +67,8 @@ const ProjectFeedCard = ({ project, handleProjectClick, onApplyClick }) => (
       </ApplyButton>
     </CardFooter>
   </ProjectCard>
-);
+  );
+};
 
 export default ProjectFeedCard;
 
@@ -209,10 +216,4 @@ const ApplyButton = styled.button`
     background: #62b9ec;
   }
 `;
-
-function formatDate(dateStr) {
-  if (!dateStr) return '';
-  const d = new Date(dateStr);
-  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
-}
 

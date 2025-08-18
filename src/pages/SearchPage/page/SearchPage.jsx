@@ -25,7 +25,7 @@ import Pagination from '../../../components/Pagination';
 
 
 
-const MainPage = () => {
+const SearchPage = () => {
   const { isLoggedIn, user } = useAuth();
   // const [isLoggedIn, setIsLoggedIn] = useAtom(IS_LOGGED_IN);
   const [feedType, setFeedType] = useAtom(feedTypeAtom);
@@ -309,9 +309,17 @@ const MainPage = () => {
         <Pagination
           currentPage={currentPage}
           projectsPerPage={projectsPerPage}
-          totalProjects={allProjects.length}
+          totalProjects={currentProjects.length}
           onPageChange={handlePageChange}
         />
+{/* 
+
+<Pagination 
+        currentPage={currentPage}
+        projectsPerPage={projectsPerPage}
+        totalProjects={projects.length}
+        onPageChange={handlePageChange}
+      /> */}
       </div>
 
       {/* Footer */}
@@ -906,4 +914,4 @@ const ModalButton = styled.button`
 `;
 
 
-export default MainPage; 
+export default SearchPage; 

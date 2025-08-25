@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import Nav from '../../../components/Nav';
+import NavigationBar from '../../../components/NavigationBar';
 import MessagePeople from '../components/MessagePeople';
 import MessageList from '../components/MessageList';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -208,7 +208,7 @@ useEffect(() => {
 
   return (
     <>
-      <Nav showSearch={false} showToggle={false} simple={true}/>
+      <NavigationBar showSearch={false} showToggle={false} simple={true}/>
       <Container>
         <LeftPanel>
           <Title>메시지</Title>

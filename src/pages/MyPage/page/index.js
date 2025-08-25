@@ -1,6 +1,6 @@
 import React, { useEffect, useState,  } from 'react';
 import styled from 'styled-components';
-import Nav from "../../../components/Nav";
+import NavigationBar from "../../../components/NavigationBar";
 // import axios from 'axios';
 import ProjectDetail from '../components/ProjectDetail';
 // import ProjectListComponent from './ProjectListComponent_del';
@@ -16,6 +16,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 import AlertModal from '../../../components/AlertModal';
+import { ContentsWrap , MainContent} from '../../../assets/BusinessAnalysisStyle';
 
 const MyPage = () => {
   const [projects, setProjects] = useState([]);
@@ -582,11 +583,14 @@ const handleConfirmCancel = async () => {
 
   return (
     <>
-    <Container>
+       <ContentsWrap>
+       <MainContent Wide1030>
+    
+    {/* <Container> */}
       {/* <Nav  showSearch={showSearch}  onToggleChange={handleToggleChange}/> */}
-      <Nav  showSearch={showSearch}  />
+      <NavigationBar  showSearch={showSearch}  />
 
-            <TabWrapType3 Border>
+        <TabWrapType3 Border>
         {['applied', 'interested', 'written', 'saved', 'closed', 'profile'].map((tabType) => (
           <TabButtonType3
             key={tabType}
@@ -732,9 +736,10 @@ const handleConfirmCancel = async () => {
           <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton>
         </ButtonContainer>
       </Modal>
+      </MainContent>
+    </ContentsWrap>
+    {/* </Container> */}
 
-      
-    </Container>
     <AlertModal
   isOpen={!!showAlertPopup}
   message={showAlertPopup}
@@ -792,24 +797,38 @@ const TabWrapType3 = styled.div`
 `;
 
 
-const TabButtonType3 = styled.a`
+// Define the styled component for the tab button
+const TabButtonType3 = styled.button`
+  background: none;
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+  color: #000; // Default text color
   cursor: pointer;
-  color: ${(props) => (props.isActive ? 'white' : '#0A8ED9')}; 
-  background-color: ${(props) => (props.isActive ? 'rgba(160, 218, 251)' : 'white')}; 
-  font-weight: ${(props) => (props.isActive ? 'bold' : 'normal')}; 
-  border: 2px solid rgba(160, 218, 251); 
-  border-radius: 30px 30px 1px 30px; 
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); 
-  padding: 10px 25px; 
-  margin-right: 20px; 
-  text-decoration: none; 
+  padding: 10px 20px; // Adjust padding as needed
+  position: relative;
+  margin-right: 25px;
 
-  &:hover {
-    background-color: rgba(160, 218, 251); 
-    color: white; 
+  &.active {
+    color: #00aeff; // Active tab color
+    font-weight: bold; // Make active tab bold
   }
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+  &:hover {
+    color: #00aeff; // Change color on hover
+  }
+
+  // Add underline effect for active tab
+  &.active::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -0px; // Adjust position as needed
+    transform: translateX(-50%);
+    width: 80%; // Full width underline
+    height: 2px; // Underline thickness
+    background-color: #00aeff; // Underline color
+  }
 `;
 
 const ProjectList = styled.div`
@@ -818,8 +837,8 @@ const ProjectList = styled.div`
   padding-bottom: 0px;
   border: 2px solid #A0DAFB;
   border-radius: 20px;
-  width:50vw;
-  max-width: 800px; 
+  // width:50vw;
+  // max-width: 800px; 
   overflow-x: auto;
   transition: transform 0.5s ease;
   transform: ${(props) => (props.isFading ? 'translateX(100%)' : 'translateX(0)')};

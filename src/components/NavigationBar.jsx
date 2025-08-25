@@ -234,7 +234,7 @@ const NavContent = styled.div`
 `;
 
   const NavBarPlaceholder = styled.div`
-    height: ${({ showSearch }) => showSearch ? '250px' : '150px'}; /* Adjust this value to match the NavigationBar's total height */
+    height: ${({ showSearch }) => showSearch ? '260px' : '150px'}; /* Adjust this value to match the NavigationBar's total height */
   `;
 
 const IconBar = styled.div`
@@ -275,10 +275,10 @@ const Logo = styled.div`
     max-width: 250px;
     cursor: pointer;
   }
-    margin-top: ${({ simple }) => (simple ? '50px' : '-50px')}; 
+    margin-top: ${({ simple }) => (simple ? '50px' : '-30px')}; 
 
    @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-   margin-top: 20px;
+  //  margin-top: 10px;
   }
      z-index: 10; 
 

@@ -370,8 +370,6 @@ const MainPage = () => {
   return (
     <>
     <ContentsWrap>
-    {/* <PageContainer> */}
-    {/* <Nav/> */}
     <MainContent Wide1030>
       {/* Header with Logo and Search */}
       <NavigationBar showSearch={true}

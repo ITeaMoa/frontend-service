@@ -23,6 +23,8 @@ import RoleSelectionModal from '../../../components/RoleSelectionModal';
 import Pagination from '../../../components/Pagination';
 import ProfileModal from '../../../components/ProfileModal';
 import MainCarousel from '../components/MainCarousel';
+import { faPen } from '@fortawesome/free-solid-svg-icons'; // Import the pencil icon
+
 
 
 
@@ -440,9 +442,10 @@ const MainPage = () => {
         ))}
       </ProjectFeed>
 
-      <div style={{ display: "flex", justifyContent: "center", margin: "32px 0" }}>
+      <div style={{ display: "flex", justifyContent: "center"}}>
         <AddButton onClick={handleAddButtonClick} >
-          피드 작성하기
+          <FontAwesomeIcon icon={faPen} style={{ color: '#fff', fontSize: '16px' }} /> {/* FontAwesome icon */}
+          글쓰기
         </AddButton>
       </div>
 
@@ -960,8 +963,9 @@ const ToggleCircle = styled.div`
 const ToggleCheck = styled.div`
   width: 12px;
   height: 12px;
-  background-color: white;
-  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  background-color: white; // Change to the desired color
+  border-radius: 50%; // Make it circular
+  border: 2px solid #00aeff; // Add border color to match the design
 `;
 
 const ProjectFeed = styled.div`
@@ -1064,27 +1068,35 @@ const ModalButton = styled.button`
 `;
 
 const AddButton = styled.button`
-  background: #00aeff;
+  background: #535353;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  gap: 10px;
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
   padding: 10px 28px;
-  font-size: 18px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   margin-bottom: 16px;
   transition: background 0.15s;
   &:hover:enabled {
-    background: #0090d9;
+    background: #535353;
   }
   &:disabled {
     background: #e0e0e0;
     color: #aaa;
     cursor: not-allowed;
   }
-    position: fixed;
-  right: 100px;
-  bottom: 50px;
+  position: fixed;
+  right: 10%;
+  bottom: 10%;
   
 `;
 

@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { selectedSavedProjectAtom } from '../../../Atoms.jsx/AtomStates';
+import { faPen } from '@fortawesome/free-solid-svg-icons'; // Import the pencil icon
 
     
 
@@ -15,7 +16,7 @@ const ProjectItemComponent = ({ project, user, handleCancelApplication, isProjec
 
     const handleEditClick = () => {
         setSelectedSavedProject(project);
-        navigate('/WritePage');
+        navigate('/WritePage1');
     };
 
   return (
@@ -45,10 +46,11 @@ const ProjectItemComponent = ({ project, user, handleCancelApplication, isProjec
         <Button2 
         
           status="EDIT"
-          style={{ backgroundColor: '#C1C1C1' , marginTop: '80px'}}
+          style={{ backgroundColor: '#535353' , fontWeight: 'bold' ,marginTop: '80px'}}
           onClick={handleEditClick}
         >
-          수정
+            <FontAwesomeIcon icon={faPen} style={{ color: '#fff', fontSize: '16px',marginRight:'5px '}} /> {/* FontAwesome icon */}
+          글 수정하기
         </Button2>
       ) : (
         <Button2 
@@ -81,7 +83,7 @@ const ProjectItemComponent = ({ project, user, handleCancelApplication, isProjec
 
 const ProjectItem = styled.div`
 //   border: 1px solid #A0DAFB;
-  border : ${({ isSaved }) => (isSaved ? '1px solid #C1C1C1' : '1px solid #A0DAFB')};
+  border : ${({ isSaved }) => (isSaved ? '1px solid #E3F5FF' : '1px solid #A0DAFB')};
   border-radius: 10px;
   padding: 20px;
   margin-bottom: 15px;
@@ -136,11 +138,11 @@ const Tag = styled.span`
   margin-right: 5px;
   padding: 5px 10px;
   border: 1px solid #ddd;
-  border-radius: 14px 14px 1px 14px; 
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  background-color: white;
-  border-color: ${({ isSaved }) => (isSaved ? '#C1C1C1' : 'rgba(160, 218, 251)')}; // 저장된 프로젝트일 때 배경색 변경
-  color: ${({ isSaved }) => (isSaved ? '#C1C1C1' : '#0A8ED9')};
+  border-radius: 14px 14px 14px 14px; 
+  // box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: #E3F5FF;
+  border-color: ${({ isSaved }) => (isSaved ? '#E3F5FF' : 'rgba(160, 218, 251)')}; // 저장된 프로젝트일 때 배경색 변경
+  color: ${({ isSaved }) => (isSaved ? '#00AEFF' : '#0A8ED9')};
 `;
 
 const Button2 = styled.button`

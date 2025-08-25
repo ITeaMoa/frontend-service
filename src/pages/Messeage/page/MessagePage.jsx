@@ -10,7 +10,7 @@ import { useAuth } from '../../../context/AuthContext'
 import { useAtom } from 'jotai';
 import { SELECTED_PERSON_ID, MESSAGE_LIST } from '../../../Atoms.jsx/AtomStates';
 import { useLocation } from 'react-router-dom';
-
+import { ContentsWrap , MainContent} from '../../../assets/BusinessAnalysisStyle';
 
 const MessagePage = () => {
   const [selectedPerson, setSelectedPerson] = useState(null);
@@ -208,6 +208,8 @@ useEffect(() => {
 
   return (
     <>
+    <ContentsWrap>
+    <MainContent Wide1030>
       <NavigationBar showSearch={false} showToggle={false} simple={true}/>
       <Container>
         <LeftPanel>
@@ -248,6 +250,9 @@ useEffect(() => {
           )}
         </RightPanel>
       </Container> 
+      </MainContent>
+    {/* </PageContainer> */}
+    </ContentsWrap>
 
       {/* {showMessagePopup && (
         <PopupOverlay>
@@ -282,22 +287,23 @@ useEffect(() => {
 const Container = styled.div`
   position: relative;
   display: flex;
-  height: calc(100vh - 300px);
-  margin-top: 200px;
-  width:60%;
-  background-color: white;
-  padding-left: 150px;
-  padding-right: 150px;
-  margin-bottom: 200px;
-  /* 중앙 정렬을 위한 스타일 추가 */
-  margin-left: auto;
-  margin-right: auto;
+  height: 100%;
+  // height: calc(100vh - 300px);
+  // margin-top: 200px;
+  // width:60%;
+  // background-color: white;
+  // padding-left: 150px;
+  // padding-right: 150px;
+  // margin-bottom: 200px;
+  // /* 중앙 정렬을 위한 스타일 추가 */
+  // margin-left: auto;
+  // margin-right: auto;
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    width: 100%;
-    padding: 0 20px;
-    margin-top:400px;
-  }
+  // @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+  //   width: 100%;
+  //   padding: 0 20px;
+  //   margin-top:400px;
+  // }
 `;
 
 const LeftPanel = styled.div`

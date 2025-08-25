@@ -626,6 +626,12 @@ const handleDelete = async () => {
                 ))}
               </ButtonGroup>
             </GridCol>
+
+            {Object.keys(selectedSavedProject).length > 0 && (
+                    <AuthorActions>
+                    <ActionButton onClick={() => setPopupMessage(true)}>삭제</ActionButton>
+                  </AuthorActions>
+)}
           </GridRow>
 
           <TextArea
@@ -674,11 +680,7 @@ const handleDelete = async () => {
         {/* </WriteFormWrap> */}
       </MainContent>
 
-      {Object.keys(selectedSavedProject).length > 0 && (
-                    <AuthorActions>
-                    <ActionButton onClick={() => setPopupMessage(true)}>삭제</ActionButton>
-                  </AuthorActions>
-)}
+     
     </ContentsWrap>
 
     <Modal isOpen={isModalOpen} onClose={closeModal}>
@@ -900,8 +902,8 @@ const AuthorActions = styled.div`
   display: flex;
   gap: 8px;
   position: absolute;
- right: 25%;
- top: 48%;
+ right: 0%;
+ top: 47%;
 `;
 
 const ActionButton = styled.button`

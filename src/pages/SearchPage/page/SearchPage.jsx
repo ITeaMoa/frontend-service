@@ -121,7 +121,7 @@ const SearchPage = () => {
 
   const handleProjectClick = (project) => {
     console.log("mainprojecttodetail", project)
-    navigate(`/ApplyPage/${project.pk}`);
+    navigate(`/ApplyPage1/${project.pk}`);
     setSelectedProjectDetail(project);
   };
 
@@ -248,20 +248,9 @@ const SearchPage = () => {
   return (
     <>
     <ContentsWrap>
-    {/* <PageContainer> */}
-    {/* <Nav/> */}
     <MainContent Wide1030>
-      {/* Header with Logo and Search */}
-      <NavigationBar 
- 
-      />
-
-      {/* Carousel Section */}
      
-
-      {/* <PopularProject projects={popularProjects} handleProjectClick={handleProjectClick} /> */}
-
-      {/* Project Feed Toggle */}
+      <NavigationBar/>
       <FeedToggleSection>
         <SectionTitle>프로젝트 목록</SectionTitle>
         <ToggleContainer>
@@ -322,8 +311,6 @@ const SearchPage = () => {
       /> */}
       </div>
 
-      {/* Footer */}
-      {/* <Footer /> */}
       </MainContent>
     {/* </PageContainer> */}
     </ContentsWrap>

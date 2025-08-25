@@ -289,7 +289,7 @@ const Container = styled.div`
   display: flex;
   height: 100%;
   // height: calc(100vh - 300px);
-  // margin-top: 200px;
+  margin-top: 50px;
   // width:60%;
   // background-color: white;
   // padding-left: 150px;

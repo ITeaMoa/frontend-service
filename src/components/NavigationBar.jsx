@@ -93,10 +93,11 @@ const option3 = [
   };
 
   // 태그 선택
-  const handleTagSelect = (tag) => {
-    setSelectedTags((prev) => prev.includes(tag) ? prev : [...prev, tag]);
-  };
+  // const handleTagSelect = (tag) => {
+  //   setSelectedTags((prev) => prev.includes(tag) ? prev : [...prev, tag]);
+  // };
 
+  //객체만 처리
 //   const handleTagSelect = (option) => {
 //     setSelectedTags((prevTags) => {
 //         if (!prevTags.includes(option.label)) {
@@ -105,6 +106,21 @@ const option3 = [
 //         return prevTags;
 //     });
 // };
+
+//문자열 객체 모도 처리
+ const handleTagSelect = (tagOrOption) => {
+    // 객체인 경우 label 속성을 사용하고, 문자열인 경우 그대로 사용
+    const tag = typeof tagOrOption === 'object' && tagOrOption.label 
+      ? tagOrOption.label 
+      : tagOrOption;
+      
+    setSelectedTags((prevTags) => {
+      if (!prevTags.includes(tag)) {
+        return [...prevTags, tag]; // 선택된 태그 추가
+      }
+      return prevTags; // 이미 존재하면 그대로 반환
+    });
+  };
 
   // 태그 삭제
   const handleTagRemove = (tag) => {

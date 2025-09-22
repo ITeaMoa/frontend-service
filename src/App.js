@@ -77,7 +77,7 @@ function App() {
               <Route path="MessagePage" element={ <RequireToken><MessagePage /></RequireToken>} />
               {/* <Route path="MainPage1" element={<MainPage1 />} /> */}
               <Route path="WritePage" element={  <RequireToken><WritePage /></RequireToken>} />
-              <Route path="ApplyPage1/:projectId" element={  <RequireToken><ApplyPage1 /></RequireToken>} />
+              <Route path="ApplyPage1/:projectId" element={  <ApplyPage1 />} />
 
             </Route>
           </Routes>

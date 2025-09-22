@@ -16,7 +16,7 @@ const ProjectItemComponent = ({ project, user, handleCancelApplication, isProjec
 
     const handleEditClick = () => {
         setSelectedSavedProject(project);
-        navigate('/WritePage1');
+        navigate('/WritePage');
     };
 
   return (

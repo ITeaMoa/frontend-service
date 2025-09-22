@@ -80,7 +80,7 @@ const MainPage = () => {
       return; 
     }
     // navigate(`/WritePage?feedType=${feedType}`); 
-    navigate(`/WritePage1`); 
+    navigate(`/WritePage`); 
   };
 
   const [searchValue, setSearchValue] = useState("");

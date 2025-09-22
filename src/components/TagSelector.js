@@ -17,6 +17,8 @@ const TagSelector = ({ options, onTagSelect, selectedTags  }) => {
         option.label.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    console.log(selectedTags);
+
     return (
         <DropdownWrapper>
             {/* <HeaderContainer> */}

@@ -76,14 +76,14 @@ export default ProjectFeedCard;
 
 const ProjectCard = styled.div`
 background: #fff;
-border-radius: 16px;
-box-shadow: 0 2px 12px 0 rgba(0,0,0,0.07);
+border-radius: 8px;
+// box-shadow: 0 2px 12px 0 rgba(0,0,0,0.07);
 padding: 28px 24px 20px 24px;
 display: flex;
 flex-direction: column;
 min-height: 350px;
 justify-content: space-between;
-border: 1px solid #e6eaf2;
+border: 1px solid #E3F5FF;
  cursor: pointer;
  &:hover {
     border:1px solid #62b9ec;

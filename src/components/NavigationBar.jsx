@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import messageImg from '../assets/Image/message.png';
 import bellImg from '../assets/Image/Bell.png';
+import Modal from './Modal';
+import TagSelector from './TagSelector';
 
 const tagOptions = [
   "AWS", "Blockchain", "NodeJS", "React", "Java", "Dapp", "Git", "Backend"
@@ -21,6 +23,60 @@ const NavigationBar = ({showSearch}) => {
   const [showAlert, setShowAlert] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [alarms, setAlarms] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열기 상태
+
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  
+const option3 = [
+  { value: '웹', label: '웹' },
+  { value: '모바일', label: '모바일' },
+  { value: '정보보안', label: '정보보안' },
+  { value: 'AWS', label: 'AWS' },
+  { value: 'Git', label: 'Git' },
+  { value: 'Github', label: 'Github' },
+  { value: '클라우드', label: '클라우드' },
+  { value: '블록체인', label: '블록체인' },
+  { value: '인공지능', label: '인공지능' },
+  { value: '빅데이터', label: '빅데이터' },
+  { value: 'Spring Boot', label: 'Spring Boot' },
+  { value: 'React', label: 'React' },
+  { value: 'Vue', label: 'Vue' },
+  { value: 'Python', label: 'Python' },
+  { value: 'Node.js', label: 'Node.js' },
+  { value: 'TypeScript', label: 'TypeScript' },
+  { value: '게임', label: '게임' },
+  { value: 'UI/UX', label: 'UI/UX' },
+  { value: '알고리즘', label: '알고리즘' },
+  { value: '자료구조', label: '자료구조' },
+  { value: 'C/C++', label: 'C/C++' },
+  { value: 'C#', label: 'C#' },
+  { value: 'SQL', label: 'SQL' },
+  { value: 'NoSQL', label: 'NoSQL' },
+  { value: 'Django', label: 'Django' },
+  { value: 'Figma', label: 'Figma' },
+  { value: 'Swift', label: 'Swift' },
+  { value: 'Kotlin', label: 'Kotlin' },
+  { value: 'React Native', label: 'React Native' },
+  { value: 'Android', label: 'Android' },
+  { value: 'iOS', label: 'iOS' },
+  { value: 'GCP', label: 'GCP' },
+  { value: 'Kubernetes', label: 'Kubernetes' },
+  { value: 'Docker', label: 'Docker' },
+  { value: 'Ruby', label: 'Ruby' },
+  { value: 'R', label: 'R' },
+  { value: 'Go', label: 'Go' },
+  { value: 'Next.js', label: 'Next.js' },
+  { value: 'Express', label: 'Express' },
+  { value: 'Firebase', label: 'Firebase' },
+  { value: 'Linux/Unix', label: 'Linux/Unix' },
+  { value: '데이터마이닝', label: '데이터마이닝' },
+  { value: 'Solidity', label: 'Solidity' },
+];
+
 
   // 검색 입력 핸들러
   const handleChange = (e) => {
@@ -40,6 +96,15 @@ const NavigationBar = ({showSearch}) => {
   const handleTagSelect = (tag) => {
     setSelectedTags((prev) => prev.includes(tag) ? prev : [...prev, tag]);
   };
+
+//   const handleTagSelect = (option) => {
+//     setSelectedTags((prevTags) => {
+//         if (!prevTags.includes(option.label)) {
+//             return [...prevTags, option.label]; // 선택된 태그 추가
+//         }
+//         return prevTags;
+//     });
+// };
 
   // 태그 삭제
   const handleTagRemove = (tag) => {
@@ -132,7 +197,17 @@ const NavigationBar = ({showSearch}) => {
             <SearchButton onClick={handleAddButtonClick}>
               <FontAwesomeIcon icon={faSearch} style={{ color: 'white' }} />
             </SearchButton>
+            <Modal isOpen={isModalOpen} onClose={closeModal} modalType="nav">
+              <TagSelector
+                options={option3}
+                placeholder={"태그를 선택하시오"}
+                onTagSelect={handleTagSelect}
+                selectedTags={selectedTags}
+              />
+            </Modal>
           </SearchContainer>
+
+
           )}
           {showSearch && (
           <TagsRow>
@@ -151,10 +226,13 @@ const NavigationBar = ({showSearch}) => {
             {selectedTags.length > 0 && (
               <ResetButton onClick={handleResetTags}>초기화</ResetButton>
             )}
-            <FilterButton>
+            <FilterButton onClick={() => setIsModalOpen(true)}>
               <FontAwesomeIcon icon={faSlidersH} style={{ color: '#C3C3C3' }} />
             </FilterButton>
           </TagsRow>
+
+
+          
           )}
           
         </NavContent>
@@ -203,6 +281,8 @@ const NavigationBar = ({showSearch}) => {
           </AlertContent>
         </AlertToggle>
       )}
+
+      
     </>
   );
 };

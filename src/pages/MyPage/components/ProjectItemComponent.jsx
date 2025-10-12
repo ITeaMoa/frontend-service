@@ -1,6 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart } from '@fortawesome/free-solid-svg-icons';
+// import { faHeart  } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
@@ -10,14 +11,24 @@ import { faPen } from '@fortawesome/free-solid-svg-icons'; // Import the pencil 
 
     
 
-const ProjectItemComponent = ({ project, user, handleCancelApplication, isProjectCanceled, isSaved, isDisabled }) => {
+const ProjectItemComponent = ({ project, user, handleCancelApplication, isProjectCanceled, isSaved, isDisabled, handleButtonClick }) => {
     const navigate = useNavigate();
-    const [selectedSavedProject, setSelectedSavedProject] = useAtom(selectedSavedProjectAtom);
+    const [, setSelectedSavedProject] = useAtom(selectedSavedProjectAtom);
 
     const handleEditClick = () => {
         setSelectedSavedProject(project);
         navigate('/WritePage');
     };
+
+      const isProjectCompleted = (projectId) => {
+      const saved = localStorage.getItem('completedProjects');
+      if (saved) {
+        const completedArray = JSON.parse(saved);
+        return completedArray.includes(projectId);
+      }
+      return false;
+    };
+  
 
   return (
     <ProjectItem isSaved={isSaved}>
@@ -25,50 +36,56 @@ const ProjectItemComponent = ({ project, user, handleCancelApplication, isProjec
         <HeaderItem>
           <FontAwesomeIcon icon={regularUser} size="15px" />
           <span>{project.nickname}</span>
-          {!isSaved && (
-            <>
-              <StyledFontAwesomeIcon2 icon={faHeart} />
-              <span>{project.likesCount || 0}</span>
-            </>
-          )}
         </HeaderItem>
       </ProjectHeader>
 
       <p>{project.title}</p>
 
-      <Tags>
+      <BottomSection2>
+
+        <Tags>
         {project.tags && project.tags.map((tag, index) => (
           <Tag key={index} isSaved={isSaved}>{tag}</Tag>
         ))}
-      </Tags>
-      
-      {!isDisabled && (isSaved ? (
-        <Button2 
-        
-          status="EDIT"
-          style={{ backgroundColor: '#535353' , fontWeight: 'bold' ,marginTop: '80px'}}
-          onClick={handleEditClick}
-        >
-            <FontAwesomeIcon icon={faPen} style={{ color: '#fff', fontSize: '16px',marginRight:'5px '}} /> {/* FontAwesome icon */}
-          글 수정하기
-        </Button2>
-      ) : (
-        <Button2 
-          onClick={() => {
-            if (user && user.id && project.feedId) {
-              handleCancelApplication(user.id, project.feedId);
-            } else {
-              console.error("User or project information is missing");
-            }
-          }}
-          disabled={isProjectCanceled(project.feedId) || project.status === "REJECTED" || project.status === "ACCEPTED"}
-          status={project.status}
-        >
-          {project.status === "REJECTED" ? "반려" : project.status === "ACCEPTED" ? "승인 완료" : "신청 취소"}
-        </Button2>
+
+             {!isDisabled && (isSaved ? (
+              <BottomContainer>
+            <Button2 
+              status="EDIT"
+              style={{ backgroundColor: '#535353', fontWeight: 'bold', }}
+              onClick={handleEditClick}
+            >
+              <FontAwesomeIcon icon={faPen} style={{ color: '#fff', fontSize: '16px', marginRight: '5px' }} /> {/* FontAwesome icon */}
+              글 수정하기
+            </Button2>
+            </BottomContainer>
+          ) : (
+
+             <BottomContainer>
+              <LikeCountContainer>
+              <StyledFontAwesomeIcon2 icon={regularHeart} />
+              <span>{project.likesCount || 0}</span>
+              </LikeCountContainer>
+              
+          <Button2 
+            onClick={() => handleButtonClick(project)}
+            disabled={isProjectCompleted(project.pk)}
+            style={{ 
+              backgroundColor: (!project.postStatus && !project.savedFeed) ? '#808080' : '#3563E9',
+              opacity: (!project.postStatus && !project.savedFeed) ? 0.6 : 1,
+              // marginTop: '80px'
+            }}
+          >
+            {isProjectCompleted(project.pk) || (!project.postStatus && !project.savedFeed) ? '모집완료' : '모집 현황'}
+          </Button2>
+
+   </BottomContainer>
       ))}
       
-      {!isSaved && (
+
+      </Tags>
+      </BottomSection2>
+      {/* {!isSaved && (
         <AdditionalInfo>
           {(!isDisabled) && <span>지원분야&nbsp;| {project.part}</span>}
           <span>모집현황&nbsp;| {project.recruitmentNum}명</span>
@@ -76,20 +93,20 @@ const ProjectItemComponent = ({ project, user, handleCancelApplication, isProjec
           <span>진행기간&nbsp;| {project.period ? `${project.period}개월` : '정보없음'}</span>
           <span>상태&nbsp; &nbsp; &nbsp;| {project.status === 'completed' ? '완료' : '진행 중'}</span>
         </AdditionalInfo>
-      )}
+      )} */}
     </ProjectItem>
   );
 };
 
 const ProjectItem = styled.div`
 //   border: 1px solid #A0DAFB;
-  border : ${({ isSaved }) => (isSaved ? '1px solid #E3F5FF' : '1px solid #A0DAFB')};
+  border : ${({ isSaved }) => (isSaved ? '2px solid #E3F5FF' : '2px solid #E3F5FF')};
   border-radius: 10px;
   padding: 20px;
   margin-bottom: 15px;
   position: relative;
   text-align: left; 
-  background-color: ${({ isSaved }) => (isSaved ? 'white' : 'white')};
+  background-color: white;
 
   p {
     font-weight: bold;
@@ -120,12 +137,12 @@ const HeaderItem = styled.div`
 `;
 
 const StyledFontAwesomeIcon2 = styled(FontAwesomeIcon)`
-  color: red;
+  // color: red;
   size: 15px;
-  background-color: #BDBDBD;
-  border-radius: 50%;
+  // background-color: #BDBDBD;
+  // border-radius: 50%;
   padding: 4px;
-  margin-left: 10px;
+  margin-right: 5px;
 `;
 
 const Tags = styled.div`
@@ -146,18 +163,19 @@ const Tag = styled.span`
 `;
 
 const Button2 = styled.button`
-  position: absolute;
+  // position: absolute;
   background-color: ${({ status }) => 
     status === "REJECTED" ? '#C1C1C1' : 
     status === "ACCEPTED" ? '#4ECF42' : 
     '#3563E9'};
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 4px 8px;
+  font-size: 14px;
   border-radius: 5px;
   cursor: ${({ status }) => (status === "REJECTED" || status === "ACCEPTED" || status === "CANCELLED" ? 'not-allowed' : 'pointer')};
-  right: 15px;
-  top: 20px;
+  // right: 15px;
+  // top: 20px;
   min-width: 100px;
 
   &:hover {
@@ -178,6 +196,42 @@ const AdditionalInfo = styled.div`
   color: #666;
   right: 15px;
   bottom: 10px;
+`;
+
+const BottomContainer = styled.div`
+ position: absolute;
+ display: flex;
+  // align-items: center;
+  justify-content: flex-end;
+  // margin-top: 80px;
+  right: 15px;
+  top: 110px;
+
+
+`;
+
+const LikeCountContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #EDEDED;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  min-width: 40px;
+  max-width: 40px;
+  height: 24px;
+  margin-right: 8px;
+`;
+
+
+const BottomSection2 = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 `;
 
 export { ProjectItem, ProjectHeader, HeaderItem, StyledFontAwesomeIcon2, Tags, Tag, Button2, AdditionalInfo };

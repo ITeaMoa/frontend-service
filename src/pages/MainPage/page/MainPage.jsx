@@ -442,10 +442,12 @@ const MainPage = () => {
 
       <div style={{ display: "flex", justifyContent: "center"}}>
         <AddButton onClick={handleAddButtonClick} >
-          <FontAwesomeIcon icon={faPen} style={{ color: '#fff', fontSize: '16px' }} /> {/* FontAwesome icon */}
+          <FontAwesomeIcon icon={faPen} style={{ color: '#535353', fontSize: '16px' }} /> {/* FontAwesome icon */}
           글쓰기
         </AddButton>
+        
       </div>
+   
 
       <div style={{ display: "flex", justifyContent: "center", margin: "32px 0" }}>
         <Pagination
@@ -1066,16 +1068,18 @@ const ModalButton = styled.button`
 `;
 
 const AddButton = styled.button`
-  background: #535353;
+  // background: #535353;
+  background: #FFFFFF;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   white-space: nowrap;
   gap: 10px;
-  color: #fff;
+  color: #535353;
   border: none;
   border-radius: 50%;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
   width: 60px;
   height: 60px;
   padding: 10px 28px;
@@ -1085,7 +1089,7 @@ const AddButton = styled.button`
   margin-bottom: 16px;
   transition: background 0.15s;
   &:hover:enabled {
-    background: #535353;
+    background: #d9d9d9;
   }
   &:disabled {
     background: #e0e0e0;

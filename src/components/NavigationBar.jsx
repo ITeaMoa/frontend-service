@@ -329,7 +329,7 @@ const NavContent = styled.div`
   margin-top: 80px;
 `;
 
-  const NavBarPlaceholder = styled.div`
+const NavBarPlaceholder = styled.div`
     height: ${({ showSearch }) => showSearch ? '260px' : '150px'}; /* Adjust this value to match the NavigationBar's total height */
   `;
 
@@ -343,9 +343,6 @@ const IconBar = styled.div`
   z-index: 201;
 `;
 
-const Header = styled.header`
-  display: none;
-`;
 
 // const Logo = styled.h1`
 //   font-family: 'Protest Strike', cursive;
@@ -556,7 +553,7 @@ const AlertToggle = styled.div`
   // position: absolute;
   position: fixed;
   top: 50px;
-  right:300px;
+  right:280px;
   width: 300px;
   background: white;
   border-radius: 8px;

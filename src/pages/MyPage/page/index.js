@@ -17,6 +17,9 @@ import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 import AlertModal from '../../../components/AlertModal';
 import { ContentsWrap , MainContent} from '../../../assets/BusinessAnalysisStyle';
+import ProjectLikeItem from '../components/ProjectLikeItem';
+import ProjectItemColumnComponent from '../components/ProjectItemColumnComponent';
+import RoleSelectionModal from '../../../components/RoleSelectionModal';
 
 const MyPage = () => {
   const [projects, setProjects] = useState([]);
@@ -24,6 +27,7 @@ const MyPage = () => {
   const [projectsPerPage] = useState(5); 
   const [selectedList, setSelectedList] = useState('applied');
   const [selectedProject, setSelectedProject] = useState(null);
+  const [applySelectedProject, setApplySelectedProject] = useState(null);
   // const isLoggedIn = true; 
   const showSearch = false;
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
@@ -37,6 +41,9 @@ const MyPage = () => {
   // const [savedProjects, setSavedProjects] = useState([]);
   // const [likedProjects, setLikedProjects] = useState([]);
   const [showAlertPopup, setShowAlertPopup] = useState('');
+  const [showApplyPopup, setShowApplyPopup] = useState(''); 
+  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
+  const [selectedRole, setSelectedRole] = '';
 
   // user.id를 콘솔에 출력
 useEffect(() => {
@@ -52,212 +59,361 @@ useEffect(() => {
 }, []);
 
 
-// const dummySavedProjects = [
-//   {
-//     "pk": "c0349497-05cb-43ef-99f2-8ac4cc73ba86",
-//     "sk": "PROJECT",
-//     "nickname": "brynn",
-//     "entityType": "FEED",
-//     "creatorId": "d4487dfc-f001-7052-0905-97df4f00380c",
-//     "title": "AI 데이터분석 서비스 팀원 모집합니다 !",
-//     "recruitmentNum": 3,
-//     "deadline": "2025-03-14T00:00:00",
-//     "place": "동탄역 근처",
-//     "period": 0,
-//     "tags": [
-//       "웹",
-//       "인공지능",
-//       "빅데이터"
-//     ],
-//     "likesCount": 1,
-//     "content": "유저 데이터를 모아서 분석하고, 대시보드화해서 AI로 마케팅 방법을 제안해주는 서비스를 만들어보려고 합니다. 제가 개발을 할 수 있으니 데이터분석 및 AI 활용해서 엔지니어링 할 수 있는 분 구합니다.\n\n궁금한 점은 쪽지 주세요!",
-//     "comments": [],
-//     "postStatus": false,
-//     "timestamp": "2025-02-03T13:42:00.587250944",
-//     "savedFeed": true,
-//     "roles": {
-//       "ai 엔지니어": 1,
-//       "프론트엔드": 1,
-//       "빅데이터": 1
-//     },
-//     "recruitmentRoles": {
-//       "ai 엔지니어": 0,
-//       "프론트엔드": 1,
-//       "빅데이터": 0
-//     }
-//   },
+const dummySavedProjects = [
+  {
+    "pk": "c0349497-05cb-43ef-99f2-8ac4cc73ba86",
+    "sk": "PROJECT",
+    "nickname": "brynn",
+    "entityType": "FEED",
+    "creatorId": "d4487dfc-f001-7052-0905-97df4f00380c",
+    "title": "AI 데이터분석 서비스 팀원 모집합니다 !",
+    "recruitmentNum": 3,
+    "deadline": "2025-03-14T00:00:00",
+    "place": "동탄역 근처",
+    "period": 0,
+    "tags": [
+      "웹",
+      "인공지능",
+      "빅데이터"
+    ],
+    "likesCount": 1,
+    "content": "유저 데이터를 모아서 분석하고, 대시보드화해서 AI로 마케팅 방법을 제안해주는 서비스를 만들어보려고 합니다. 제가 개발을 할 수 있으니 데이터분석 및 AI 활용해서 엔지니어링 할 수 있는 분 구합니다.\n\n궁금한 점은 쪽지 주세요!",
+    "comments": [],
+    "postStatus": false,
+    "timestamp": "2025-02-03T13:42:00.587250944",
+    "savedFeed": true,
+    "roles": {
+      "ai 엔지니어": 1,
+      "프론트엔드": 1,
+      "빅데이터": 1
+    },
+    "recruitmentRoles": {
+      "ai 엔지니어": 0,
+      "프론트엔드": 1,
+      "빅데이터": 0
+    }
+  },
  
-//   {
-//     "pk": "c0349497-05cb-43ef-99f2-8ac4cc73ba86",
-//     "sk": "PROJECT",
-//     "nickname": "brynn",
-//     "entityType": "FEED",
-//     "creatorId": "d4487dfc-f001-7052-0905-97df4f00380c",
-//     "title": "AI 데이터분석 서비스 팀원 모집합니다 !",
-//     "recruitmentNum": 3,
-//     "deadline": "2025-03-14T00:00:00",
-//     "place": "동탄역 근처",
-//     "period": 0,
-//     "tags": [
-//       "웹",
-//       "인공지능",
-//       "빅데이터"
-//     ],
-//     "likesCount": 1,
-//     "content": "유저 데이터를 모아서 분석하고, 대시보드화해서 AI로 마케팅 방법을 제안해주는 서비스를 만들어보려고 합니다. 제가 개발을 할 수 있으니 데이터분석 및 AI 활용해서 엔지니어링 할 수 있는 분 구합니다.\n\n궁금한 점은 쪽지 주세요!",
-//     "comments": [],
-//     "postStatus": false,
-//     "timestamp": "2025-02-03T13:42:00.587250944",
-//     "savedFeed": true,
-//     "roles": {
-//       "ai 엔지니어": 1,
-//       "프론트엔드": 1,
-//       "빅데이터": 1
-//     },
-//     "recruitmentRoles": {
-//       "ai 엔지니어": 0,
-//       "프론트엔드": 1,
-//       "빅데이터": 0
-//     }
-//   },
+  {
+    "pk": "c0349497-05cb-43ef-99f2-8ac4cc73ba86",
+    "sk": "PROJECT",
+    "nickname": "brynn",
+    "entityType": "FEED",
+    "creatorId": "d4487dfc-f001-7052-0905-97df4f00380c",
+    "title": "AI 데이터분석 서비스 팀원 모집합니다 !",
+    "recruitmentNum": 3,
+    "deadline": "2025-03-14T00:00:00",
+    "place": "동탄역 근처",
+    "period": 0,
+    "tags": [
+      "웹",
+      "인공지능",
+      "빅데이터"
+    ],
+    "likesCount": 1,
+    "content": "유저 데이터를 모아서 분석하고, 대시보드화해서 AI로 마케팅 방법을 제안해주는 서비스를 만들어보려고 합니다. 제가 개발을 할 수 있으니 데이터분석 및 AI 활용해서 엔지니어링 할 수 있는 분 구합니다.\n\n궁금한 점은 쪽지 주세요!",
+    "comments": [],
+    "postStatus": false,
+    "timestamp": "2025-02-03T13:42:00.587250944",
+    "savedFeed": true,
+    "roles": {
+      "ai 엔지니어": 1,
+      "프론트엔드": 1,
+      "빅데이터": 1
+    },
+    "recruitmentRoles": {
+      "ai 엔지니어": 0,
+      "프론트엔드": 1,
+      "빅데이터": 0
+    }
+  },
  
-// ];
+];
 
-// const likeProjects = [ // 더미 데이터 업데이트
-//   {
-//     "pk": "4fccc2dd-58a7-4db1-a549-b44603b9fbbb",
-//     "sk": "PROJECT",
-//     "nickname": "바다상어",
-//     "entityType": "FEED",
-//     "creatorId": "f4f84d4c-90c1-7027-d639-96212513682e",
-//     "title": "ITeaMoa 프로젝트 팀원 구합니다",
-//     "recruitmentNum": 5,
-//     "deadline": "2025-02-28T00:00:00",
-//     "place": "강남역",
-//     "period": 0,
-//     "tags": [
-//       "웹",
-//       "모바일",
-//       "AWS",
-//       "Git",
-//       "Github",
-//       "Spring Boot",
-//       "React"
-//     ],
-//     "likesCount": 5,
-//     "content": "안녕하세요.\n\n\"IT관련 프로젝트 팀원 모집 플랫폼\" 프로젝트 진행하실 팀원 구합니다~\n\n많은 관심 바라요:)",
-//     "comments": [
-//       {
-//         "userId": "84b8ddac-3081-70eb-e79d-e8f5deef4892",
-//         "comment": "질문이 있습니다",
-//         "timestamp": "2025-02-05T01:20:34.78452235",
-//         "name": null
-//       },
-//       {
-//         "userId": "84b8ddac-3081-70eb-e79d-e8f5deef4892",
-//         "comment": "질문 받아주세요!!",
-//         "timestamp": "2025-02-05T01:26:31.379855213",
-//         "name": null
-//       }
-//     ],
-//     "postStatus": true,
-//     "timestamp": "2025-02-03T13:21:40.743217531",
-//     "savedFeed": false,
-//     "roles": {
-//       "백엔드": 2,
-//       "프론트엔드": 1,
-//       "기획자": 1,
-//       "pm": 1
-//     },
-//     "recruitmentRoles": {
-//       "백엔드": 1,
-//       "프론트엔드": 0,
-//       "기획자": 1,
-//       "pm": 0
-//     }
-//   },
+const likeProjects = [ // 더미 데이터 업데이트
+  {
+    "pk": "4fccc2dd-58a7-4db1-a549-b44603b9fbbb",
+    "sk": "PROJECT",
+    "nickname": "바다상어",
+    "entityType": "FEED",
+    "creatorId": "f4f84d4c-90c1-7027-d639-96212513682e",
+    "title": "ITeaMoa 프로젝트 팀원 구합니다",
+    "recruitmentNum": 5,
+    "deadline": "2025-02-28T00:00:00",
+    "place": "강남역",
+    "period": 0,
+    "tags": [
+      "웹",
+      "모바일",
+      "AWS",
+      "Git",
+      "Github",
+      "Spring Boot",
+      "React"
+    ],
+    "likesCount": 5,
+    "content": "안녕하세요.\n\n\"IT관련 프로젝트 팀원 모집 플랫폼\" 프로젝트 진행하실 팀원 구합니다~\n\n많은 관심 바라요:)",
+    "comments": [
+      {
+        "userId": "84b8ddac-3081-70eb-e79d-e8f5deef4892",
+        "comment": "질문이 있습니다",
+        "timestamp": "2025-02-05T01:20:34.78452235",
+        "name": null
+      },
+      {
+        "userId": "84b8ddac-3081-70eb-e79d-e8f5deef4892",
+        "comment": "질문 받아주세요!!",
+        "timestamp": "2025-02-05T01:26:31.379855213",
+        "name": null
+      }
+    ],
+    "postStatus": true,
+    "timestamp": "2025-02-03T13:21:40.743217531",
+    "savedFeed": false,
+    "roles": {
+      "백엔드": 2,
+      "프론트엔드": 1,
+      "기획자": 1,
+      "pm": 1
+    },
+    "recruitmentRoles": {
+      "백엔드": 1,
+      "프론트엔드": 0,
+      "기획자": 1,
+      "pm": 0
+    }
+  },
+  {
+    "pk": "4fccc2dd-58a7-4db1-a549-b44603b9fbbb",
+    "sk": "PROJECT",
+    "nickname": "바다상어",
+    "entityType": "FEED",
+    "creatorId": "f4f84d4c-90c1-7027-d639-96212513682e",
+    "title": "ITeaMoa 프로젝트 팀원 구합니다",
+    "recruitmentNum": 5,
+    "deadline": "2025-02-28T00:00:00",
+    "place": "강남역",
+    "period": 0,
+    "tags": [
+      "웹",
+      "모바일",
+      "AWS",
+      "Git",
+      "Github",
+      "Spring Boot",
+      "React"
+    ],
+    "likesCount": 5,
+    "content": "안녕하세요.\n\n\"IT관련 프로젝트 팀원 모집 플랫폼\" 프로젝트 진행하실 팀원 구합니다~\n\n많은 관심 바라요:)",
+    "comments": [
+      {
+        "userId": "84b8ddac-3081-70eb-e79d-e8f5deef4892",
+        "comment": "질문이 있습니다",
+        "timestamp": "2025-02-05T01:20:34.78452235",
+        "name": null
+      },
+      {
+        "userId": "84b8ddac-3081-70eb-e79d-e8f5deef4892",
+        "comment": "질문 받아주세요!!",
+        "timestamp": "2025-02-05T01:26:31.379855213",
+        "name": null
+      }
+    ],
+    "postStatus": true,
+    "timestamp": "2025-02-03T13:21:40.743217531",
+    "savedFeed": false,
+    "roles": {
+      "백엔드": 2,
+      "프론트엔드": 1,
+      "기획자": 1,
+      "pm": 1
+    },
+    "recruitmentRoles": {
+      "백엔드": 1,
+      "프론트엔드": 0,
+      "기획자": 1,
+      "pm": 0
+    }
+  },
  
-// ];
+];
 
-//진짜ㅏㅏㅏㅏㅏㅏ(예전꺼꺼)
-// useCallback을 사용하여 함수 메모이제이션
-// const refreshProjects = useCallback(async () => {
-//   if (!user) return; // 사용자가 없으면 실행하지 않음
+const appliedproject = 
+[
+  {
+    "userId": "a4a8fd8c-d0b1-7054-7d1c-d0285599d299",
+    "feedId": "a3e74975-5bd9-4c57-a3b4-33aa5828e702",
+    "part": "프론트",
+    "status": "PENDING",
+    "applicationTimestamp": "2025-05-01T10:14:05.6506286",
+    "creatorId": "USER#a4a8fd8c-d0b1-7054-7d1c-d0285599d299",
+    "title": "테스트1",
+    "content": "테스트1",
+    "tags": [
+      "c",
+      "c++"
+    ],
+    "recruitmentNum": 5,
+    "deadline": "2024-12-31T23:59:59",
+    "period": 3,
+    "likesCount": 1,
+    "recruitmentRoles": {
+      "프론트엔드": 0,
+      "백엔드": 0,
+      "프론트": 2
+    },
+    "nickname": "brynn_"
+  },
+  {
+    "userId": "a4a8fd8c-d0b1-7054-7d1c-d0285599d299",
+    "feedId": "a3e74975-5bd9-4c57-a3b4-33aa5828e702",
+    "part": "프론트",
+    "status": "REJECTED",
+    "applicationTimestamp": "2025-05-01T10:14:05.6506286",
+    "creatorId": "USER#a4a8fd8c-d0b1-7054-7d1c-d0285599d299",
+    "title": "테스트1",
+    "content": "테스트1",
+    "tags": [
+      "c",
+      "c++"
+    ],
+    "recruitmentNum": 5,
+    "deadline": "2024-12-31T23:59:59",
+    "period": 3,
+    "likesCount": 1,
+    "recruitmentRoles": {
+      "프론트엔드": 0,
+      "백엔드": 0,
+      "프론트": 2
+    },
+    "nickname": "brynn_"
+  }
+]
 
-//   try {
-//     if (selectedList === 'applied') {
-//       const response = await axios.get('/feed/applications', {
-//         params: {
-//           userId: user.id,
-//         }
-//       });
-//       console.log("Fetched applied projects:", response.data);
-//       setProjects(response.data || []);
-//     } else if (selectedList === 'written') {
-//       const params = {
-//         creatorId: user.id,
-//         // creatorId:'null',
-//         sk: feedType
-//       };
-//       const response = await axios.get('/my/writing', { params });
-//       setProjects(response.data || []);
-//     }
-//   } catch (error) {
-//     console.error("Error fetching projects:", error);
-//     // setProjects([]); // 이전 상태를 유지하는 것이 더 나은 사용자 경험일 수 있음
-//     // setProjects(prevProjects => prevProjects); // 이전 상태 유지
-//   }
-// }, [user, selectedList, feedType]); // 필요한 의존성만 포함
-
-// // 초기 데이터 로드를 위한 useEffect
-// useEffect(() => {
-//   refreshProjects();
-// }, [ selectedList, user?.id, feedType, refreshProjects]); // refreshProjects 추가
-
-
-//useCallback 사용 한거거
-// useCallback을 사용하여 함수 메모이제이션
-// const refreshProjects = useCallback(async () => {
-//   // if (!user) return; // 사용자가 없으면 실행하지 않음
-
-//   try {
-  
-//     if (selectedList === 'applied') {
-//       const response = await axios.get('/feed/applications', {
-//         params: {
-//           userId: user.id,
-//         }
-//       });
-//       console.log("Fetched applied projects:", response.data);
-//       setProjects(response.data || []);
-//     } else if (selectedList === 'written') {
-//       const params = {
-//         creatorId: user.id,
-//         sk: feedType
-//       };
-//       const response = await axios.get('/my/writing', { params });
-//       setProjects(response.data || []);
-//     } else if (selectedList === 'saved') {
-//       // 저장된 프로젝트를 가져오는 API 호출
-//       setProjects(dummySavedProjects); // 더미 데이터 사용
-//     } else if (selectedList === 'interested') {
-//       // 좋아요한 프로젝트를 가져오는 API 호출
-//       setProjects(likeProjects); // 더미 데이터 사용
-//     }
-
-//     // setProjects(fetchedProjects);
-//   } catch (error) {
-//     console.error("Error fetching projects:", error);
-//     // setProjects([]); // 이전 상태를 유지하는 것이 더 나은 사용자 경험일 수 있음
-//   }
-// }, [user, selectedList, feedType]); // 필요한 의존성만 포함
-
-// // 초기 데이터 로드를 위한 useEffect
-// useEffect(() => {
-//   refreshProjects();
-// }, [selectedList, user?.id, feedType, refreshProjects]); // refreshProjects 추가
-
-  // 선택된 목록이 변경될 때 신청 프로젝트를 가져오는 새로운 useEffect
+const writtenProjects = [
+  {
+    "pk": "bfcd417e-5f0b-456f-94ae-78628ba050ac",
+    "sk": "PROJECT",
+    "nickname": "청갈치",
+    "entityType": "FEED",
+    "creatorId": "34f8fd4c-a001-7051-2a4e-64beb057470f",
+    "title": "두번째테스트",
+    "recruitmentNum": 5,
+    "deadline": "2024-12-31T23:59:59",
+    "place": "강남",
+    "period": 3,
+    "tags": [
+      "c",
+      "c++"
+    ],
+    "likesCount": 0,
+    "content": "두번째테스트",
+    "comments": [],
+    "postStatus": true,
+    "timestamp": "2025-01-16T08:31:10.900805343",
+    "savedFeed": false,
+    "roles": {
+      "frontend": 1,
+      "backend": 2
+    },
+    "recruitmentRoles": {
+      "backend": 1,
+      "frontend": 0,
+      "무관": 1
+    }
+  },
+  {
+    "pk": "5bd04ed7-a3f6-4a4e-b909-6e1ad6724fa9",
+    "sk": "PROJECT",
+    "nickname": "청갈치",
+    "entityType": "FEED",
+    "creatorId": "34f8fd4c-a001-7051-2a4e-64beb057470f",
+    "title": "3",
+    "recruitmentNum": 5,
+    "deadline": "2024-12-31T23:59:59",
+    "place": "강남",
+    "period": 3,
+    "tags": [
+      "c",
+      "c++"
+    ],
+    "likesCount": 0,
+    "content": "3",
+    "comments": [],
+    "postStatus": true,
+    "timestamp": "2025-01-14T14:24:14.8894676",
+    "savedFeed": false,
+    "roles": {
+      "frontend": 1,
+      "backend": 2
+    },
+    "recruitmentRoles": {
+      "backend": 0,
+      "frontend": 0
+    }
+  },
+  {
+    "pk": "b213afa5-cb05-413d-b934-6e30c46e68be",
+    "sk": "PROJECT",
+    "nickname": "청갈치",
+    "entityType": "FEED",
+    "creatorId": "34f8fd4c-a001-7051-2a4e-64beb057470f",
+    "title": "USER#붙임",
+    "recruitmentNum": 5,
+    "deadline": "2024-12-31T23:59:59",
+    "place": "강남",
+    "period": 3,
+    "tags": [
+      "c",
+      "c++"
+    ],
+    "likesCount": 0,
+    "content": "USER#붙임",
+    "comments": [],
+    "postStatus": true,
+    "timestamp": "2025-01-16T19:09:34.184155",
+    "savedFeed": false,
+    "roles": {
+      "frontend": 1,
+      "backend": 2
+    },
+    "recruitmentRoles": {
+      "backend": 1,
+      "frontend": 0,
+      "무관": 2
+    }
+  },
+  {
+    "pk": "518d95b1-597f-4ecb-a214-9b1f9ed4f788",
+    "sk": "PROJECT",
+    "nickname": "청갈치",
+    "entityType": "FEED",
+    "creatorId": "34f8fd4c-a001-7051-2a4e-64beb057470f",
+    "title": "첫테스트",
+    "recruitmentNum": 5,
+    "deadline": "2024-12-31T23:59:59",
+    "place": "강남",
+    "period": 3,
+    "tags": [
+      "c",
+      "c++"
+    ],
+    "likesCount": 0,
+    "content": "첫테스트",
+    "comments": [],
+    "postStatus": true,
+    "timestamp": "2025-01-16T19:07:25.831017",
+    "savedFeed": false,
+    "roles": {
+      "frontend": 1,
+      "backend": 2
+    },
+    "recruitmentRoles": {
+      "backend": 1,
+      "frontend": 0
+    }
+  }
+]
  
 // 그냥 일반 함수로 작성
 const refreshProjects = async () => {
@@ -266,35 +422,37 @@ const refreshProjects = async () => {
     console.log('selectedList', selectedList);
     
     if (selectedList === 'applied') {
-      response = await axios.get('/feed/applications', {
-        params: {
-          userId: user.id,
-        }
-      });
+      // response = await axios.get('/feed/applications', {
+      //   params: {
+      //     userId: user.id,
+      //   }
+      // });
+      setProjects(appliedproject);
     } else if (selectedList === 'written') {
-      response = await axios.get('/my/writing', {
-        params: {
-          creatorId: user.id,
-          sk: feedType
-        }
-      });
+      // response = await axios.get('/my/writing', {
+      //   params: {
+      //     creatorId: user.id,
+      //     sk: feedType
+      //   }
+      // });
+      setProjects(writtenProjects)
      
     } else if (selectedList === 'saved') {
-      response = await axios.get('/my/temp', {
-        params: {
-          creatorId: user.id,
-          feedType: feedType
-        }
-      });
-      // setProjects(dummySavedProjects);
+      // response = await axios.get('/my/temp', {
+      //   params: {
+      //     creatorId: user.id,
+      //     feedType: feedType
+      //   }
+      // });
+      setProjects(dummySavedProjects);
     } else if (selectedList === 'interested') {
-      response = await axios.get('/my/like', { 
-        params: {
-          userId: user.id,
-          feedType: feedType
-        }
-      });
-      // setProjects(likedProjects);
+      // response = await axios.get('/my/like', { 
+      //   params: {
+      //     userId: user.id,
+      //     feedType: feedType
+      //   }
+      // });
+      setProjects(likeProjects);
     }
 
     console.log(`${selectedList} 목록:`, response.data);
@@ -355,8 +513,8 @@ useEffect(() => {
 
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
-    console.log('Page changed to:', pageNumber);
-    console.log('Showing projects:', indexOfFirstProject, 'to', indexOfLastProject);
+    // console.log('Page changed to:', pageNumber);
+    // console.log('Showing projects:', indexOfFirstProject, 'to', indexOfLastProject);
   };
 
 
@@ -579,6 +737,75 @@ const handleConfirmCancel = async () => {
   };
 
 
+  
+
+  const handleApplyClick = async (project) => {
+    // if (!user) { 
+    //   setPopupMessage("로그인 후에 신청할 수 있습니다."); 
+    //   setIsSubmitted(true); 
+    //   return; 
+    // }
+
+    // 자신이 작성한 게시글인지 확인
+    if (project && project.creatorId === user.id) {
+      // alert("자신이 작성한 게시글에는 신청할 수 없습니다."); 
+      setShowAlertPopup("자신이 작성한 게시글에는 신청할 수 없습니다.");
+      return; 
+    }
+  
+    try {
+      const response = await axios.get('/feed/applications', {
+        params: {
+          userId: user.id,
+        }
+      });
+  
+      const appliedProjects = response.data.map(app => app.feedId); // 신청한 프로젝트의 feedId 목록
+  
+      // 선택한 프로젝트의 pk와 비교
+      const isAlreadyApplied = appliedProjects.includes(project.pk);
+      if (isAlreadyApplied) {
+        setShowApplyPopup("이미 신청한 프로젝트입니다."); 
+        // setPopupMessage("이미 신청한 프로젝트입니다."); // 이미 신청한 경우 메시지 설정
+        // setIsSubmitted(true); // 제출 확인 팝업 표시
+        return; // Exit the function if already applied
+      }
+    } catch (error) {
+      console.error("신청 여부 확인 실패:", error);
+    }
+  
+    // setProject(project); // 선택한 프로젝트 상태 저장
+    console.log('선택한 프로젝트:', selectedProject);
+    setApplySelectedProject(project);
+    setIsRoleModalOpen(true); // 역할 선택 모달 열기
+  };
+  
+  // 프로젝트 신청 처리
+  const handleApplySubmit = async (project, role) => {
+   
+   
+    try {
+      const applicationData = {
+        pk: user.id,
+        sk: applySelectedProject.pk,
+        part: selectedRole,
+        feedType: feedType
+      };
+      console.log('applicationData:', applicationData);
+      await axios.post('/main/application', applicationData);
+      setShowApplyPopup("신청이 완료되었습니다.");
+      setIsRoleModalOpen(false);
+    } catch (error) {
+      console.error("신청 실패:", error);
+      setShowApplyPopup("신청에 실패했습니다.");
+    }
+  };
+
+
+  const handleRoleSelect = (role) => {
+    setSelectedRole(role);
+  };
+  
 
 
   return (
@@ -586,8 +813,6 @@ const handleConfirmCancel = async () => {
        <ContentsWrap>
        <MainContent Wide1030>
     
-    {/* <Container> */}
-      {/* <Nav  showSearch={showSearch}  onToggleChange={handleToggleChange}/> */}
       <NavigationBar  showSearch={showSearch}  />
 
         <TabWrapType3 Border>
@@ -617,28 +842,37 @@ const handleConfirmCancel = async () => {
                     onClose={(projectId) => handleProjectClose(projectId, 'PROJECT')}
                 />
          
-
         </>
       ) : (
         <ProjectList isFading={isFading} selectedList={selectedList}>
           {selectedList === 'applied' ? (
-            <>
-              {currentProjects.length === 0 ? (
-                <p>신청한 프로젝트가 없습니다.</p>
-              ) : (
-                currentProjects.map((project, index) => (
-                  <ProjectItemComponent 
-                    key={`applied-${project.pk || project.sk || index}`}
-                    project={project}
-                    user={user}
-                    handleCancelApplication={handleCancelApplication}
-                    isProjectCanceled={isProjectCanceled}
-                  />
-                ))
-              )}
-            </>
+            <div style={{ gridColumn: '1 / -1', width: '100%' }}>
+              <h2 style={{ fontSize: '20px', fontWeight: 'bold', margin: '10px 0 30px 0' }}>
+                나의 신청 목록 ({currentProjects.length})
+              </h2>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
+                {currentProjects.length === 0 ? (
+                  <p style={{ gridColumn: '1 / -1' }}>신청한 프로젝트가 없습니다.</p>
+                ) : (
+                  currentProjects.map((project, index) => (
+                    <ProjectItemColumnComponent
+                      key={`applied-${project.pk || project.sk || index}`}
+                      project={project}
+                      user={user}
+                      handleCancelApplication={handleCancelApplication}
+                      isProjectCanceled={isProjectCanceled}
+                    />
+                  ))
+                )}
+              </div>
+            </div>
           ) : selectedList === 'saved' ? (
             <>
+            <div style={{ gridColumn: '1 / -1', width: '100%' }}>
+              <h2 style={{ fontSize: '20px', fontWeight: 'bold', margin: '10px 0 30px 0' }}>
+                나의 임시저장글({currentProjects.length})
+              </h2>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}></div>
               {currentProjects.filter(project => project.savedFeed).length === 0 ? (
                 <p>저장한 프로젝트가 없습니다.</p>
               ) : (
@@ -653,23 +887,32 @@ const handleConfirmCancel = async () => {
                   />
                 ))
               )}
+              </div>
             </>
           ) : selectedList === 'interested' ? (
             <>
+        
+            <div style={{ gridColumn: '1 / -1', width: '100%' }}>
+              <h2 style={{ fontSize: '20px', fontWeight: 'bold', margin: '10px 0 30px 0' }}>
+                나의 관심 목록 ({currentProjects.length})
+              </h2>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
               {currentProjects.filter(project => project.postStatus).length === 0 ? (
                 <p>좋아요한 프로젝트가 없습니다.</p>
               ) : (
                 currentProjects.filter(project => project.postStatus).map((project, index) => (
-                  <ProjectItemComponent 
+                  <ProjectLikeItem 
                     key={`interested-${project.pk || project.sk || index}`}
                     project={project}
                     user={user}
-                    handleCancelApplication={handleCancelApplication}
-                    isProjectCanceled={isProjectCanceled}
-                    isDisabled={true}
+                    // handleProjectClick={handleProjectClick}
+                    onApplyClick={handleApplyClick}
+                 
                   />
                 ))
               )}
+              </div>
+              </div>
             </>
           ) : selectedList === 'profile' ? (
             <UserProfile 
@@ -678,73 +921,89 @@ const handleConfirmCancel = async () => {
               setIsProfileVisible={setIsProfileVisible} 
               setShowAlertPopup={setShowAlertPopup}
             />
-          ) : (
-            currentProjects && currentProjects.map((project, index) => (
-              <ProjectItem 
-                key={`written-${project.pk || project.sk || index}`}
-              >
-                <ProjectHeader>
-                  <HeaderItem>
-                    <FontAwesomeIcon icon={regularUser} size="15px" />
-                    <span>{project.nickname}</span>
-                  </HeaderItem>
-                  <HeaderItem>
-                    <StyledFontAwesomeIcon icon={faHeart} />
-                    <span>{project.likesCount}</span>
-                  </HeaderItem>
-                </ProjectHeader>
-                <p>{project.title}</p>
-                <Tags>
-                  {Array.isArray(project.tags) && project.tags.length > 0 ? (
-                    project.tags.map((tag, tagIndex) => (
-                      <Tag key={`${project.pk}-tag-${tagIndex}`}>{tag}</Tag>
-                    ))
+          ) : selectedList === 'written' ? (
+            <>
+              <div style={{ gridColumn: '1 / -1', width: '100%' }}>
+                <h2 style={{ fontSize: '20px', fontWeight: 'bold', margin: '10px 0 30px 0' }}>
+                  나의 작성 목록 ({currentProjects.length})
+                </h2>
+                <div style={{ display: 'grid',  gap: '10px' }}>
+                  {currentProjects.filter(project => project.postStatus).length === 0 ? (
+                    <p>작성한 프로젝트가 없습니다.</p>
                   ) : (
-                    <span>태그가 없습니다.</span>
+                    currentProjects && currentProjects.map((project, index) => (
+                      <ProjectItemComponent 
+                        key={`written-${project.pk || project.sk || index}`}
+                        project={project}
+                        handleButtonClick={handleButtonClick}
+                        isProjectCompleted={isProjectCompleted}
+                        isSaved={false}
+                      />  
+                    ))
                   )}
-                </Tags>
-                <Button 
-                  onClick={() => handleButtonClick(project)}
-                  disabled={isProjectCompleted(project.pk)}
-                  style={{ 
-                    backgroundColor: (!project.postStatus && !project.savedFeed) ? '#808080' : '#3563E9',
-                    opacity:  (!project.postStatus && !project.savedFeed) ? 0.6 : 1
-                  }}
-                >
-                  {isProjectCompleted(project.pk) || (!project.postStatus && !project.savedFeed) ? '모집완료' : '모집 현황'}
-                  {/* 아마 없애도 됨 isprojectcompletd */}
-                </Button>
-              </ProjectItem>
-            ))
+                </div>
+              </div>
+            </>
+          ) : (
+
+      
+            
+            <ProjectList></ProjectList>
           )}
         </ProjectList>
       )}
 
+    
+
+</MainContent>
+</ContentsWrap>
+
 {selectedList !== 'profile' && (
-  <Pagination 
-    currentPage={currentPage}
-      projectsPerPage={projectsPerPage}
-          totalProjects={projects.length}
-        onPageChange={paginate} 
-      />
+        <div style={{ display: 'flex', justifyContent: 'center', margin: '32px 0' }}>
+          <Pagination 
+            currentPage={currentPage}
+            projectsPerPage={projectsPerPage}
+            totalProjects={projects.length}
+            onPageChange={paginate} 
+          />
+        </div>
       )}
 
-      <Modal isOpen={isConfirmModalOpen} onClose={() => setIsConfirmModalOpen(false)}>
+<Modal isOpen={isConfirmModalOpen} onClose={() => setIsConfirmModalOpen(false)}>
         <h3 style={{ textAlign: 'center' }}>정말로 신청을 취소하시겠습니까?</h3>
         <ButtonContainer>
           <ModalButton onClick={handleConfirmCancel}>확인</ModalButton>
           <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton>
         </ButtonContainer>
       </Modal>
-      </MainContent>
-    </ContentsWrap>
-    {/* </Container> */}
+   
 
-    <AlertModal
-  isOpen={!!showAlertPopup}
-  message={showAlertPopup}
-  onClose={() => setShowAlertPopup(false)}
-/>
+ <AlertModal
+      isOpen={!!showAlertPopup}
+      message={showAlertPopup}
+      onClose={() => setShowAlertPopup(false)}
+    />
+
+
+{showApplyPopup && (
+<Modal isOpen={showApplyPopup} onClose={() => setShowApplyPopup(false)}>
+      <h3 style={{ textAlign: 'center',fontSize:'16px' }}>{showApplyPopup}</h3>
+      <ButtonContainer>
+        <ModalButton onClick={() => setShowApplyPopup(false)}>확인</ModalButton>
+        {/* <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton> */}
+      </ButtonContainer>
+    </Modal>  
+
+)}
+
+ <RoleSelectionModal
+        isOpen={isRoleModalOpen}
+        onClose={() => setIsRoleModalOpen(false)}
+        project={applySelectedProject}
+        selectedRole={selectedRole}
+        handleRoleSelect={handleRoleSelect}
+        handleApplySubmit={handleApplySubmit}
+      />
     </>
    
   );
@@ -832,10 +1091,10 @@ const TabButtonType3 = styled.button`
 `;
 
 const ProjectList = styled.div`
-  margin-top: 60px;
+  margin-top: 20px;
   padding: 20px;
   padding-bottom: 0px;
-  border: 2px solid #A0DAFB;
+  // border: 2px solid #A0DAFB;
   border-radius: 20px;
   // width:50vw;
   // max-width: 800px; 
@@ -843,6 +1102,23 @@ const ProjectList = styled.div`
   transition: transform 0.5s ease;
   transform: ${(props) => (props.isFading ? 'translateX(100%)' : 'translateX(0)')};
   min-height: 700px;
+  // display: grid;
+  // grid-template-columns: repeat(2, 1fr);
+  // gap: 20px;
+
+  ${({ selectedList }) => (selectedList === 'applied' || selectedList === 'interested' ) && `
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    
+
+  `}
+
+  //  ${({ selectedList }) => (selectedList === 'applied'  ) && `
+  //  margin-top
+
+  // `}
+  
   ${({ selectedList }) => (selectedList === 'applied' || selectedList === 'saved' || selectedList === 'interested' || selectedList === 'profile') && `
     border: none;
     padding: 3px;
@@ -853,6 +1129,7 @@ const ProjectList = styled.div`
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     width: 100%;
+    grid-template-columns: 1fr;
   }
 `;
 
@@ -949,6 +1226,3 @@ const ModalButton = styled.button`
     background-color: #a0dafb;
   }
 `;
-
-
-

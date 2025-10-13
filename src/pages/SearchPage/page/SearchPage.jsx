@@ -10,7 +10,7 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { faSlidersH } from '@fortawesome/free-solid-svg-icons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';  
 import { ContentsWrap , MainContent} from '../../../assets/BusinessAnalysisStyle';
-import Nav from '../../../components/Nav';
+// import Nav from '../../../components/Nav';
 import NavigationBar from '../../../components/NavigationBar';
 import ProjectFeedCard from '../components/ProjectFeedCard';
 import axios from '../../../api/axios'

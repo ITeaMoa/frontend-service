@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import Nav from '../../components/Nav';
+// import Nav from '../../components/Nav';
 import Dropdown from '../../components/DropDown';
 import Modal from '../../components/Modal';
 import { useNavigate, } from 'react-router-dom';

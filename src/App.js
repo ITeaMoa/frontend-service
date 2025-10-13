@@ -1,6 +1,6 @@
 // import MainPage1 from "./pages/MainPage/page";
 // import WritePage from "./pages/WritePage";
-import ApplyPage from "./pages/ApplyPage/page";
+// import ApplyPage from "./pages/ApplyPage/page";
 // import SearchPage from "./pages/SearchPage/page";
 import MyPage from "./pages/MyPage/page";
 import LoginPage from "./pages/LoginPage";
@@ -69,7 +69,7 @@ function App() {
             <Route path="/" element={<Layout />}>
               <Route index element={<MainPage />} />
               <Route path="WritePage" element={<WritePage />} />
-              <Route path="ApplyPage/:projectId" element={<ApplyPage />} />
+              {/* <Route path="ApplyPage/:projectId" element={<ApplyPage />} /> */}
               <Route path="SearchPage1" element={<SearchPage1 />} />
               {/* <Route path="SearchPage" element={<SearchPage />} /> */}
               <Route path="MyPage" element={<MyPage/>} />

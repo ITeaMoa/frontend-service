@@ -21,6 +21,7 @@ import ProjectLikeItem from '../components/ProjectLikeItem';
 import ProjectItemColumnComponent from '../components/ProjectItemColumnComponent';
 import RoleSelectionModal from '../../../components/RoleSelectionModal';
 
+
 const MyPage = () => {
   const [projects, setProjects] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -43,7 +44,7 @@ const MyPage = () => {
   const [showAlertPopup, setShowAlertPopup] = useState('');
   const [showApplyPopup, setShowApplyPopup] = useState(''); 
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
-  const [selectedRole, setSelectedRole] = '';
+  const [selectedRole, setSelectedRole] = useState(null);
 
   // user.id를 콘솔에 출력
 useEffect(() => {
@@ -805,7 +806,7 @@ const handleConfirmCancel = async () => {
   const handleRoleSelect = (role) => {
     setSelectedRole(role);
   };
-  
+ 
 
 
   return (
@@ -1114,12 +1115,8 @@ const ProjectList = styled.div`
 
   `}
 
-  //  ${({ selectedList }) => (selectedList === 'applied'  ) && `
-  //  margin-top
-
-  // `}
   
-  ${({ selectedList }) => (selectedList === 'applied' || selectedList === 'saved' || selectedList === 'interested' || selectedList === 'profile') && `
+  ${({ selectedList }) => (selectedList === 'applied' || selectedList === 'saved' || selectedList === 'interested' || selectedList === 'profile' || selectedList === 'written') && `
     border: none;
     padding: 3px;
   `}

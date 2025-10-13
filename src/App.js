@@ -15,6 +15,7 @@ import MainPage from './pages/MainPage/page/MainPage';
 import SearchPage1 from './pages/SearchPage/page/SearchPage';
 import WritePage from './pages/WritePage/WritePage';
 import ApplyPage1 from './pages/ApplyPage/page/ApplyPage';
+import ContestPage from './pages/ContestPage/page/ContestPage';
 
   function RequireToken({ children }) {
     const { isLoggedIn } = useAuth();
@@ -78,6 +79,7 @@ function App() {
               {/* <Route path="MainPage1" element={<MainPage1 />} /> */}
               <Route path="WritePage" element={  <RequireToken><WritePage /></RequireToken>} />
               <Route path="ApplyPage1/:projectId" element={  <ApplyPage1 />} />
+              <Route path="ContestPage" element={  <ContestPage/>} />
 
             </Route>
           </Routes>

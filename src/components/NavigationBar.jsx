@@ -14,7 +14,7 @@ const tagOptions = [
   // 필요시 더 추가
 ];
 
-const NavigationBar = ({showSearch}) => {
+const NavigationBar = ({showSearch, showTag=true}) => {
   const [searchValue, setSearchValue] = useState("");
   const [selectedTags, setSelectedTags] = useState([]);
   const navigate = useNavigate();
@@ -156,7 +156,7 @@ const option3 = [
 
   return (
     <>
-      <NavigationBarWrapper>
+      <NavigationBarWrapper showSearch={showSearch} showTag={showTag}>
         <IconBar>
           {isLoggedIn ? (
             <>
@@ -197,14 +197,15 @@ const option3 = [
             />
           </Logo>
           {showSearch && (
-          <SearchContainer>
-            <SearchBar>
+          <SearchContainer >
+            <SearchBar >
               <FontAwesomeIcon icon={faSearch} style={{marginRight: '10px'}}/>
-              <SearchInput
+              <SearchInput 
                 value={searchValue}
                 onChange={handleChange}
                 onKeyDown={handleChange}
                 placeholder="Search projects"
+                onClick={(e) => e.stopPropagation()}
               />
             </SearchBar>
             {/* <FilterButton>
@@ -225,7 +226,7 @@ const option3 = [
 
 
           )}
-          {showSearch && (
+          {showSearch && showTag && (
           <TagsRow>
             {tagOptions.map(tag => (
               <Tag
@@ -253,7 +254,7 @@ const option3 = [
           
         </NavContent>
       </NavigationBarWrapper>
-      <NavBarPlaceholder showSearch={showSearch} />
+       <NavBarPlaceholder showSearch={showSearch} showTag={showTag} />
 
       {showAlert && (
         <AlertToggle className={isClosing ? "closing" : ""}>
@@ -330,9 +331,11 @@ const NavContent = styled.div`
 `;
 
 const NavBarPlaceholder = styled.div`
-    height: ${({ showSearch }) => showSearch ? '260px' : '150px'}; /* Adjust this value to match the NavigationBar's total height */
+    height: ${({ showSearch, showTag }) => 
+      showSearch && !showTag ? '230px' : 
+      showSearch ? '260px' : '150px'
+    };
   `;
-
 const IconBar = styled.div`
   position: absolute;
   top: 24px;

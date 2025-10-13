@@ -4,14 +4,10 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { feedTypeAtom, selectedProjectDetailAtom ,selectedSavedProjectAtom} from '../../../Atoms.jsx/AtomStates';
-import Footer from '../../../components/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import { faSlidersH } from '@fortawesome/free-solid-svg-icons';
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons';  
 import { ContentsWrap , MainContent} from '../../../assets/BusinessAnalysisStyle';
 import NavigationBar from '../../../components/NavigationBar';
-import Nav from '../../../components/Nav';
 import PopularProject from '../components/PopularProject';
 import ProjectFeedCard from '../components/ProjectFeedCard';
 import axios from '../../../api/axios'
@@ -40,7 +36,7 @@ const MainPage = () => {
   const [allProjects, setAllProjects] = useState([]);
   const [showApplyPopup, setShowApplyPopup] = useState('');
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
-  const [selectedRole, setSelectedRole] = useState('');
+  const [selectedRole, setSelectedRole] = useState(null);
   const [selectedProject, setSelectedProject] = useState(null);
   const [popupMessage, setPopupMessage] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -81,6 +77,11 @@ const MainPage = () => {
     }
     // navigate(`/WritePage?feedType=${feedType}`); 
     navigate(`/WritePage`); 
+  };
+
+  const handleContestPageClick = () => {
+
+    navigate(`/ContestPage`);
   };
 
   const [searchValue, setSearchValue] = useState("");
@@ -440,13 +441,22 @@ const MainPage = () => {
         ))}
       </ProjectFeed>
 
-      <div style={{ display: "flex", justifyContent: "center"}}>
-        <AddButton onClick={handleAddButtonClick} >
+     
+        <FloatingActionButtonContainer>
+            <AddButton onClick={handleContestPageClick} >
+           <FontAwesomeIcon icon={faSearch} style={{fontSize:'16px'}}/> {/* FontAwesome icon */}
+         공모전
+        </AddButton>
+
+         <AddButton onClick={handleAddButtonClick} >
           <FontAwesomeIcon icon={faPen} style={{ color: '#535353', fontSize: '16px' }} /> {/* FontAwesome icon */}
           글쓰기
         </AddButton>
-        
-      </div>
+        <MoreButton>
+          +
+        </MoreButton>
+
+        </FloatingActionButtonContainer>
    
 
       <div style={{ display: "flex", justifyContent: "center", margin: "32px 0" }}>
@@ -511,242 +521,8 @@ onClose={() => setShowAlertPopup(false)}
   );
 };
 
-// Styled Components
-const PageContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: 'Pretendard', sans-serif;
-`;
 
-const Header = styled.header`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 32px;
-  width: 100%;
-  margin-bottom: 32px;
-`;
 
-const Logo = styled.h1`
-  font-family: 'Protest Strike', cursive;
-  font-size: 56px;
-  color: #00AEFF;
-  margin: 0;
-`;
-
-const SearchContainer = styled.div`
-  display: flex;
-  align-items: flex-end;
-  width: 100%;
-  gap: 8px;
-`;
-
-const SearchBar = styled.div`
-  display: flex;
-  align-items: center;
-  background-color: #F3F0F0;
-  border-radius: 8px;
-  padding: 9px 16px;
-  flex-grow: 1;
-`;
-
-// const SearchIcon = styled.img`
-//   margin-right: 8px;
-// `;
-
-const SearchIcon = styled.span`
-  position: absolute;
-  right: 20%;
-  top: 50%;
-  transform: translate(250%, -50%);
-  font-size: 20px;
-  cursor: pointer;
-  color: #0080ff;
-
-  &:hover {
-    color: #62B9EC;
-  }
-`;
-
-const SearchInput = styled.input`
-  border: none;
-  background: transparent;
-  font-size: 20px;
-  color: #858585;
-  width: 100%;
-  outline: none;
-  
-  &::placeholder {
-    color: #858585;
-  }
-`;
-
-const FilterButton = styled.button`
-  background-color: #F3F0F0;
-  border: none;
-  border-radius: 8px;
-  padding: 13px 17px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-`;
-
-const SearchButton = styled.button`
-  background-color: #00AEFF;
-  border: none;
-  border-radius: 8px;
-  padding: 13px 17px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-`;
-
-const TagsRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-`;
-
-const Tag = styled.div`
-  border: 1px solid #CECECE;
-  border-radius: 4100px;
-  padding: 12px 18px;
-  font-size: 18px;
-  color: #1A1A1A;
-  cursor: pointer;
-  
-  &:hover {
-    background-color: #F3F0F0;
-  }
-`;
-
-const CarouselWrapper = styled.div`
-  position: relative;
-  width: 100%;
-  // overflow: hidden;
-  max-width: 900px;
-  margin: 0 auto 32px auto;
-`;
-
-const CarouselArrow = styled.button`
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 2;
-  background: rgba(255,255,255,0.8);
-  border: none;
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  color: #888;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  transition: background 0.15s;
-  &:hover {
-    background: #eaf6ff;
-    color: #00aeff;
-  }
-`;
-
-const CarouselSection = styled.section`
-  display: flex;
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  transform: translateX(-${props => props.$currentSlide * 100}%);
-  width: 100%;
-`;
-
-const CarouselItem = styled.div`
-  flex: 0 0 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  display: flex;
-  justify-content: center;
-`;
-
-const CarouselContent = styled.div`
-  position: relative;
-  border-radius: 28px;
-  padding: 40px;
-  height: 200px;
-  width: 80%;
-  background-color: ${props => props.purple ? '#662CC2' : props.blue ? '#00AEFF' : '#1A1A1A'};
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-`;
-
-const CarouselTextContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  z-index: 1;
-`;
-
-const CarouselSubtitle = styled.h3`
-  font-size: 30px;
-  font-weight: 300;
-  color: white;
-  margin: 0;
-`;
-
-const CarouselTitle = styled.h2`
-  font-size: 36px;
-  font-weight: 700;
-  color: white;
-  margin: 0;
-`;
-
-const CarouselImage = styled.div`
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 50%;
-  height: 100%;
-  display: flex;
-  justify-content: flex-end;
-  align-items: flex-end;
-  img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    display: block;
-  }
-`;
-
-const CtaButton = styled.button`
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  border-radius: 100px;
-  padding: 16px 36px;
-  font-size: 20px;
-  font-weight: 600;
-  background-color: ${props => props.blue ? '#00AEFF' : props.white ? '#FFFFFF' : '#FFFFFF'};
-  color: ${props => props.white ? '#00AEFF' : props.blue ? '#FFFFFF' : '#662CC2'};
-  border: none;
-  cursor: pointer;
-  z-index: 1;
-`;
-
-const SlideIndicator = styled.div`
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  background-color: rgba(109, 109, 109, 0.5);
-  border-radius: 50px;
-  padding: 10px 18px;
-  font-size: 14px;
-  font-weight: 600;
-  color: white;
-`;
 
 const SectionHeader = styled.div`
   display: flex;
@@ -762,169 +538,8 @@ const SectionTitle = styled.h2`
   margin: 0;
 `;
 
-const ViewMoreLink = styled.a`
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  font-size: 18px;
-  font-weight: 300;
-  color: #1A1A1A;
-  font-weight: 500;
-  text-decoration: none;
-  cursor: pointer;
-`;
 
-const ArrowIcon = styled.img`
-  transform: rotate(90deg);
-`;
 
-const PopularProjectsGrid = styled.div`
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 48px;
-   max-width: 100%;
-`;
-
-const PopularProjectCard = styled.div`
-  background: linear-gradient(135deg, #eaf6ff 80%, #f6fbff 100%);
-  border-radius: 16px;
-  padding: 24px 20px 18px 20px;
-  // min-width: 300px;
-  max-width: 33%;
-  min-height: 200px;
-  // max-width: 100%;
-  box-shadow: none;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-`;
-
-const PopularProjectHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const PopularProjectTitle = styled.h3`
-  font-size: 18px;
-  font-weight: 700;
-  color: #222;
-  margin: 0;
-`;
-
-const PopularDeadlineTag = styled.span`
-  background: #00aeff;
-  color: #fff;
-  border-radius: 16px;
-  padding: 4px 14px;
-  font-size: 13px;
-  font-weight: 500;
-`;
-
-const PopularProjectDescription = styled.p`
-  font-size: 14px;
-  color: #444;
-  margin: 12px 0 10px 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-`;
-
-const PopularProjectInfo = styled.div`
-  display: flex;
-  gap: 16px;
-  font-size: 13px;
-  color: #555;
-  margin-bottom: 8px;
-`;
-
-const PopularProjectTags = styled.div`
-  display: flex;
-  gap: 8px;
-`;
-
-const PopularProjectTag = styled.span`
-  background: #fff;
-  color: #00aeff;
-  border-radius: 16px;
-  padding: 4px 12px;
-  font-size: 12px;
-  font-weight: 500;
-  border: 1px solid #e0f0ff;
-`;
-
-const ProjectCard = styled.div`
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.07);
-  padding: 28px 24px 20px 24px;
-  display: flex;
-  flex-direction: column;
-  min-height: 400px;
-  justify-content: space-between;
-  border: 1px solid #e6eaf2;
-
-`;
-
-const ProjectHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const ProjectTitle = styled.h3`
-  font-size: 20px;
-  font-weight: 600;
-  color: #000000;
-  margin: 0;
-`;
-
-const DeadlineTag = styled.span`
-  background-color: #D4D4D4;
-  border-radius: 50px;
-  padding: 6px 10px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #888888;
-`;
-
-const ProjectDescription = styled.p`
-  font-size: 16px;
-  line-height: 1.5;
-  color: #888888;
-  margin: 0;
-`;
-
-const ProjectInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const ProjectDetail = styled.span`
-  font-size: 14px;
-  font-weight: 500;
-  color: #888888;
-`;
-
-const ProjectTags = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-`;
-
-const ProjectTag = styled.span`
-  background: #eaf6ff;
-  color: #009cff;
-  border-radius: 16px;
-  padding: 4px 14px;
-  font-size: 13px;
-  font-weight: 500;
-  margin-right: 6px;
-`;
 
 const FeedToggleSection = styled.div`
   display: flex;
@@ -975,76 +590,6 @@ const ProjectFeed = styled.div`
   margin-bottom: 32px;
 `;
 
-const ApplyButton = styled.button`
-  flex: 1;
-  height: 44px;
-  // background: linear-gradient(90deg, #36c6ff 0%, #3a8dff 100%);
-  background: #00BEFF;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 18px;
-  font-weight: bold;
-  cursor: pointer;
-`;
-
-const PopularProjectDetail = styled.span`
-  font-size: 13px;
-  color: #555;
-  margin-right: 12px;
-`;
-
-const LikeButton = styled.button`
-  display: flex;
-  align-items: center;
-  background: #f7f7f7;
-  border: 1px solid #e6eaf2;
-  border-radius: 8px;
-  padding: 6px 14px;
-  font-size: 16px;
-  color: #888;
-  cursor: pointer;
-  margin-right: 12px;
-  transition: background 0.15s;
-  &:hover {
-    background: #eaf6ff;
-    color: #00aeff;
-  }
-  svg {
-    margin-right: 6px;
-    font-size: 18px;
-  }
-`;
-
-const VerticalLikeButton = styled.button`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  background: #f5f5f5;
-  border: none;
-  border-radius: 8px;
-  margin-right: 12px;
-  cursor: pointer;
-  font-size: 15px;
-  color: #222;
-  box-shadow: none;
-  padding: 0;
-  transition: background 0.2s;
-  &:hover {
-    background: #e0e0e0;
-  }
-  svg {
-    margin-bottom: 2px;
-  }
-`;
-
-// const ContentsWrap = styled.div`
-//   transform: scale(0.9);
-//   transform-origin: top center;
-// `;
 
 
 const ButtonContainer = styled.div`
@@ -1096,9 +641,9 @@ const AddButton = styled.button`
     color: #aaa;
     cursor: not-allowed;
   }
-  position: fixed;
-  right: 10%;
-  bottom: 10%;
+  // position: fixed;
+  // right: 10%;
+  // bottom: 10%;
   
 `;
 
@@ -1126,6 +671,37 @@ const AddButtonFixed = styled.button`
     cursor: not-allowed;
   }
 `;
+
+
+const FloatingActionButtonContainer = styled.div`
+  position: fixed;
+  right: 120px;
+  bottom: 30px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+`;
+
+const MoreButton = styled.button`
+  background: #535353;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  gap: 10px;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);  
+  width: 60px;
+  height: 60px;
+  padding: 10px 28px;   
+  font-size: 40px;
+  // font-weight: 600;
+  `;
 
 
 export default MainPage; 

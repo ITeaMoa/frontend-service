@@ -677,6 +677,8 @@ const FloatingActionButtonContainer = styled.div`
   position: fixed;
   right: 120px;
   bottom: 30px;
+  // right: 10%;
+  // bottom: 10%;
   z-index: 1000;
   display: flex;
   flex-direction: column;

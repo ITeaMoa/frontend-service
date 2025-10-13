@@ -1,5 +1,5 @@
 //바끤 피그마
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
@@ -89,23 +89,24 @@ const tagDetails = {
   }
 };
 
-// ... existing code ...
 const contests = [
   {
     id: 1,
-    image: "https://via.placeholder.com/300x180.png?text=AI+기반+추천+시스템",
+    image: "https://via.placeholder.com/300x180.png?text=전국+대학생+SW창업",
     title: "전국 대학생 SW창업 아이디어톤(대구 대-다산벤처스)",
     detail: "신규 서비스/사업 아이디어 / 사용자 패인포인트 발굴→MVP 기획 실전.",
     date: "2025.09.01 ~ 2025.10.15",
-    tags: ["생산/품질/SCM", "모집중"]
+    tags: ["상품/서비스 기획(PO)", "모집중"],
+    description: "신규 서비스/사업 아이디어 / 사용자 패인포인트 발굴→MVP 기획 실전."
   },
   {
     id: 2,
-    image: "https://via.placeholder.com/300x180.png?text=블록체인+기반+투표",
+    image: "https://via.placeholder.com/300x180.png?text=물류데이터+활용",
     title: "물류데이터 활용·분석 아이디어 공모전 (대전정보문화산업진흥원)",
     detail: "수요예측·물류적재화·지표설계 역량.",
     date: "2025.08.15 ~ 2025.09.30",
-    tags: ["생산/품질/SCM", "모집중"]
+    tags: ["생산/품질/SCM", "모집중"],
+    description: "수요예측·물류적재화·지표설계 역량."
   },
   {
     id: 3,
@@ -113,7 +114,8 @@ const contests = [
     title: "공공 AI 혁신 대국민 아이디어 공모전(행안부-NIA)",
     detail: "공공서비스 혁신 아이디어 / 빅데이터 GTM·정책/서비스 기획 경청차 쌓기.",
     date: "2025.09.01 ~ 2025.10.15",
-    tags: ["상품/서비스 기획(PO)", "모집중"]
+    tags: ["상품/서비스 기획(PO)", "모집중"],
+    description: "공공서비스 혁신 아이디어 / 빅데이터 GTM·정책/서비스 기획 경청차 쌓기."
   },
   {
     id: 4,
@@ -121,7 +123,8 @@ const contests = [
     title: "제8회 전국 청년 아이디어톤(수원시-아주대)",
     detail: "아이디어에선→프로토타이핑→퍼팅.",
     date: "2025.10.01 ~ 2025.11.01",
-    tags: ["PM(프로젝트/프로덕트)", "모집중"]
+    tags: ["PM(프로젝트/프로덕트)", "모집중"],
+    description: "아이디어에선→프로토타이핑→퍼팅."
   },
   {
     id: 5,
@@ -129,7 +132,8 @@ const contests = [
     title: "국립생태원 '생태디자인' 공모전(텍스타일 패턴)",
     detail: "리서치 기반 콘셉팅-퍼즐 시스템 설계.",
     date: "2025.09.15 ~ 2025.10.31",
-    tags: ["UX/UI-리서치", "모집중"]
+    tags: ["UX/UI-리서치", "모집중"],
+    description: "리서치 기반 콘셉팅-퍼즐 시스템 설계."
   },
   {
     id: 6,
@@ -137,7 +141,8 @@ const contests = [
     title: "2025 인문가치 논문 공모전(한국정신문화재단)",
     detail: "조직문화-러닝 디자인 관점의 리서치-정책 제안에 활용 가능.",
     date: "2025.09.01 ~ 2025.10.15",
-    tags: ["HR(조직/채용/리닝)", "모집중"]
+    tags: ["HR(조직/채용/리닝)", "모집중"],
+    description: "조직문화-러닝 디자인 관점의 리서치-정책 제안에 활용 가능."
   },
   {
     id: 7,
@@ -145,7 +150,8 @@ const contests = [
     title: "대한민국 ESG경영 혁신대상(한경)",
     detail: "지배구조-윤리경영-내부통제 체계 관련 문서화/평가 대응 실무에 유의미.",
     date: "2025.09.01 ~ 2025.10.15",
-    tags: ["법무/컴플라이언스", "모집중"]
+    tags: ["법무/컴플라이언스", "모집중"],
+    description: "지배구조-윤리경영-내부통제 체계 관련 문서화/평가 대응 실무에 유의미."
   },
   {
     id: 8,
@@ -153,18 +159,46 @@ const contests = [
     title: "캠퍼스온에어 ESG 성장 공모전",
     detail: "ESG 메시지 설계-캠페인 기획 실전.",
     date: "2025.09.01 ~ 2025.10.15",
-    tags: ["ESG/지속가능경영", "모집중"]
+    tags: ["ESG/지속가능경영", "모집중"],
+    description: "ESG 메시지 설계-캠페인 기획 실전."
   },
   {
     id: 9,
-    image: "https://via.placeholder.com/300x180.png?text=데이터+AI",
+    image: "https://via.placeholder.com/300x180.png?text=마케팅+콘텐츠",
+    title: "2025 미래한국 아이디어 공모전(카드 뉴스/영상 부문)",
+    detail: "메시지 설계-스토리텔링-콘텐츠 그로스 감각 검증",
+    date: "2025.09.01 ~ 2025.10.15",
+    tags: ["마케팅/브랜드", "모집중"],
+    description: "메시지 설계-스토리텔링-콘텐츠 그로스 감각 검증"
+  },
+  {
+    id: 10,
+    image: "https://via.placeholder.com/300x180.png?text=기업+사회",
+    title: "대한민국 ESG경영 혁신대상(한경)",
+    detail: "지배구조-윤리경영-내부통제 체계 관련 문서화/평가 대응 실무에 유의미.",
+    date: "2025.09.01 ~ 2025.10.15",
+    tags: ["법무/컴플라이언스", "모집중"],
+    description: "지배구조-윤리경영-내부통제 체계 관련 문서화/평가 대응 실무에 유의미."
+  },
+  {
+    id: 11,
+    image: "https://via.placeholder.com/300x180.png?text=데이터+분석",
     title: "2025 DATA-AI 분석 경진대회(KISTI)",
     detail: "재무 KPI/리스크 분석 지표 설계 프레임 연습에 유용(문제발굴-해결 모두).",
     date: "2025.09.01 ~ 2025.10.15",
-    tags: ["재무/회계", "모집중"]
+    tags: ["재무/회계", "모집중"],
+    description: "재무 KPI/리스크 분석 지표 설계 프레임 연습에 유용(문제발굴-해결 모두)."
+  },
+  {
+    id: 12,
+    image: "https://via.placeholder.com/300x180.png?text=기술+혁신",
+    title: "2025 DATA-AI 분석 경진대회(KISTI)",
+    detail: "재무 KPI/리스크 분석 지표 설계 프레임 연습에 유용(문제발굴-해결 모두).",
+    date: "2025.09.01 ~ 2025.10.15",
+    tags: ["재무/회계", "모집중"],
+    description: "재무 KPI/리스크 분석 지표 설계 프레임 연습에 유용(문제발굴-해결 모두)."
   }
 ];
-
 // // Update tagOptions to include all unique tags from the contests
 // const tagOptions = [...new Set(contests.flatMap(contest => contest.tags))];
 // // ... existing code ...
@@ -195,6 +229,26 @@ const ContestPage = () => {
   const [selectedSavedProject,setSelectedSavedProject] = useAtom(selectedSavedProjectAtom); // 아톰에서 프로젝트 정보 가져오기
   const [selectedTags, setSelectedTags] = useState([]); // 태그 상태 추가
   const [selectedTagDetails, setSelectedTagDetails] = useState([]);
+  const [tagsRowZIndex, setTagsRowZIndex] = useState(2000);
+  const tagsRowRef = useRef(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (tagsRowRef.current) {
+        const tagsRowTop = tagsRowRef.current.getBoundingClientRect().top;
+        // NavigationBar의 고정된 부분의 높이를 80px로 가정합니다.
+        if (tagsRowTop <= 250) {
+          setTagsRowZIndex(0);
+        } else {
+          setTagsRowZIndex(2000);
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
 
   const navigate = useNavigate();
   
@@ -255,7 +309,7 @@ const ContestPage = () => {
         
         {/* Tag Section */}
         <TagTitle>공모분야</TagTitle>
-        <TagsRow>
+        <TagsRow ref={tagsRowRef} style={{ zIndex: tagsRowZIndex }}>
           {tagOptions.map(tag => (
             <Tag
               key={tag}
@@ -355,7 +409,6 @@ const TagsRow = styled.div`
   max-width: 1030px;
   margin-left: auto;
   margin-right: auto;
-  // z-index:2000;
 `;
 
 const Tag = styled.div`
@@ -405,9 +458,11 @@ const TagDetailContainer = styled.div`
 
 const TagDetailCard = styled.div`
   flex: 1;
- width: 300px;
- max-width: 300px;
+ width: 200px;
+ max-width: 200px;
+ min-height: 100px;
   padding: 20px;
+  text-align: center;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   background-color: white;

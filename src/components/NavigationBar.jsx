@@ -108,19 +108,33 @@ const option3 = [
 // };
 
 //문자열 객체 모도 처리
- const handleTagSelect = (tagOrOption) => {
+ const handleTagSelect = (e,tagOrOption) => {
+    e.stopPropagation();
     // 객체인 경우 label 속성을 사용하고, 문자열인 경우 그대로 사용
     const tag = typeof tagOrOption === 'object' && tagOrOption.label 
       ? tagOrOption.label 
       : tagOrOption;
       
-    setSelectedTags((prevTags) => {
-      if (!prevTags.includes(tag)) {
-        return [...prevTags, tag]; // 선택된 태그 추가
+  setSelectedTags(prevTags => {
+      if (prevTags.includes(tag)) {
+        return prevTags.filter(t => t !== tag);
+      } else {
+        return [...prevTags, tag];
       }
-      return prevTags; // 이미 존재하면 그대로 반환
     });
   };
+
+
+  // const handleTagSelect = (e, tag) => {
+  //   e.stopPropagation();
+  //   setSelectedTags(prevTags => {
+  //     if (prevTags.includes(tag)) {
+  //       return prevTags.filter(t => t !== tag);
+  //     } else {
+  //       return [...prevTags, tag];
+  //     }
+  //   });
+  // };
 
   // 태그 삭제
   const handleTagRemove = (tag) => {
@@ -232,12 +246,12 @@ const option3 = [
               <Tag
                 key={tag}
                 selected={selectedTags.includes(tag)}
-                onClick={() => handleTagSelect(tag)}
+                onClick={(e) => handleTagSelect(e, tag)}
               >
                 {tag}
-                {selectedTags.includes(tag) && (
+                {/* {selectedTags.includes(tag) && (
                   <CloseButton onClick={e => { e.stopPropagation(); handleTagRemove(tag); }}>×</CloseButton>
-                )}
+                )} */}
               </Tag>
             ))}
             {selectedTags.length > 0 && (
@@ -479,19 +493,19 @@ const TagsRow = styled.div`
 `;
 
 const Tag = styled.div`
-  border: 1px solid #CECECE;
+   border: ${({ selected }) => (selected ? '#00AEFF' : '1px solid #CECECE')};
   border-radius: 999px;
   padding: 8px 20px;
   font-size: 16px;
-  color: #222;
-  background: ${({ selected }) => (selected ? '#62B9EC' : '#fff')};
-  cursor: pointer;
+  color:  ${({ selected }) => (selected ? 'white' : '#222')};
+  background: ${({ selected }) => (selected ? '#00AEFF' : '#fff')};
   margin-right: 10px;
   margin-bottom: 8px;
   transition: background 0.15s, color 0.15s, border 0.15s;
   display: inline-flex;
   align-items: center;
   font-weight: 500;
+  cursor: pointer;
 
   &:hover {
     background: #f3f0f0;

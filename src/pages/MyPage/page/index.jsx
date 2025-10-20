@@ -20,6 +20,7 @@ import { ContentsWrap , MainContent} from '../../../assets/BusinessAnalysisStyle
 import ProjectLikeItem from '../components/ProjectLikeItem';
 import ProjectItemColumnComponent from '../components/ProjectItemColumnComponent';
 import RoleSelectionModal from '../../../components/RoleSelectionModal';
+import ProjectDeadline from '../components/ProjectDeadline';
 
 
 const MyPage = () => {
@@ -454,6 +455,8 @@ const refreshProjects = async () => {
       //   }
       // });
       setProjects(likeProjects);
+    } else{
+      setProjects(appliedproject);
     }
 
     console.log(`${selectedList} 목록:`, response.data);
@@ -945,11 +948,30 @@ const handleConfirmCancel = async () => {
                 </div>
               </div>
             </>
-          ) : (
+          ) : ( <> 
+          <div style={{ gridColumn: '1 / -1', width: '100%' }}> 
+          <h2 style={{ fontSize: '20px', fontWeight: 'bold', margin: '10px 0 30px 0' }}>
+            나의 프로젝트 ({currentProjects.length})
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
+             {currentProjects.length === 0 ? (
+                    <p>참여한 공모전이 없습니다.</p>
+                  ) : (
+                    currentProjects && currentProjects.map((project, index) => (
+                      <ProjectDeadline
+                      key={`deadline-${project.pk || project.sk || index}`}
+                      project={project}
+                   
+                    />
+                    ))
+                  )}
+          </div>
+          </div>  
+          </>
 
       
             
-            <ProjectList></ProjectList>
+      
           )}
         </ProjectList>
       )}

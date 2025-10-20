@@ -92,28 +92,17 @@ const option3 = [
     navigate(`/SearchPage1?q=${searchValue}${tagsQuery}`);
   };
 
-  // 태그 선택
-  // const handleTagSelect = (tag) => {
-  //   setSelectedTags((prev) => prev.includes(tag) ? prev : [...prev, tag]);
-  // };
-
-  //객체만 처리
-//   const handleTagSelect = (option) => {
-//     setSelectedTags((prevTags) => {
-//         if (!prevTags.includes(option.label)) {
-//             return [...prevTags, option.label]; // 선택된 태그 추가
-//         }
-//         return prevTags;
-//     });
-// };
 
 //문자열 객체 모도 처리
  const handleTagSelect = (e,tagOrOption) => {
-    e.stopPropagation();
-    // 객체인 경우 label 속성을 사용하고, 문자열인 경우 그대로 사용
-    const tag = typeof tagOrOption === 'object' && tagOrOption.label 
-      ? tagOrOption.label 
-      : tagOrOption;
+    if (e && typeof e.stopPropagation === 'function') {
+      e.stopPropagation();
+    }
+
+    // TagSelector에서는 e가 option 객체이고, Tag에서는 tagOrOption이 tag 문자열입니다.
+    const tag = typeof tagOrOption === 'string' 
+      ? tagOrOption // <Tag>에서 클릭한 경우
+      : e.label; // <TagSelector>에서 클릭한 경우
       
   setSelectedTags(prevTags => {
       if (prevTags.includes(tag)) {
@@ -123,18 +112,8 @@ const option3 = [
       }
     });
   };
+// console.log(selectedTags)
 
-
-  // const handleTagSelect = (e, tag) => {
-  //   e.stopPropagation();
-  //   setSelectedTags(prevTags => {
-  //     if (prevTags.includes(tag)) {
-  //       return prevTags.filter(t => t !== tag);
-  //     } else {
-  //       return [...prevTags, tag];
-  //     }
-  //   });
-  // };
 
   // 태그 삭제
   const handleTagRemove = (tag) => {

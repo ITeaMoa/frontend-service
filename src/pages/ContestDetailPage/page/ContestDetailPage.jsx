@@ -261,22 +261,22 @@ const ContestDetailPage = () => {
             </ContestTags>
               <ContestTitle>{contest.title}</ContestTitle>
               <ContestMeta>
-                <ContestCategory>
-                  <FontAwesomeIcon icon={faTrophy} style={{ marginRight: '8px' }} />
-                  상금 | 6000만원
-                </ContestCategory>
-                <ContestStatus>
-                  <FontAwesomeIcon icon={faClock} style={{ marginRight: '8px' }} />
-                  마감 | {contest.tags[1]}
-                </ContestStatus>
-                <ContestPeriod>
-                  <FontAwesomeIcon icon={faUsers} style={{ marginRight: '8px' }} />
-                  인원 | 5명
-                </ContestPeriod>
-                <ContestPeriod>
-                  <FontAwesomeIcon icon={faCalendarDays} style={{ marginRight: '8px' }} />
-                  기간 | {contest.date}
-                </ContestPeriod>
+                <MetaRow>
+                  <MetaLabel><FontAwesomeIcon icon={faTrophy} />상금</MetaLabel>
+                  <MetaValue>| 6000만원</MetaValue>
+                </MetaRow>
+                <MetaRow>
+                  <MetaLabel><FontAwesomeIcon icon={faClock} />마감</MetaLabel>
+                  <MetaValue>| {contest.tags[1]}</MetaValue>
+                </MetaRow>
+                <MetaRow>
+                  <MetaLabel><FontAwesomeIcon icon={faUsers} />인원</MetaLabel>
+                  <MetaValue>| 5명</MetaValue>
+                </MetaRow>
+                <MetaRow>
+                  <MetaLabel><FontAwesomeIcon icon={faCalendarDays} />기간</MetaLabel>
+                  <MetaValue>| {contest.date}</MetaValue>
+                </MetaRow>
               </ContestMeta>
               {/* <ApplyButton>공모전 지원하기</ApplyButton> */}
               <ProgressTimeline>
@@ -473,35 +473,26 @@ const ContestMeta = styled.div`
   font-weight: bold;
   gap:12px;
 `;
-
-const ContestCategory = styled.span`
-  font-size: 14px;
-  color: #000000;
+const MetaRow = styled.div`
   display: flex;
   align-items: center;
-  // gap: 8px;
+  font-size: 14px;
 `;
 
-const ContestStatus = styled.span`
-  font-size: 14px;
+const MetaLabel = styled.span`
   display: flex;
   align-items: center;
-  // gap: 8px;
+  width: 60px; /* 고정 너비로 정렬 맞춤 */
+
+  svg {
+    margin-right: 10px;
+    width: 16px; /* 아이콘 너비 고정 */
+    text-align: center;
+  }
 `;
 
-const ContestDeadline = styled.span`
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-const ContestPeriod = styled.span`
-  font-size: 14px;
-  // color: #666;
-  display: flex;
-  align-items: center;
-  // gap: 8px;
+const MetaValue = styled.span`
+  flex: 1;
 `;
 
 const ProgressTimeline = styled.div`
@@ -642,7 +633,7 @@ const SectionContent = styled.div`
 const RelatedProjectsSection = styled.div`
   margin-top: 60px;
   // background-color: #f7f7f7;
-  padding: 40px;
+  // padding: 40px;
   border-radius: 8px;
 `;
 

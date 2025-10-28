@@ -80,8 +80,8 @@ function App() {
               {/* <Route path="MainPage1" element={<MainPage1 />} /> */}
               <Route path="WritePage" element={  <RequireToken><WritePage /></RequireToken>} />
               <Route path="ApplyPage1/:projectId" element={  <ApplyPage1 />} />
-              <Route path="ContestPage" element={  <ContestPage />} />
-              <Route path="ContestDetailPage/:contestId" element={ <ContestDetailPage />} />
+              <Route path="ContestPage" element={  <RequireToken><ContestPage/></RequireToken>} />
+              <Route path="ContestDetailPage/:contestId" element={ <RequireToken><ContestDetailPage/></RequireToken>} />
 
             </Route>
           </Routes>

@@ -6,19 +6,12 @@ import { useAtom } from 'jotai';
 import { feedTypeAtom, selectedProjectDetailAtom ,selectedSavedProjectAtom} from '../../../Atoms.jsx/AtomStates';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import { ContentsWrap , MainContent} from '../../../assets/BusinessAnalysisStyle';
+// import { ContentsWrap , MainContent} from '../../../assets/BusinessAnalysisStyle';
 import NavigationBar from '../../../components/NavigationBar';
 // import PopularProject from '../components/PopularProject';
 // import ProjectFeedCard from '../components/ProjectFeedCard';
 import axios from '../../../api/axios'
 import { useAuth } from '../../../context/AuthContext';
-import AlertModal from '../../../components/AlertModal';
-import AuthModal from '../../../components/AuthModal';
-import Modal from '../../../components/Modal';
-import RoleSelectionModal from '../../../components/RoleSelectionModal';
-import Pagination from '../../../components/Pagination';
-import ProfileModal from '../../../components/ProfileModal';
-import { faPen } from '@fortawesome/free-solid-svg-icons'; // Import the pencil icon
 import contest1 from '../../../assets/Image/01.jpeg';
 import contest2 from '../../../assets/Image/02.jpg.avif';
 import contest3 from '../../../assets/Image/03.jpg';
@@ -281,26 +274,7 @@ const contests = [
 
 const ContestPage = () => {
   const { isLoggedIn, user } = useAuth();
-  // const [isLoggedIn, setIsLoggedIn] = useAtom(IS_LOGGED_IN);
-  const [feedType, setFeedType] = useAtom(feedTypeAtom);
-  const [selectedProjectDetail, setSelectedProjectDetail] = useAtom(selectedProjectDetailAtom);
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [popularProjects, setPopularProjects] = useState([]);
   const [allProjects, setAllProjects] = useState([]);
-  const [showApplyPopup, setShowApplyPopup] = useState('');
-  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
-  const [selectedRole, setSelectedRole] = useState('');
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [popupMessage, setPopupMessage] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [showAlertPopup, setShowAlertPopup] = useState('');
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  const [userProfile, setUserProfile] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [isUserProfileLoaded, setIsUserProfileLoaded] = useState(false);
-  const [modalOpenedOnce, setModalOpenedOnce] = useState(false);
-  const [hasProfileModalOpened, setHasProfileModalOpened] = useState(false);
-  // const [isProfileComplete, setIsProfileComplete] = useState(false);
   const [selectedSavedProject,setSelectedSavedProject] = useAtom(selectedSavedProjectAtom); // 아톰에서 프로젝트 정보 가져오기
   const [selectedTags, setSelectedTags] = useState([]); // 태그 상태 추가
   const [selectedTagDetails, setSelectedTagDetails] = useState([]);
@@ -402,37 +376,50 @@ const ContestPage = () => {
         {/* Tag Detail Content */}
      
         {selectedTags.length > 0 ? (
-          <>
-            <TagTitle style={{marginTop: '60px'}}>고르신 직군은 이런 공모전 유형을 추천해요</TagTitle>
-            <TagDetailContainer>
-              {selectedTagDetails.map((detail, index) => (
-                <TagDetailCard key={index}>
-                  <TagDetailTitle>{detail.title}</TagDetailTitle>
-                  <TagDetailDescription>{detail.description}</TagDetailDescription>
-                </TagDetailCard>
-              ))}
-            </TagDetailContainer>
-          </>
+          <RecommendSection>
+            <div style={{ maxWidth: '1030px', margin: '0 auto', width: '100%' }}>
+              <TagTitle style={{ marginTop: '50px', color: 'black', marginBottom: '30px' }}>
+                고르신 직군은 이런 공모전 유형을 추천해요
+              </TagTitle>
+              <TagDetailContainer>
+                {selectedTagDetails.map((detail, index) => (
+                  <TagDetailCard key={index}>
+                    <TagDetailHeader color={index === 0 ? '#00AEFF' : index === 1 ? '#333333' : '#555555'}>
+                      <TagDetailTitle>{detail.title}</TagDetailTitle>
+                    </TagDetailHeader>
+                    <TagDetailContent>
+                      <TagDetailDescription>{detail.description}</TagDetailDescription>
+                      <LearnMoreButton onClick={() => {/* Handle more info click */}}>
+                        더 알아보기
+                      </LearnMoreButton>
+                    </TagDetailContent>
+                  </TagDetailCard>
+                ))}
+              </TagDetailContainer>
+            </div>
+          </RecommendSection>
         ) : (
-          <>
-            <TagTitle style={{marginTop: '60px'}}> {user.nickname}님께 이런 공모전을 추천드려요</TagTitle>
-            <ContestGrid>
-              {recommendContest.map(contest => (
-                <ContestCard key={contest.id} onClick={() => navigate(`/ContestDetailPage/${contest.id}`)}>
-                  <ContestImage src={contest.image} alt={contest.title} />
-                  <ContestContent>
-                    <ContestTitle>{contest.title}</ContestTitle>
-                    <ContestDetail>{contest.detail}</ContestDetail>
-                  </ContestContent>
-                  <ContestTags>
-                    {contest.tags.map((tag, index) => (
-                      <ContestTag key={index}>{tag}</ContestTag>
-                    ))}
-                  </ContestTags>
-                </ContestCard>
-              ))}
-            </ContestGrid>
-          </>
+          <FullWidthBlueSection>
+            <div style={{ maxWidth: '1030px', margin: '0 auto', width: '100%' }}>
+              <TagTitle style={{marginTop: '50px', color: 'white'}}> {user?.nickname}님께 이런 공모전을 추천드려요</TagTitle>
+              <ContestGrid>
+                {recommendContest.map(contest => (
+                  <ContestCard key={contest.id} onClick={() => navigate(`/ContestDetailPage/${contest.id}`)}>
+                    <ContestImage src={contest.image} alt={contest.title} />
+                    <ContestContent>
+                      <ContestTitle>{contest.title}</ContestTitle>
+                      <ContestDetail>{contest.detail}</ContestDetail>
+                    </ContestContent>
+                    <ContestTags>
+                      {contest.tags.map((tag, index) => (
+                        <ContestTag key={index}>{tag}</ContestTag>
+                      ))}
+                    </ContestTags>
+                  </ContestCard>
+                ))}
+              </ContestGrid>
+            </div>
+          </FullWidthBlueSection>
         )}
 
         <TagTitle style={{marginTop: '80px', marginBottom: '10px'}}>
@@ -481,11 +468,40 @@ const ContestPage = () => {
 );
 };
 
+ const ContentsWrap = styled.div`
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: ${(props) => (props.isMobile ? "column" : "row")};
+  // gap: ${(props) => (props.isMobile ? "20px" : "40px")};
+  // padding: ${(props) => (props.isMobile ? "20px" : "0 4px 0 0")};
+  min-height: 100vh;
+  overflow-x: hidden;
+`;
 
+
+const MainContent = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-width: ${(props) =>
+    props.Wide
+      ? "1024px"
+      : props.Wide1030
+      ? "1030px"
+      : props.Wide1240
+      ? "1240px"
+      : "820px"};
+  width: 100%;
+  justify-content: flex-start;
+  padding: 57px 0 40px;
+  margin: 0 auto;
+  // padding: ${(props) => (props.isMobile ? "0" : "0 20px")};
+`;
 
 
 const TagTitle = styled.h2`
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 600;
   color: #000000;
   margin: 0;
@@ -503,6 +519,7 @@ const TagsRow = styled.div`
   max-width: 1030px;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 40px;
 `;
 
 const Tag = styled.div`
@@ -542,56 +559,68 @@ const ResetButton = styled.button`
 `;
 
 
-
 const TagDetailContainer = styled.div`
   display: flex;
-  gap: 20px;
-  margin-top: 20px;
   flex-wrap: wrap;
+  gap: 20px;
+  // justify-content: space-between;
 `;
 
 const TagDetailCard = styled.div`
-  flex: 1;
+ flex: 1;
  width: 200px;
- max-width: 200px;
- min-height: 100px;
-  padding: 20px;
-  text-align: center;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background-color: white;
-  // box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  position: relative;
-  //  flex-basis: calc(100% / 3);
+ max-width: 250px;
+ min-height: 120px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
 `;
 
-const TagDetailTitle = styled.h4`
-  font-size: 16px;
-  font-weight: bold;
-  margin: 0 0 12px 0;
-  color: #333;
-  text-align: center;
-  position: absolute;
-  top: -16px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: inline-block;
-  padding: 8px 16px;
-  background-color: #00AEFF;
+const TagDetailHeader = styled.div`
+  background-color: ${props => props.color || '#00AEFF'};
   color: white;
-  border-radius: 20px;
-  z-index: 1;
-  font-size: 16px;
-  white-space: nowrap;
+  padding: 16px 20px;
+  text-align: center;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  // white-space: nowrap;
+  
+`;
+
+const TagDetailTitle = styled.h3`
+  font-size: clamp(12px, 1.5vw, 16px);
+  font-weight: bold;
+  margin: 0;
+
+`;
+
+const TagDetailContent = styled.div`
+  padding: 20px;
+  background-color: white;
+  border-radius: 30px;
+  
+
 `;
 
 const TagDetailDescription = styled.p`
   font-size: 14px;
-  color: #F2F2F;
-  line-height: 1.5;
-  text-align: left;
-  margin: 0;
-  margin-top:20px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  color: #333;
+  max-height: 100px;
+`;
+
+const LearnMoreButton = styled.button`
+  width: 100%;
+  padding: 10px 16px;
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 8px;
+  color: #666;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 `;
 
 const ContestGrid = styled.div`
@@ -608,6 +637,9 @@ const ContestCard = styled.div`
   display: flex;
   flex-direction: column;
   transition: transform 0.2s ease;
+  min-height:350px;
+  background-color: white;
+  max-width: 300px;
   
   &:hover {
     transform: translateY(-2px);
@@ -619,6 +651,7 @@ const ContestImage = styled.img`
   width: 100%;
   height: 180px;
   object-fit: cover;
+  object-position: top;
 `;
 
 const ContestContent = styled.div`
@@ -686,6 +719,29 @@ const ContestTag = styled.span`
   white-space: nowrap;
 `;
 
+const FullWidthBlueSection = styled.div`
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw; /* This is already correct for full width */
+  margin-right: -50vw; /* This is already correct for full width */
+  background: linear-gradient(180deg, #00AEFF 20%, #FBFBFB 100%);
+  // padding: 20px 0;
+  padding-bottom: 40px;
+`;
 
+
+const RecommendSection = styled.div`
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw; /* This is already correct for full width */
+  margin-right: -50vw; /* This is already correct for full width */
+  background: #F9F9F9;
+  // padding: 20px 0;
+  padding-bottom: 40px;
+`;
 
 export default ContestPage; 

@@ -290,7 +290,7 @@ const handleSignup = async () => {
 
         <Form>
 
-       
+{/*        
         <SocialLoginContainer>
         <SocialLogin>
         <DividerLine />
@@ -303,7 +303,7 @@ const handleSignup = async () => {
           <SocialButton2 >
             <Icon src="/images/네이버 로고 아이콘.png" alt="네이버 아이콘" /> 네이버로 시작하기
           </SocialButton2>
-        </SocialLoginContainer>
+        </SocialLoginContainer> */}
       </Form>
     </Container>
 
@@ -325,7 +325,7 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   height: 100vh;
-  margin-top:180px;
+  // margin-top:180px;
  
 `;
 
@@ -338,7 +338,7 @@ const Logo = styled.div`
 
   img {
     width: 100%; 
-    max-width: 300px;
+    max-width: 250px;
     height: auto; 
     cursor: pointer;
   }

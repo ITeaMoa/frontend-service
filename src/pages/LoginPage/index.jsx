@@ -157,7 +157,7 @@ const LoginPage = () => {
         <Button type="submit">로그인</Button>
         </Con1>
 
-        <SocialLoginContainer>
+        {/* <SocialLoginContainer>
         <SocialLogin>
         <DividerLine />
         <SocialLoginTitle>소셜 로그인</SocialLoginTitle>
@@ -169,7 +169,7 @@ const LoginPage = () => {
           <SocialButton2 >
             <Icon src="/images/네이버 로고 아이콘.png" alt="네이버 아이콘" /> 네이버 아이디로 로그인하기
           </SocialButton2>
-        </SocialLoginContainer>
+        </SocialLoginContainer> */}
       </Form>
 
       <Signup>
@@ -197,16 +197,17 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   height: 100vh;
-  margin-top: 90px;
+  // margin-top: 90px;
 `;
 
 const Logo = styled.div`
   position: absolute;
+  // top:100px;
   top:15px;
 
   img {
     width: 100%; 
-    max-width: 300px; 
+    max-width: 250px; 
     height: auto; 
     cursor: pointer;
   }

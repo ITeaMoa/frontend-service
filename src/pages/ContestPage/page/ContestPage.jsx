@@ -383,17 +383,17 @@ const ContestPage = () => {
               </TagTitle>
               <TagDetailContainer>
                 {selectedTagDetails.map((detail, index) => (
-                  <TagDetailCard key={index}>
-                    <TagDetailHeader color={index === 0 ? '#00AEFF' : index === 1 ? '#333333' : '#555555'}>
-                      <TagDetailTitle>{detail.title}</TagDetailTitle>
+                  <div key={index} style={{ display: 'flex', flexDirection: 'column', flex: '1 ', minWidth: '200px', maxWidth: '250px',hover: 'background-color: #08B1FF'}}>
+                    <TagDetailHeader >
+                      {detail.title}
                     </TagDetailHeader>
                     <TagDetailContent>
-                      <TagDetailDescription>{detail.description}</TagDetailDescription>
-                      <LearnMoreButton onClick={() => {/* Handle more info click */}}>
-                        더 알아보기
-                      </LearnMoreButton>
+                      <div>
+                        <TagDetailDescription>{detail.description}</TagDetailDescription>
+                      </div>
+                     
                     </TagDetailContent>
-                  </TagDetailCard>
+                  </div>
                 ))}
               </TagDetailContainer>
             </div>
@@ -477,6 +477,7 @@ const ContestPage = () => {
   // padding: ${(props) => (props.isMobile ? "20px" : "0 4px 0 0")};
   min-height: 100vh;
   overflow-x: hidden;
+  padding-bottom: 100px;
 `;
 
 
@@ -567,40 +568,51 @@ const TagDetailContainer = styled.div`
 `;
 
 const TagDetailCard = styled.div`
- flex: 1;
+ /* flex: 1;
  width: 200px;
  max-width: 250px;
  min-height: 120px;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease; */
 `;
 
+
+
 const TagDetailHeader = styled.div`
-  background-color: ${props => props.color || '#00AEFF'};
+  background-color: ${props => props.color || '#535353'};
   color: white;
   padding: 16px 20px;
   text-align: center;
-  border-top-left-radius: 16px;
-  border-top-right-radius: 16px;
-  // white-space: nowrap;
+  border-radius: 16px;
+  white-space: nowrap;
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0;
+  height: 60px;
+  &:hover {
+    background-color: #00AEFF};
+  }
   
 `;
 
 const TagDetailTitle = styled.h3`
-  font-size: clamp(12px, 1.5vw, 16px);
-  font-weight: bold;
-  margin: 0;
-
+  /* Merged into TagDetailHeader */
 `;
 
 const TagDetailContent = styled.div`
   padding: 20px;
   background-color: white;
-  border-radius: 30px;
-  
-
+  border-radius: 16px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-top: -40px;
+  position: relative;
+  z-index: 1;
+  min-height: 150px;
 `;
 
 const TagDetailDescription = styled.p`
@@ -609,6 +621,11 @@ const TagDetailDescription = styled.p`
   margin-bottom: 20px;
   color: #333;
   max-height: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
 `;
 
 const LearnMoreButton = styled.button`

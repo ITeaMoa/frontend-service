@@ -133,15 +133,16 @@ const LoginPage = () => {
        </Logo>
        
         
-        <Label>로그인</Label>
+    
       
        <Form onSubmit={handleSubmit}>
+          <Label>로그인</Label>
          <Con1>
            <Input 
              type="email" 
              value={email} 
              onChange={(e) => setEmail(e.target.value)} 
-             placeholder="아이디" 
+             placeholder="이메일을 입력하세요" 
              required 
            />
  
@@ -221,9 +222,9 @@ const Logo = styled.div`
 const Form = styled.form`
   display: flex;
   flex-direction: column;
- align-items:center;
- justify-content: center;
-  width: 25%;
+  align-items: flex-start; /* Changed to flex-start to align children to the left */
+  justify-content: center;
+  width: 30%;
 
 `;
 
@@ -241,12 +242,13 @@ const Con1 = styled.div`
 `;
 
 const Label = styled.label`
-  margin: 10px 0 5px;
-  font-size: 24px;
+  // margin: 10px 0 5px;
+  font-size: 20px;
   font-weight: bold;
-  margin-bottom:10px;
+  // margin-bottom:10px;
   color: #333;
-  text-align: left;
+  // text-align: left;
+  margin-left: 14px;
 `;
 
 const TogglePasswordButton = styled.button`
@@ -261,13 +263,20 @@ const TogglePasswordButton = styled.button`
 `;
 
 const Input = styled.input`
-  width: 90%;
-  padding: 16px;
-  border-radius: 8px;
+  width: 100%;
+  padding: 18px;
+  border-radius: 5px;
   border: none;
-  background-color: #f5f5f5;
+  background-color: #EDEDED;
   font-size: 14px;
   margin-bottom: 16px;
+  box-sizing: border-box;
+  outline: none;
+
+  // &:focus {
+  //   border-color: #007bff;
+  //   box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  // }
 `;
 
 const HelperText = styled.span`
@@ -294,13 +303,13 @@ const CheckboxLabel = styled.label`
 const Button = styled.button`
   width: 100%;
   padding: 16px;
-  border-radius: 8px;
+  border-radius: 5px;
   background-color: ${props => props.secondary ? 'transparent' : '#333'};
   color: ${props => props.secondary ? '#333' : 'white'};
   font-size: 16px;
   font-weight: bold;
   border: ${props => props.secondary ? '1px solid #333' : 'none'};
-  margin-bottom: 16px;
+  margin-bottom: 10px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 

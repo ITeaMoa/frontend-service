@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 //import axios from 'axios';
-import axios from '../../api/axios'
+import axios from '../../api/axios';
 import Modal from '../../components/Modal';
 import AlertModal from '../../components/AlertModal';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const SignUpPage = () => {
   const navigate = useNavigate();
+  const [id, setId] = useState('');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [authNumber, setAuthNumber] = useState('');
   const [password, setPassword] = useState('');
@@ -16,9 +19,44 @@ const SignUpPage = () => {
   const [isAuthNumberSent, setIsAuthNumberSent] = useState(false);
   const [isResendDisabled, setIsResendDisabled] = useState(false);
   const [remainingTime, setRemainingTime] = useState(180); // 3분
+  const [phone, setPhone] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
   const [showAlertPopup, setShowAlertPopup] = useState('');
   const [isNicknameAvailable, setIsNicknameAvailable] = useState(false);
   const [confirmEmail, setConfirmEmail] = useState(false);
+
+  const [selectedInterests, setSelectedInterests] = useState([]);
+  const [selectedSkills, setSelectedSkills] = useState([]);
+
+
+// Interest options
+const interestOptions = [
+  '전략/기획', '상품/서비스 기획(PO)', '마케팅/브랜드', '세일즈/BD', 
+  'PR/커뮤니케이션', '구매/소싱', 'UX/UI-리서치', 'PM(프로그래밍/프로젝트)', 
+  '생산/품질/SCM', '재무/회계', 'HR(조직/채용/러닝)', '데이터/AI(분석)', 
+  '법무/컴플라이언스', 'ESG/지속가능경영', '소프트웨어/플랫폼(백엔드·클라우드)'
+];
+
+// Skills options
+const skillsOptions = ['AWS', 'Blockchain', 'NodeJS', 'React', 'Java', 'Dapp', 'DID', 'Backend'];
+
+// Handlers
+const handleInterestToggle = (interest) => {
+  setSelectedInterests(prev => 
+    prev.includes(interest)
+      ? prev.filter(item => item !== interest)
+      : [...prev, interest]
+  );
+};
+
+const handleSkillToggle = (skill) => {
+  setSelectedSkills(prev => 
+    prev.includes(skill)
+      ? prev.filter(item => item !== skill)
+      : [...prev, skill]
+  );
+};
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     // console.log('이메일:', email);
@@ -208,7 +246,7 @@ const handleSignup = async () => {
             type="text" 
             value={nickname} 
             onChange={(e) => setNickname(e.target.value)} 
-            placeholder="닉네임 입력" 
+            placeholder="활동명을 입력하세요 " 
             required 
           />
           <AuthButton type="button" onClick={handleCheckNickname}>중복 확인</AuthButton>
@@ -220,7 +258,7 @@ const handleSignup = async () => {
             type="email" 
             value={email} 
             onChange={(e) => setEmail(e.target.value)} 
-            placeholder="이메일 입력" 
+            placeholder="이메일을 입력하세요" 
             required 
           />
           <AuthButton disabled={!isNicknameAvailable} type="button" onClick={isAuthNumberSent ? handleResendCode : handleAuthNumberSend}>
@@ -234,7 +272,7 @@ const handleSignup = async () => {
           type="text" 
           value={authNumber} 
           onChange={(e) => setAuthNumber(e.target.value)} 
-          placeholder="인증번호 입력" 
+          placeholder="인증번호를 입력하세요" 
           required 
         />
          <AuthButton disabled={!isNicknameAvailable} type="button" onClick={handleConfirmEmail}>인증번호 확인</AuthButton>
@@ -251,7 +289,7 @@ const handleSignup = async () => {
           type="password" 
           value={password} 
           onChange={(e) => setPassword(e.target.value)} 
-          placeholder="비밀번호 (영문, 숫자, 특수문자 포함 12~18자)" 
+          placeholder="비밀번호를 입력하세요 (영문, 숫자, 특수문자 포함 12~18자)" 
           required 
         />
         <PasswordHelperText>
@@ -263,13 +301,56 @@ const handleSignup = async () => {
           type="password" 
           value={confirmPassword} 
           onChange={(e) => setConfirmPassword(e.target.value)} 
-          placeholder="비밀번호를 다시 입력해주세요." 
+          placeholder="비밀번호를 다시 입력해주세요" 
           required 
           $hasError={confirmPassword && password !== confirmPassword}
         />
         {confirmPassword && password !== confirmPassword && (
           <PasswordErrorMessage>비밀번호가 일치하지 않습니다.</PasswordErrorMessage>
         )}
+
+        </Form>
+        </Con1>
+
+         <AdditionalInfoContainer>
+          <AdditionalInfo>
+            <AdditionalInfoTitle>추가 정보</AdditionalInfoTitle>
+            <AdditionalInfoSubtitle>*선택 사항</AdditionalInfoSubtitle>
+            </AdditionalInfo>
+
+            <InterestSection>
+              <InterestLabel>관심있는 공모전 분야를 선택하세요 <span style={{ color: 'red', fontWeight: '600', fontSize: '14px'}}>*(중복 선택 가능)</span></InterestLabel>
+              <InterestTagsContainer>
+                {interestOptions.map((option) => (
+                  <InterestTag
+                    key={option}
+                    onClick={() => handleInterestToggle(option)}
+                    selected={selectedInterests.includes(option)}
+                  >
+                    {option}
+                  </InterestTag>
+                ))}
+              </InterestTagsContainer>
+            </InterestSection>
+
+            <SkillsSection> 
+              <SkillsLabel>
+                사용 가능한 기술 스택을 선택하세요 <span style={{ color: 'red', fontWeight: '600', fontSize: '14px'}}>*(중복 선택 가능)</span>
+              </SkillsLabel>
+              <SkillsTagsContainer>
+                {skillsOptions.map((skill) => (
+                  <SkillsTag
+                    key={skill}
+                    onClick={() => handleSkillToggle(skill)}
+                    selected={selectedSkills.includes(skill)}
+                  >
+                    {skill}
+                  </SkillsTag>
+                ))}
+              </SkillsTagsContainer>
+            </SkillsSection>
+          </AdditionalInfoContainer>
+
         
         <Button 
           type="button" 
@@ -282,10 +363,6 @@ const handleSignup = async () => {
         >
           회원가입 하기
         </Button>
-        </Form>
-        </Con1>
-
-        
         
         <Form>
 
@@ -352,12 +429,13 @@ const Title = styled.h1`
 
 const Con1 = styled.div`
   width: 100%;
-  max-width: 500px;
+  max-width: 600px;
   padding: 20px;
   border-radius: 8px;
   background-color: white;
   // box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border: 1px solid #EDEDED;
+  margin-top: 120px;
 `;
 
 const Form = styled.form`
@@ -388,11 +466,12 @@ const InputContainer = styled.div`
 
 const Input = styled.input`
   flex: 1;
-  padding: 14px;
+  padding: 18px;
   padding-right: 140px; /* 버튼을 위한 공간 확보 */
   width: 100%;
   box-sizing: border-box; /* 패딩과 보더를 너비에 포함 */
-  border: 1px solid #ddd;
+  // border: 1px solid #ddd;
+  border: none;
   border-radius: 5px;
   background-color: #EDEDED;
   outline: none;
@@ -442,7 +521,7 @@ const Button = styled.button`
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
-  width: 100%;
+  width: 300px;
   
   &:hover {
     background-color: #0056b3;
@@ -572,5 +651,100 @@ const ModalButton = styled.button`
 
   &:hover {
     background-color: #a0dafb;
+  }
+`;
+
+
+const AdditionalInfoContainer = styled.div`
+   width: 100%;
+  max-width: 600px;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: white;
+  // box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #EDEDED;
+  margin-top: 30px;
+`;
+
+const AdditionalInfo = styled.div`
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 20px;
+`;
+
+const AdditionalInfoTitle = styled.h2`
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 10px;
+`;
+
+const AdditionalInfoSubtitle = styled.p`
+  font-size: 0.9rem;
+  color: #666;
+  margin-left: 10px;
+  margin-top: 20px; /* Added top margin to push it down */
+`;
+
+const InterestSection = styled.div`
+  margin-bottom: 20px;
+`;
+
+const InterestLabel = styled.label`
+  font-weight: bold;
+  color: #333;
+  display: block;
+  margin-bottom: 10px;
+`;
+
+const InterestTagsContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+`;
+
+const InterestTag = styled.button`
+  padding: 8px 16px;
+  background-color: ${props => props.selected ? '#007bff' : '#f0f0f0'};
+  color: ${props => props.selected ? 'white' : '#333'};
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: ${props => props.selected ? '#0056b3' : '#e0e0e0'};
+  }
+`;
+
+const SkillsSection = styled.div`
+  margin-bottom: 20px;
+`;
+
+const SkillsLabel = styled.label`
+  font-weight: bold;
+  color: #333;
+  display: block;
+  margin-bottom: 10px;
+`;
+
+const SkillsTagsContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+`;
+
+const SkillsTag = styled.button`
+  padding: 8px 16px;
+  background-color: ${props => props.selected ? '#007bff' : 'white'};
+  color: ${props => props.selected ? 'white' : '#333'};
+  border: 1px solid ${props => props.selected ? '#007bff' : '#ddd'};
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: ${props => props.selected ? '#0056b3' : '#e0e0e0'};
   }
 `;

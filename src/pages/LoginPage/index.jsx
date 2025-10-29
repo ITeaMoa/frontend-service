@@ -3,12 +3,15 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Modal from '../../components/Modal';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import AlertModal from '../../components/AlertModal';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [showAlertPopup, setShowAlertPopup] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -21,6 +24,10 @@ const LoginPage = () => {
       setPassword(savedPassword);
     }
   }, [rememberMe]);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -117,72 +124,70 @@ const LoginPage = () => {
   };
 
   return (
-    <Container>
-      <Logo>
-      <img
-          alt="Logo"
-          src="/images/logo1.png"
-        onClick={() => (window.location.href = "/")}/>
-      </Logo>
-      
+     <Container>
+       <Logo>
+       <img
+           alt="Logo"
+           src="/images/logo1.png"
+         onClick={() => (window.location.href = "/")}/>
+       </Logo>
        
-       <Label>Sign In</Label>
-     
-      <Form onSubmit={handleSubmit}>
-        <Con1>
-        <Input 
-          type="email" 
-          value={email} 
-          onChange={(e) => setEmail(e.target.value)} 
-          placeholder="이메일 입력" 
-          required 
-        />
-
-        <Input 
-          type="password" 
-          value={password} 
-          onChange={(e) => setPassword(e.target.value)} 
-          placeholder="비밀번호 입력" 
-          required 
-        />
-        <HelperText>영문 대/소문자와 숫자, 특수문자를 조합하여 12~18자내</HelperText>
-        <CheckboxContainer>
-          <Checkbox 
-            type="checkbox" 
-            checked={rememberMe} 
-            onChange={() => setRememberMe(!rememberMe)} 
-          />
-          <CheckboxLabel>ID 저장</CheckboxLabel>
-        </CheckboxContainer>
-        <Button type="submit">로그인</Button>
-        </Con1>
-
-        {/* <SocialLoginContainer>
-        <SocialLogin>
-        <DividerLine />
-        <SocialLoginTitle>소셜 로그인</SocialLoginTitle>
-        <DividerLine />
-        </SocialLogin> 
-        <SocialButton1>
-            <Icon src="/images/pngwing.com.png" alt="카카오톡 아이콘" /> 카카오계정으로 로그인하기
-          </SocialButton1>
-          <SocialButton2 >
-            <Icon src="/images/네이버 로고 아이콘.png" alt="네이버 아이콘" /> 네이버 아이디로 로그인하기
-          </SocialButton2>
-        </SocialLoginContainer> */}
-      </Form>
-
-      <Signup>
-        아직 회원이 아니신가요? <span onClick={handleAddButtonClick}> 회원가입하기 </span>
-      </Signup>
-
-    
-<AlertModal
-isOpen={!!showAlertPopup}
-message={showAlertPopup}
-onClose={() => setShowAlertPopup(false)}
-/>
-    </Container>
+        
+        <Label>로그인</Label>
+      
+       <Form onSubmit={handleSubmit}>
+         <Con1>
+           <Input 
+             type="email" 
+             value={email} 
+             onChange={(e) => setEmail(e.target.value)} 
+             placeholder="아이디" 
+             required 
+           />
+ 
+           <div style={{ position: 'relative', width: '100%' }}>
+             <Input 
+               type={showPassword ? 'text' : 'password'}
+               value={password} 
+               onChange={(e) => setPassword(e.target.value)} 
+               placeholder="비밀번호(영문, 숫자, 특수문자 포함 8~15자내)" 
+               required 
+             />
+              <TogglePasswordButton type="button" onClick={togglePasswordVisibility}>
+                <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
+              </TogglePasswordButton>
+           </div>
+           <HelperText>
+             영문 대/소문자와 숫자, 특수문자를 조합하여 8~15자 내
+           </HelperText>
+ 
+           <CheckboxContainer>
+             <Checkbox 
+               type="checkbox" 
+               checked={rememberMe} 
+               onChange={() => setRememberMe(!rememberMe)} 
+             />
+             <CheckboxLabel>ID 저장</CheckboxLabel>
+           
+           </CheckboxContainer>
+ 
+           <ButtonGroup>
+             <Button type="submit">로그인</Button>
+             <Button type="button" onClick={handleAddButtonClick} secondary>회원가입</Button>
+           </ButtonGroup>
+         </Con1>
+       </Form>
+ 
+       {/* <Signup>
+         아직 회원이 아니신가요? <span onClick={handleAddButtonClick}> 회원가입하기 </span>
+       </Signup> */}
+ 
+     <AlertModal
+       isOpen={!!showAlertPopup}
+       message={showAlertPopup}
+       onClose={() => setShowAlertPopup(false)}
+     />
+     </Container>
 
 
   );
@@ -197,7 +202,7 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   height: 100vh;
-  // margin-top: 90px;
+  background-color: #fff;
 `;
 
 const Logo = styled.div`
@@ -216,8 +221,8 @@ const Logo = styled.div`
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-//  align-items:center;
-//  justify-content: center;
+ align-items:center;
+ justify-content: center;
   width: 25%;
 
 `;
@@ -226,42 +231,55 @@ const Con1 = styled.div`
   display: flex;
   flex-direction: column;
   border: 2px solid;
-  // border-color: rgba(160, 218, 251, 0.5);
-  border-color: #A0DAFB;
-  border-radius: 30px 30px 1px 30px;
-  width: 90%;
+  border: none;
+  /* border-color: #A0DAFB;
+  border-radius: 30px 30px 1px 30px; */
+  width: 100%;
   padding: 15px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
 
 `;
 
 const Label = styled.label`
   margin: 10px 0 5px;
-  font-size: 35px;
+  font-size: 24px;
   font-weight: bold;
   margin-bottom:10px;
-  color: rgba(160, 218, 251);
+  color: #333;
+  text-align: left;
+`;
+
+const TogglePasswordButton = styled.button`
+  position: absolute;
+  right: 16px;
+  top: 40%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #888;
 `;
 
 const Input = styled.input`
+  width: 90%;
   padding: 16px;
-  border: 2px solid #0080ff; //진한 파랑
-  border-radius:15px;
-  border-color: #A0DAFB;
-  margin-bottom: 10px;
-
+  border-radius: 8px;
+  border: none;
+  background-color: #f5f5f5;
+  font-size: 14px;
+  margin-bottom: 16px;
 `;
 
 const HelperText = styled.span`
+  margin: 0 0 16px 0;
   font-size: 12px;
-  color: #888;
-  margin-bottom: 10px;
+  color: #666;
 `;
 
 const CheckboxContainer = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 24px;
 `;
 
 const Checkbox = styled.input`
@@ -274,21 +292,34 @@ const CheckboxLabel = styled.label`
 `;
 
 const Button = styled.button`
-  padding: 10px;
-  background-color: #3563E9 ;
-  color: white;
-  border: none;
-  cursor: pointer;
-  margin-bottom: 10px;
-  font-size:14px;
+  width: 100%;
+  padding: 16px;
+  border-radius: 8px;
+  background-color: ${props => props.secondary ? 'transparent' : '#333'};
+  color: ${props => props.secondary ? '#333' : 'white'};
+  font-size: 16px;
   font-weight: bold;
-  padding:14px;
-  border-radius: 30px 30px 1px 30px;
-
+  border: ${props => props.secondary ? '1px solid #333' : 'none'};
+  margin-bottom: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 
   &:hover {
-    color: #aaa;
-  
+    background-color: ${props => props.secondary ? '#f5f5f5' : '#555'};
+  }
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  // gap: 4px;
+  width: 100%;
+  flex-direction: column;
+`;
+
+const Link = styled.a`
+  color: #666;
+  font-size: 12px;
+  text-decoration: none;
 `;
 
 const SocialLoginContainer = styled.div`

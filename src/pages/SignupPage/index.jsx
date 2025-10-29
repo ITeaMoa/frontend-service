@@ -198,12 +198,11 @@ const handleSignup = async () => {
         onClick={() => (window.location.href = "/")}/>
       </Logo>
 
-      <Title>Sign Up</Title>
-
+      
     <Con1>
       <Form onSubmit={handleSubmit}>
-
-      <Label>닉 네 임</Label>
+        <Title>회원가입</Title>
+        <Label>닉 네 임</Label>
         <InputContainer>
           <Input 
             type="text" 
@@ -212,7 +211,7 @@ const handleSignup = async () => {
             placeholder="닉네임 입력" 
             required 
           />
-          <AuthButton type="button" onClick={handleCheckNickname} style={{ padding: '14px 26px' }}>중복 확인</AuthButton>
+          <AuthButton type="button" onClick={handleCheckNickname}>중복 확인</AuthButton>
         </InputContainer>
        
         <Label>이 메 일</Label>
@@ -246,28 +245,30 @@ const handleSignup = async () => {
         </RemainTime>
       )}
           
-        <Label>비밀번호</Label>
+        <Label htmlFor="password">비밀번호</Label>
         <Input 
+          id="password"
           type="password" 
           value={password} 
           onChange={(e) => setPassword(e.target.value)} 
-          placeholder="비밀번호 입력" 
+          placeholder="비밀번호 (영문, 숫자, 특수문자 포함 12~18자)" 
           required 
         />
-        <span style={{ fontSize: '12px', color: 'gray', textAlign: 'center' }}>
+        <PasswordHelperText>
           영문 대/소문자, 숫자, 특수문자를 조합하여 12~18자 이내
-        </span>
-        <Label>비밀번호 확인</Label>
+        </PasswordHelperText>
+        <Label htmlFor="confirmPassword">비밀번호 확인</Label>
         <Input 
+          id="confirmPassword"
           type="password" 
           value={confirmPassword} 
           onChange={(e) => setConfirmPassword(e.target.value)} 
           placeholder="비밀번호를 다시 입력해주세요." 
           required 
-          style={{ borderColor: confirmPassword && password !== confirmPassword ? 'red' : '#ccc' }}
+          $hasError={confirmPassword && password !== confirmPassword}
         />
         {confirmPassword && password !== confirmPassword && (
-          <span style={{ color: 'red', fontSize: '12px', textAlign: 'center', display: 'block' }}>비밀번호가 일치하지 않습니다.</span>
+          <PasswordErrorMessage>비밀번호가 일치하지 않습니다.</PasswordErrorMessage>
         )}
         
         <Button 
@@ -279,15 +280,13 @@ const handleSignup = async () => {
             cursor: isFormValid() ? 'pointer' : 'not-allowed'
           }}
         >
-          가입하기
+          회원가입 하기
         </Button>
-
         </Form>
-
         </Con1>
 
-      
-
+        
+        
         <Form>
 
 {/*        
@@ -319,135 +318,161 @@ const handleSignup = async () => {
 export default SignUpPage;
 
 
+// Add these styled components at the top of the file
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  // margin-top:180px;
- 
+  min-height: 100vh;
+  padding: 20px;
+  background-color: #f9f9f9;
+  
 `;
 
-
-
-
 const Logo = styled.div`
-  position: absolute;
-  top:15px;
-
+  margin-bottom: 30px;
+  cursor: pointer;
+  position: absolute; /* Keep absolute positioning for logo */
+  top: 15px; /* Keep top positioning for logo */
   img {
     width: 100%; 
-    max-width: 250px;
+    max-width: 250px; /* Adjusted max-width to match previous */
     height: auto; 
     cursor: pointer;
   }
 `;
 
+const Title = styled.h1`
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 10px; /* Adjusted margin for better spacing inside the form */
+  text-align: left;
+`;
+
+const Con1 = styled.div`
+  width: 100%;
+  max-width: 500px;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: white;
+  // box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #EDEDED;
+`;
+
 const Form = styled.form`
-
   display: flex;
   flex-direction: column;
-  width: 90%;
-
-`;
-
-
-
-const Con1 = styled.form`
-  display: flex;
-  flex-direction: column;
-  margin-top:10px;
-  border: 2px solid;
-  border-color: rgba(160, 218, 251, 0.5);
-  width: 25%;
-  padding: 10px;
-  border-radius: 15px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  align-items:center;
-  justify-content: center;
-  border-radius: 30px 30px 1px 30px;
-  border-color: #A0DAFB;
-
-`;
-
-
-const Title = styled.label`
-  margin-top:40px;
-  font-size: 35px;
-  font-weight: bold;
-  color: rgba(160, 218, 251);
+  gap: 15px;
 `;
 
 const Label = styled.label`
-  margin: 10px 0 5px;
+  font-weight: bold;
+  color: #333;
+  display: block;
   font-size: 14px;
-  align-self: flex-start;
+  // margin-bottom: 8px;
+  margin-bottom:-10px;
 
+  &::after {
+    content: " *";
+    color: red;
+    margin-left: 2px;
+  }
+`;
+
+const InputContainer = styled.div`
+  position: relative;
+  width: 100%;
 `;
 
 const Input = styled.input`
-  padding: 16px;
-  border: 2px solid #0080ff; //진한 파랑
-  border-radius: 15px;
-  margin-bottom: 10px;
-  border-color: #A0DAFB;
-  flex-grow: 1; /* 버튼을 제외한 나머지 공간을 모두 차지 */
-`;
-
-const Button = styled.button`
-  padding: 10px;
-  background-color: #3563E9;
-  color: white;
-  border: none;
-  cursor: pointer;
-  margin-bottom: 10px;
-  margin-top: 30px;
-  font-size: 14px;
-  font-weight: bold;
+  flex: 1;
   padding: 14px;
-  border-radius: 30px 30px 1px 30px;
-  white-space: nowrap;
-  overflow: hidden; 
-  text-overflow: ellipsis;
-
-
-  &:hover {
-    color: #aaa;
+  padding-right: 140px; /* 버튼을 위한 공간 확보 */
+  width: 100%;
+  box-sizing: border-box; /* 패딩과 보더를 너비에 포함 */
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #EDEDED;
+  outline: none;
+  
+  &:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
   }
 
+  ${props => props.$hasError && `
+    border-color: red;
+    box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.25);
+  `}
+`;
+
+const AuthButton = styled.button`
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 10px 12px; /* Input과 동일한 수직 패딩 */
+  background-color:white;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+  // height: calc(100% - 20px); /* Input의 상하 보더 1px씩 제외 */
+  
+  &:hover {
+    background-color: #0056b3;
+  }
+  
   &:disabled {
     background-color: #ccc;
     cursor: not-allowed;
   }
 `;
 
-const InputContainer = styled.div`
-  display: flex;
-  align-items: center;
+const Button = styled.button`
+  margin-top: 20px;
+  padding: 14px;
+  background-color: #2C2C2C;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
   width: 100%;
   
+  &:hover {
+    background-color: #0056b3;
+  }
+  
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
 `;
 
-const AuthButton = styled(Button)`
-  background-color: #62B9EC;
-  color: white;
-  margin-left: 20px; 
-  margin-top: -3px;
+const PasswordHelperText = styled.span`
+  font-size: 12px;
+  color: #666;
+  text-align: left;
+  margin-top: -10px; /* Adjust spacing */
+`;
 
-  
-  &:hover {
-    background-color: #A0DAFB;
-  }
-
-  
+const PasswordErrorMessage = styled.span`
+  color: red;
+  font-size: 12px;
+  text-align: left;
+  display: block;
+  margin-top: -10px; /* Adjust spacing */
 `;
 
 const RemainTime= styled.div`
 font-size: 14px;
 color: red;
 `;
-
 
 const SocialLogin = styled.h2`
   display: flex;

@@ -4,8 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment } from '@fortawesome/free-solid-svg-icons';
 import Pagination from '../../../components/Pagination'; 
 import axios from '../../../api/axios'
-// import axios from 'axios';
-// import { useAuth } from '../../context/AuthContext'
 import Modal from '../../../components/Modal';
 import { useAtom } from 'jotai';
 import { currentApplicantsAtom } from '../../../Atoms.jsx/AtomStates';
@@ -22,8 +20,6 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
     const applicantsPerPage = 5;
     // 모집 완료 버튼 상태 추가
     const [isClosed, setIsClosed] = useState(false);
-    // const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
-    // 팝업 상태 추가
     const [isPopupVisible, setIsPopupVisible] = useState(false);
     const [selectedApplicant, setSelectedApplicant] = useState(null);
     const [newStatus, setNewStatus] = useState('');
@@ -48,8 +44,6 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
             const response = await axios.get(`my/writing/application`, {
                 params: { feedId: feedId },
             });
-
-            console.log("가져온 지원자 데이터:", response.data); // 응답 데이터 확인
 
             if (response.data) {
                 setApplicants(response.data); // 아톰 상태를 가져온 지원자로 업데이트
@@ -81,19 +75,6 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
     }, [project.pk]); // project.pk에 의존
 
 
-    useEffect(() => {
-        console.log("Project 정보:", project); // project 정보를 콘솔에 출력
-    }, [project]); // project가 변경될 때마다 실행
-
-    useEffect(() => {
-        console.log("Current project:", project); // project의 현재 상태를 로그로 출력
-    }, [project]);
-
-
-    //useffect사용안한거
-    // const currentApplicants = selectedField === '전체' 
-    // ? applicants || [] 
-    // : applicants.filter(applicant => applicant.part === selectedField);
      useEffect(() => {
         if (selectedField === '전체') {
             setCurrentApplicants(applicants || []);
@@ -103,8 +84,7 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
     }, [selectedField, applicants]);
      
   
-    //  console.log("Is Current Applicants an array?", Array.isArray(currentApplicants)); // 배열인지 확인
-     const paginate = (pageNumber) => setCurrentPage(pageNumber);
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     currentApplicants.forEach((applicant, index) => {
         console.log(`Applicant ${index}:`, applicant);
@@ -118,13 +98,6 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
         setIsPopupVisible(true);
     };
 
-    // const confirmStatusChange = () => {
-    //     console.log(`Changing status for ${selectedApplicant.name} to ${newStatus}`);
-    //     setVisibleButtons(prevState => ({ ...prevState, [selectedApplicant.name]: newStatus }));
-    //     setClickedButtons(prevState => ({ ...prevState, [selectedApplicant.name]: newStatus }));
-    //     setDisabledButtons(prevState => ({ ...prevState, [selectedApplicant.name]: true })); // 버튼 비활성화
-    //     setIsPopupVisible(false);
-    // };
 
     const confirmStatusChange = async () => {
         const requestData = {
@@ -132,12 +105,10 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
             sk: project.pk // feedId
         };
 
-        console.log("Request Data:", requestData); // 요청 데이터 콘솔 출력
         const url = newStatus === "반려" ? 'my/writing/reject' : 'my/writing/accept';
 
         try {
-            const response = await axios.patch(url, requestData);
-            console.log(`Response: ${response.data}`);
+           await axios.patch(url, requestData);
 
             // 상태 업데이트: 승인 또는 반려에 따라 버튼 상태 변경
             setVisibleButtons(prevState => ({ ...prevState, [selectedApplicant.nickname]: newStatus }));
@@ -174,7 +145,6 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
                             part: field // 선택한 필드를 part로 사용
                         }
                     });
-                    console.log("응답 데이터:", response.data); // 응답 데이터를 콘솔에 출력
                     setApplicants(response.data); // 응답 데이터로 지원자 설정
                 }
             } catch (error) {
@@ -183,14 +153,7 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
         }
     };
 
-    // const handlePageChange = (pageNumber) => {
-    //     if (!isPopupVisible) {
-    //         setCurrentPage(pageNumber);
-    //     }
-    // };
-
-    // // 모집 완료 요청 함수
-
+  
 
     const handleCloseApplication = () => {
         setIsConfirmModalOpen(true); // Show the confirmation modal
@@ -214,8 +177,7 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
     // 페이지가 로드될 때 상태를 확인하는 함수
     useEffect(() => {
         const checkStatus = () => {
-            const status = localStorage.getItem(`projectStatus_${project.pk}`);
-            console.log('현재 상태:', status); // 현재 상태를 콘솔에 출력
+        localStorage.getItem(`projectStatus_${project.pk}`);
         };
         checkStatus(); // 상태 확인 함수 호출
     }, [project.pk]); // project.pk에 의존

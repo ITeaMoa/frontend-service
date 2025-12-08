@@ -1,9 +1,7 @@
 import React, { useEffect, useState,  } from 'react';
 import styled from 'styled-components';
 import NavigationBar from "../../../components/NavigationBar";
-// import axios from 'axios';
 import ProjectDetail from '../components/ProjectDetail';
-// import ProjectListComponent from './ProjectListComponent_del';
 import { useAuth } from '../../../context/AuthContext'
 import axios from '../../../api/axios';
 import { useAtom } from 'jotai';
@@ -12,9 +10,6 @@ import Pagination from '../../../components/Pagination';
 import Modal from '../../../components/Modal';
 import ProjectItemComponent from '../components/ProjectItemComponent';
 import UserProfile from '../components/UserProfile';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart } from '@fortawesome/free-solid-svg-icons';
-import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 import AlertModal from '../../../components/AlertModal';
 import { ContentsWrap , MainContent} from '../../../assets/BusinessAnalysisStyle';
 import ProjectLikeItem from '../components/ProjectLikeItem';
@@ -39,22 +34,11 @@ const MyPage = () => {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [selectedProjectForCancel, setSelectedProjectForCancel] = useState(null);
   const [, setIsProfileVisible] = useState(false);
-  // const [userProfile, setUserProfile] = useState({});
-  // const [savedProjects, setSavedProjects] = useState([]);
-  // const [likedProjects, setLikedProjects] = useState([]);
   const [showAlertPopup, setShowAlertPopup] = useState('');
   const [showApplyPopup, setShowApplyPopup] = useState(''); 
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
 
-  // user.id를 콘솔에 출력
-useEffect(() => {
-  if (user) {
-    console.log('User ID:', user.id); // 로그인한 사용자 ID 출력
-  } else {
-    console.log('사용자가 로그인하지 않았습니다.');
-  }
-}, [user]); // user가 변경될 때마다 실행
 
 useEffect(() => {
   window.scrollTo(0, 0);
@@ -458,11 +442,8 @@ const refreshProjects = async () => {
     } else{
       setProjects(appliedproject);
     }
-
-    console.log(`${selectedList} 목록:`, response.data);
     if (response && response.data) {
       setProjects(response.data);
-      console.log('프로젝트 데이터 로드 성공:', response.data);
     } else {
       console.error('응답 데이터가 없습니다:', response);
       setProjects([]); // 빈 배열로 초기화
@@ -476,6 +457,7 @@ const refreshProjects = async () => {
 // useEffect에서 사용
 useEffect(() => {
   refreshProjects();
+  // eslint-disable-next-line
 }, [selectedList, user?.id, feedType]); // refreshProjects는 의존성 배열에서 제거
 
 //신청목록
@@ -517,8 +499,6 @@ useEffect(() => {
 
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
-    // console.log('Page changed to:', pageNumber);
-    // console.log('Showing projects:', indexOfFirstProject, 'to', indexOfLastProject);
   };
 
 
@@ -566,11 +546,6 @@ useEffect(() => {
     }
   };
 
-
-  //특정 프로젝트 클릭했을때 실행 
-  // 클릭된 프로젝트의 데이터는 ProjectListComponent로부터 전달받은 currentProjects 배열에서 가져옴
-  //currentProjects는 신청 목록일 때: /feed/applications
-//작성 목록일 때: /my/writing 에서 가져온 데 이터 
   const handleProjectClick = (project) => {
     setSelectedProject(project);
     console.log("Selected project:", project);
@@ -744,11 +719,6 @@ const handleConfirmCancel = async () => {
   
 
   const handleApplyClick = async (project) => {
-    // if (!user) { 
-    //   setPopupMessage("로그인 후에 신청할 수 있습니다."); 
-    //   setIsSubmitted(true); 
-    //   return; 
-    // }
 
     // 자신이 작성한 게시글인지 확인
     if (project && project.creatorId === user.id) {
@@ -778,16 +748,12 @@ const handleConfirmCancel = async () => {
       console.error("신청 여부 확인 실패:", error);
     }
   
-    // setProject(project); // 선택한 프로젝트 상태 저장
-    console.log('선택한 프로젝트:', selectedProject);
     setApplySelectedProject(project);
     setIsRoleModalOpen(true); // 역할 선택 모달 열기
   };
   
   // 프로젝트 신청 처리
   const handleApplySubmit = async (project, role) => {
-   
-   
     try {
       const applicationData = {
         pk: user.id,
@@ -795,7 +761,7 @@ const handleConfirmCancel = async () => {
         part: selectedRole,
         feedType: feedType
       };
-      console.log('applicationData:', applicationData);
+
       await axios.post('/main/application', applicationData);
       setShowApplyPopup("신청이 완료되었습니다.");
       setIsRoleModalOpen(false);
@@ -968,83 +934,65 @@ const handleConfirmCancel = async () => {
           </div>
           </div>  
           </>
-
-      
-            
-      
           )}
         </ProjectList>
-      )}
-
-    
+      )} 
 
 </MainContent>
 </ContentsWrap>
 
-{selectedList !== 'profile' && (
-        <div style={{ display: 'flex', justifyContent: 'center', margin: '32px 0' }}>
-          <Pagination 
-            currentPage={currentPage}
-            projectsPerPage={projectsPerPage}
-            totalProjects={projects.length}
-            onPageChange={paginate} 
+      {selectedList !== 'profile' && (
+              <div style={{ display: 'flex', justifyContent: 'center', margin: '32px 0' }}>
+                <Pagination 
+                  currentPage={currentPage}
+                  projectsPerPage={projectsPerPage}
+                  totalProjects={projects.length}
+                  onPageChange={paginate} 
+                />
+              </div>
+            )}
+
+      <Modal isOpen={isConfirmModalOpen} onClose={() => setIsConfirmModalOpen(false)}>
+              <h3 style={{ textAlign: 'center' }}>정말로 신청을 취소하시겠습니까?</h3>
+              <ButtonContainer>
+                <ModalButton onClick={handleConfirmCancel}>확인</ModalButton>
+                <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton>
+              </ButtonContainer>
+            </Modal>
+        
+
+      <AlertModal
+            isOpen={!!showAlertPopup}
+            message={showAlertPopup}
+            onClose={() => setShowAlertPopup(false)}
           />
-        </div>
+
+
+      {showApplyPopup && (
+      <Modal isOpen={showApplyPopup} onClose={() => setShowApplyPopup(false)}>
+            <h3 style={{ textAlign: 'center',fontSize:'16px' }}>{showApplyPopup}</h3>
+            <ButtonContainer>
+              <ModalButton onClick={() => setShowApplyPopup(false)}>확인</ModalButton>
+              {/* <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton> */}
+            </ButtonContainer>
+          </Modal>  
+
       )}
 
-<Modal isOpen={isConfirmModalOpen} onClose={() => setIsConfirmModalOpen(false)}>
-        <h3 style={{ textAlign: 'center' }}>정말로 신청을 취소하시겠습니까?</h3>
-        <ButtonContainer>
-          <ModalButton onClick={handleConfirmCancel}>확인</ModalButton>
-          <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton>
-        </ButtonContainer>
-      </Modal>
-   
-
- <AlertModal
-      isOpen={!!showAlertPopup}
-      message={showAlertPopup}
-      onClose={() => setShowAlertPopup(false)}
-    />
-
-
-{showApplyPopup && (
-<Modal isOpen={showApplyPopup} onClose={() => setShowApplyPopup(false)}>
-      <h3 style={{ textAlign: 'center',fontSize:'16px' }}>{showApplyPopup}</h3>
-      <ButtonContainer>
-        <ModalButton onClick={() => setShowApplyPopup(false)}>확인</ModalButton>
-        {/* <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton> */}
-      </ButtonContainer>
-    </Modal>  
-
-)}
-
- <RoleSelectionModal
-        isOpen={isRoleModalOpen}
-        onClose={() => setIsRoleModalOpen(false)}
-        project={applySelectedProject}
-        selectedRole={selectedRole}
-        handleRoleSelect={handleRoleSelect}
-        handleApplySubmit={handleApplySubmit}
-      />
-    </>
+      <RoleSelectionModal
+              isOpen={isRoleModalOpen}
+              onClose={() => setIsRoleModalOpen(false)}
+              project={applySelectedProject}
+              selectedRole={selectedRole}
+              handleRoleSelect={handleRoleSelect}
+              handleApplySubmit={handleApplySubmit}
+            />
+          </>
    
   );
 };
 
 export default MyPage;
-
-const Container = styled.div`
- margin-top: 20vh;
- min-height: calc(100vh - 250px);
- display: flex;
- padding-top: 30px;
- flex-direction: column;
- align-items: center;
- z-index:1000;
- justify-content: center;
-`;
-
 
 const TabWrapType3 = styled.div`
   display: flex;
@@ -1152,79 +1100,7 @@ const ProjectList = styled.div`
   }
 `;
 
-const ProjectItem = styled.div`
-  border-bottom: ${(props) => (props.isLast ? 'none' : '2px solid #A0DAFB')};
-  border-radius: 1px;
-  padding: 15px;
-  padding-bottom: 30px;
-  margin-bottom: 15px;
-  position: relative;
-  text-align: left; 
 
-  p{
-    font-weight: bold;
-    font-size: 18px;
-  }
-`;
-
-const ProjectHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const HeaderItem = styled.div`
-  display: flex;
-  align-items: center; 
-  margin-right: 10px; 
-
-  & > span {
-    margin-left: 5px; 
-    font-weight: bold;
-  }
-`;
-
-const StyledFontAwesomeIcon = styled(FontAwesomeIcon)`
-  color: red;
-  size: 15px;
-  background-color: #BDBDBD;
-  border-radius: 50%;
-  padding:  4px;
-`;
-
-const Tags = styled.div`
-  display: flex;  
-  margin: 10px 0;
-  align-items: left;
-`;
-
-const Tag = styled.span`
-  margin-right: 5px;
-  padding: 5px 10px;
-  border: 1px solid #ddd;
-  border-radius: 14px 14px 1px 14px; 
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  background-color: white;
-  border-color: rgba(160, 218, 251);
-  color: #0A8ED9;
-`;
-
-const Button = styled.button`
-  position: absolute;
-  background-color: ${props => props.disabled ? '#808080' : '#3563E9'};
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  right: 15px;
-  bottom: 30px;
-  opacity: ${props => props.disabled ? 0.6 : 1};
-
-  &:hover {
-    background-color: ${props => props.disabled ? '#808080' : '#a0dafb'};
-  }
-`;
 
 const ButtonContainer = styled.div`
   display: flex;

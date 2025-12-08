@@ -59,9 +59,6 @@ const ProjectFeedCard = ({ project, handleProjectClick, onApplyClick }) => {
     <CardFooter>
       <LikeButtonColumn 
         sk={project.pk}
-
-        // userId={userId} // 필요하다면 추가
-        // onLikeChange={...} // 필요하다면 추가
       />
       <ApplyButton
         onClick={(e) => {
@@ -105,23 +102,7 @@ const ProfileWrap = styled.div`
   align-items: center;
 `;
 
-// const ProfileImg = styled.img`
-//   width: 32px;
-//   height: 32px;
-//   border-radius: 50%;
-//   margin-right: 8px;
-//   object-fit: cover;
-// `;
 
-// const Nickname = styled.span`
-//   font-weight: 600;
-//   font-size: 15px;
-// `;
-
-// const Views = styled.span`
-//   color: #b0b0b0;
-//   font-size: 15px;
-// `;
 
 const ProjectTitle = styled.h3`
   font-size: 20px;
@@ -175,22 +156,6 @@ const CardFooter = styled.div`
   gap: 16px;
   margin-top: 16px;
 `;
-
-// const LikeButton = styled.button`
-//   width: 44px;
-//   height: 44px;
-//   background: #f5f5f5;
-//   border-radius: 8px;
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   justify-content: center;
-//   font-size: 18px;
-//   color: #222;
-//   box-shadow: none;
-//   padding: 0;
-//   user-select: none;
-// `;
 
 const ApplyButton = styled.button`
   flex: 1;

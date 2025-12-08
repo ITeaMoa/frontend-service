@@ -3,13 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 import styled from 'styled-components';
-// import { useNavigate } from 'react-router-dom';
-// import { useAtom } from 'jotai';
-// import { selectedSavedProjectAtom } from '../../../Atoms.jsx/AtomStates';
-// import { faPen } from '@fortawesome/free-solid-svg-icons';
 
 const ProjectDeadline = ({ project, user, handleCancelApplication, isProjectCanceled, isSaved, isDisabled }) => {
-    // const navigate = useNavigate();
   
 
   return (
@@ -150,57 +145,6 @@ const TagColumn = styled.span`
   font-weight: 500;
 `;
 
-const AdditionalInfoColumn = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  // margin: 15px 0;
-  flex: 1;
-  margin-bottom: -15px;
-`;
-
-const InfoItem = styled.div`
-  font-size: 13px;
-  color: #666;
-  display: flex;
-  align-items: center;
-`;
-
-// const ButtonContainerColumn = styled.div`
-//   display: flex;
-//   justify-content: center;
-//   margin-top: auto;
-//   padding-top: 15px;
-// `;
-
-const ButtonColumn = styled.button`
-  background-color: ${({ status }) => 
-    status === "REJECTED" ? '#C1C1C1' : 
-    status === "ACCEPTED" ? '#4ECF42' : 
-    '#3563E9'};
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
-  cursor: ${({ status }) => (status === "REJECTED" || status === "ACCEPTED" || status === "CANCELLED" ? 'not-allowed' : 'pointer')};
-  font-weight: bold;
-  font-size: 14px;
-  transition: background-color 0.2s ease;
-  width: 100%;
-  
-
-  &:hover {
-    background-color: ${({ status }) => 
-      status === "REJECTED" ? '#C1C1C1' : 
-      status === "ACCEPTED" ? '#4ECF42' : 
-      '#2952cc'};
-  }
-
-  &:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-`;
 
 
 export default ProjectDeadline;

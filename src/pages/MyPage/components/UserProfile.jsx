@@ -24,7 +24,6 @@ const UserProfile = ({  setIsProfileVisible}) => {
     const headLineInputRef = useRef(null);
     const passwordInputRef = useRef(null);
     const nicknameInputRef = useRef(null);
-    const [showImageEdit, setShowImageEdit] = useState(false);
     const fileInputRef = useRef();
     const [isEditingPassword, setIsEditingPassword] = useState(false);
     const [newTags, setNewTags] = useState([]);
@@ -76,71 +75,13 @@ const UserProfile = ({  setIsProfileVisible}) => {
       ];
 
 
-    // useEffect(() => {
-    //   const fetchUserProfile = async () => {
-    //     try {
-    //       if (user && user.id) {
-    //         const response = await axios.get(`/my/profile/${user.id}`);
-    //         console.log('사용자 프로필:', response.data);
-    //         if (response.data) {
-    //           setUserProfile(response.data);
-              
-    //         } else {
-    //           setUserProfile({
-    //             avatarUrl: '',
-    //             headLine: '',
-    //             tags: [],
-    //             experiences: [],
-    //             educations: [],
-    //             personalUrl: '',
-    //             nickname: ''  
-    //           });
-          
-    //         }
-    //       }
-    //     } catch (error) {
-    //       console.error('사용자 프로필 조회 중 오류 발생:', error);
-    //     }
-    //   }
-  
-    //   fetchUserProfile(); // 사용자 정보가 있을 때 프로필을 가져옴
-    // }, [user]); // user가 변경될 때마다 실행
-
-    // useEffect(() => {
-//   const fetchUserProfile = async () => {
-//       try {
-//           if (user && user.id) {
-//               // MainPage와 동일한 형식으로 API 호출
-//               const response = await axios.get(`/my/profile/${user.id}`);
-//               console.log('사용자 프로필:', response.data);
-//               if (response.data) {
-//                   setUserProfile(response.data);
-//               } else {
-//                   setUserProfile({
-//                       avatarUrl: '',
-//                       headLine: '',
-//                       tags: [],
-//                       experiences: [],
-//                       educations: [],
-//                       personalUrl: ''
-//                   });
-//               }
-//           }
-//       } catch (error) {
-//           console.error('사용자 프로필 조회 중 오류 발생:', error);
-//       }
-//   };
-
-//   fetchUserProfile();
-// }, [user]);
-
 useEffect(() => {
   const fetchUserProfile = async () => {
     try {
-      console.log('사용자 프로필 조회 시작' , user.id);
+  
       if (user && user.id) {
         const response = await axios.get(`/my/profile/${user.id}`);
-        console.log('사용자 프로필:', response.data);
+
         if (response.data) {
           setUserProfile(response.data);
        
@@ -162,11 +103,12 @@ useEffect(() => {
   }
 
   fetchUserProfile(); // 사용자 정보가 있을 때 프로필을 가져옴
+  // eslint-disable-next-line
 }, [user]); // user가 변경될 때마다 실행
 
     const handleEdit = (field) => {
         // Implement your editing logic here
-        console.log(`Editing ${field}`);
+  
         if (field === 'experiences') {
             experiencesInputRef.current.focus();
         }
@@ -190,14 +132,7 @@ useEffect(() => {
         }
     };
 
-    // const submitProfile = async () => {
-    //     try {
-    //         const response = await axios.put(`/my/profile/update/${user.id}`, userProfile);
-    //         console.log(response.data);
-    //     } catch (error) {
-    //         console.error('프로필 업데이트 오류:', error);
-    //     }
-    // };
+
     const updateUserProfile = async () => {
       const data = new FormData();
   
@@ -205,23 +140,14 @@ useEffect(() => {
       if (selectedFile) {
         data.append('file', selectedFile);
       }
-      console.log("newTags", newTags);
-      console.log("userProfile.tags", userProfile.tags);
       // 백엔드가 요구하는 구조로 프로필 데이터를 구성합니다.
       const profileData = {
-        // pk: `USER#${user.id}`, // 사용자 id를 이용하여 pk 구성
 
         sk: "PROFILE#",
         entityType: "USER",
         timestamp: new Date().toISOString(), // 현재 시간을 ISO 형식으로
         avatarUrl: userProfile.avatarUrl ? userProfile.avatarUrl : null,
         headLine: userProfile.headLine || '',
-        // tags: Array.isArray(userProfile.tags)
-        //   ? userProfile.tags.map(tag => (tag.value ? tag.value : tag))
-        //   : [],
-        // tags: userProfile.tags 
-        // ? [...new Set(userProfile.tags.map(tag => tag.value || tag))] // 중복 제거
-        // : [],
         tags: newTags.tags ? newTags.tags.map(tag => {
           if (typeof tag === 'string') {
             return tag;
@@ -242,19 +168,13 @@ useEffect(() => {
   
       // JSON 문자열로 변환 후 FormData에 프로필 데이터를 추가합니다.
       data.append('profile', JSON.stringify(profileData));
-  
-      console.log('전송할 데이터:', {
-        file: selectedFile,
-        profile: profileData
-      });
-  
+
       try {
-        const response = await axios.put(`my/profile/${user.id}`, data, {
+         await axios.put(`my/profile/${user.id}`, data, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
         });
-        console.log('사용자 프로필 업데이트 응답:', response.data);
         // setShowAlertPopup(true);
       } catch (error) {
         console.error('프로필 업데이트 에러:', error.response?.data || error.message);
@@ -263,8 +183,8 @@ useEffect(() => {
     
     const handleDeleteUser = async () => {
         try {
-            const response = await axios.put(`/my/profile/withdraw/${user}`);
-            console.log(response.data);
+             await axios.put(`/my/profile/withdraw/${user}`);
+  
             setIsProfileVisible(false);
         } catch (error) {
             console.error('회원탈퇴 오류:', error);
@@ -272,8 +192,6 @@ useEffect(() => {
     };
 
     const nickname = userProfile ? userProfile.nickname : '이름 없음';
-    const avatarUrl = userProfile ? userProfile.avatarUrl : '기본 이미지 URL'; // 기본 이미지 URL로 변경
-    const headLine = userProfile ? userProfile.headLine : '소개 없음';
     const email = userProfile ? userProfile.email : '이메일 없음';
 
 
@@ -297,13 +215,7 @@ useEffect(() => {
             <FontAwesomeIcon icon={regularUser} size="50px" />
           )}
         </ProfileImage>
-        {/* <ProfileImage hasImage={!!userProfile.avatarUrl}>
-          {userProfile.avatarUrl ? (
-            <img src={encodeURI(userProfile.avatarUrl)} alt="Profile Avatar" />
-          ) : (
-            <FontAwesomeIcon icon={regularUser} size="50px" />
-          )}
-        </ProfileImage> */}
+  
         <input
         type="file"
         accept="image/*"
@@ -407,24 +319,9 @@ useEffect(() => {
           }
           dropdownType="profile"
           onTagSelect={(selectedTags) => {
-            console.log('선택된 태그:', selectedTags);
     
             const tagsArray = Array.isArray(selectedTags) ? selectedTags : [selectedTags];
             const newTags = tagsArray.map(tag => ({ value: tag.value, label: tag.label }));
-
-            // setUserProfile(prevState => ({
-            //   ...prevState,
-            //   tags: newTags.map(tag => tag.value || tag) // 모든 선택된 태그 저장
-            // }));
-            // setUserProfile(prevState => ({
-            //   ...prevState,
-            //   tags: [
-            //     ...((prevState?.tags ?? [])),
-            //     ...newTags.filter(newTag => 
-            //       newTag && !prevState?.tags?.some(existingTag => existingTag && existingTag.value === newTag.value)
-            //     )
-            //   ]
-            // }));
 
             setNewTags(prevState => ({
               ...prevState,
@@ -487,9 +384,6 @@ useEffect(() => {
         </ButtonContainer>
     </Modal>
   )}
-
-
-
     </ProfileContainer>
 
 

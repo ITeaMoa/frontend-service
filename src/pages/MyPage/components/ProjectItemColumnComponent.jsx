@@ -3,10 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 import styled from 'styled-components';
-// import { useNavigate } from 'react-router-dom';
-// import { useAtom } from 'jotai';
-// import { selectedSavedProjectAtom } from '../../../Atoms.jsx/AtomStates';
-// import { faPen } from '@fortawesome/free-solid-svg-icons';
 
 const ProjectItemColumnComponent = ({ project, user, handleCancelApplication, isProjectCanceled, isSaved, isDisabled }) => {
     // const navigate = useNavigate();
@@ -195,12 +191,6 @@ const InfoItem = styled.div`
   align-items: center;
 `;
 
-// const ButtonContainerColumn = styled.div`
-//   display: flex;
-//   justify-content: center;
-//   margin-top: auto;
-//   padding-top: 15px;
-// `;
 
 const ButtonColumn = styled.button`
   background-color: ${({ status }) => 

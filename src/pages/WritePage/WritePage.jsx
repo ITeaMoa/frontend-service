@@ -1,24 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-// import Nav from '../../components/Nav';
 import Dropdown from '../../components/DropDown';
 import Modal from '../../components/Modal';
 import { useNavigate, } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { faPaperclip } from '@fortawesome/free-solid-svg-icons';
-// import axios from 'axios';
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 import { useAtom } from 'jotai';
-import { selectedSavedProjectAtom,feedTypeAtom } from '../../Atoms.jsx/AtomStates'; // Atom import
+import { selectedSavedProjectAtom } from '../../Atoms.jsx/AtomStates'; // Atom import
 import AlertModal from '../../components/AlertModal';
 import { ContentsWrap , MainContent} from '../../assets/BusinessAnalysisStyle';
 import NavigationBar from '../../components/NavigationBar';
 
 const recruitTypes = ['프로젝트', '스터디'];
 const peopleOptions = ['1명', '2명', '3명', '4명', '5명 이상'];
-const roles = ['프론트엔드', '백엔드', '디자이너'];
 const places = ['서울', '경기', '인천', '비대면', '기타'];
 const during = [
 
@@ -30,19 +26,10 @@ const during = [
 ];
 
 const WritePage = () => {
-  // const location = useLocation();
-  // const query = new URLSearchParams(location.search);
-  // const feedTypeFromQuery = query.get('feedType'); // 쿼리 파라미터에서 feedType 가져오기
-  
 
-  // const [feedType, setFeedType] = useState(feedTypeFromQuery || initialFeedType || 'PROJECT'); // 쿼리 파라미터가 없으면 초기값 사용
   const [selectedSavedProject] = useAtom(selectedSavedProjectAtom); // 아톰에서 프로젝트 정보 가져오기
-  // const [selectedRoles, setSelectedRoles] = useState(selectedSavedProject ? selectedSavedProject.roles : []);
   const [selectedRoles, setSelectedRoles] = useState([]); // 반드시 배열!
   const [selectedTags, setSelectedTags] = useState(['AWS', 'Blockchain']);
-  // const [period, setPeriod] = useState('');
-  console.log('selectedSavedProject', selectedSavedProject);
-
   const navigate = useNavigate();
   const [feedType, setFeedType] = useState(selectedSavedProject ? selectedSavedProject.sk : '');
   const [title, setTitle] = useState(selectedSavedProject ? selectedSavedProject.title : ''); // 프로젝트 제목 초기화
@@ -55,24 +42,22 @@ const WritePage = () => {
   const fileInputRef = useRef();
   const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
   const nickname = user ? user.nickname : 'Unknown'; //사용자 닉네임 설정
-  // const [participants, setParticipants] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열기 상태
   const [recruitmentNum, setRecruitmentNum] = useState(0); // recruitmentNum 상태 추가
   const [showAlertPopup, setShowAlertPopup] = useState(false); // 경고 모달 상태 추가
   const [people, setPeople] = useState(null);
   const [popupMessage, setPopupMessage] = useState(''); // 팝업 메시지 상태
   
-console.log(period)
-  const option1 = [
-    { value: '기간 미정', label: '기간 미정' },
-    { value: '1개월', label: '1개월' },
-    { value: '2개월', label: '2개월' },
-    { value: '3개월', label: '3개월' },
-    { value: '4개월', label: '4개월' },
-    { value: '5개월', label: '5개월' },
-    { value: '6개월이상', label: '6개월이상' },
-    { value: '장기', label: '장기' },
-];
+//   const option1 = [
+//     { value: '기간 미정', label: '기간 미정' },
+//     { value: '1개월', label: '1개월' },
+//     { value: '2개월', label: '2개월' },
+//     { value: '3개월', label: '3개월' },
+//     { value: '4개월', label: '4개월' },
+//     { value: '5개월', label: '5개월' },
+//     { value: '6개월이상', label: '6개월이상' },
+//     { value: '장기', label: '장기' },
+// ];
 
 const option2 = [
   { value: '백엔드', label: '백엔드' },
@@ -143,10 +128,6 @@ const option3 = [
   { value: 'Solidity', label: 'Solidity' },
 ];
 
-// // 선택된 역할 변경 시 로그 출력
-// useEffect(() => {
-//   console.log('현재 선택된 역할:', selectedRoles);
-// }, [selectedRoles]);
 
 const handleSubmit = async (e, isTemporary) => {
   e.preventDefault();
@@ -156,8 +137,6 @@ const handleSubmit = async (e, isTemporary) => {
       setShowAlertPopup('로그인 상태가 아닙니다. 로그인 후 다시 시도해주세요.');
       return;
   }
-  // console.log("isTemporary", isTemporary);
-  //임시저장 ->게시물 : postStatus = true, savedFeed = false
 
   const missingFields = [];
 
@@ -218,7 +197,6 @@ const handleSubmit = async (e, isTemporary) => {
     ...selectedSavedProject, // seletsavedproject의 모든 속성을 먼저 포함
     ...dataToSend         // dataToSend의 속성으로 중복되는 키를 덮어씀
 };
-// console.log("finalDataToSend",finalDataToSend)
   formData.append('feed', JSON.stringify(dataToSend));
  
   try {
@@ -235,9 +213,7 @@ const handleSubmit = async (e, isTemporary) => {
               feedType: selectedSavedProject.sk,
             
             },
-            // headers: {
-            //   'Content-Type': 'multipart/form-data'
-            // }
+          
           }
         );
       
@@ -262,113 +238,6 @@ const handleSubmit = async (e, isTemporary) => {
     console.log('업로드 실패!');
   }
 };
-//업데이트
-  // const handleSubmit = async (e, isTemporary) => {
-  //   e.preventDefault();
-
-  //   // user가 존재하는지 확인
-  //   if (!user || !user.id) {
-  //       setShowAlertPopup('로그인 상태가 아닙니다. 로그인 후 다시 시도해주세요.');
-  //       return;
-  //   }
-
-  //   const missingFields = [];
-
-  //   // 각 필드가 존재하는지 먼저 확인
-  //   if (!title || !title.trim()) {
-  //       missingFields.push('제목');
-  //   }
-  //   if (!description || !description.trim()) {
-  //       missingFields.push('본문');
-  //   }
-  //   if (!deadline) {
-  //       missingFields.push('마감일자');
-  //   }
-  //   if (!progress || !progress.trim()) {
-  //       missingFields.push('진행장소');
-  //   }
-  //   if (!selectedRoles || selectedRoles.length === 0) {
-  //       missingFields.push('모집 역할');
-  //   }
-  //   if (!selectedTags || selectedTags.length === 0) {
-  //       missingFields.push('태그');
-  //   }
-  //   if (!period) {
-  //       missingFields.push('진행기간');
-  //   }
-
-  //   if (missingFields.length > 0) {
-  //         setShowAlertPopup(`다음 필드를 올바르게 입력해주세요: ${missingFields.join(', ')}`);
-  //       return;
-  //   }
-
-  //   const deadlineISO = new Date(deadline).toISOString();
-  //   const periodValue = parseInt(period, 10);
-
-  //   const formData = new FormData();
-  //   if (image) {
-  //     formData.append('image', image);
-  //   }
-
-  //   const dataToSend = {
-  //       title,
-  //       content: description,
-  //       postStatus: !isTemporary,
-  //       savedFeed: isTemporary,
-  //       tags: selectedTags,
-  //       recruitmentNum: recruitmentNum > 0 ? recruitmentNum : 1,
-  //       deadline: deadlineISO,
-  //       place: progress,
-  //       period: periodValue,
-  //       roles: selectedRoles.length > 0 ? selectedRoles.reduce((acc, role) => {
-  //           acc[role.role.toLowerCase()] = role.count;
-  //           return acc;
-  //       }, {}) : {},
-  //       creatorId: user ? user.id : 'Unknown',
-  //       nickname
-  //   };
-
-  //   formData.append('feed', JSON.stringify(dataToSend));
-   
-  //   try {
-  //     if (selectedSavedProject) {
-  //       // 수정(업데이트) API 호출
-  //       await axios.put(
-  //         `/feed/update/${selectedSavedProject.id}`, // 또는 PATCH, 엔드포인트는 서버에 맞게
-  //         formData,
-  //         {
-  //           params: {
-  //             feedType: feedType,
-  //             userId: user.id
-  //           },
-  //           headers: {
-  //             'Content-Type': 'multipart/form-data'
-  //           }
-  //         }
-  //       );
-  //       console.log('수정 성공!');
-  //     } else {
-  //       // 새로 생성
-  //       await axios.post(
-  //         '/feed/create',
-  //         formData,
-  //         {
-  //           params: {
-  //             feedType: feedType,
-  //             userId: user.id
-  //           },
-  //           headers: {
-  //             'Content-Type': 'multipart/form-data'
-  //           }
-  //         }
-  //       );
-  //       console.log('업로드 성공!');
-  //     }
-  //     navigate('/');
-  //   } catch (error) {
-  //     console.log('업로드/수정 실패!');
-  //   }
-  // };
 
 useEffect(() => {
   if (selectedSavedProject && selectedSavedProject.roles) {
@@ -416,7 +285,6 @@ const handleRoleSelect = (option, count) => {
 
 
 
-
 // // 1. TagDropdown이 받은 onTagSelect는 WritePage의 handleTagSelect 함수
 const handleTagSelect = (option) => {
     if (!option || !option.label) {
@@ -445,11 +313,6 @@ if ((selectedTags || []).length >= MAX_TAGS) {
 const handleTagDelete = (tagToDelete) => {
     setSelectedTags(prevTags => prevTags.filter(tag => tag !== tagToDelete));
 };
-
-const handlePeriodSelect = (selectedOption) => {
-    setPeriod(selectedOption.value);
-};
-
 
 
 const handleDeadlineChange = (e) => {
@@ -508,9 +371,7 @@ const handleDelete = async () => {
      <ContentsWrap>
       <MainContent>
         <NavigationBar showSearch={false} />
-        {/* <WriteFormWrap> */}
-          
-         
+    
           <TitleInput>
             <InputField
               value={title}
@@ -592,25 +453,15 @@ const handleDelete = async () => {
           <GridRow>
             <GridCol>
               <Label>모집 역할</Label>
-              {/* <ButtonGroup>
-                {roles.map(r => (
-                  <ToggleButton
-                    key={r}
-                    active={selectedRoles === r}
-                    onClick={() => setSelectedRoles(selectedRoles === r ? null : r)}
-                  >
-                    {r}
-                  </ToggleButton>
-                ))}
-              </ButtonGroup> */}
-            <Dropdown 
-            options={option2} 
-            placeholder={"프론트엔드,백엔드..."} 
-            showCountButtons={true}
-            value={selectedRoles}
-            onTagSelect={handleRoleSelect} // 역할과 카운트를 직접 전달
-            dropdownType="roles"
-        />
+            
+                  <Dropdown 
+                  options={option2} 
+                  placeholder={"프론트엔드,백엔드..."} 
+                  showCountButtons={true}
+                  value={selectedRoles}
+                  onTagSelect={handleRoleSelect} // 역할과 카운트를 직접 전달
+                  dropdownType="roles"
+              />
             </GridCol>
             <GridCol>
               <Label>진행 장소</Label>
@@ -641,36 +492,36 @@ const handleDelete = async () => {
           />
 
 
-<div style={{ marginTop: '0px' }}>
-        <ImageButton type="button" onClick={handleImageButtonClick}>
-          파일 첨부
-        </ImageButton>
-        <input
-          ref={fileInputRef}
-          type="file"
-          // accept="image/*"
-            accept="image/jpeg,image/png,image/gif,application/pdf"
-          style={{ display: 'none' }}
-          onChange={handleImageChange}
-        />
+      <div style={{ marginTop: '0px' }}>
+              <ImageButton type="button" onClick={handleImageButtonClick}>
+                파일 첨부
+              </ImageButton>
+              <input
+                ref={fileInputRef}
+                type="file"
+                // accept="image/*"
+                  accept="image/jpeg,image/png,image/gif,application/pdf"
+                style={{ display: 'none' }}
+                onChange={handleImageChange}
+              />
       </div>
 
       {imagePreview && (
-  <ImagePreviewWrapper>
-    {imagePreview.type?.includes('image/') ? (
-      // 이미지 파일인 경우
-      <PreviewImage src={URL.createObjectURL(imagePreview)} alt="미리보기" />
-    ) : (
-      // PDF 등 다른 파일인 경우
-      <FilePreview>
-        <FontAwesomeIcon icon={faPaperclip} style={{ marginRight: '8px' }} />
-        <FileName>{imagePreview.name}</FileName>
-      </FilePreview>
-    )}
-    <RemoveButton type="button" onClick={handleImageRemove} aria-label="파일 삭제">
-      ×
-    </RemoveButton>
-  </ImagePreviewWrapper>
+        <ImagePreviewWrapper>
+          {imagePreview.type?.includes('image/') ? (
+            // 이미지 파일인 경우
+            <PreviewImage src={URL.createObjectURL(imagePreview)} alt="미리보기" />
+          ) : (
+            // PDF 등 다른 파일인 경우
+            <FilePreview>
+              <FontAwesomeIcon icon={faPaperclip} style={{ marginRight: '8px' }} />
+              <FileName>{imagePreview.name}</FileName>
+            </FilePreview>
+          )}
+          <RemoveButton type="button" onClick={handleImageRemove} aria-label="파일 삭제">
+            ×
+          </RemoveButton>
+        </ImagePreviewWrapper>
 )}
 
           <ButtonRow>
@@ -683,37 +534,37 @@ const handleDelete = async () => {
      
     </ContentsWrap>
 
-    <Modal isOpen={isModalOpen} onClose={closeModal}>
-            <Dropdown 
-              options={option3}
-              placeholder="태그를 선택하시오"
-              dropdownType="tags"
-              onTagSelect={selectedTag => {
-                handleTagSelect(selectedTag);
-                console.log('Tag selected:', selectedTag.label);
-              }}
+        <Modal isOpen={isModalOpen} onClose={closeModal}>
+                <Dropdown 
+                  options={option3}
+                  placeholder="태그를 선택하시오"
+                  dropdownType="tags"
+                  onTagSelect={selectedTag => {
+                    handleTagSelect(selectedTag);
+                    console.log('Tag selected:', selectedTag.label);
+                  }}
             />
           </Modal>
 
 
-      <AlertModal
-  isOpen={!!showAlertPopup}
-  message={showAlertPopup}
-  onClose={() => setShowAlertPopup(false)}
-/>
+            <AlertModal
+        isOpen={!!showAlertPopup}
+        message={showAlertPopup}
+        onClose={() => setShowAlertPopup(false)}
+      />
 
 
-{popupMessage && (
-    <Modal
-      isOpen={!!popupMessage}
-      onClose={() => setPopupMessage('')}
-    showFooter={true}
-    onConfirm={handleDelete}
-    >
-     <h3 style={{ textAlign: 'center' }}>정말로 삭제 하시겠습니까?</h3>
-      
-    </Modal>
-  )}
+      {popupMessage && (
+          <Modal
+            isOpen={!!popupMessage}
+            onClose={() => setPopupMessage('')}
+          showFooter={true}
+          onConfirm={handleDelete}
+          >
+          <h3 style={{ textAlign: 'center' }}>정말로 삭제 하시겠습니까?</h3>
+            
+          </Modal>
+        )}
 
     </>
 
@@ -723,26 +574,7 @@ const handleDelete = async () => {
 
 export default WritePage;
 
-// const ContentsWrap = styled.div`
-//   width: 100%;
-//   min-height: 100vh;
-//   background: #fafbfc;
-// `;
 
-// const MainContent = styled.div`
-//   max-width: 900px;
-//   margin: 0 auto;
-//   padding: 40px 0 80px 0;
-// `;
-
-const WriteFormWrap = styled.div`
-  max-width: 900px;
-  margin: 0 auto;
-  background: #fff;
-  border-radius: 16px;
-  padding: 32px 32px 24px 32px;
-  margin-top: 32px;
-`;
 
 const TagRow = styled.div`
   display: flex;

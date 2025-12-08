@@ -1,16 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-//import axios from 'axios';
 import axios from '../../api/axios';
-import Modal from '../../components/Modal';
 import AlertModal from '../../components/AlertModal';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const SignUpPage = () => {
   const navigate = useNavigate();
-  const [id, setId] = useState('');
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [authNumber, setAuthNumber] = useState('');
   const [password, setPassword] = useState('');
@@ -19,8 +14,6 @@ const SignUpPage = () => {
   const [isAuthNumberSent, setIsAuthNumberSent] = useState(false);
   const [isResendDisabled, setIsResendDisabled] = useState(false);
   const [remainingTime, setRemainingTime] = useState(180); // 3분
-  const [phone, setPhone] = useState('');
-  const [verificationCode, setVerificationCode] = useState('');
   const [showAlertPopup, setShowAlertPopup] = useState('');
   const [isNicknameAvailable, setIsNicknameAvailable] = useState(false);
   const [confirmEmail, setConfirmEmail] = useState(false);
@@ -59,25 +52,10 @@ const handleSkillToggle = (skill) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.log('이메일:', email);
-    // console.log('인증 번호:', authNumber);
-    // console.log('비밀번호:', password);
-    // console.log('비밀번호 확인:', confirmPassword);
-    // console.log('닉네임:', nickname);
-
-    // navigate('/?showModal=true');
   };
 
   const handleAuthNumberSend = async () => {
     try {
-      // const response = await axios.post('/login/verify/email', 
-      //   { email: email }, 
-      //   { 
-      //     headers: { 
-      //       'Content-Type': 'application/json',
-      //     }
-      //   }
-      // );
 
       await axios.post('/login/verify/email', 
         { email: email }, 
@@ -123,7 +101,7 @@ const handleSkillToggle = (skill) => {
   const handleResendCode = async () => {
     try {
        
-        const response = await axios.post('login/verify/resend', 
+     await axios.post('login/verify/resend', 
             { email: email }, 
             { 
                 headers: { 
@@ -142,8 +120,7 @@ const handleSkillToggle = (skill) => {
      await axios.post('login/confirm/email', 
             { email: email, verification_code: authNumber }, 
             { headers: { 'Content-Type': 'application/json' } }
-        );
-        // console.log('인증 응답:', response.data);
+        );;
         setShowAlertPopup('이메일 인증이 완료되었습니다.');
         setConfirmEmail(true);
         setIsResendDisabled(false);
@@ -186,15 +163,11 @@ const handleSignup = async () => {
           nickname,
           password,
       });
-      
-      // 응답 데이터의 구조에 맞게 메시지 처리
-      // console.log('회원가입 응답:', response.data);
-      // alert(response.data.message); // 서버에서 반환된 메시지를 사용자에게 알림
+
       setShowAlertPopup(response.data.message);
       // MainPage로 닉네임을 전달하며 이동
       navigate('/', { state: { nickname } });
   } catch (error) {
-      console.error('회원가입 오류:', error);
       if (error.response) {
           setShowAlertPopup(`회원가입에 실패했습니다: ${error.response.data.message || '다시 시도하세요.'}`);
       } else {
@@ -206,10 +179,6 @@ const handleSignup = async () => {
   const handleCheckNickname = async () => {
     try {
       const response = await axios.post('login/verify/nickname', { nickname });
-      // 서버 응답 구조 확인을 위한 상세 로깅
- 
-      // 여기서 응답 구조를 확인한 후 적절한 조건문을 작성할 수 있습니다
-      // setShowAlertPopup(response.data.message ? '사용가능한 닉네임입니다' : '사용불가능한 닉네임입니다');
           // 닉네임 사용 가능 여부에 따라 state 업데이트
           if (response.data.message) {
             setShowAlertPopup('사용가능한 닉네임입니다');
@@ -553,106 +522,106 @@ font-size: 14px;
 color: red;
 `;
 
-const SocialLogin = styled.h2`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 600px;
+// const SocialLogin = styled.h2`
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   width: 600px;
 
-`;
+// `;
 
-const DividerLine = styled.hr`
-    border: 0; 
-    height: 1px;
-    background: #ccc;
-    flex: 1; /* 남은 공간을 차지, 기본 너비가 0이기 때문에 설정 필수 */
-    margin: 0px 10px; 
+// const DividerLine = styled.hr`
+//     border: 0; 
+//     height: 1px;
+//     background: #ccc;
+//     flex: 1; /* 남은 공간을 차지, 기본 너비가 0이기 때문에 설정 필수 */
+//     margin: 0px 10px; 
 
-`;
+// `;
 
-const SocialLoginTitle = styled.h2`
-  font-size: 20px;
-`;
-
-
-const SocialLoginContainer = styled.div`
-   display: flex;
-  flex-direction: column;
- // justify-content:center; //여기서는 수직 정렬
-  align-items: center; // 여기서는 수평정렬
-  margin-top: 30px;
-`;
-
-const SocialButton1 = styled.button`
-  padding: 10px;
-  background-color: ${props => (props.yellow ? '#f7e02e' : '#3dbd4e')};
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size:14px;
-  color: black;
-  font-weight: bold;
-  width: 30%;
-  border-radius: 10px;
-  border-radius: 30px 30px 1px 30px;
+// const SocialLoginTitle = styled.h2`
+//   font-size: 20px;
+// `;
 
 
-  &:hover {
-    color: #aaa;
-`;
+// const SocialLoginContainer = styled.div`
+//    display: flex;
+//   flex-direction: column;
+//  // justify-content:center; //여기서는 수직 정렬
+//   align-items: center; // 여기서는 수평정렬
+//   margin-top: 30px;
+// `;
+
+// const SocialButton1 = styled.button`
+//   padding: 10px;
+//   background-color: ${props => (props.yellow ? '#f7e02e' : '#3dbd4e')};
+//   color: white;
+//   border: none;
+//   border-radius: 5px;
+//   cursor: pointer;
+//   font-size:14px;
+//   color: black;
+//   font-weight: bold;
+//   width: 30%;
+//   border-radius: 10px;
+//   border-radius: 30px 30px 1px 30px;
 
 
-const SocialButton2 = styled.button`
-  padding: 10px;
-  background-color: #03CF5D; /* 네이버 색상 */
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 5px;
-  font-size:14px;
-  color: white;
-  font-weight: bold;
-  width: 30%;
-  border-radius: 10px;
-  margin-bottom: 50px;
-  border-radius: 30px 30px 1px 30px;
+//   &:hover {
+//     color: #aaa;
+// `;
+
+
+// const SocialButton2 = styled.button`
+//   padding: 10px;
+//   background-color: #03CF5D; /* 네이버 색상 */
+//   color: white;
+//   border: none;
+//   border-radius: 5px;
+//   cursor: pointer;
+//   margin-top: 5px;
+//   font-size:14px;
+//   color: white;
+//   font-weight: bold;
+//   width: 30%;
+//   border-radius: 10px;
+//   margin-bottom: 50px;
+//   border-radius: 30px 30px 1px 30px;
 
 
 
-  &:hover {
-    color: #aaa;
-`;
+//   &:hover {
+//     color: #aaa;
+// `;
 
-const Icon = styled.img`
-  width: 25px; /* 아이콘 크기 조절 */
-  height: 25px;
-  margin-right: 5px;
-  vertical-align: middle;
+// const Icon = styled.img`
+//   width: 25px; /* 아이콘 크기 조절 */
+//   height: 25px;
+//   margin-right: 5px;
+//   vertical-align: middle;
 
-`;
+// `;
 
 
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 20px;
-`;
+// const ButtonContainer = styled.div`
+//   display: flex;
+//   justify-content: center;
+//   gap: 20px;
+//   margin-top: 20px;
+// `;
 
-const ModalButton = styled.button`
-  background-color: #3563E9;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
+// const ModalButton = styled.button`
+//   background-color: #3563E9;
+//   color: white;
+//   border: none;
+//   padding: 10px 20px;
+//   border-radius: 5px;
+//   cursor: pointer;
 
-  &:hover {
-    background-color: #a0dafb;
-  }
-`;
+//   &:hover {
+//     background-color: #a0dafb;
+//   }
+// `;
 
 
 const AdditionalInfoContainer = styled.div`

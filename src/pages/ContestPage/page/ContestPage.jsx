@@ -2,15 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { useAtom } from 'jotai';
-import { feedTypeAtom, selectedProjectDetailAtom ,selectedSavedProjectAtom} from '../../../Atoms.jsx/AtomStates';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
-// import { ContentsWrap , MainContent} from '../../../assets/BusinessAnalysisStyle';
 import NavigationBar from '../../../components/NavigationBar';
-// import PopularProject from '../components/PopularProject';
-// import ProjectFeedCard from '../components/ProjectFeedCard';
-import axios from '../../../api/axios'
 import { useAuth } from '../../../context/AuthContext';
 import contest1 from '../../../assets/Image/01.jpeg';
 import contest2 from '../../../assets/Image/02.jpg.avif';
@@ -267,15 +259,10 @@ const contests = [
   }
 
 ];
-// // Update tagOptions to include all unique tags from the contests
-// const tagOptions = [...new Set(contests.flatMap(contest => contest.tags))];
-// // ... existing code ...
 
 
 const ContestPage = () => {
-  const { isLoggedIn, user } = useAuth();
-  const [allProjects, setAllProjects] = useState([]);
-  const [selectedSavedProject,setSelectedSavedProject] = useAtom(selectedSavedProjectAtom); // 아톰에서 프로젝트 정보 가져오기
+  const {  user } = useAuth();
   const [selectedTags, setSelectedTags] = useState([]); // 태그 상태 추가
   const [selectedTagDetails, setSelectedTagDetails] = useState([]);
   const [tagsRowZIndex, setTagsRowZIndex] = useState(2000);
@@ -323,25 +310,7 @@ const ContestPage = () => {
     setSelectedTagDetails([]);
   };
 
-  const projectsPerPage = 6;
-  const [currentPage, setCurrentPage] = useState(1);
-  // const [projectsPerPage] = useState(6); 
-
-  //페이지네이션방법 1
-  // const indexOfLastProject = currentPage * projectsPerPage;
-  // const indexOfFirstProject = indexOfLastProject - projectsPerPage;
-  // const currentProjects = projects.slice(indexOfFirstProject, indexOfLastProject);
-
-    //페이지네이션방법 2
-  const currentProjects = allProjects.slice(
-    (currentPage - 1) * projectsPerPage,
-    currentPage * projectsPerPage
-  );
-
   
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
 
   const filteredContests = selectedTags.length > 0
     ? contests.filter(contest => 
@@ -453,15 +422,6 @@ const ContestPage = () => {
     </>
   ))}
 </ContestGrid>
-
-        {/* <div style={{ display: "flex", justifyContent: "center", margin: "32px 0" }}>
-          <Pagination
-            currentPage={currentPage}
-            projectsPerPage={projectsPerPage}
-            totalProjects={allProjects.length}
-            onPageChange={handlePageChange}
-          />
-        </div> */}
       </MainContent>
     </ContentsWrap>
   </>
@@ -567,18 +527,6 @@ const TagDetailContainer = styled.div`
   // justify-content: space-between;
 `;
 
-const TagDetailCard = styled.div`
- /* flex: 1;
- width: 200px;
- max-width: 250px;
- min-height: 120px;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease; */
-`;
-
-
 
 const TagDetailHeader = styled.div`
   background-color: ${props => props.color || '#535353'};
@@ -597,9 +545,6 @@ const TagDetailHeader = styled.div`
   
 `;
 
-const TagDetailTitle = styled.h3`
-  /* Merged into TagDetailHeader */
-`;
 
 const TagDetailContent = styled.div`
   padding: 20px;
@@ -626,18 +571,6 @@ const TagDetailDescription = styled.p`
   display: -webkit-box;
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
-`;
-
-const LearnMoreButton = styled.button`
-  width: 100%;
-  padding: 10px 16px;
-  background-color: #f0f0f0;
-  border: none;
-  border-radius: 8px;
-  color: #666;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
 `;
 
 const ContestGrid = styled.div`
@@ -693,32 +626,12 @@ const ContestDetail = styled.p`
   margin: 0 0 4px 0;
 `;
 
-const ContestDate = styled.p`
-  font-size: 12px;
-  color: #999;
-  margin: 0;
-`;
 
 const ContestButtons = styled.div`
   display: flex;
   gap: 8px;
 `;
 
-const ApplyButton = styled.button`
-  flex: 1;
-  padding: 8px 12px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  
-  &:hover {
-    background-color: #0056b3;
-  }
-`;
 
 const ContestTags = styled.div`
   display: flex;

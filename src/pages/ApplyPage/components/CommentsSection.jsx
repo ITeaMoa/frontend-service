@@ -5,63 +5,22 @@ import styled from 'styled-components';
 import axios from '../../../api/axios';
 import { selectedProjectDetailAtom } from '../../../Atoms.jsx/AtomStates';
 import { useAtom } from 'jotai';
-import Modal from '../../../components/Modal';
 import AlertModal from '../../../components/AlertModal';
 
 const CommentsSection = ({ commentInput, setCommentInput, user, projectId }) => {
   const [replyInput, setReplyInput] = useState({});
   const [showReplyInput, setShowReplyInput] = useState({});
-  // const [isEditing, setIsEditing] = useState(false);
-  // const [editedComment, setEditedComment] = useState(null);   
   const [selectedProjectDetail, setSelectedProjectDetail] = useAtom(selectedProjectDetailAtom);
   const [, setReplies] = useState({});
   const [editingCommentId, setEditingCommentId] = useState(null);
-const [editCommentInput, setEditCommentInput] = useState('');
- const [showAlertPopup,setShowAlertPopup] =useState(false)
-//  const [project, setProject] = useState(null);
-  const [project, ] = useState(null);
+  const [editCommentInput, setEditCommentInput] = useState('');
+  const [showAlertPopup,setShowAlertPopup] =useState(false)
   const [comments, setComments] = useState(selectedProjectDetail?.comments || []);
 
-console.log("comments:", comments)
-  // setProject(selectedProjectDetail);
-  //projectId를 -> 여기서 찾아도 될듯/ comment도?
-
-  // const fetchProjectDetails = async () => {
-  //   try {
-    
-      
-  //     if (selectedProjectDetail) {
-  //       console.log("selectedProjectDetail:", selectedProjectDetail);
-  //       const response = await axios.get(`/main?feedType=${selectedProjectDetail.sk}`);
-  //     const selectedProject = response.data.find(item => item.pk === projectId);
-
-  //     for (const comment of selectedProject.comments) {
-  //       const commentId = comment.commentId;
-  //       const replyIdResponse = await axios.get(`/feed/${projectId}/comments/${commentId}/replies`);
-  //       console.log("대댓글 아이디 받아오기:", replyIdResponse.data);
-  //       setReplies(replyIdResponse.data);
-  //     }
-  //       console.log("Selected Project:", selectedProject);
-  //       setSelectedProjectDetail(selectedProject);
-  //       setComments(selectedProject.comments || []);
-   
-  //     } else {
-  //       setSelectedProjectDetail(null);
-  //       setComments([]);
-  //       setReplies([]);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching project details:", error);
-  //     setSelectedProjectDetail(null);
-  //     setComments([]);
-  //     setReplies([]);
-  //   }
-  // };
 
   const fetchProjectDetails = async () => {
     try {
       if (selectedProjectDetail) {
-        console.log("selectedProjectDetail:", selectedProjectDetail);
         const response = await axios.get(`/main?feedType=${selectedProjectDetail.sk}`);
         const selectedProject = response.data.find(item => item.pk === projectId);
   
@@ -69,7 +28,6 @@ console.log("comments:", comments)
         const commentsWithReplies = await Promise.all(
           selectedProject.comments.map(async (comment) => {
             const replyResponse = await axios.get(`/feed/${projectId}/comments/${comment.commentId}/replies`);
-            console.log("대댓글 아이디 받아오기:", replyResponse.data);
             return {
               ...comment,
               replies: replyResponse.data
@@ -77,7 +35,6 @@ console.log("comments:", comments)
           })
         );
   
-        console.log("Selected Project with replies:", commentsWithReplies);
         setSelectedProjectDetail(selectedProject);
         setComments(commentsWithReplies);
         // setReplies는 더 이상 필요하지 않음
@@ -94,10 +51,10 @@ console.log("comments:", comments)
 
   useEffect(() => {
     fetchProjectDetails();
+    // eslint-disable-next-line
   }, []);
 
   const handleCommentSubmit = async () => {
-    console.log("handleCommentSubmit 호출", { commentInput, project });
     if(!user) {
       return;
     }
@@ -106,37 +63,18 @@ console.log("comments:", comments)
         userId: user ? user.id : null,
         comment: commentInput,
       };
-      console.log("Current feedType:", selectedProjectDetail.sk);
 
       try {
         await axios.post(`/feed/${projectId}/comments`, newComment, {
           params: { feedType: selectedProjectDetail.sk }
         });
-        // setSelectedProjectDetail(prevProject => {
-        //   const updatedProject = {
-        //     ...prevProject,
-        //     comments: [...prevProject.comments, newComment]
-        //   };
-        //   // fetchProjectDetails();
-        //   setProject(updatedProject);
-        //   setComments(prevComments => [...prevComments, newComment]);
-        //   // console.log("Updated project state:", updatedProject);
-        //   return updatedProject;
-        // });
-        // setCommentInput('');
-            
-      // 댓글 입력 필드 초기화
       setCommentInput('');
       
       // 프로젝트 상세 정보 새로고침
       await fetchProjectDetails();
       } catch (error) {
-        console.error("댓글 제출 중 오류 발생:", error);
-        // alert("댓글 제출에 실패했습니다.");
         setShowAlertPopup("댓글 제출에 실패했습니다. 다시 시도해주세요.");
       }
-    } else {
-      console.log("댓글 입력이 없거나, project 데이터가 존재하지 않음", { commentInput, selectedProjectDetail });
     }
   };
 
@@ -149,12 +87,10 @@ console.log("comments:", comments)
       const replyData = {
         content: replyText
       }
-      const response = await axios.post(
+     await axios.post(
         `/feed/${projectId}/comments/${commentId}/replies?userId=${user.id}`,
         replyData
       );
-  
-     console.log("대댓글 작성 성공:", response.data);
   
       // 대댓글 목록 업데이트
       setReplies(prev => ({
@@ -169,8 +105,7 @@ console.log("comments:", comments)
         ]
       }));
 
-      const replyIdResponse = await axios.get(`/feed/${projectId}/comments/${commentId}/replies`);
-      console.log("대댓글 아이디 받아오기:", replyIdResponse.data);
+    await axios.get(`/feed/${projectId}/comments/${commentId}/replies`);
   
       // 입력 필드 초기화
       setReplyInput(prev => ({ ...prev, [commentId]: '' }));
@@ -190,18 +125,12 @@ console.log("comments:", comments)
 
 
 const handleDeleteReply = async (commentId, replyId, userId) => {
-  console.log("handleDeleteReply 호출", { commentId, replyId, userId });
-
   try {
     await axios.delete(
       `/feed/${projectId}/comments/${commentId}/replies/${replyId}`,
       { params: { userId } }
     );
-    // 성공 시 프론트 상태도 갱신
-    // setReplies(prev => ({
-    //   ...prev,
-    //   [commentId]: prev[commentId].filter(reply => reply.id !== replyId)
-    // }));
+  
     await fetchProjectDetails();
   } catch (error) {
     console.error('대댓글 삭제 실패:', error);
@@ -210,30 +139,16 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
 };
 
 
-  
 
   const handleDeleteComment = async (commentId) => {
-    console.log("handleDeleteComment 호출", { commentId, project });
-    console.log(projectId)
+
     try {
       const response = await axios.delete(`/feed/${projectId}/comments/${commentId}`, {
         params: { feedType: selectedProjectDetail.sk, userId: user.id }
       });
       
       if (response.data) {
-        console.log("댓글 삭제 성공:", response.data);
-        // fetchProjectDetails();
         setComments(prevComments => prevComments.filter(comment => comment.id !== commentId));
-      
-        // setSelectedProjectDetail(prevProject => {
-        //   const updatedProject = {
-        //     ...prevProject,
-        //     comments: prevProject.comments.filter(comment => comment.id !== commentId)
-        //   };
-        //   setProject(updatedProject);
-        //   return updatedProject;
-        // });
-          // 프로젝트 상세 정보 새로고침
       await fetchProjectDetails();
       }
     } catch (error) {
@@ -243,26 +158,21 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
   };     
   
   
-
   // 수정 저장 핸들러
   const handleEditCommentSave = async (commentId) => {
     if (!editCommentInput.trim()) {
       alert('댓글 내용을 입력해주세요');
       return;
     }
-  
     try {
 
      const commentData = {
       newContent: editCommentInput
      }
-      const response = await axios.put(
+       await axios.put(
         `/feed/${projectId}/comments/${commentId}?feedType=${selectedProjectDetail.sk}&userId=${user.id}`, 
         commentData
       );
-  
-      console.log("댓글 수정 성공:", response.data);
-      
       // 댓글 목록 업데이트
       setComments(prevComments => 
         prevComments.map(comment => 
@@ -413,27 +323,6 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
                     <CommentButton onClick={() => handleReplySubmit(comment.commentId)}>등록</CommentButton>
                   </ReplyInputWrapper>
                 )}
-{/* 
-                {showReplyInput[selectedProjectDetail.id] && (
-                  <CommentInputWrapper>
-                    <CommentInput
-                      value={replyInput[selectedProjectDetail.id] || ''}
-                      onChange={(e) => setReplyInput(prev => ({ ...prev, [selectedProjectDetail.id]: e.target.value }))}
-                      placeholder="대댓글을 입력해 주세요."
-                    />
-                    <CommentButton onClick={() => handleReplySubmit(selectedProjectDetail.id)}>등록</CommentButton>
-                  </CommentInputWrapper>
-                )}
-
-                  {selectedProjectDetail.replies && selectedProjectDetail.replies.length > 0 && (
-                  <div style={{ marginLeft: '20px' }}>
-                    {selectedProjectDetail.replies.map((reply, replyIndex) => (
-                      <div key={replyIndex}>
-                                <Comments>{reply.comment}</Comments>
-                      </div>
-                    ))}
-                  </div>
-                )} */}
               </Comment>
             );
           })
@@ -441,11 +330,11 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
           <span>댓글 정보가 없습니다.</span>
         )}
 
-<AlertModal
-  isOpen={!!showAlertPopup}
-  message={showAlertPopup}
-  onClose={() => setShowAlertPopup(false)}
-/>
+        <AlertModal
+          isOpen={!!showAlertPopup}
+          message={showAlertPopup}
+          onClose={() => setShowAlertPopup(false)}
+        />
       </CommentsList>
     </Container>
    

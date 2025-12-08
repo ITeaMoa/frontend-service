@@ -1,16 +1,14 @@
-import React, { useState, useEffect, useLocation, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import axios from '../../../api/axios';
 import { useAtom } from 'jotai';
 import { MESSAGE_LIST } from '../../../Atoms.jsx/AtomStates';
 import { useAuth } from '../../../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPaperPlane, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 
 const MessageList = ({ onSendMessage }) => {
   const [selectedMessage, setSelectedMessage] = useState(null);
-  const [messages, setMessages] = useState([]);
-  const [messageList, setMessageList] = useAtom(MESSAGE_LIST);
+  const [messageList] = useAtom(MESSAGE_LIST);
   const { user } = useAuth();
   const [inputValue, setInputValue] = useState('');
 
@@ -18,61 +16,6 @@ const MessageList = ({ onSendMessage }) => {
   const handleClosePopup = () => {
     setSelectedMessage(null);
   };
-
-  // useEffect(() => {
-  //   const getMessage = async (id) => {
-  //     const response = await axios.get('/message', {
-  //       params: { pk:id ,userId: messages.userId }
-  //     });
-  //     setMessages(response.data);
-  //     return response.data;
-
-  //   };
-  //   getMessage();
-  // }, []);
-
-  // useEffect(() => {
-  //   const getMessage = async () => {
-  //     try {
-  //       const response = await axios.get('/message', {
-  //         params: { 
-  //           userId: user.id,  // 현재 사용자 ID
-  //           recipientId: selectedPerson  // 선택된 상대방 ID
-  //         }
-  //       });
-        
-  //       if (response.data) {
-  //         setMessages(response.data);
-  //       }
-  //     } catch (error) {
-  //       console.error('메시지 가져오기 오류:', error);
-  //     }
-  //   };
-  
-  //   // selectedPerson이 변경될 때마다 메시지 가져오기
-  //   if (selectedPerson) {
-  //     getMessage();
-  //   }
-  // }, [ user.id]); // 의존성 배열에 selectedPerson과 user.id 추가ㄴ
-
-  const handleDeleteMessage = async (id) => {
-    try {
-      const currentTime = new Date().toISOString();  // "2025-04-14T18:57:57.712644" 형식
-
-      await axios.delete('/message', {
-        data: {
-          pk: id,
-          sk: currentTime  // 현재 시간을 ISO 문자열로
-        }
-      });
-      
-
-      setMessageList(messageList.filter(message => message.id !== id));
-    } catch (error) {
-      console.error('메시지 삭제 오류:', error);
-    }
-  };
-  console.log("messageList",messageList)
 
   function formatFullDateTime(dateString) {
     const date = new Date(dateString);
@@ -120,7 +63,6 @@ const MessageList = ({ onSendMessage }) => {
 
   const handleSend = () => {
     if (!inputValue.trim()) return;
-    // console.log("ddddupupth", inputValue)
     onSendMessage(inputValue); // 입력값을 부모로 전달
     setInputValue('');
 
@@ -129,7 +71,7 @@ const MessageList = ({ onSendMessage }) => {
   return (
     <>
      
-       <ChatWrapper>
+<ChatWrapper>
   <MessageContainer>
     {orderedMessages.length > 0 ? (
         orderedMessages.map((message, idx) => {
@@ -161,24 +103,24 @@ const MessageList = ({ onSendMessage }) => {
       )}
       <div ref={messageEndRef} />
 
-<ChatInputBar>
-  {/* <AvatarBox /> */}
-  <InputWrapper>
-    <Input
-      type="text"
-      placeholder="내용을 입력해주세요"
-      value={inputValue}
-      onChange={e => setInputValue(e.target.value)}
-      onKeyDown={handleKeyDown}
-    />
-    <SendButton onClick={handleSend}>
-      {/* 예시: > 또는 아이콘 */}
-      <FontAwesomeIcon icon={faPaperPlane} /> 
-      {/* <span style={{ color: "#fff", fontSize: 20, fontWeight: "bold" }}>{'>'}</span> */}
-    </SendButton>
-  </InputWrapper>
-</ChatInputBar>
-  </MessageContainer>
+        <ChatInputBar>
+          {/* <AvatarBox /> */}
+          <InputWrapper>
+            <Input
+              type="text"
+              placeholder="내용을 입력해주세요"
+              value={inputValue}
+              onChange={e => setInputValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+            />
+            <SendButton onClick={handleSend}>
+              {/* 예시: > 또는 아이콘 */}
+              <FontAwesomeIcon icon={faPaperPlane} /> 
+              {/* <span style={{ color: "#fff", fontSize: 20, fontWeight: "bold" }}>{'>'}</span> */}
+            </SendButton>
+          </InputWrapper>
+        </ChatInputBar>
+          </MessageContainer>
 </ChatWrapper>
 
 
@@ -244,62 +186,6 @@ const MessageMeta = styled.div`
   align-self: ${({ isSent }) => (isSent ? 'flex-end' : 'flex-start')};
 `;
 
-const MessageHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-`;
-
-const MessageTitle = styled.h3`
-  color: ${props => props.type === 'notice' ? '#FF0000' : '#000000'};
-  font-size: 16px;
-  margin: 0;
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    width: 100%;
-    margin-bottom: -10px;
-  }
-`;
-
-const MessageDate = styled.span`
-  color: #666;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    width: 100%;
-    justify-content: space-between;
-
-  }
-`;
-
-const DeleteButton = styled.button`
-  border: none;
-  background: none;
-  color: #666;
-  cursor: pointer;
-  margin-left: 10px;
-  
-  &:hover {
-    color: #ff4444;
-  }
-`;
-
-const MessageContent = styled.p`
-  font-size: 14px;
-  color: #333;
-  line-height: 1.5;
-  margin: 0;
-`;
 
 const PopupOverlay = styled.div`
    position: fixed;
@@ -363,14 +249,6 @@ const MessageTextArea = styled.textarea`
   }
 `;
 
-const UnreadBadge = styled.span`
-  background: #3563E9;
-  color: white;
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-size: 12px;
-  margin-left: 8px;
-`;
 
 const DateDivider = styled.div`
   text-align: center;
@@ -393,13 +271,6 @@ const ChatInputBar = styled.div`
   height: 50px; /* 입력창 높이와 MessageContainer의 height 계산이 일치해야 함 */
 `;
 
-const AvatarBox = styled.div`
-  width: 48px;
-  height: 48px;
-  background: #ddd;
-  border-radius: 12px;
-  margin-right: 16px;
-`;
 
 const InputWrapper = styled.div`
   flex: 1;

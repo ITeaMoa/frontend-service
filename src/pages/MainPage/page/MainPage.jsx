@@ -19,18 +19,14 @@ import RoleSelectionModal from '../../../components/RoleSelectionModal';
 import Pagination from '../../../components/Pagination';
 import ProfileModal from '../../../components/ProfileModal';
 import MainCarousel from '../components/MainCarousel';
-import { faPen } from '@fortawesome/free-solid-svg-icons'; // Import the pencil icon
-
-
-
+import { faPen } from '@fortawesome/free-solid-svg-icons'; 
 
 
 
 const MainPage = () => {
-  const { isLoggedIn, user } = useAuth();
-  // const [isLoggedIn, setIsLoggedIn] = useAtom(IS_LOGGED_IN);
+  const {  user } = useAuth();
   const [feedType, setFeedType] = useAtom(feedTypeAtom);
-  const [selectedProjectDetail, setSelectedProjectDetail] = useAtom(selectedProjectDetailAtom);
+  const [ ,setSelectedProjectDetail] = useAtom(selectedProjectDetailAtom);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [popularProjects, setPopularProjects] = useState([]);
   const [allProjects, setAllProjects] = useState([]);
@@ -38,36 +34,23 @@ const MainPage = () => {
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
   const [selectedProject, setSelectedProject] = useState(null);
-  const [popupMessage, setPopupMessage] = useState('');
+  const [ setPopupMessage] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showAlertPopup, setShowAlertPopup] = useState('');
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [isUserProfileLoaded, setIsUserProfileLoaded] = useState(false);
-  const [modalOpenedOnce, setModalOpenedOnce] = useState(false);
-  const [hasProfileModalOpened, setHasProfileModalOpened] = useState(false);
-  // const [isProfileComplete, setIsProfileComplete] = useState(false);
-  const [selectedSavedProject,setSelectedSavedProject] = useAtom(selectedSavedProjectAtom); // 아톰에서 프로젝트 정보 가져오기
-
-
+  const [modalOpenedOnce, ] = useState(false);
+  const [, setHasProfileModalOpened] = useState(false);
+  const [,setSelectedSavedProject] = useAtom(selectedSavedProjectAtom);
+  const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
-  
-  const handleSearch = (e) => {
-    if (e.key === 'Enter') {
-      navigate(`/search?query=${e.target.value}`);
-    }
-  };
+
 
   const handleFeedToggle = (type) => {
     setFeedType(type);
   };
-
-  // const handleAddButtonClick = () => {
-  //   const tagsQuery = selectedTags.length > 0 ? `&tags=${selectedTags.join(',')}` : '';
-  //   // const feedType = toggleActive ? 'PROJECT' : 'STUDY'; // 현재의 토글 값에 따라 feedType 설정
-  //   navigate(`/SearchPage?q=${searchValue}${tagsQuery}&feedType=${feedType}`); // 검색어, 선택된 태그, feedType을 URL로 전달
-  // };
 
   const handleAddButtonClick = () => {
     if (!user) { 
@@ -75,7 +58,7 @@ const MainPage = () => {
       setIsSubmitted(true); 
       return; 
     }
-    // navigate(`/WritePage?feedType=${feedType}`); 
+
     navigate(`/WritePage`); 
   };
 
@@ -84,31 +67,29 @@ const MainPage = () => {
     navigate(`/ContestPage`);
   };
 
-  const [searchValue, setSearchValue] = useState("");
-  const [selectedTags, setSelectedTags] = useState([]); // 선택된 태그 상태 추가
 
-  // 1. 프로젝트 데이터 예시
-  const projectList = [
-    {
-      id: 1,
-      title: "재난 대응 어플리케이션 백엔드 구해요!",
-      description: "재난 대응 어플리케이션에서 백엔드 개발자를 구합니다. 주요 업무는 ...",
-      tags: ["백엔드", "Node.js", "React"],
-      people: "2",
-      date: "2024.06.08",
-      views: 340,
-    },
-    {
-      id: 2,
-      title: "재난 대응 어플리케이션 백엔드 구해요!",
-      description: "재난 대응 어플리케이션에서 백엔드 개발자를 구합니다. 주요 업무는 ...",
-      tags: ["백엔드", "Node.js", "React"],
-      people: "2",
-      date: "2024.06.08",
-      views: 340,
-    },
-    // ... 여러 개 추가
-  ];
+  // // 1. 프로젝트 데이터 예시
+  // const projectList = [
+  //   {
+  //     id: 1,
+  //     title: "재난 대응 어플리케이션 백엔드 구해요!",
+  //     description: "재난 대응 어플리케이션에서 백엔드 개발자를 구합니다. 주요 업무는 ...",
+  //     tags: ["백엔드", "Node.js", "React"],
+  //     people: "2",
+  //     date: "2024.06.08",
+  //     views: 340,
+  //   },
+  //   {
+  //     id: 2,
+  //     title: "재난 대응 어플리케이션 백엔드 구해요!",
+  //     description: "재난 대응 어플리케이션에서 백엔드 개발자를 구합니다. 주요 업무는 ...",
+  //     tags: ["백엔드", "Node.js", "React"],
+  //     people: "2",
+  //     date: "2024.06.08",
+  //     views: 340,
+  //   },
+  //   // ... 여러 개 추가
+  // ];
 
   // const popularProjects = [
   //   {
@@ -137,8 +118,6 @@ const MainPage = () => {
   //   }
   // ];
 
-  
-
 
 
   const handleModalClose = async () => {
@@ -151,7 +130,7 @@ const MainPage = () => {
       try {
         if (user && user.id) {
           const response = await axios.get(`/my/profile/${user.id}`);
-          console.log('사용자 프로필:', response.data);
+    
           if (response.data) {
             setUserProfile(response.data);
             setIsUserProfileLoaded(true);
@@ -180,10 +159,9 @@ const MainPage = () => {
     const tags = userProfile.tags || [];
     return headLine.length > 0 && tags.length > 0;
   };
- 
-//app.js에서 체크하며 어떨까.
+
   useEffect(() => {
-    // 로그인하지 않은 경우 (user가 null) 함수 즉시 종료
+ 
     if(!user) return;
     setSelectedSavedProject({})
 
@@ -194,13 +172,12 @@ const MainPage = () => {
     if (!modalOpenedOnce) {
       // 프로필이 미완성일 경우에만 모달을 강제로 열어줍니다.
       if (!isProfileComplete()) {
-        console.log("모달을 열어야 합니다.");
         setIsProfileModalOpen(true);
-        modalOpenedOnce = true;
         setHasProfileModalOpened(true);
       }
   
     }
+    // eslint-disable-next-line
   }, [user, userProfile, isProfileModalOpen, isUserProfileLoaded, modalOpenedOnce]);
 
 
@@ -237,13 +214,10 @@ const MainPage = () => {
   }, [feedType]);
 
   const handleProjectClick = (project) => {
-    console.log("mainprojecttodetail", project)
     navigate(`/ApplyPage1/${project.pk}`);
     setSelectedProjectDetail(project);
   };
 
-
-  
   
   useEffect(() => {
     const fetchAllProjects = async () => {
@@ -253,7 +227,6 @@ const MainPage = () => {
           setAllProjects([]);
           return;
         }
-        console.log('모든 게시물:', response.data);
   
         setAllProjects(response.data);
       } catch (error) {
@@ -274,7 +247,6 @@ const MainPage = () => {
   }, [feedType]);
 
 
-  
 
   const handleApplyClick = async (project) => {
     if (!user) { 
@@ -303,8 +275,6 @@ const MainPage = () => {
       const isAlreadyApplied = appliedProjects.includes(project.pk);
       if (isAlreadyApplied) {
         setShowApplyPopup("이미 신청한 프로젝트입니다."); 
-        // setPopupMessage("이미 신청한 프로젝트입니다."); // 이미 신청한 경우 메시지 설정
-        // setIsSubmitted(true); // 제출 확인 팝업 표시
         return; // Exit the function if already applied
       }
     } catch (error) {
@@ -332,7 +302,6 @@ const MainPage = () => {
         part: selectedRole,
         feedType: feedType
       };
-      console.log('applicationData:', applicationData);
       await axios.post('/main/application', applicationData);
       setShowApplyPopup("신청이 완료되었습니다.");
       setIsRoleModalOpen(false);
@@ -348,8 +317,6 @@ const MainPage = () => {
   
 
   const projectsPerPage = 6;
-  const [currentPage, setCurrentPage] = useState(1);
-  // const [projectsPerPage] = useState(6); 
 
   //페이지네이션방법 1
   // const indexOfLastProject = currentPage * projectsPerPage;
@@ -372,15 +339,9 @@ const MainPage = () => {
     <>
     <ContentsWrap>
     <MainContent Wide1030>
-      {/* Header with Logo and Search */}
-      <NavigationBar showSearch={true}
+      <NavigationBar showSearch={true}/>
 
-      />
-
-      {/* Carousel Section */}
       <MainCarousel currentSlide={currentSlide} setCurrentSlide={setCurrentSlide} slideCount={slideCount} />
-
-      {/* Popular Projects Section */}
       <SectionHeader>
       
       <SectionTitle>
@@ -388,12 +349,6 @@ const MainPage = () => {
       </SectionTitle>
        
       </SectionHeader>
-
-      {/* <ViewMoreLink>
-          자세히 알아보기 
-          <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M7 4L12 10L7 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-   
-        </ViewMoreLink> */}
 
       <PopularProject projects={popularProjects} handleProjectClick={handleProjectClick} />
 
@@ -418,28 +373,26 @@ const MainPage = () => {
               {feedType === 'PROJECT' && <ToggleCheck />}
             </ToggleCircle>
           
-          
             Project
           </ToggleOption>
         </ToggleContainer>
       </FeedToggleSection>
 
-      {/* Project Feed */}
-      <ProjectFeed style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(2, 1fr)",
-        gap: "32px",
-        marginBottom: "32px"
-      }}>
-        {currentProjects.map(project => (
-          <ProjectFeedCard
-            key={project.id}
-            project={project}
-            handleProjectClick={handleProjectClick}
-            onApplyClick={handleApplyClick}
-          />
-        ))}
-      </ProjectFeed>
+          <ProjectFeed style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(2, 1fr)",
+            gap: "32px",
+            marginBottom: "32px"
+          }}>
+            {currentProjects.map(project => (
+              <ProjectFeedCard
+                key={project.id}
+                project={project}
+                handleProjectClick={handleProjectClick}
+                onApplyClick={handleApplyClick}
+              />
+            ))}
+          </ProjectFeed>
 
      
         <FloatingActionButtonContainer>
@@ -494,34 +447,32 @@ const MainPage = () => {
         handleApplySubmit={handleApplySubmit}
       />
 
-<AlertModal
-isOpen={!!showAlertPopup}
-message={showAlertPopup}
-onClose={() => setShowAlertPopup(false)}
-/>
+        <AlertModal
+        isOpen={!!showAlertPopup}
+        message={showAlertPopup}
+        onClose={() => setShowAlertPopup(false)}
+        />
 
-<AuthModal 
-        isOpen={isSubmitted}
-        onClose={() => setIsSubmitted(false)}
-        handleSignUp={() => navigate('/SignupPage')}
-        handleLogin={() => navigate('/LoginPage')}
-      />
+        <AuthModal 
+                isOpen={isSubmitted}
+                onClose={() => setIsSubmitted(false)}
+                handleSignUp={() => navigate('/SignupPage')}
+                handleLogin={() => navigate('/LoginPage')}
+              />
 
-{showApplyPopup && (
-<Modal isOpen={showApplyPopup} onClose={() => setShowApplyPopup(false)}>
-      <h3 style={{ textAlign: 'center',fontSize:'16px' }}>{showApplyPopup}</h3>
-      <ButtonContainer>
-        <ModalButton onClick={() => setShowApplyPopup(false)}>확인</ModalButton>
-        {/* <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton> */}
-      </ButtonContainer>
-    </Modal>  
+        {showApplyPopup && (
+        <Modal isOpen={showApplyPopup} onClose={() => setShowApplyPopup(false)}>
+              <h3 style={{ textAlign: 'center',fontSize:'16px' }}>{showApplyPopup}</h3>
+              <ButtonContainer>
+                <ModalButton onClick={() => setShowApplyPopup(false)}>확인</ModalButton>
+                {/* <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton> */}
+              </ButtonContainer>
+            </Modal>  
 
 )}
 </>
   );
 };
-
-
 
 
 const SectionHeader = styled.div`
@@ -647,30 +598,6 @@ const AddButton = styled.button`
   
 `;
 
-const AddButtonFixed = styled.button`
-  position: fixed;
-  right: 40px;
-  bottom: 40px;
-  z-index: 100;
-  background: #00aeff;
-  color: #fff;
-  border: none;
-  border-radius: 50px;
-  padding: 18px 36px;
-  font-size: 18px;
-  font-weight: 600;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  cursor: pointer;
-  transition: background 0.15s;
-  &:hover:enabled {
-    background: #0090d9;
-  }
-  &:disabled {
-    background: #e0e0e0;
-    color: #aaa;
-    cursor: not-allowed;
-  }
-`;
 
 
 const FloatingActionButtonContainer = styled.div`

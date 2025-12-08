@@ -1,9 +1,7 @@
 import React from 'react';
-// 스타일드 컴포넌트 import는 실제 경로에 맞게 수정하세요
 import styled from 'styled-components';
 
 const PopularProject = ({ projects, handleProjectClick }) => {
-console.log("projects", projects)
     return (
     
   <>
@@ -31,12 +29,6 @@ console.log("projects", projects)
                 <PopularProjectDetail>
                   마감일 | {formatDate(project.deadline)}
                 </PopularProjectDetail>
-                {/* <PopularProjectDetail>
-                  기간 | {project.period}주
-                </PopularProjectDetail> */}
-                {/* <PopularProjectDetail>
-                  장소 | {project.place}
-                </PopularProjectDetail> */}
               </PopularProjectInfo>
               <PopularProjectTags>
                 {project.tags && project.tags.map((tag, i) => (
@@ -48,10 +40,6 @@ console.log("projects", projects)
                   <path d="M7 4L12 10L7 16" stroke="#00AEFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </ArrowCircle>
-              {/* <div style={{ marginTop: 8, fontSize: 13, color: '#888' }}>
-                <span>❤️ {project.likesCount}</span>
-                <span style={{ marginLeft: 12 }}>작성자: {project.nickname}</span>
-              </div> */}
             </PopularProjectCard>
           ))}
           {/* 빈 카드로 3개 맞추기 */}
@@ -160,137 +148,6 @@ const PopularProjectTag = styled.span`
   font-size: 12px;
   font-weight: 500;
   border: 1px solid #e0f0ff;
-`;
-
-const ProjectCard = styled.div`
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.07);
-  padding: 28px 24px 20px 24px;
-  display: flex;
-  flex-direction: column;
-  min-height: 400px;
-  justify-content: space-between;
-  border: 1px solid #e6eaf2;
-
-`;
-
-const ProjectHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const ProjectTitle = styled.h3`
-  font-size: 20px;
-  font-weight: 600;
-  color: #000000;
-  margin: 0;
-`;
-
-const DeadlineTag = styled.span`
-  background-color: #D4D4D4;
-  border-radius: 50px;
-  padding: 6px 10px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #888888;
-`;
-
-const ProjectDescription = styled.p`
-  font-size: 16px;
-  line-height: 1.5;
-  color: #888888;
-  margin: 0;
-`;
-
-const ProjectInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const ProjectDetail = styled.span`
-  font-size: 14px;
-  font-weight: 500;
-  color: #888888;
-`;
-
-const ProjectTags = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-`;
-
-const ProjectTag = styled.span`
-  background: #eaf6ff;
-  color: #009cff;
-  border-radius: 16px;
-  padding: 4px 14px;
-  font-size: 13px;
-  font-weight: 500;
-  margin-right: 6px;
-`;
-
-const FeedToggleSection = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 32px;
-`;
-
-const ToggleContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 27px;
-`;
-
-const ToggleOption = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 16px;
-  font-weight: 500;
-  color: ${props => props.active ? '#000000' : '#888888'};
-  cursor: pointer;
-`;
-
-const ToggleCircle = styled.div`
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background-color: ${props => props.active ? '#00AEFF' : 'transparent'};
-  border: ${props => props.outlined ? '1.5px solid #00AEFF' : 'none'};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const ToggleCheck = styled.div`
-  width: 12px;
-  height: 12px;
-  background-color: white;
-  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
-`;
-
-const ProjectFeed = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  margin-bottom: 32px;
-`;
-
-const ApplyButton = styled.button`
-  flex: 1;
-  height: 44px;
-  // background: linear-gradient(90deg, #36c6ff 0%, #3a8dff 100%);
-  background: #00BEFF;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 18px;
-  font-weight: bold;
-  cursor: pointer;
 `;
 
 const PopularProjectDetail = styled.span`

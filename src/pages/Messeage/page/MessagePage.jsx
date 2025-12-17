@@ -21,13 +21,10 @@ const MessagePage = () => {
 useEffect(() => {
   if (location.state?.selectedPersonId) {
     setSelectedPersonId(location.state?.selectedPersonId);
-
-    // personList에 있는지 확인
     const exists = personList.some(person => person.id === location.state.selectedPersonId);
     if (exists) {
       handlePersonClick(location.state.selectedPersonId);
     }
-    // 없는 경우: 팝업만 띄우고, 메시지 보내기 후 getMessage() 호출
   }
   // eslint-disable-next-line
 }, [location.state?.selectedPersonId, setSelectedPersonId, personList]);
@@ -53,7 +50,6 @@ useEffect(() => {
       });
       const countData = countResponse.data;
 
-      // personList에서 해당 사람만 count 갱신
       setPersonList(prevList =>
         prevList.map(person =>
           person.id === personId
@@ -78,8 +74,6 @@ const getMessage = async () => {
       name: nickname
     }));
     setPersonList(list);
-
-    // if (list.length > 0) setSelectedPerson(list[0].id);
 
     const countResponse = await axios.get('/message/count', {
       params: { pk: user.id }
@@ -115,13 +109,10 @@ useEffect(() => {
       };
       await axios.post('/message', data);
 
-      // 기존 목록에 없는 사용자면 getMessage() 호출
       const exists = personList.some(person => person.id === selectedPersonId);
       if (!exists) {
         await getMessage();
       }
-
-      // 메시지 목록도 새로고침
       try {
         const messageResponse = await axios.get('/message', {
           params: {
@@ -191,33 +182,16 @@ const Container = styled.div`
   height: 100%;
   // height: calc(100vh - 300px);
   margin-top: 50px;
-  // width:60%;
-  // background-color: white;
-  // padding-left: 150px;
-  // padding-right: 150px;
-  // margin-bottom: 200px;
-  // /* 중앙 정렬을 위한 스타일 추가 */
-  // margin-left: auto;
-  // margin-right: auto;
-
-  // @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-  //   width: 100%;
-  //   padding: 0 20px;
-  //   margin-top:400px;
-  // }
 `;
 
 const LeftPanel = styled.div`
   width: 300px;
   border: 1px solid #BDBDBD;
   border-right: none;
-//   padding: 20px;
-  // margin-right: 20px;
-  // border-radius: 10px;
-    border-top-left-radius: 10px;     // 왼쪽 위
-  border-bottom-left-radius: 10px;  // 왼쪽 아래
-  border-top-right-radius: 0;      // 오른쪽 위를 0으로
-  border-bottom-right-radius: 0;   // 오른쪽 아래를 0으로
+  border-top-left-radius: 10px;     
+  border-bottom-left-radius: 10px;  
+  border-top-right-radius: 0;     
+  border-bottom-right-radius: 0; 
   background : rgba(237, 237, 237, 0.5);
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
@@ -232,14 +206,13 @@ const RightPanel = styled.div`
   flex: 1;
   border: 1px solid #BDBDBD;
   // border-radius: 10px;
-  border-top-left-radius: 0px;     // 왼쪽 위
-  border-bottom-left-radius: 0px;  // 왼쪽 아래
-  border-top-right-radius: 10px;      // 오른쪽 위를 0으로
-  border-bottom-right-radius: 10px;   // 오른쪽 아래를 0으로
+  border-top-left-radius: 0px;  
+  border-bottom-left-radius: 0px; 
+  border-top-right-radius: 10px;      
+  border-bottom-right-radius: 10px;   
   // padding: 20px;
   padding-left:20px;
   // overflow-y: auto;
-  // height: 100%;         /* 부모가 높이 지정 필요 */
   overflow: hidden;    
   position: relative;
 `;

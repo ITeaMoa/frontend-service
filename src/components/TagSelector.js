@@ -5,10 +5,10 @@ const TagSelector = ({ options, onTagSelect, selectedTags  }) => {
     const [searchTerm, setSearchTerm] = useState('');
 
     const handleTagClick = (option) => {
-        if (selectedTags.includes(option.label)) return; // 이미 선택된 태그는 클릭 불가능
+        if (selectedTags.includes(option.label)) return; 
 
         if (selectedTags.length < 8) {
-            onTagSelect(option); // 선택된 태그 전달
+            onTagSelect(option); 
         }
     };
 
@@ -19,19 +19,17 @@ const TagSelector = ({ options, onTagSelect, selectedTags  }) => {
 
     return (
         <DropdownWrapper>
-            {/* <HeaderContainer> */}
             <DropdownHeader>
                 <SearchInput
                     type="text"
                     placeholder={selectedTags.length > 0 ? selectedTags.join(', ') : '태그를 선택하세요'}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    onFocus={() => setSearchTerm(searchTerm)} // 포커스 시 검색어 유지
+                    onFocus={() => setSearchTerm(searchTerm)} 
                 />
      
             </DropdownHeader>
-            {/* <PlusIcon>+</PlusIcon>
-            </HeaderContainer> */}
+      
             <TagContainer>
                 {filteredOptions.length > 0 ? (
                     filteredOptions.map(option => (
@@ -39,8 +37,8 @@ const TagSelector = ({ options, onTagSelect, selectedTags  }) => {
                             key={option.value}
                             onClick={() => handleTagClick(option)}
 
-                            isSelected={selectedTags.includes(option.label)} // 선택된 태그 여부 확인
-                            disabled={selectedTags.includes(option.label)} // 클릭 불가능 상태 (이미 누른 태그)
+                            isSelected={selectedTags.includes(option.label)} 
+                            disabled={selectedTags.includes(option.label)} 
                         >
                             
                             {option.label}

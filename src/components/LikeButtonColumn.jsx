@@ -1,4 +1,4 @@
-//사용자 좋아요 ui와 이벤트 처리
+
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useLocation } from 'react-router-dom';
@@ -19,11 +19,10 @@ const LikeButtonColumn = ({ initialLiked, initialLikesCount, onLikeChange, userI
   const { user } = useAuth();
   const location = useLocation();
 
-  // feedType prop 우선, 없으면 globalFeedType 사용
+
   
   const fetchUserLikeStatus = async () => {
     try {
-      // 1. 좋아요 수는 항상 가져옴
       const feedResponse = await axios.get(`/main?feedType=${feedType}`);
       if (feedResponse.data) {
         const thisFeed = feedResponse.data.find(feed => feed.pk === sk);
@@ -34,7 +33,6 @@ const LikeButtonColumn = ({ initialLiked, initialLikesCount, onLikeChange, userI
         }
       }
 
-      // 2. 로그인한 경우에만 내 좋아요 상태 확인
       if (user && user.id) {
         const likeResponse = await axios.get(`/main/like?userId=${user.id}`);
         const userLiked = likeResponse.data.some(like => like.sk === sk);
@@ -58,16 +56,13 @@ const LikeButtonColumn = ({ initialLiked, initialLikesCount, onLikeChange, userI
     const likeData = { pk: user?.id, sk, feedType: feedType };
     try {
       if (!liked) {
-        // 좋아요 추가
         const checkResponse = await axios.get(`/main/like?userId=${user.id}`);
         const isAlreadyLiked = checkResponse.data.some(like => like.sk === sk);
         if (isAlreadyLiked) return;
         await axios.post(`/main/like`, likeData);
       } else {
-        // 좋아요 취소
         await axios.delete(`/main/like`, { data: likeData });
       }
-      // 서버에서 최신 상태로 동기화
       await fetchUserLikeStatus();
     } catch (error) {
       console.error('Error updating like status:', error);
@@ -101,10 +96,10 @@ const LikeBox = styled.div`
   color: #222;
   box-shadow: none;
   padding: 0;
-  user-select: none;//마우스 드래그 방지
+  user-select: none;
   border: none;
   cursor: pointer;
-   transition: background 0.15s, border-color 0.15s; /* 테두리 색상 변경에 대한 전환 추가 */
+   transition: background 0.15s, border-color 0.15s;
    &:hover {
     border:1px solid #62b9ec;
   }

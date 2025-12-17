@@ -1,4 +1,3 @@
-//바끤 피그마
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -240,7 +239,7 @@ const ContestDetailPage = () => {
     arr.slice(i * size, i * size + size)
   );
 
-  const timelineRows = chunk(timelineItems, 5); // 한 줄에 5개씩 나누기
+  const timelineRows = chunk(timelineItems, 5);
 
   return (
     <>

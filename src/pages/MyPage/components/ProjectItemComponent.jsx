@@ -6,11 +6,11 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { selectedSavedProjectAtom } from '../../../Atoms.jsx/AtomStates';
-import { faPen } from '@fortawesome/free-solid-svg-icons'; // Import the pencil icon
+import { faPen } from '@fortawesome/free-solid-svg-icons'; 
 
     
 
-const ProjectItemComponent = ({ project, user, handleCancelApplication, isProjectCanceled, isSaved, isDisabled, handleButtonClick }) => {
+const ProjectItemComponent = ({ project,isSaved, isDisabled, handleButtonClick }) => {
     const navigate = useNavigate();
     const [, setSelectedSavedProject] = useAtom(selectedSavedProjectAtom);
 
@@ -72,7 +72,7 @@ const ProjectItemComponent = ({ project, user, handleCancelApplication, isProjec
             style={{ 
               backgroundColor: (!project.postStatus && !project.savedFeed) ? '#808080' : '#3563E9',
               opacity: (!project.postStatus && !project.savedFeed) ? 0.6 : 1,
-              // marginTop: '80px'
+         
             }}
           >
             {isProjectCompleted(project.pk) || (!project.postStatus && !project.savedFeed) ? '모집완료' : '모집 현황'}
@@ -80,25 +80,14 @@ const ProjectItemComponent = ({ project, user, handleCancelApplication, isProjec
 
    </BottomContainer>
       ))}
-      
-
+    
       </Tags>
       </BottomSection2>
-      {/* {!isSaved && (
-        <AdditionalInfo>
-          {(!isDisabled) && <span>지원분야&nbsp;| {project.part}</span>}
-          <span>모집현황&nbsp;| {project.recruitmentNum}명</span>
-          <span>마감일자&nbsp;| {new Date(project.deadline).toLocaleDateString()}</span>
-          <span>진행기간&nbsp;| {project.period ? `${project.period}개월` : '정보없음'}</span>
-          <span>상태&nbsp; &nbsp; &nbsp;| {project.status === 'completed' ? '완료' : '진행 중'}</span>
-        </AdditionalInfo>
-      )} */}
     </ProjectItem>
   );
 };
 
 const ProjectItem = styled.div`
-//   border: 1px solid #A0DAFB;
   border : ${({ isSaved }) => (isSaved ? '2px solid #E3F5FF' : '2px solid #E3F5FF')};
   border-radius: 10px;
   padding: 20px;
@@ -157,7 +146,7 @@ const Tag = styled.span`
   border-radius: 14px 14px 14px 14px; 
   // box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   background-color: #E3F5FF;
-  border-color: ${({ isSaved }) => (isSaved ? '#E3F5FF' : 'rgba(160, 218, 251)')}; // 저장된 프로젝트일 때 배경색 변경
+  border-color: ${({ isSaved }) => (isSaved ? '#E3F5FF' : 'rgba(160, 218, 251)')};
   color: ${({ isSaved }) => (isSaved ? '#00AEFF' : '#0A8ED9')};
 `;
 

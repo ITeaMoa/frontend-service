@@ -1,136 +1,53 @@
-//사용자 좋아요 ui와 이벤트 처리
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useLocation } from 'react-router-dom';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons'; 
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
-// import axios from 'axios';
-import axios from '../api/axios'
-import { useAtom } from 'jotai';
-import { likedProjectsAtom, IS_LOGGED_IN, USER, feedTypeAtom } from '../Atoms.jsx/AtomStates';  
-import { useAuth } from '../context/AuthContext'; // AuthContext에서 useAuth 가져오기
+import useLikeStatus from '../hooks/useLikeStatus'; // [면접관용 설명] 관심사 분리를 위해 비즈니스 로직을 custom hook으로 분리
+import AlertModal from './AlertModal'; // [면접관용 설명] 에러 발생 시 사용자에게 알림을 제공하기 위해 추가
 
-
-const LikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle, userId, sk,  }) => {
-  const [liked, setLiked] = useState(false);
-  const [likesCount, setLikesCount] = useState(0);
-  // const [isLoggedIn, setIsLoggedIn] = useAtom(IS_LOGGED_IN);
-  const { isLoggedIn: authIsLoggedIn } = useAuth(); // AuthContext에서 isLoggedIn 가져오기 //나중에 넣기
-  // const [user, setUser] = useAtom(USER);
-  const [likedProjects, setLikedProjects] = useAtom(likedProjectsAtom);
-  const [feedType, setFeedType] = useAtom(feedTypeAtom);
-  const [allProjects, setAllProjects] = useState([]);
-  const { user } = useAuth();
-  const location = useLocation(); // 현재 경로를 가져옵니다.
-
-  // // 사용자 좋아요 상태를 API 호출로 가져오기
-  // const fetchUserLikeStatus = useCallback(async () => {
-  //   if (!userId || !sk) return; // userId와 sk가 없으면 종료
-  //   try {
-  //     const response = await axios.get(`/main/like?userId=${userId}`);
-  //     if (response.data) {
-  //       console.log('사용자 좋아요 상태ㅇㅇㅇㅇㅇ:', response.data); // API 응답을 콘솔에 출력
-        
-  //       // 사용자가 좋아요를 눌렀던 피드의 sk가 현재 버튼의 sk와 일치하는지 확인
-  //       const userLiked = response.data.some(like => like.sk === sk);
-  //       setLiked(userLiked); // liked 상태 설정
-  //       //아톰으로 추가한거 -> 테스 해볼것것: 메인페이지와 연동해서?
-  //       setLikedProjects(prevLikedProjects => [
-  //         ...prevLikedProjects,
-  //         { id: user.id, liked: userLiked, likesCount: likesCount }
-  //       ]);   //
-  //       // setLikesCount(response.data.length); // 총 좋아요 수 설정 (여기서는 단순히 길이로 설정)
-  //     }
-  //   } catch (error) {
-  //     console.error('Error fetching user like status:', error);
-  //   }
-  // }, [userId, sk,isLoggedIn,user,feedType]);
-
-  // // 컴포넌트가 마운트될 때 사용자 좋아요 상태를 가져옴
-  // useEffect(() => {
-  //   fetchUserLikeStatus();
-  // }, [fetchUserLikeStatus]);
-
-// useEffect(() => {
-//   setLikesCount(initialLikesCount);
-// }, [initialLikesCount]);
- // useCallback 없이 일반 함수로 작성 //uscecallback없이 작성성
-const fetchUserLikeStatus = async () => {
-  if (!user?.id || !sk) return;
-  try {
-    // 1. 내 좋아요 상태 확인
-    const likeResponse = await axios.get(`/main/like?userId=${user.id}`);
-    console.log('likeResponse:', likeResponse.data);
-    const userLiked = likeResponse.data.some(like => like.sk === sk);
-    setLiked(userLiked);
-
-    // 2. 전체 피드에서 해당 sk의 좋아요 수 찾기
-    const feedResponse = await axios.get(`/main?feedType=${feedType}`);
-    if (feedResponse.data ) {
-      const thisFeed = feedResponse.data.find(feed => feed.pk === sk);
-      if (thisFeed) {
-        setLikesCount(thisFeed.likesCount || 0);
-        // 디버깅용
-        console.log('likesCount:', thisFeed.likesCount, 'sk:', sk);
-      } else {
-        setLikesCount(0);
-      }
-    }
-  } catch (error) {
-    console.error('Error fetching user like status:', error);
-  }
-};
-
-useEffect(() => {
-  fetchUserLikeStatus();
-}, [user, sk, authIsLoggedIn, feedType, location.pathname]);
-   
-// useEffect 수정
+const LikeButton = ({ buttonStyle, sk }) => {
+  // [면접관용 설명] custom hook을 사용하여 like 상태와 관련된 모든 로직을 분리
+  const { liked, likesCount, toggleLike, loading } = useLikeStatus(sk);
+  const [error, setError] = useState(null);
 
   const handleClick = async (e) => {
-    if (!user) return;
     e.stopPropagation();
-
-    const likeData = { pk: user?.id, sk, feedType };
-
+    
     try {
-      if (!liked) {
-        // 좋아요 추가
-        console.log('좋아요 추가');
-        const checkResponse = await axios.get(`/main/like?userId=${user.id}`);
-        const isAlreadyLiked = checkResponse.data.some(like => like.sk === sk);
-        if (isAlreadyLiked) {
-          console.log('이미 좋아요가 눌린 상태입니다');
-          return;
-        }
-        await axios.post(`/main/like`, likeData);
-      } else {
-        // 좋아요 취소
-        console.log('좋아요 취소');
-        await axios.delete(`/main/like`, { data: likeData });
-      }
-
-      // 서버에서 최신 상태로 동기화
-      await fetchUserLikeStatus();
-    } catch (error) {
-      console.error('Error updating like status:', error);
+      await toggleLike();
+    } catch (err) {
+      // [면접관용 설명] 에러 발생 시 사용자에게 알림 표시
+      setError('좋아요 상태 업데이트에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
-  
-
   return (
-    <Button onClick={handleClick} buttonStyle={buttonStyle}>
-      <FontAwesomeIcon icon={liked ? faHeart : regularHeart} style={{ color: liked ? 'red' : 'white', marginRight: '4px' }} />
-      {Math.abs(likesCount)}
-    </Button>
+    <>
+      <Button onClick={handleClick} buttonStyle={buttonStyle} disabled={loading}>
+        <FontAwesomeIcon 
+          icon={liked ? faHeart : regularHeart} 
+          style={{ 
+            color: liked ? 'red' : 'white', 
+            marginRight: '4px' 
+          }} 
+        />
+        {Math.abs(likesCount)}
+      </Button>
+      
+      {/* [면접관용 설명] 에러 발생 시 모달로 알림 표시 */}
+      <AlertModal
+        isOpen={!!error}
+        message={error}
+        onClose={() => setError(null)}
+      />
+    </>
   );
 };
 
-const Button = styled.div`  border: 1px solid #ddd;
+const Button = styled.div`
+  border: 1px solid #ddd;
   padding: 2px 8px;
-  // width: 50px;
   border-radius: 15px;
   color: white;
   font-weight: bold;
@@ -138,6 +55,7 @@ const Button = styled.div`  border: 1px solid #ddd;
   cursor: pointer;
   float: right;
   margin-top: -24px;
+  opacity: ${({ disabled }) => disabled ? 0.6 : 1};
 
   &:hover {
     background-color: #A0DAFB; 
@@ -145,15 +63,11 @@ const Button = styled.div`  border: 1px solid #ddd;
 
   ${({ buttonStyle }) => buttonStyle === 's1' && `
     margin-top:0px;
-
   `}
-
 
   ${({ buttonStyle }) => buttonStyle === 'apply' && `
     transform: translate(400px,60px);
-
   `}
 `;
 
 export default LikeButton;
-

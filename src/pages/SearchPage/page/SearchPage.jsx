@@ -1,4 +1,3 @@
-//바끤 피그마
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
@@ -18,7 +17,6 @@ import Pagination from '../../../components/Pagination';
 
 const SearchPage = () => {
   const {  user } = useAuth();
-  // const [isLoggedIn, setIsLoggedIn] = useAtom(IS_LOGGED_IN);
   const [feedType, setFeedType] = useAtom(feedTypeAtom);
   const [ setSelectedProjectDetail] = useAtom(selectedProjectDetailAtom);
   const [, setAllProjects] = useState([]);
@@ -45,21 +43,19 @@ const SearchPage = () => {
   useEffect(() => {
     const fetchSearchItems = async () => {
         if ((!searchTerm || searchTerm.trim() === '') && (!tags || tags.trim() === '')) {
-          setSearchResults([]); // 아무것도 안 보여줌
+          setSearchResults([]); 
           return;
         }
         try {
-            // 태그가 있을 경우, search-tags API 호출
             const apiUrl = tags 
                 ? `/main/search-tags?feedType=${feedType}&tags=${encodeURIComponent(tags)}`
                 : `/main/search-keyword?feedType=${feedType}&keyword=${encodeURIComponent(searchTerm)}`;
             
             const response = await axios.get(apiUrl);
             const filteredResults = response.data.filter(item => {
-                // 태그가 선택된 경우, 태그 필터링
                 return !tags || (item.tags && item.tags.some(tag => tags.split(',').includes(tag)));
             });
-            setSearchResults(filteredResults); // 필터링된 결과 설정
+            setSearchResults(filteredResults); 
 
         } catch (error) {
             console.error("Error fetching search items:", error);
@@ -67,37 +63,11 @@ const SearchPage = () => {
     };
 
     fetchSearchItems();
-}, [searchTerm, tags, feedType]); // 검색어와 태그가 변경될 때마다 호출
+}, [searchTerm, tags, feedType]); 
 
   const handleFeedToggle = (type) => {
     setFeedType(type);
   };
-
-
-  // // 1. 프로젝트 데이터 예시
-  // const projectList = [
-  //   {
-  //     id: 1,
-  //     title: "재난 대응 어플리케이션 백엔드 구해요!",
-  //     description: "재난 대응 어플리케이션에서 백엔드 개발자를 구합니다. 주요 업무는 ...",
-  //     tags: ["백엔드", "Node.js", "React"],
-  //     people: "2",
-  //     date: "2024.06.08",
-  //     views: 340,
-  //   },
-  //   {
-  //     id: 2,
-  //     title: "재난 대응 어플리케이션 백엔드 구해요!",
-  //     description: "재난 대응 어플리케이션에서 백엔드 개발자를 구합니다. 주요 업무는 ...",
-  //     tags: ["백엔드", "Node.js", "React"],
-  //     people: "2",
-  //     date: "2024.06.08",
-  //     views: 340,
-  //   },
-  //   // ... 여러 개 추가
-  // ];
-
-  
 
 
   const handleProjectClick = (project) => {
@@ -121,10 +91,9 @@ const SearchPage = () => {
       } catch (error) {
         console.error('프로젝트 가져오기 실패:', error);
         
-        // Network error handling - set empty array as fallback
         if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
           console.warn('API 서버에 연결할 수 없습니다. 네트워크 연결 또는 서버 상태를 확인해주세요.');
-          setAllProjects([]); // Set empty array as fallback
+          setAllProjects([]);
         } else {
           console.error('API 요청 중 오류가 발생했습니다:', error.message);
           setAllProjects([]);
@@ -145,9 +114,7 @@ const SearchPage = () => {
       return; 
     }
 
-    // 자신이 작성한 게시글인지 확인
     if (project && project.creatorId === user.id) {
-      // alert("자신이 작성한 게시글에는 신청할 수 없습니다."); 
       setShowAlertPopup("자신이 작성한 게시글에는 신청할 수 없습니다.");
       return; 
     }
@@ -159,26 +126,23 @@ const SearchPage = () => {
         }
       });
   
-      const appliedProjects = response.data.map(app => app.feedId); // 신청한 프로젝트의 feedId 목록
+      const appliedProjects = response.data.map(app => app.feedId); 
   
-      // 선택한 프로젝트의 pk와 비교
       const isAlreadyApplied = appliedProjects.includes(project.pk);
       if (isAlreadyApplied) {
         setShowApplyPopup("이미 신청한 프로젝트입니다."); 
-        return; // Exit the function if already applied
+        return; 
       }
     } catch (error) {
       console.error("신청 여부 확인 실패:", error);
     }
-  
-    // setProject(project); // 선택한 프로젝트 상태 저장
+
     setSelectedProject(project);
-    setIsRoleModalOpen(true); // 역할 선택 모달 열기
+    setIsRoleModalOpen(true); 
   };
   
 
-  // 프로젝트 신청 처리
-  const handleApplySubmit = async (project, role) => {
+  const handleApplySubmit = async () => {
     if (!user) {
       setPopupMessage("로그인 후에 신청할 수 있습니다.");
       setIsSubmitted(true);
@@ -283,8 +247,6 @@ const SearchPage = () => {
       </MainContent>
     </ContentsWrap>
 
-
-
     <RoleSelectionModal
         isOpen={isRoleModalOpen}
         onClose={() => setIsRoleModalOpen(false)}
@@ -305,7 +267,6 @@ onClose={() => setShowAlertPopup(false)}
       <h3 style={{ textAlign: 'center',fontSize:'16px' }}>{showApplyPopup}</h3>
       <ButtonContainer>
         <ModalButton onClick={() => setShowApplyPopup(false)}>확인</ModalButton>
-        {/* <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton> */}
       </ButtonContainer>
     </Modal>  
 

@@ -8,7 +8,7 @@ import { faPaperclip } from '@fortawesome/free-solid-svg-icons';
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 import { useAtom } from 'jotai';
-import { selectedSavedProjectAtom } from '../../Atoms.jsx/AtomStates'; // Atom import
+import { selectedSavedProjectAtom } from '../../Atoms.jsx/AtomStates'; 
 import AlertModal from '../../components/AlertModal';
 import { ContentsWrap , MainContent} from '../../assets/BusinessAnalysisStyle';
 import NavigationBar from '../../components/NavigationBar';
@@ -27,37 +27,27 @@ const during = [
 
 const WritePage = () => {
 
-  const [selectedSavedProject] = useAtom(selectedSavedProjectAtom); // 아톰에서 프로젝트 정보 가져오기
-  const [selectedRoles, setSelectedRoles] = useState([]); // 반드시 배열!
+  const [selectedSavedProject] = useAtom(selectedSavedProjectAtom); 
+  const [selectedRoles, setSelectedRoles] = useState([]); 
   const [selectedTags, setSelectedTags] = useState(['AWS', 'Blockchain']);
   const navigate = useNavigate();
   const [feedType, setFeedType] = useState(selectedSavedProject ? selectedSavedProject.sk : '');
-  const [title, setTitle] = useState(selectedSavedProject ? selectedSavedProject.title : ''); // 프로젝트 제목 초기화
-  const [description, setDescription] = useState(selectedSavedProject ? selectedSavedProject.content : ''); // 프로젝트 내용 초기화
-  const [progress, setProgress] = useState(selectedSavedProject ? selectedSavedProject.place : ''); // 진행 장소 초기화
-  const [deadline, setDeadline] = useState(selectedSavedProject ? selectedSavedProject.deadline : ''); // 마감일 초기화
-  const [period, setPeriod] = useState(selectedSavedProject ? selectedSavedProject.period : 0); // 기본값을 0으로 설정
+  const [title, setTitle] = useState(selectedSavedProject ? selectedSavedProject.title : ''); 
+  const [description, setDescription] = useState(selectedSavedProject ? selectedSavedProject.content : ''); 
+  const [progress, setProgress] = useState(selectedSavedProject ? selectedSavedProject.place : ''); 
+  const [deadline, setDeadline] = useState(selectedSavedProject ? selectedSavedProject.deadline : ''); 
+  const [period, setPeriod] = useState(selectedSavedProject ? selectedSavedProject.period : 0); 
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef();
-  const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
-  const nickname = user ? user.nickname : 'Unknown'; //사용자 닉네임 설정
-  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열기 상태
-  const [recruitmentNum, setRecruitmentNum] = useState(0); // recruitmentNum 상태 추가
-  const [showAlertPopup, setShowAlertPopup] = useState(false); // 경고 모달 상태 추가
+  const { user } = useAuth(); 
+  const nickname = user ? user.nickname : 'Unknown'; 
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [recruitmentNum, setRecruitmentNum] = useState(0); 
+  const [showAlertPopup, setShowAlertPopup] = useState(false);
   const [people, setPeople] = useState(null);
-  const [popupMessage, setPopupMessage] = useState(''); // 팝업 메시지 상태
+  const [popupMessage, setPopupMessage] = useState(''); 
   
-//   const option1 = [
-//     { value: '기간 미정', label: '기간 미정' },
-//     { value: '1개월', label: '1개월' },
-//     { value: '2개월', label: '2개월' },
-//     { value: '3개월', label: '3개월' },
-//     { value: '4개월', label: '4개월' },
-//     { value: '5개월', label: '5개월' },
-//     { value: '6개월이상', label: '6개월이상' },
-//     { value: '장기', label: '장기' },
-// ];
 
 const option2 = [
   { value: '백엔드', label: '백엔드' },
@@ -132,7 +122,6 @@ const option3 = [
 const handleSubmit = async (e, isTemporary) => {
   e.preventDefault();
 
-  // user가 존재하는지 확인
   if (!user || !user.id) {
       setShowAlertPopup('로그인 상태가 아닙니다. 로그인 후 다시 시도해주세요.');
       return;
@@ -140,7 +129,6 @@ const handleSubmit = async (e, isTemporary) => {
 
   const missingFields = [];
 
-  // 각 필드가 존재하는지 먼저 확인
   if (!title || !title.trim()) {
       missingFields.push('제목');
   }
@@ -194,15 +182,13 @@ const handleSubmit = async (e, isTemporary) => {
       nickname
   };
   const finalDataToSend = {
-    ...selectedSavedProject, // seletsavedproject의 모든 속성을 먼저 포함
-    ...dataToSend         // dataToSend의 속성으로 중복되는 키를 덮어씀
+    ...selectedSavedProject, 
+    ...dataToSend      
 };
   formData.append('feed', JSON.stringify(dataToSend));
  
   try {
     if (Object.keys(selectedSavedProject).length > 0) {
-
-        // 임시저장 PATCH
         await axios.patch(
           `/my/temp`,
           finalDataToSend,
@@ -218,7 +204,7 @@ const handleSubmit = async (e, isTemporary) => {
         );
       
     } else {
-      // 새로 생성
+      
       await axios.post(
         '/feed/create',
         formData,
@@ -235,19 +221,16 @@ const handleSubmit = async (e, isTemporary) => {
     }
     navigate('/');
   } catch (error) {
-    console.log('업로드 실패!');
   }
 };
 
 useEffect(() => {
   if (selectedSavedProject && selectedSavedProject.roles) {
-    // roles: { backend: 2, frontend: 1 } → [{ role: 'backend', count: 2 }, ...]
     const rolesArray = Object.entries(selectedSavedProject.roles)
       .map(([role, count]) => ({ role, count }));
     setSelectedRoles(rolesArray);
   }
   if (selectedSavedProject && selectedSavedProject.deadline) {
-    // 날짜만 추출 (YYYY-MM-DD)
     const dateOnly = selectedSavedProject.deadline.split('T')[0];
     setDeadline(dateOnly);
   }
@@ -284,8 +267,6 @@ const handleRoleSelect = (option, count) => {
 };
 
 
-
-// // 1. TagDropdown이 받은 onTagSelect는 WritePage의 handleTagSelect 함수
 const handleTagSelect = (option) => {
     if (!option || !option.label) {
         return;
@@ -298,18 +279,14 @@ if ((selectedTags || []).length >= MAX_TAGS) {
 }
 
     setSelectedTags(prevTags => {
-        // 중복 체크를 더 엄격하게 수행
         if (prevTags.includes(option.label)) {
-            console.log('Duplicate tag:', option.label);
             return prevTags;
         }
         return [...prevTags, option.label];
     });
-    
-    // 모달 닫기 코드 제거 - 사용자가 X를 누를 때까지 유지
+
 };
 
-// 태그 삭제 함수 추가
 const handleTagDelete = (tagToDelete) => {
     setSelectedTags(prevTags => prevTags.filter(tag => tag !== tagToDelete));
 };
@@ -318,7 +295,7 @@ const handleTagDelete = (tagToDelete) => {
 const handleDeadlineChange = (e) => {
     const selectedDate = new Date(e.target.value);
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Set time to midnight for comparison
+    today.setHours(0, 0, 0, 0);
 
     if (selectedDate < today) {
         setShowAlertPopup('마감일자는 오늘 이후의 날짜만 선택할 수 있습니다.');
@@ -331,8 +308,7 @@ const handleImageChange = (e) => {
   const file = e.target.files[0];
   if (file) {
     setImage(file);
-    // setImagePreview(URL.createObjectURL(file));
-    setImagePreview(file); // 파일 객체 자체를 저장
+    setImagePreview(file); 
   }
 };
 
@@ -355,13 +331,10 @@ const handleDelete = async () => {
         }
       }
     );
-    // 삭제 성공 후 원하는 동작 (예: 메인 페이지로 이동)
     setShowAlertPopup('게시물이 삭제되었습니다.');
     setPopupMessage(false);
     navigate('/');
-    // 예시: navigate('/') 또는 window.location.href = '/'
   } catch (error) {
-    console.error('게시물 삭제 실패:', error);
     setShowAlertPopup('게시물 삭제에 실패했습니다.');
   }
 };
@@ -441,7 +414,7 @@ const handleDelete = async () => {
                   <ToggleButton
                     key={opt.value}
                     active={period === opt.value}
-                    onClick={() => setPeriod(opt.value)} // opt.value를 사용하여 설정
+                    onClick={() => setPeriod(opt.value)}
                   >
                     {opt.label}
                   </ToggleButton>
@@ -459,7 +432,7 @@ const handleDelete = async () => {
                   placeholder={"프론트엔드,백엔드..."} 
                   showCountButtons={true}
                   value={selectedRoles}
-                  onTagSelect={handleRoleSelect} // 역할과 카운트를 직접 전달
+                  onTagSelect={handleRoleSelect} 
                   dropdownType="roles"
               />
             </GridCol>
@@ -499,7 +472,6 @@ const handleDelete = async () => {
               <input
                 ref={fileInputRef}
                 type="file"
-                // accept="image/*"
                   accept="image/jpeg,image/png,image/gif,application/pdf"
                 style={{ display: 'none' }}
                 onChange={handleImageChange}
@@ -528,10 +500,7 @@ const handleDelete = async () => {
             <SaveButton gray onClick={(e) => handleSubmit(e, true)}>임시 저장</SaveButton>
             <SaveButton onClick={(e) => handleSubmit(e, false)}>게시하기</SaveButton>
           </ButtonRow>
-        {/* </WriteFormWrap> */}
       </MainContent>
-
-     
     </ContentsWrap>
 
         <Modal isOpen={isModalOpen} onClose={closeModal}>
@@ -541,7 +510,6 @@ const handleDelete = async () => {
                   dropdownType="tags"
                   onTagSelect={selectedTag => {
                     handleTagSelect(selectedTag);
-                    console.log('Tag selected:', selectedTag.label);
                   }}
             />
           </Modal>
@@ -780,8 +748,8 @@ const PreviewImage = styled.img`
 
 const RemoveButton = styled.button`
   position: absolute;
-  top: 5px; /* 위쪽 간격을 줄여서 사진과 가까이 위치 */
-  right: 400px; /* 오른쪽 간격을 줄여서 사진과 가까이 위치 */
+  top: 5px;
+  right: 400px;
   background: rgba(0, 0, 0, 0.5);
   color: white;
   border: none;

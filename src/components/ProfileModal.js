@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import Modal from './Modal'; // Assuming you have a Modal component
-import Dropdown from './DropDown'; // Assuming you have a Dropdown component
+import Modal from './Modal'; 
+import Dropdown from './DropDown'; 
 import { useAuth } from '../context/AuthContext';
 import axios from '../api/axios';
 
@@ -82,7 +82,6 @@ const ProfileModal = ({ isOpen, onClose, userProfile, setUserProfile, selectedFi
       try {
         if (user && user.id) {
           const response = await axios.get(`/my/profile/${user.id}`);
-          console.log('사용자 프로필:', response.data);
           if (response.data) {
             setUserProfile(response.data);
           } else {
@@ -108,17 +107,17 @@ const ProfileModal = ({ isOpen, onClose, userProfile, setUserProfile, selectedFi
   const updateUserProfile = async () => {
     const data = new FormData();
 
-    // 파일이 선택된 경우에만 'file' 필드 추가 (파일이 없는 경우엔 추가하지 않음)
+
     if (selectedFile) {
       data.append('file', selectedFile);
     }
 
-    // 백엔드가 요구하는 구조로 프로필 데이터를 구성합니다.
+
     const profileData = {
-      pk: `USER#${user.id}`, // 사용자 id를 이용하여 pk 구성
+      pk: `USER#${user.id}`, 
       sk: "PROFILE#",
       entityType: "USER",
-      timestamp: new Date().toISOString(), // 현재 시간을 ISO 형식으로
+      timestamp: new Date().toISOString(), 
       avatarUrl: userProfile.avatarUrl ? userProfile.avatarUrl : null,
       headLine: userProfile.headLine || '',
       tags: Array.isArray(userProfile.tags)
@@ -127,7 +126,7 @@ const ProfileModal = ({ isOpen, onClose, userProfile, setUserProfile, selectedFi
       educations: Array.isArray(userProfile.educations)
         ? userProfile.educations
         : [],
-      // personalUrl는 배열 형태로 처리 (기본값은 빈 배열)
+
       personalUrl: Array.isArray(userProfile.personalUrl)
         ? userProfile.personalUrl
         : [],
@@ -136,21 +135,14 @@ const ProfileModal = ({ isOpen, onClose, userProfile, setUserProfile, selectedFi
         : []
     };
 
-    // JSON 문자열로 변환 후 FormData에 프로필 데이터를 추가합니다.
     data.append('profile', JSON.stringify(profileData));
 
-    console.log('전송할 데이터:', {
-      file: selectedFile,
-      profile: profileData
-    });
-
     try {
-      const response = await axios.put(`my/profile/${user.id}`, data, {
+    await axios.put(`my/profile/${user.id}`, data, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
-      console.log('사용자 프로필 업데이트 응답:', response.data);
     } catch (error) {
       console.error('프로필 업데이트 에러:', error.response?.data || error.message);
     }
@@ -187,33 +179,9 @@ const ProfileModal = ({ isOpen, onClose, userProfile, setUserProfile, selectedFi
         />
 
         <Label>기술 스택 <span>*</span></Label>
-        {/* <Dropdown 
-          options={option3} 
-          value={(userProfile.tags ?? []).map(tag => ({ value: tag, label: tag }))}
-          placeholder={(userProfile.tags?.length ?? 0) > 0 ? userProfile.tags.join(', ') : "태그를 선택하시오"}
-          dropdownType="main"
-          // onTagSelect={(selectedTags) => {
-          //   console.log('선택된 태그:', selectedTags);
-          //   const tagsArray = Array.isArray(selectedTags) ? selectedTags : [selectedTags];
-          //   const newTags = tagsArray.map(tag => ({ value: tag.value, label: tag.label }));
-
-          //   setUserProfile(prevState => ({
-          //     ...prevState,
-          //     tags: [
-          //       ...((prevState?.tags ?? [])),
-          //       ...newTags.filter(newTag => 
-          //         newTag && !prevState?.tags?.some(existingTag => existingTag && existingTag.value === newTag.value)
-          //       )
-          //     ]
-          //   }));
-         
-        /> */}
-
         <Dropdown 
-
         options={option3} 
         value={(userProfile.tags ?? []).map(tag => ({ value: tag, label: tag }))}
-        // placeholder={(userProfile.tags?.length ?? 0) > 0 ? userProfile.tags.join(', ') : "태그를 선택하시오"}
         placeholder={
           (userProfile.tags?.length ?? 0) > 0
             ? userProfile.tags.map(tag =>
@@ -225,7 +193,6 @@ const ProfileModal = ({ isOpen, onClose, userProfile, setUserProfile, selectedFi
         }
         dropdownType="profile"
         onTagSelect={(selectedTags) => {
-          console.log('선택된 태그:', selectedTags);
           const tagsArray = Array.isArray(selectedTags) ? selectedTags : [selectedTags];
           const newTags = tagsArray.map(tag => ({ value: tag.value, label: tag.label }));
 

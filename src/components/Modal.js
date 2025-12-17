@@ -1,12 +1,9 @@
-import React from 'react';
 import styled from 'styled-components';
-import ReactDOM from 'react-dom';
 
 const Modal = ({ isOpen, onClose, children, modalType, confirmFooter,   showFooter = false, onConfirm }) => {
-    if (!isOpen) return null; // 모달이 열려 있지 않으면 아무것도 렌더링하지 않음
+    if (!isOpen) return null; 
 
     const handleOverlayClick = (e) => {
-        // 모달 외부를 클릭했을 때만 onClose 호출
         if (e.target === e.currentTarget) {
             onClose();
         }
@@ -32,7 +29,7 @@ return (
                 </span>
                 <span
                   style={{ color: '#1976d2', fontWeight: 'bold', cursor: 'pointer' }}
-                  onClick={onConfirm || onClose} // onConfirm이 없으면 onClose 실행
+                  onClick={onConfirm || onClose}
                 >
                   확인
                 </span>

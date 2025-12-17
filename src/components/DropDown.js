@@ -8,20 +8,20 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [isFocused, setIsFocused] = useState(false);
-    const [peopleCounts, setPeopleCounts] = useState({}); // 각 옵션에 대한 인원수 상태 추가
+    const [peopleCounts, setPeopleCounts] = useState({});
 
-    const dropdownRef = useRef(null); // 드롭다운 참조 추가
+    const dropdownRef = useRef(null); 
 
-    // 옵션 필터링: 검색어를 포함하는 옵션만 표시
+
     const filteredOptions = options.filter(option =>
         option.label.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    // 외부 클릭 감지
+
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setIsOpen(false); // 드롭다운 닫기
+                setIsOpen(false); 
             }
         };
 
@@ -32,17 +32,14 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
     }, []);
 
     const handleOptionClick = (option) => {
-        console.log(`Option clicked: ${option.label}`); // 릭된 옵션 로그 추가
         if (!selectedOptions.includes(option.label)) {
             setSelectedOptions(prevSelected => [...prevSelected, option.label]);
-            handleCountChange(option, 1); // 옵션 선택 시 카운트 증가
-            console.log(`Selected option: ${option.label}`); // 선택된 옵션을 콘솔에 출력
+            handleCountChange(option, 1); 
         } else {
-            handleCountChange(option, -1); // 옵션 선택 해제 시 카운트 감소
+            handleCountChange(option, -1); 
         }
     };
 
-      // value(selectedRoles)가 바뀔 때 peopleCounts도 동기화
     useEffect(() => {
         if (value && Array.isArray(value)) {
         const counts = {};
@@ -53,9 +50,7 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
         }
     }, [value]);
 
-    // 카운트 버튼 클릭 핸들러
-   
-      // count 변경 핸들러
+    
   const handleCountChange = (option, change) => {
     const currentCount = peopleCounts[option.label] || 0;
     const newCount = currentCount + change;
@@ -64,7 +59,7 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
     } else {
       onTagSelect(option, 0);
     }
-    // peopleCounts는 부모에서 value가 바뀌면 useEffect로 동기화됨
+
   };
 
 
@@ -82,31 +77,22 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
       useEffect(() => {
         if (value) {
             if (dropdownType === "profile") {
-             
             }else{
                 setSelectedOptions(Array.isArray(value) ? value : [value]);
             }
-          console.log('selectedOptionsdddddddddd', selectedOptions);
         }
       }, [value],);
     
-    //   --- placeholder 텍스트 분기 ---
+
       const getPlaceholderText = () => {
         if (selectedOptions.length === 0) return placeholder;
     
-        // if (dropdownType === "roles") {
-        //   // 객체 배열: [{role, count}, ...]
-        // // 
-        // return selectedOptions
-        // .map(opt => opt.role || opt.label || opt.value || '')
-        // .filter(Boolean)
-        // .join(', ');
+      
         if (dropdownType === "roles") {
-            // 객체 배열: [{role, count}, ...]
             return selectedOptions
               .map(opt => {
                 const name = opt.role || opt.label || opt.value || '';
-                // count가 있으면 (count) 표시
+              
                 return opt.count !== undefined && opt.count !== null
                   ? `${name} (${opt.count})`
                   : name;
@@ -115,7 +101,7 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
               .join(', ');
           
         } else if (dropdownType === "profile") {
-          // 문자열 배열: ['5개월', ...]
+ 
           if (selectedOptions.length > 8) {
             return `${selectedOptions.slice(0, 8).join(', ')}...`;
           }
@@ -128,9 +114,9 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
       };
     
 
-    // 카운트 버튼 렌더링
+
     const renderCountButtons = (option) => {
-        const count = peopleCounts[option.label] || 0; // 현재 카운트 가져오기
+        const count = peopleCounts[option.label] || 0; 
         return (
             <CountContainer>
                 <Button onClick={() => handleCountChange(option, -1)}>-</Button>
@@ -151,7 +137,7 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
             >
                 <SearchInput
                     type="text"
-                    placeholder={getPlaceholderText()} // 플레이스홀더 텍스트 업데이트
+                    placeholder={getPlaceholderText()} 
                     value={searchTerm}
                     onChange={handleInputChange}
                     onFocus={() => setIsOpen(true)}
@@ -172,7 +158,7 @@ const Dropdown = ({ options, placeholder, showCountButtons, onTagSelect = () => 
                                 isSelected={selectedOptions.includes(option.label)}
                                 onClick={() => {
                                     if (!showCountButtons) {
-                                        handleOptionClick(option); // 옵션 클릭 시
+                                        handleOptionClick(option); 
                                     } else {
                                         if (!selectedOptions.includes(option.label)) {
                                             setSelectedOptions(prevSelected => [...prevSelected, option.label]);

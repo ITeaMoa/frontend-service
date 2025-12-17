@@ -33,7 +33,6 @@ import { atom } from "jotai";
     
    });
 
-// feedType atom - 단순 초기값 설정
 export const feedTypeAtom = atom('PROJECT');
 export const toggleActiveAtom = atom(false);
 
@@ -42,4 +41,3 @@ export const selectedProjectDetailAtom = atom([]);
 export const SELECTED_PERSON_ID = atom(null);
 export const MESSAGE_LIST = atom([]);
 
-// export const likesCountAtom = atom(initialLikesCount);

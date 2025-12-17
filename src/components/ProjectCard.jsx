@@ -3,20 +3,17 @@ import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 import LikeButton from './LikeButton';
-import { useAtom } from 'jotai';
-import { USER_PROFILE } from '../Atoms.jsx/AtomStates';
+import AlertModal from './AlertModal';
 
 const ProjectCard = ({ 
   project, 
   onClick, 
-  onLikeClick, 
   onApplyClick,
-  isLoggedIn,
-  userId,
   feedType 
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [userProfile, setUserProfile] = useAtom(USER_PROFILE);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, ] = useState('');
   return (
     <CardWrapper onClick={onClick}>
       <ProjectOwner>
@@ -26,28 +23,10 @@ const ProjectCard = ({
         />
         {project.nickname}
       </ProjectOwner>
-      {/* <ProjectOwner> */}
-  {/* {userProfile.avatarUrl ? (
-    <img 
-      src={encodeURI(userProfile.avatarUrl)} 
-      alt="Profile Avatar" 
-    />
-  ) : (
-    <FontAwesomeIcon 
-      icon={regularUser} 
-      style={{ fontSize: '20px', lineHeight: '1.2', marginRight: '6px',marginTop: '10px' }} 
-    />
-  )} */}
-  {/* {project.nickname} */}
-  {/* <span style={{ fontWeight: 600, color: '#888',marginTop: '8px', fontSize: '18px'}}>{project.nickname}</span>
-</ProjectOwner> */}
+    
       <LikeButtonWrapper>
         <LikeButton 
-          // initialLiked={project.liked}
-          // initialLikesCount={project.likesCount}
-          // onLikeChange={(newLiked) => onLikeClick(project.id, newLiked)}
           sk={project.pk}
-          // userId={userId}
           feedType={feedType}
         />
       </LikeButtonWrapper>
@@ -74,30 +53,20 @@ const ProjectCard = ({
           마감일자 | {new Date(project.deadline).toLocaleDateString()}
         </Details>
       </ProjectInfo>
-      {/* <ApplyButton 
-        onClick={(e) => {
-          e.stopPropagation();
-          if (!isLoggedIn) {
-            alert("로그인 후에 신청할 수 있습니다.");
-            return;
-          }
-          if (project.creatorId === userId) {
-            alert("자신이 작성한 게시글에는 신청할 수 없습니다.");
-            return;
-          }
-          onApplyClick(project);
-        }}
-      >
-        신청하기
-      </ApplyButton> */}
+  
       <ApplyButton 
   onClick={(e) => {
-    e.stopPropagation(); // 이벤트 버블링 방지
-    onApplyClick(project); // 바로 상위 컴포넌트로 전달
+    e.stopPropagation(); 
+    onApplyClick(project);
   }}
 >
   신청하기
 </ApplyButton>
+      <AlertModal 
+        isOpen={showAlert} 
+        message={alertMessage} 
+        onClose={() => setShowAlert(false)} 
+      />
     </CardWrapper>
   );
 };
@@ -200,10 +169,10 @@ const ProjectInfo = styled.div`
 
 const Tags = styled.div`
   display: flex;
-  flex-wrap: wrap; // 줄 바꿈을 허용
+  flex-wrap: wrap;
   padding-top: 10px;
   margin-bottom: 5px;
-  align-items: flex-start; // 상단 정렬
+  align-items: flex-start;
   white-space: nowrap;
 `;
 

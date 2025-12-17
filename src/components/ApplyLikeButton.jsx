@@ -1,34 +1,26 @@
-//사용자 좋아요 ui와 이벤트 처리
-import React, { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useLocation } from 'react-router-dom';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons'; 
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
-// import axios from 'axios';
 import axios from '../api/axios'
 import { useAtom } from 'jotai';
-import { likedProjectsAtom, IS_LOGGED_IN, USER, feedTypeAtom } from '../Atoms.jsx/AtomStates';  
-import { useAuth } from '../context/AuthContext'; // AuthContext에서 useAuth 가져오기
+import {  feedTypeAtom } from '../Atoms.jsx/AtomStates';  
+import { useAuth } from '../context/AuthContext';
 
 
-const ApplyLikeButton = ({ initialLiked, initialLikesCount, onLikeChange, buttonStyle, userId, sk,  }) => {
+const ApplyLikeButton = ({  buttonStyle, sk,  }) => {
   const [liked, setLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
-  // const [isLoggedIn, setIsLoggedIn] = useAtom(IS_LOGGED_IN);
-  const { isLoggedIn: authIsLoggedIn } = useAuth(); // AuthContext에서 isLoggedIn 가져오기 //나중에 넣기
-  // const [user, setUser] = useAtom(USER);
-  const [likedProjects, setLikedProjects] = useAtom(likedProjectsAtom);
-  const [feedType, setFeedType] = useAtom(feedTypeAtom);
-  const [allProjects, setAllProjects] = useState([]);
+  const { isLoggedIn: authIsLoggedIn } = useAuth();
+  const [feedType, ] = useAtom(feedTypeAtom);
   const { user } = useAuth();
-  const location = useLocation(); // 현재 경로를 가져옵니다.
+  const location = useLocation(); 
 
   
- // useCallback 없이 일반 함수로 작성 //uscecallback없이 작성성
  const fetchUserLikeStatus = async () => {
     try {
-      // 1. 좋아요 수는 항상 가져옴
       const feedResponse = await axios.get(`/main?feedType=${feedType}`);
       if (feedResponse.data) {
         const thisFeed = feedResponse.data.find(feed => feed.pk === sk);
@@ -39,7 +31,6 @@ const ApplyLikeButton = ({ initialLiked, initialLikesCount, onLikeChange, button
         }
       }
 
-      // 2. 로그인한 경우에만 내 좋아요 상태 확인
       if (user && user.id) {
         const likeResponse = await axios.get(`/main/like?userId=${user.id}`);
         const userLiked = likeResponse.data.some(like => like.sk === sk);
@@ -56,7 +47,6 @@ useEffect(() => {
   fetchUserLikeStatus();
 }, [user, sk, authIsLoggedIn, feedType, location.pathname]);
    
-// useEffect 수정
 
   const handleClick = async (e) => {
     if (!user) return;
@@ -66,22 +56,16 @@ useEffect(() => {
 
     try {
       if (!liked) {
-        // 좋아요 추가
-        console.log('좋아요 추가');
         const checkResponse = await axios.get(`/main/like?userId=${user.id}`);
         const isAlreadyLiked = checkResponse.data.some(like => like.sk === sk);
         if (isAlreadyLiked) {
-          console.log('이미 좋아요가 눌린 상태입니다');
           return;
         }
         await axios.post(`/main/like`, likeData);
       } else {
-        // 좋아요 취소
-        console.log('좋아요 취소');
         await axios.delete(`/main/like`, { data: likeData });
       }
 
-      // 서버에서 최신 상태로 동기화
       await fetchUserLikeStatus();
     } catch (error) {
       console.error('Error updating like status:', error);

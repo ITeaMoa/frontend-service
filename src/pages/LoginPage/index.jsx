@@ -30,11 +30,6 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.log('로그인 시도');
-    // console.log('이메일:', email);
-    // console.log('비밀번호:', password);
-    // console.log('ID 저장:', rememberMe);
-    
     try {
       const response = await login(email, password);
       if (response) {;

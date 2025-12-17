@@ -46,12 +46,12 @@ const MessageList = ({ onSendMessage }) => {
   const orderedMessages = [...messageList].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
   const messageEndRef = useRef(null);
 
-  // 컴포넌트가 마운트될 때 스크롤을 아래로 내리기
+
   useEffect(() => {
     if (messageEndRef.current) {
-      messageEndRef.current.scrollIntoView({ behavior: 'auto' }); // 'smooth' 대신 'auto'로 설정
+      messageEndRef.current.scrollIntoView({ behavior: 'auto' });
     }
-  }, []); // 처음 마운트될 때만 실행
+  }, []); 
 
   let lastDate = null;
   const handleKeyDown = (e) => {
@@ -63,7 +63,7 @@ const MessageList = ({ onSendMessage }) => {
 
   const handleSend = () => {
     if (!inputValue.trim()) return;
-    onSendMessage(inputValue); // 입력값을 부모로 전달
+    onSendMessage(inputValue);
     setInputValue('');
 
   };
@@ -104,7 +104,6 @@ const MessageList = ({ onSendMessage }) => {
       <div ref={messageEndRef} />
 
         <ChatInputBar>
-          {/* <AvatarBox /> */}
           <InputWrapper>
             <Input
               type="text"
@@ -114,9 +113,7 @@ const MessageList = ({ onSendMessage }) => {
               onKeyDown={handleKeyDown}
             />
             <SendButton onClick={handleSend}>
-              {/* 예시: > 또는 아이콘 */}
               <FontAwesomeIcon icon={faPaperPlane} /> 
-              {/* <span style={{ color: "#fff", fontSize: 20, fontWeight: "bold" }}>{'>'}</span> */}
             </SendButton>
           </InputWrapper>
         </ChatInputBar>
@@ -155,7 +152,7 @@ const ChatWrapper = styled.div`
 const MessageContainer = styled.div`
   flex: 1 1 auto;
   overflow-y: auto;
-  // height: calc(100% - 700px); /* 입력창 높이만큼 빼기 */
+
   padding-right: 12px;        /* 스크롤바와 내용 사이 여백 */
   /* 필요시 min-height: 0; 추가 */
    padding-bottom: 60px; 
@@ -309,5 +306,5 @@ const SendButton = styled.button`
   align-items: center;
   justify-content: center;
 `;
-// SendButton 안에 아이콘(예: > 또는 FontAwesome paper-plane) 넣으세요.
+
 export default MessageList;

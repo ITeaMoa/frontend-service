@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 
 const PopularProject = ({ projects, handleProjectClick }) => {
@@ -42,7 +41,7 @@ const PopularProject = ({ projects, handleProjectClick }) => {
               </ArrowCircle>
             </PopularProjectCard>
           ))}
-          {/* 빈 카드로 3개 맞추기 */}
+
           {Array.from({ length: 3 - projects.length }).map((_, i) => (
             <PopularProjectCard key={`dummy-${i}`} style={{ visibility: 'hidden' }} />
           ))}
@@ -180,7 +179,6 @@ const ArrowCircle = styled.span`
   }
 `;
 
-// D-day 계산 함수
 function getDDay(deadline) {
   const end = new Date(deadline);
   const today = new Date();
@@ -188,7 +186,6 @@ function getDDay(deadline) {
   return diff > 0 ? diff : 0;
 }
 
-// 날짜 포맷 함수
 function formatDate(dateStr) {
   if (!dateStr) return '';
   const d = new Date(dateStr);

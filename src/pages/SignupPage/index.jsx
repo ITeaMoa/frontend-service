@@ -13,7 +13,7 @@ const SignUpPage = () => {
   const [nickname, setNickname] = useState('');
   const [isAuthNumberSent, setIsAuthNumberSent] = useState(false);
   const [isResendDisabled, setIsResendDisabled] = useState(false);
-  const [remainingTime, setRemainingTime] = useState(180); // 3분
+  const [remainingTime, setRemainingTime] = useState(180);
   const [showAlertPopup, setShowAlertPopup] = useState('');
   const [isNicknameAvailable, setIsNicknameAvailable] = useState(false);
   const [confirmEmail, setConfirmEmail] = useState(false);
@@ -66,10 +66,9 @@ const handleSkillToggle = (skill) => {
       setShowAlertPopup('인증번호가 발송되었습니다. 이메일을 확인하세요.');
       setIsAuthNumberSent(true);
       setIsResendDisabled(true);
-      setRemainingTime(180); // 타이머 초기화
+      setRemainingTime(180); 
     } catch (error) {
       if (error.response) {
-        // 서버가 응답한 오류 메시지를 확인
         console.error('인증 번호 발송 오류:', error.response.data);
         if (error.response.status === 409) {
           setShowAlertPopup('가입된 이메일입니다. 다른 이메일을 사용하세요.');
@@ -84,18 +83,16 @@ const handleSkillToggle = (skill) => {
   };
   
 
-  // 타이머 관리
   useEffect(() => {
     let timer;
     if (isResendDisabled && remainingTime > 0) {
       timer = setInterval(() => {
         setRemainingTime(prev => prev - 1);
-      }, 1000); // 1초마다 감소
+      }, 1000); 
     } else if (remainingTime === 0) {
-      // setIsResendDisabled(false);
       clearInterval(timer);
     }
-    return () => clearInterval(timer); // 컴포넌트 언마운트 시 정리
+    return () => clearInterval(timer); 
   }, [isResendDisabled, remainingTime]);
 
   const handleResendCode = async () => {
@@ -125,7 +122,6 @@ const handleSkillToggle = (skill) => {
         setConfirmEmail(true);
         setIsResendDisabled(false);
     } catch (error) {
-        // console.error('이메일 인증 오류:', error);
         setShowAlertPopup('이메일 인증에 실패했습니다. 인증번호를 확인하세요.');
     }
   };
@@ -165,7 +161,6 @@ const handleSignup = async () => {
       });
 
       setShowAlertPopup(response.data.message);
-      // MainPage로 닉네임을 전달하며 이동
       navigate('/', { state: { nickname } });
   } catch (error) {
       if (error.response) {
@@ -179,18 +174,16 @@ const handleSignup = async () => {
   const handleCheckNickname = async () => {
     try {
       const response = await axios.post('login/verify/nickname', { nickname });
-          // 닉네임 사용 가능 여부에 따라 state 업데이트
           if (response.data.message) {
             setShowAlertPopup('사용가능한 닉네임입니다');
-            setIsNicknameAvailable(true); // 사용 가능한 경우 true
+            setIsNicknameAvailable(true);
           } else {
             setShowAlertPopup('사용불가능한 닉네임입니다');
-            setIsNicknameAvailable(false); // 사용 불가능한 경우 false
+            setIsNicknameAvailable(false); 
           }
 
     } catch (error) {
-      console.error('닉네임 확인 오류:', error);
-      // alert('닉네임 확인에 실패했습니다. 다시 시도하세요.');
+      console.error('닉네임 확인 오류:', error);;
       setShowAlertPopup('닉네임 확인에 실패했습니다. 다시 시도하세요.');
       setIsNicknameAvailable(false);
     }
@@ -364,7 +357,6 @@ const handleSignup = async () => {
 export default SignUpPage;
 
 
-// Add these styled components at the top of the file
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -379,11 +371,11 @@ const Container = styled.div`
 const Logo = styled.div`
   margin-bottom: 30px;
   cursor: pointer;
-  position: absolute; /* Keep absolute positioning for logo */
-  top: 15px; /* Keep top positioning for logo */
+  position: absolute;
+  top: 15px; 
   img {
     width: 100%; 
-    max-width: 250px; /* Adjusted max-width to match previous */
+    max-width: 250px;
     height: auto; 
     cursor: pointer;
   }
@@ -392,7 +384,7 @@ const Logo = styled.div`
 const Title = styled.h1`
   font-size: 20px;
   color: #333;
-  margin-bottom: 10px; /* Adjusted margin for better spacing inside the form */
+  margin-bottom: 10px;
   text-align: left;
 `;
 
@@ -461,15 +453,14 @@ const AuthButton = styled.button`
   right: 20px;
   top: 50%;
   transform: translateY(-50%);
-  padding: 10px 12px; /* Input과 동일한 수직 패딩 */
+  padding: 10px 12px; 
   background-color:white;
   color: black;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-size: 14px;
-  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
-  // height: calc(100% - 20px); /* Input의 상하 보더 1px씩 제외 */
+  white-space: nowrap; 
   
   &:hover {
     background-color: #0056b3;
@@ -534,7 +525,7 @@ color: red;
 //     border: 0; 
 //     height: 1px;
 //     background: #ccc;
-//     flex: 1; /* 남은 공간을 차지, 기본 너비가 0이기 때문에 설정 필수 */
+
 //     margin: 0px 10px; 
 
 // `;
@@ -547,8 +538,7 @@ color: red;
 // const SocialLoginContainer = styled.div`
 //    display: flex;
 //   flex-direction: column;
-//  // justify-content:center; //여기서는 수직 정렬
-//   align-items: center; // 여기서는 수평정렬
+
 //   margin-top: 30px;
 // `;
 
@@ -574,7 +564,7 @@ color: red;
 
 // const SocialButton2 = styled.button`
 //   padding: 10px;
-//   background-color: #03CF5D; /* 네이버 색상 */
+
 //   color: white;
 //   border: none;
 //   border-radius: 5px;
@@ -595,7 +585,7 @@ color: red;
 // `;
 
 // const Icon = styled.img`
-//   width: 25px; /* 아이콘 크기 조절 */
+
 //   height: 25px;
 //   margin-right: 5px;
 //   vertical-align: middle;

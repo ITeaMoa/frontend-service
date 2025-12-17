@@ -1,10 +1,9 @@
-import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 import styled from 'styled-components';
 
-const ProjectDeadline = ({ project, user, handleCancelApplication, isProjectCanceled, isSaved, isDisabled }) => {
+const ProjectDeadline = ({ project,  isSaved }) => {
   
 
   return (
@@ -15,7 +14,6 @@ const ProjectDeadline = ({ project, user, handleCancelApplication, isProjectCanc
           <span>{project.nickname}</span>
         </HeaderItemColumn>
         <ButtonSection>
-            {/* <StyledFontAwesomeIconColumn icon={faHeart} /> */}
             <LikeCountContainer>
               <StyledFontAwesomeIconColumn icon={regularHeart} />{project.likesCount || 0}
               </LikeCountContainer>
@@ -49,9 +47,6 @@ const ProjectItemColumn = styled.div`
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   // width: 400px;
   width: 90%;
-  // min-height: 350px;
-//   height: 200px;
-
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);

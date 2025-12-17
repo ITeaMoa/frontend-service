@@ -25,11 +25,10 @@ const MyPage = () => {
   const [selectedList, setSelectedList] = useState('applied');
   const [selectedProject, setSelectedProject] = useState(null);
   const [applySelectedProject, setApplySelectedProject] = useState(null);
-  // const isLoggedIn = true; 
   const showSearch = false;
-  const { user } = useAuth(); // 로그인한 사용자 정보 가져오기
+  const { user } = useAuth(); 
   const [feedType, ] = useAtom(feedTypeAtom);
-  const [applications, setApplications] = useState([]); // 지원자 정보를 위한 새로운 state
+  const [applications, setApplications] = useState([]); 
   const [isFading, setIsFading] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [selectedProjectForCancel, setSelectedProjectForCancel] = useState(null);
@@ -116,7 +115,7 @@ const dummySavedProjects = [
  
 ];
 
-const likeProjects = [ // 더미 데이터 업데이트
+const likeProjects = [ 
   {
     "pk": "4fccc2dd-58a7-4db1-a549-b44603b9fbbb",
     "sk": "PROJECT",
@@ -401,43 +400,42 @@ const writtenProjects = [
   }
 ]
  
-// 그냥 일반 함수로 작성
+
 const refreshProjects = async () => {
   try {
     let response;
-    console.log('selectedList', selectedList);
-    
+
     if (selectedList === 'applied') {
-      // response = await axios.get('/feed/applications', {
-      //   params: {
-      //     userId: user.id,
-      //   }
-      // });
+      response = await axios.get('/feed/applications', {
+        params: {
+          userId: user.id,
+        }
+      });
       setProjects(appliedproject);
     } else if (selectedList === 'written') {
-      // response = await axios.get('/my/writing', {
-      //   params: {
-      //     creatorId: user.id,
-      //     sk: feedType
-      //   }
-      // });
+      response = await axios.get('/my/writing', {
+        params: {
+          creatorId: user.id,
+          sk: feedType
+        }
+      });
       setProjects(writtenProjects)
      
     } else if (selectedList === 'saved') {
-      // response = await axios.get('/my/temp', {
-      //   params: {
-      //     creatorId: user.id,
-      //     feedType: feedType
-      //   }
-      // });
+      response = await axios.get('/my/temp', {
+        params: {
+          creatorId: user.id,
+          feedType: feedType
+        }
+      });
       setProjects(dummySavedProjects);
     } else if (selectedList === 'interested') {
-      // response = await axios.get('/my/like', { 
-      //   params: {
-      //     userId: user.id,
-      //     feedType: feedType
-      //   }
-      // });
+      response = await axios.get('/my/like', { 
+        params: {
+          userId: user.id,
+          feedType: feedType
+        }
+      });
       setProjects(likeProjects);
     } else{
       setProjects(appliedproject);
@@ -445,27 +443,26 @@ const refreshProjects = async () => {
     if (response && response.data) {
       setProjects(response.data);
     } else {
-      console.error('응답 데이터가 없습니다:', response);
-      setProjects([]); // 빈 배열로 초기화
+  
+      setProjects([]); 
     }
     
   } catch (error) {
-    console.error("Error fetching projects:", error);
   }
 };
 
-// useEffect에서 사용
+
 useEffect(() => {
   refreshProjects();
   // eslint-disable-next-line
-}, [selectedList, user?.id, feedType]); // refreshProjects는 의존성 배열에서 제거
+}, [selectedList, user?.id, feedType]); 
 
-//신청목록
+
   useEffect(() => {
     const fetchApplications = async (feedId) => {
       if (!feedId) {
-        console.error('feedId is undefined. Cannot fetch applications.');
-        return; // feedId가 없으면 요청을 보내지 않음
+
+        return; 
       }
 
       try {
@@ -476,12 +473,11 @@ useEffect(() => {
         });
 
         if (response.data) {
-          setApplications(response.data); // 지원자 정보는 별도의 state에 저장
+          setApplications(response.data); 
         } else {
           setApplications([]);
         }
       } catch (error) {
-        console.error("지원자 정보를 가져오는 중 오류 발생:", error);
         setApplications([]);
       }
     };
@@ -502,53 +498,19 @@ useEffect(() => {
   };
 
 
-  //    // 선택된 프로젝트의 세부정보 가져오기
-  // // 특정 프로젝트의 세부정보 가져오기
-  // useEffect(() => {
-  //   const fetchProjectDetail = async (projectId) => {
-  //     try {
-  //       const response = await axios.get(`/main`, {
-  //         params: { feedType } // feedType을 올바르게 전달
-  //       });
-
-  //       // projectId에서 'APPLICATION#' 부분을 제거
-  //       const strippedProjectId = projectId.replace('APPLICATION#', '');
-
-  //       // pk와 strippedProjectId가 같은 프로젝트 찾기
-  //       const specificProject = response.data.find(project => project.pk === strippedProjectId);
-  //       if (specificProject) {
-  //         console.log("Fetched project details:", specificProject); // Fetch된 프로젝트 세부정보를 콘솔에 출력
-  //         setSelectedProject(specificProject);
-  //       } else {
-  //         console.warn("No specific project found with the given ID:", strippedProjectId); // 추가된 로그
-  //         setSelectedProject(null);
-  //       }
-  //     } catch (error) {
-  //       console.error("프로젝트 세부정보를 가져오는 중 오류 발생:", error);
-  //     }
-  //   };
-
-  //   // selectedProject의 sk를 사용하여 세부정보 가져오기
-  //   if (selectedProject) {
-  //     fetchProjectDetail(selectedProject.sk); // selectedProject.sk를 사용하여 세부정보 가져오기
-  //   }
-  // }, [selectedProject, feedType]); // feedType 추가
-
-
   const handleListClick = (listType) => {
     setSelectedList(listType);
     setCurrentPage(1); 
     setSelectedProject(null); 
 
-    // 특정 리스트 타입에 대해 프로젝트를 빈 배열로 설정
     if (listType === 'saved' || listType === 'closed' || listType === 'interested' || listType === 'applied' || listType === 'written') {
-      setProjects([]); // 프로젝트를 빈 배열로 설정
+      setProjects([]);
     }
   };
 
   const handleProjectClick = (project) => {
     setSelectedProject(project);
-    console.log("Selected project:", project);
+
   };
   
 
@@ -556,85 +518,24 @@ useEffect(() => {
     setSelectedProject(null);
   };
 
-    // //  userProfile 불러오기
-    // useEffect(() => {
-    //   const fetchUserProfile = async () => {
-    //     try {
-    //       if (user && user.id) {
-    //         const response = await axios.get(`/my/profile/${user.id}`);
-    //         console.log('사용자 프로필:', response.data);
-    //         if (response.data) {
-    //           setUserProfile(response.data);
-    //         } else {
-    //           setUserProfile({
-    //             avatarUrl: '',
-    //             headLine: '',
-    //             tags: [],
-    //             experiences: [],
-    //             educations: [],
-    //             personalUrl: ''
-    //           });
-    //         }
-    //       }
-    //     } catch (error) {
-    //       console.error('사용자 프로필 조회 중 오류 발생:', error);
-    //     }
-    //   };
-  
-    //   fetchUserProfile();
-    // }, [user, setUserProfile]);
-// UserProfile.js
-// useEffect(() => {
-//   const fetchUserProfile = async () => {
-//       try {
-//           if (user && user.id) {
-//               // MainPage와 동일한 형식으로 API 호출
-//               const response = await axios.get(`/my/profile/${user.id}`);
-//               console.log('사용자 프로필:', response.data);
-//               if (response.data) {
-//                   setUserProfile(response.data);
-//               } else {
-//                   setUserProfile({
-//                       avatarUrl: '',
-//                       headLine: '',
-//                       tags: [],
-//                       experiences: [],
-//                       educations: [],
-//                       personalUrl: ''
-//                   });
-//               }
-//           }
-//       } catch (error) {
-//           console.error('사용자 프로필 조회 중 오류 발생:', error);
-//       }
-//   };
 
-//   fetchUserProfile();
-// }, [user]);
-
-    // 프로젝트 완료 처리 함수 수정
     const handleButtonClick = (project) => {
-      // 프로젝트가 완료되지 않은 경우에만 완료 처리
       if (!isProjectCompleted(project.pk)) {
           setIsFading(true);
           setTimeout(() => {
               handleProjectClick(project);
               setIsFading(false);
+            
+              localStorage.removeItem('completedProjects');
               
-              // localStorage에서 완료된 프로젝트 목록 초기화
-              localStorage.removeItem('completedProjects'); // 완료된 프로젝트 목록 삭제
-              
-              // 모든 프로젝트의 완료 상태를 초기화
               setProjects(prevProjects => 
-                  prevProjects.map(p => ({ ...p, completed: false })) // 모든 프로젝트의 completed 상태를 false로 설정
+                  prevProjects.map(p => ({ ...p, completed: false }))
               );
           }, 100);
       } else {
-          console.log("이미 완료된 프로젝트입니다."); // 디버깅용 로그
       }
     };
   
-     // 프로젝트 상태 확인 함수 추가
      const isProjectCompleted = (projectId) => {
       const saved = localStorage.getItem('completedProjects');
       if (saved) {
@@ -647,17 +548,14 @@ useEffect(() => {
 
 const handleProjectClose = async (projectId, feedType) => {
     try {
-        // 문제: feedType이 객체 형태로 전달되고 있음
+
         const requestData = {
             pk: projectId,
             sk: feedType  
         };
 
-        console.log('요청 데이터:', requestData); // 디버깅용
-
         await axios.patch('my/writing/close', requestData);
             
-        // 성공 시 상태 업데이트
         setProjects(prevProjects => 
             prevProjects.map(project => 
                 project.pk === projectId 
@@ -666,14 +564,12 @@ const handleProjectClose = async (projectId, feedType) => {
             )
         );
     } catch (error) {
-        console.error('Error:', error);
         setShowAlertPopup('모집 완료 처리 중 문제가 발생했습니다.');
     }
 };
 
 const handleCancelApplication = async (userId, feedId) => {
     if (!userId || !feedId) {
-      console.error("userId 또는 feedId가 null입니다.");
       return;
     }
     setSelectedProjectForCancel({ userId, feedId });
@@ -701,7 +597,6 @@ const handleConfirmCancel = async () => {
       }
       setIsConfirmModalOpen(false);
     } catch (error) {
-      console.error('오류 세부정보:', error);
       if (error.response) {
         setShowAlertPopup(`신청 취소 중 오류가 발생했습니다. (${error.response.data})`);
       } else {
@@ -712,7 +607,7 @@ const handleConfirmCancel = async () => {
 
   const isProjectCanceled = (projectId) => {
     const project = currentProjects.find(p => p.feedId === projectId);
-    return project ? project.canceled : false; // canceled 상태 확인
+    return project ? project.canceled : false; 
   };
 
 
@@ -720,9 +615,7 @@ const handleConfirmCancel = async () => {
 
   const handleApplyClick = async (project) => {
 
-    // 자신이 작성한 게시글인지 확인
     if (project && project.creatorId === user.id) {
-      // alert("자신이 작성한 게시글에는 신청할 수 없습니다."); 
       setShowAlertPopup("자신이 작성한 게시글에는 신청할 수 없습니다.");
       return; 
     }
@@ -734,25 +627,21 @@ const handleConfirmCancel = async () => {
         }
       });
   
-      const appliedProjects = response.data.map(app => app.feedId); // 신청한 프로젝트의 feedId 목록
+      const appliedProjects = response.data.map(app => app.feedId); 
   
-      // 선택한 프로젝트의 pk와 비교
       const isAlreadyApplied = appliedProjects.includes(project.pk);
       if (isAlreadyApplied) {
         setShowApplyPopup("이미 신청한 프로젝트입니다."); 
-        // setPopupMessage("이미 신청한 프로젝트입니다."); // 이미 신청한 경우 메시지 설정
-        // setIsSubmitted(true); // 제출 확인 팝업 표시
-        return; // Exit the function if already applied
+        return; 
       }
     } catch (error) {
-      console.error("신청 여부 확인 실패:", error);
+
     }
   
     setApplySelectedProject(project);
-    setIsRoleModalOpen(true); // 역할 선택 모달 열기
+    setIsRoleModalOpen(true); 
   };
   
-  // 프로젝트 신청 처리
   const handleApplySubmit = async (project, role) => {
     try {
       const applicationData = {
@@ -766,7 +655,6 @@ const handleConfirmCancel = async () => {
       setShowApplyPopup("신청이 완료되었습니다.");
       setIsRoleModalOpen(false);
     } catch (error) {
-      console.error("신청 실패:", error);
       setShowApplyPopup("신청에 실패했습니다.");
     }
   };
@@ -783,7 +671,7 @@ const handleConfirmCancel = async () => {
        <ContentsWrap>
        <MainContent Wide1030>
     
-      <NavigationBar  showSearch={showSearch}  />
+        <NavigationBar  showSearch={showSearch}  />
 
         <TabWrapType3 Border>
         {['applied', 'interested', 'written', 'saved', 'closed', 'profile'].map((tabType) => (
@@ -1027,7 +915,6 @@ const TabWrapType3 = styled.div`
 `;
 
 
-// Define the styled component for the tab button
 const TabButtonType3 = styled.button`
   background: none;
   border: none;

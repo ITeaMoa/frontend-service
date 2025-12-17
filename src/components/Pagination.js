@@ -1,12 +1,8 @@
-import React from 'react';
 import MuiPagination from '@mui/material/Pagination'; 
 import styled from 'styled-components';
 
 const Pagination = ({ currentPage, totalProjects, projectsPerPage, onPageChange}) => {
   const pageCount = Math.ceil(totalProjects / projectsPerPage);
-
-
-
 
   return (
     <StyledPagination

@@ -1,7 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import axios from '../api/axios'
-//import axios from 'axios';
-
 
 
 // JWT 토큰을 Local Storage에 저장
@@ -9,20 +7,10 @@ const saveToken = (token) => {
   sessionStorage.setItem('jwtToken', token);
 };
 
-// // Local Storage에서 JWT 토큰을 읽기
-// const getToken = () => {
-//   return localStorage.getItem('jwtToken');
-// };
-
 const getToken = () => {
   return sessionStorage.getItem('jwtToken');
 };
 
-
-// Local Storage에서 JWT 토큰 제거
-// const removeToken = () => {
-//   localStorage.removeItem('jwtToken');
-// };
 
 const removeToken = () => {
   sessionStorage.removeItem('jwtToken');
@@ -37,13 +25,6 @@ const parseJwt = (token) => {
   return JSON.parse(jsonPayload);
 };
 
-// // JWT 토큰 유효성 검사
-// const isTokenExpired = (token) => {
-//   if (!token) return true;
-//   const payload = JSON.parse(atob(token.split('.')[1]));
-//   const exp = payload.exp * 1000; // exp는 초 단위로 되어 있으므로 밀리초로 변환
-//   return Date.now() >= exp; // 현재 시간과 만료 시간을 비교
-// };
 
 // Context 생성
 export const AuthContext = createContext();
@@ -72,14 +53,6 @@ export const AuthProvider = ({ children }) => {
     loadUserData();
   }, []); // 빈 배열을 사용하여 컴포넌트가 마운트될 때만 실행
 
-  // useEffect(() => {
-  //   const storedUser = localStorage.getItem('user');
-  //   const token = getToken(); // JWT 토큰 가져오기
-  //   if (storedUser && token) {
-  //     setUser(JSON.parse(storedUser)); // 사용자 정보 설정
-  //     setIsLoggedIn(true); // 로그인 상태 업데이트
-  //   }
-  // }, []);
 
   const login = async (email, password) => {
     try {
@@ -88,66 +61,38 @@ export const AuthProvider = ({ children }) => {
         password,
       });
   
-      // console.log('응답 데이터:', response.data); // 응답 데이터 로그
-  
       if (response.status === 200) {
-        const token = response.data.access_token; // JWT 
-        const idToken = response.data.id_token; // id_token 가져오기
+        const token = response.data.access_token;
+        const idToken = response.data.id_token;
   
-        // console.log('로그인 성공, JWT 토큰:', token); // JWT 로그
-  
-        saveToken(token); // 로컬 스토리지에 JWT 저장
-        setIsLoggedIn(true); // 로그인 상태 업데이트
+        saveToken(token); 
+        setIsLoggedIn(true);
   
         // ID 토큰 디코드하여 사용자 정보 추출
         const decodedToken = parseJwt(idToken);
-        const userId = decodedToken.sub; // 'sub' 필드에서 사용자 ID 추출
-        const nickname = decodedToken.nickname; // ID 토큰에서 닉네임 추출
+        const userId = decodedToken.sub; 
+        const nickname = decodedToken.nickname; 
   
         // 사용자 정보를 상태에 저장 (닉네임 포함)
         const userInfo = { 
           id: userId, 
           email,
-          nickname // 닉네임 추가
+          nickname 
         };
         
         setUser(userInfo);
-        // console.log('로그인한 사용자 정보:', userInfo);
   
         // 사용자 정보를 로컬 스토리지에 저장
-        sessionStorage.setItem('user', JSON.stringify(userInfo)); // 로컬 스토리지에 저장
+        sessionStorage.setItem('user', JSON.stringify(userInfo)); 
   
         return response;
       }
     } catch (error) {
       console.error('로그인 실패:', error.response ? error.response.data : error);
-      throw error; // 오류를 상위로 전파
+      throw error;
     }
   };
 
-
-
-//   // 소셜 로그인 함수
-//   const socialLogin = async (provider, { code, state }) => {
-//     try {
-//       const response = await apiClient.post(`/home/login/${provider}`, {
-//         code,
-//         state,
-//       });
-//       const userData = response.data.user; // 사용자 정보
-//       const token = response.data.token; // JWT
-
-//       setUser(userData);
-//       saveToken(token); // 로컬 스토리지에 JWT 저장
-//       localStorage.setItem('user', JSON.stringify(userData)); // 사용자 정보 저장
-//       setIsLoggedIn(true); // 로그인 상태 업데이트
-
-//       return response.data; // 응답 데이터 반환 (refreshToken 포함)
-//     } catch (error) {
-//       console.error('소셜 로그인 요청 중 오류 발생:', error);
-//       throw error; // 오류를 상위로 전파
-//     }
-//   };
 
   const socialLogin = async (provider, { code, state }) => {
     try {
@@ -163,23 +108,6 @@ export const AuthProvider = ({ children }) => {
   };
 
 
-
-// // 소셜 로그인 함수
-// export const socialLogin = async (provider, accessToken) => {
-//     try {
-//       const response = await apiClient.post(`/home/login/${provider}`, {
-//         accessToken,
-//       });
-  
-//       if (response.status === 200) {
-//         saveToken(response.data.token); // JWT 저장
-//         return response.data; // JWT 포함된 응답 데이터 반환
-//       }
-//     } catch (error) {
-//       console.error('소셜 로그인 실패:', error);
-//       throw error; // 오류를 상위로 전파
-//     }
-//   };
 
   const logout = (navigate) => {
     if (user) {
@@ -224,7 +152,6 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-//이거 이용하므로 export const으로 함수 export 할 필요 없음
 
 
 // Project Context 사용을 위한 커스텀 훅

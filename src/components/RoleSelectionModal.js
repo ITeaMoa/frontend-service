@@ -1,6 +1,5 @@
-import React from 'react';
-import Modal from './Modal'; // Modal 컴포넌트 경로에 맞게 수정
-import { styled } from 'styled-components'; // 스타일 컴포넌트 경로에 맞게 수정
+import Modal from './Modal'; 
+import { styled } from 'styled-components'; 
 
 const RoleSelectionModal = ({ isOpen, onClose, project, selectedRole, handleRoleSelect, handleApplySubmit }) => (
   <Modal isOpen={isOpen} onClose={onClose} modalType="apply">

@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 
 const MainCarousel = ({ currentSlide, setCurrentSlide, slideCount }) => (
@@ -99,7 +98,7 @@ const MainCarousel = ({ currentSlide, setCurrentSlide, slideCount }) => (
 
 export default MainCarousel;
 
-// --- 스타일 컴포넌트 복사 ---
+
 const CarouselWrapper = styled.div`
   position: relative;
   width: 100%;
@@ -136,58 +135,8 @@ const CarouselContent = styled.div`
   overflow: hidden;
 `;
 
-const CarouselTextContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  z-index: 1;
-`;
 
-const CarouselSubtitle = styled.h3`
-  font-size: 30px;
-  font-weight: 300;
-  color: white;
-  margin: 0;
-`;
 
-const CarouselTitle = styled.h2`
-  font-size: 36px;
-  font-weight: 700;
-  color: white;
-  margin: 0;
-`;
-
-const CarouselImage = styled.div`
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 50%;
-  height: 100%;
-  display: flex;
-  justify-content: flex-end;
-  align-items: flex-end;
-  img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    display: block;
-  }
-`;
-
-const CtaButton = styled.button`
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  border-radius: 100px;
-  padding: 16px 36px;
-  font-size: 20px;
-  font-weight: 600;
-  background-color: ${props => props.blue ? '#00AEFF' : props.white ? '#FFFFFF' : '#FFFFFF'};
-  color: ${props => props.white ? '#00AEFF' : props.blue ? '#FFFFFF' : '#662CC2'};
-  border: none;
-  cursor: pointer;
-  z-index: 1;
-`;
 
 const SlideIndicator = styled.div`
   position: absolute;

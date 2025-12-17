@@ -8,8 +8,7 @@ import axios from '../../../api/axios';
 import Modal from '../../../components/Modal';
 import { useAtom } from 'jotai';
 import { USER_PROFILE } from '../../../Atoms.jsx/AtomStates';
-import { useAuth } from '../../../context/AuthContext'; // AuthContext에서 useAuth 가져오기
-
+import { useAuth } from '../../../context/AuthContext';
 
 
 const UserProfile = ({  setIsProfileVisible}) => {
@@ -102,12 +101,11 @@ useEffect(() => {
     }
   }
 
-  fetchUserProfile(); // 사용자 정보가 있을 때 프로필을 가져옴
+  fetchUserProfile();
   // eslint-disable-next-line
-}, [user]); // user가 변경될 때마다 실행
+}, [user]); 
 
     const handleEdit = (field) => {
-        // Implement your editing logic here
   
         if (field === 'experiences') {
             experiencesInputRef.current.focus();
@@ -135,17 +133,17 @@ useEffect(() => {
 
     const updateUserProfile = async () => {
       const data = new FormData();
+
   
-      // 파일이 선택된 경우에만 'file' 필드 추가 (파일이 없는 경우엔 추가하지 않음)
       if (selectedFile) {
         data.append('file', selectedFile);
       }
-      // 백엔드가 요구하는 구조로 프로필 데이터를 구성합니다.
+  
       const profileData = {
 
         sk: "PROFILE#",
         entityType: "USER",
-        timestamp: new Date().toISOString(), // 현재 시간을 ISO 형식으로
+        timestamp: new Date().toISOString(), 
         avatarUrl: userProfile.avatarUrl ? userProfile.avatarUrl : null,
         headLine: userProfile.headLine || '',
         tags: newTags.tags ? newTags.tags.map(tag => {
@@ -157,7 +155,7 @@ useEffect(() => {
         educations: Array.isArray(userProfile.educations)
           ? userProfile.educations
           : [],
-        // personalUrl는 배열 형태로 처리 (기본값은 빈 배열)
+   
         personalUrl: Array.isArray(userProfile.personalUrl)
           ? userProfile.personalUrl
           : [],
@@ -166,7 +164,6 @@ useEffect(() => {
           : []
       };
   
-      // JSON 문자열로 변환 후 FormData에 프로필 데이터를 추가합니다.
       data.append('profile', JSON.stringify(profileData));
 
       try {
@@ -175,7 +172,6 @@ useEffect(() => {
             'Content-Type': 'multipart/form-data'
           }
         });
-        // setShowAlertPopup(true);
       } catch (error) {
         console.error('프로필 업데이트 에러:', error.response?.data || error.message);
       }
@@ -223,7 +219,6 @@ useEffect(() => {
         style={{ display: 'none' }}
         onChange={handleFileChange}
       />
-        {/* <EditImageButton onClick={() => handleEdit('nickname')}>사진 편집</EditImageButton> */}
         <EditImageButton onClick={() => fileInputRef.current && fileInputRef.current.click()}>
         사진 편집
       </EditImageButton>
@@ -247,8 +242,6 @@ useEffect(() => {
           </>
         )}
       </h2>
-        {/* <h3>{user.nickname || '닉네임이 없습니다.'}</h3> */}
-        {/* <h2>{nickname || '닉네임이 없습니다.'} <FontAwesomeIcon color='#1489CE' icon={faEdit} onClick={() => handleEdit('nickname')} /></h2> */}
       </ProfileImageSection>
       <ProfileContent>
         <h2>프로필 설정</h2>
@@ -264,7 +257,6 @@ useEffect(() => {
             <Label>E-mail</Label> 
             <FontAwesomeIcon icon={faEdit} onClick={() => handleEdit('email')} />
           </ProfileTitle>
-          {/* <p>{user.email || '정보가 없습니다.'}</p> */}
           <p>Email: {email}</p>
         </ProfileField>
         <ProfileField>
@@ -307,7 +299,6 @@ useEffect(() => {
 
           options={option3} 
           value={(userProfile.tags ?? []).map(tag => ({ value: tag, label: tag }))}
-          // placeholder={(userProfile.tags?.length ?? 0) > 0 ? userProfile.tags.join(', ') : "태그를 선택하시오"}
           placeholder={
             (userProfile.tags?.length ?? 0) > 0
               ? userProfile.tags.map(tag =>
@@ -366,7 +357,6 @@ useEffect(() => {
           />
         </ProfileField>
         <EditButton onClick={updateUserProfile}>변경사항 저장</EditButton>
-        {/* <CloseButton onClick={() => setPopupMessage(true)}>회원탈퇴</CloseButton> */}
          
         <CloseButton onClick={() => setPopupMessage(true)}>회원탈퇴</CloseButton>
       </ProfileContent>
@@ -385,13 +375,9 @@ useEffect(() => {
     </Modal>
   )}
     </ProfileContainer>
-
-
     
   );
   
-
-
 };
 
 
@@ -449,7 +435,7 @@ const ProfileContent = styled.div`  // background-color: #f9f9f9;
     overflow-y: visible;
   // overflow-y: hidden;
   // min-width: 400px;
-  min-height: 400px;   // 최소 높이만 지정 (원하는 값으로)
+  min-height: 400px;
   height: auto;  
   h2{
     text-align: center;
@@ -490,7 +476,7 @@ const CloseButton = styled.button`
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
-  // align-self: flex-start;  // 왼쪽 정렬
+
   // position: absolute;
   // right: 400px;  
   // top: 720px;

@@ -60,7 +60,7 @@ const ContestCard = ({ project, handleProjectClick, onApplyClick }) => {
       <CardFooter>
         <LikeButtonColumn
           sk={project.pk || project.id}
-          likes={100} // 임의의 좋아요 수 추가
+          likes={100}
         />
         <ApplyButton
           onClick={(e) => {

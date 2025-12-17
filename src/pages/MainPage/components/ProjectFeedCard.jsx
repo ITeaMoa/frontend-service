@@ -1,12 +1,10 @@
-import React from 'react';
 import styled from 'styled-components';
 import LikeButtonColumn from '../../../components/LikeButtonColumn';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 
-// 필요한 스타일드 컴포넌트 import 또는 아래처럼 정의
-// ProjectCard, ProjectTitle, ProjectTag, ProjectDescription, ProjectDetail, VerticalLikeButton, ApplyButton 등
+
 
 const ProjectFeedCard = ({ project, handleProjectClick, onApplyClick }) => {
   const formatDate = (dateStr) => {
@@ -59,8 +57,8 @@ const ProjectFeedCard = ({ project, handleProjectClick, onApplyClick }) => {
       />
       <ApplyButton
         onClick={(e) => {
-          e.stopPropagation(); // 이벤트 버블링 방지
-          onApplyClick(project); // 상위 컴포넌트로 이벤트 전달
+          e.stopPropagation();
+          onApplyClick(project);
         }}
       >
         신청하기
@@ -72,7 +70,7 @@ const ProjectFeedCard = ({ project, handleProjectClick, onApplyClick }) => {
 
 export default ProjectFeedCard;
 
-// 스타일드 컴포넌트 정의는 기존 코드에서 복사/이동
+
 
 const ProjectCard = styled.div`
 background: #fff;
@@ -142,7 +140,7 @@ const ProjectTitle = styled.h3`
 const ProjectTags = styled.div`
   display: flex;
   gap: 8px;
-  // margin-bottom: 8px;
+
 `;
 
 const ProjectTag = styled.span`

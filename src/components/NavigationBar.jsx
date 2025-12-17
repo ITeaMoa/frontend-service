@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faSlidersH, faCommentDots, faBell, faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faSlidersH, faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import messageImg from '../assets/Image/message.png';
@@ -11,7 +11,6 @@ import TagSelector from './TagSelector';
 
 const tagOptions = [
   "AWS", "Blockchain", "NodeJS", "React", "Java", "Dapp", "Git", "Backend"
-  // 필요시 더 추가
 ];
 
 const NavigationBar = ({showSearch, showTag=true}) => {
@@ -19,11 +18,11 @@ const NavigationBar = ({showSearch, showTag=true}) => {
   const [selectedTags, setSelectedTags] = useState([]);
   const navigate = useNavigate();
   const { isLoggedIn ,authIsLoggedIn} = useAuth();
-  const { logout } = useAuth(); // logout 함수 가져오기
+  const { logout } = useAuth();
   const [showAlert, setShowAlert] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-  const [alarms, setAlarms] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열기 상태
+  const [alarms] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
 
   const closeModal = () => {
@@ -78,7 +77,6 @@ const option3 = [
 ];
 
 
-  // 검색 입력 핸들러
   const handleChange = (e) => {
     setSearchValue(e.target.value);
     if (e.key === 'Enter') {
@@ -86,23 +84,20 @@ const option3 = [
     }
   };
 
-  // 검색 버튼 클릭
   const handleAddButtonClick = () => {
     const tagsQuery = selectedTags.length > 0 ? `&tags=${selectedTags.join(',')}` : '';
     navigate(`/SearchPage1?q=${searchValue}${tagsQuery}`);
   };
 
 
-//문자열 객체 모도 처리
  const handleTagSelect = (e,tagOrOption) => {
     if (e && typeof e.stopPropagation === 'function') {
       e.stopPropagation();
     }
 
-    // TagSelector에서는 e가 option 객체이고, Tag에서는 tagOrOption이 tag 문자열입니다.
     const tag = typeof tagOrOption === 'string' 
-      ? tagOrOption // <Tag>에서 클릭한 경우
-      : e.label; // <TagSelector>에서 클릭한 경우
+      ? tagOrOption
+      : e.label; 
       
   setSelectedTags(prevTags => {
       if (prevTags.includes(tag)) {
@@ -112,27 +107,14 @@ const option3 = [
       }
     });
   };
-// console.log(selectedTags)
 
 
-  // 태그 삭제
-  const handleTagRemove = (tag) => {
-    setSelectedTags((prev) => prev.filter((t) => t !== tag));
-  };
-
-  // 태그 전체 초기화
   const handleResetTags = () => {
     setSelectedTags([]);
   };
   const handleLogout = () => {
-    logout(navigate); // logout 호출 시 navigate 전달
+    logout(navigate); 
   };
-
-  // useEffect(() => {
-  //   if (showAlert && authIsLoggedIn) {
-  //     fetchAlarms();
-  //   }
-  // }, [showAlert, authIsLoggedIn]);
 
   const handleAlertToggle = () => {
     if (showAlert) {
@@ -140,7 +122,7 @@ const option3 = [
       setTimeout(() => { 
         setShowAlert(false);
         setIsClosing(false);
-      }, 300); // 애니메이션 시간
+      }, 300);
     } else {
       setShowAlert(true);
     }
@@ -153,8 +135,6 @@ const option3 = [
         <IconBar>
           {isLoggedIn ? (
             <>
-              {/* <FontAwesomeIcon icon={faCommentDots} onClick={() => navigate('/MessagePage')} size="xl" color="#e0dfdb" />
-              <FontAwesomeIcon icon={faBell} size="xl" color="#e0dfdb" onClick={handleAlertToggle} /> */}
               <img
                 src={messageImg}
                 alt="Message"
@@ -169,7 +149,6 @@ const option3 = [
               />
               <IconWrap>
                 <FontAwesomeIcon style={{cursor: 'pointer'}} icon={faUserCircle} onClick={() => navigate('/MyPage')} size="xl" color="#e0dfdb" />
-                {/* <RedDot /> */}
               </IconWrap>
 
               <LogoutButton onClick={() => { handleLogout(); window.location.reload(); }}>Logout</LogoutButton>
@@ -201,9 +180,7 @@ const option3 = [
                 onClick={(e) => e.stopPropagation()}
               />
             </SearchBar>
-            {/* <FilterButton>
-              <FontAwesomeIcon icon={faSlidersH} style={{ color: '#C3C3C3' }} />
-            </FilterButton> */}
+           
             <SearchButton onClick={handleAddButtonClick}>
               <FontAwesomeIcon icon={faSearch} style={{ color: 'white' }} />
             </SearchButton>
@@ -228,9 +205,7 @@ const option3 = [
                 onClick={(e) => handleTagSelect(e, tag)}
               >
                 {tag}
-                {/* {selectedTags.includes(tag) && (
-                  <CloseButton onClick={e => { e.stopPropagation(); handleTagRemove(tag); }}>×</CloseButton>
-                )} */}
+                
               </Tag>
             ))}
             {selectedTags.length > 0 && (
@@ -276,13 +251,7 @@ const option3 = [
                           {new Date(item.createTime).toLocaleString()}
                         </span>
                       </MessageContent>
-                      {/* {item.linkText && (
-                        <ButtonWrap>
-                          <Button onClick={() => handleLinkNavigation(item)}>
-                            {item.linkText}
-                          </Button>
-                        </ButtonWrap>
-                      )} */}
+                    
                     </Message>
                   </MessageBox>
                 ))}
@@ -297,7 +266,6 @@ const option3 = [
   );
 };
 
-// styled-components 정의는 기존 코드에서 복사
 
 export default NavigationBar;
 
@@ -544,7 +512,6 @@ const AuthButton = styled.button`
 `;
 
 
-// 스타일 컴포넌트 추가
 const AlertToggle = styled.div`
   // position: absolute;
   position: fixed;
@@ -577,7 +544,6 @@ const AlertHeader = styled.div`
 const AlertContent = styled.div`
   max-height: 400px;
   overflow-y: auto;
-  // max-height: 460px;
 `;
 
 const MessageBox = styled.div`

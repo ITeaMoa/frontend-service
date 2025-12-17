@@ -8,6 +8,7 @@ import Modal from '../../../components/Modal';
 import { useAtom } from 'jotai';
 import { currentApplicantsAtom } from '../../../Atoms.jsx/AtomStates';
 import { useNavigate } from 'react-router-dom';
+import AlertModal from '../../../components/AlertModal';
 
 const ProjectDetail = ({ project, onBack, onClose}) => {
     const navigate = useNavigate();
@@ -15,22 +16,21 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
     const [visibleButtons, setVisibleButtons] = useState({});
     const [clickedButtons, setClickedButtons] = useState({});
     const [selectedField, setSelectedField] = useState('전체');
-    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // Add state for modal visibility
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const applicantsPerPage = 5;
-    // 모집 완료 버튼 상태 추가
     const [isClosed, setIsClosed] = useState(false);
     const [isPopupVisible, setIsPopupVisible] = useState(false);
     const [selectedApplicant, setSelectedApplicant] = useState(null);
     const [newStatus, setNewStatus] = useState('');
-    // 버튼 비활성화 상태 추가
     const [disabledButtons, setDisabledButtons] = useState({});
     const [currentApplicants, setCurrentApplicants] = useState([]);
+    const [alertMessage, setAlertMessage] = useState('');
+    const [showAlert, setShowAlert] = useState(false);
 
-    // 역할 목록 정의
     const roles = project && project.roles ? 
         ['전체', ...Object.entries(project.roles).map(([roleName, count]) => ({ name: roleName, count }))] : 
-        []; // roles가 정의되지 않았을 경우 빈 배열로 초기화
+        [];
 
 
 
@@ -46,33 +46,32 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
             });
 
             if (response.data) {
-                setApplicants(response.data); // 아톰 상태를 가져온 지원자로 업데이트
+                setApplicants(response.data);
             } else {
-                setApplicants([]); // 데이터가 없으면 아톰 상태를 비움
+                setApplicants([]);
             }
         } catch (error) {
             console.error("지원자 정보를 가져오는 중 오류 발생:", error);
-            setApplicants([]); // 오류 발생 시 아톰 상태를 비움
+            setApplicants([]);
         }
     }, [setApplicants]);
 
 
     useEffect(() => {
         if (project?.pk) {
-            fetchApplications(project.pk); // 프로젝트 pk로 fetchApplications 호출
+            fetchApplications(project.pk);
         }
-    }, [fetchApplications, project]); // fetchApplications를 의존성 배열에 추가
+    }, [fetchApplications, project]);
 
 
     useEffect(() => {
-        // 로컬 스토리지에서 초기 상태를 가져오는 함수
         const initialStatus = localStorage.getItem(`projectStatus_${project.pk}`);
         if (initialStatus) {
             const parsedStatus = JSON.parse(initialStatus);
-            setVisibleButtons(parsedStatus); // 로컬 스토리지에서 상태 설정
-            setIsClosed(parsedStatus[project.pk] === 'completed'); // 모집 완료 상태 설정
+            setVisibleButtons(parsedStatus);
+            setIsClosed(parsedStatus[project.pk] === 'completed');
         }
-    }, [project.pk]); // project.pk에 의존
+    }, [project.pk]);
 
 
      useEffect(() => {
@@ -86,9 +85,7 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
   
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-    currentApplicants.forEach((applicant, index) => {
-        console.log(`Applicant ${index}:`, applicant);
-    });
+
 
     const handleStatusChange = (applicant, status) => {
         if (disabledButtons[applicant.name]) return; // 비활성화된 버튼이면 함수 종료
@@ -110,13 +107,12 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
         try {
            await axios.patch(url, requestData);
 
-            // 상태 업데이트: 승인 또는 반려에 따라 버튼 상태 변경
+    
             setVisibleButtons(prevState => ({ ...prevState, [selectedApplicant.nickname]: newStatus }));
             setClickedButtons(prevState => ({ ...prevState, [selectedApplicant.nickname]: newStatus }));
             setDisabledButtons(prevState => ({ ...prevState, [selectedApplicant.nickname]: true }));
-
-            // ... 추가된 코드: 반려 또는 승인 성공 시 알림 표시
-            alert(newStatus === "반려" ? "지원자가 반려되었습니다." : "지원자가 승인되었습니다.");
+            setAlertMessage(newStatus === "반려" ? "지원자가 반려되었습니다." : "지원자가 승인되었습니다.");
+            setShowAlert(true);
         } catch (error) {
             console.error(`Error changing status for ${selectedApplicant.nickname}:`, error);
         } finally {
@@ -134,53 +130,49 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
         if (project && project.pk) {
             try {
                 if (field === '전체') {
-                    // "전체"가 클릭되었을 때 모든 지원자 불러오기
-                    await fetchApplications(project.pk); // '무관'을 사용하여 모든 지원자 불러오기
-                    // const allApplicants = applicants; 
+                    await fetchApplications(project.pk); 
                 } else {
-                    // 다른 역할이 클릭되었을 때 해당 역할의 지원자 불러오기
                     const response = await axios.get(`my/writing/part`, {
                         params: {
-                            feedId: project.pk, // project.pk를 feedId로 사용
-                            part: field // 선택한 필드를 part로 사용
+                            feedId: project.pk,
+                            part: field 
                         }
                     });
-                    setApplicants(response.data); // 응답 데이터로 지원자 설정
+                    setApplicants(response.data);
                 }
             } catch (error) {
                 console.error("역할에 따른 지원서 가져오는 중 오류 발생:", error);
             }
         }
     };
-
-  
+ 
 
     const handleCloseApplication = () => {
-        setIsConfirmModalOpen(true); // Show the confirmation modal
+        setIsConfirmModalOpen(true); 
     };
 
     const handleConfirmClose = () => {
         try {
-            onClose(project.pk, 'completed'); // 새로운 상태를 전달
-            const updatedStatus = { ...visibleButtons, [project.pk]: 'completed' }; // 상태 업데이트
-            setVisibleButtons(updatedStatus); // 상태 업데이트
-            localStorage.setItem(`projectStatus_${project.pk}`, JSON.stringify(updatedStatus)); // 로컬 스토리지에 저장
-            setIsClosed(true); // 모집 완료 상태 설정
+            onClose(project.pk, 'completed'); 
+            const updatedStatus = { ...visibleButtons, [project.pk]: 'completed' }; 
+            setVisibleButtons(updatedStatus);
+            localStorage.setItem(`projectStatus_${project.pk}`, JSON.stringify(updatedStatus)); 
+            setIsClosed(true); 
         } catch (error) {
             console.error('오류:', error);
-            alert('모집 완료 처리 중 문제가 발생했습니다.');
+            setAlertMessage('모집 완료 처리 중 문제가 발생했습니다.');
+            setShowAlert(true);
         } finally {
-            setIsConfirmModalOpen(false); // 확인 후 모달 닫기
+            setIsConfirmModalOpen(false); 
         }
     };
 
-    // 페이지가 로드될 때 상태를 확인하는 함수
     useEffect(() => {
         const checkStatus = () => {
         localStorage.getItem(`projectStatus_${project.pk}`);
         };
-        checkStatus(); // 상태 확인 함수 호출
-    }, [project.pk]); // project.pk에 의존
+        checkStatus();
+    }, [project.pk]);
 
     return (
         <DetailContainer>
@@ -198,7 +190,7 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
                     ) : 0}명 / {project.recruitmentNum}명</InfoItem>
                     <InfoItem>진행 기간 | {project.period}개월</InfoItem>
                     <InfoItem>모집 역할 | {roles && roles.length > 0 ? (
-                        roles.filter(role => role !== '전체').map((role, index) => ( // 전체를 제외한 역할만 필터링
+                        roles.filter(role => role !== '전체').map((role, index) => ( 
                             typeof role === 'string' ? (
                                 <span key={index}>{role}</span>
                             ) : (
@@ -265,7 +257,6 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
                         <p>신청자가 없습니다.</p>
                     ) : (
                         currentApplicants.map((applicant, index) => {
-                            console.log(`Applicant ${index}:`, applicant); // 각 지원자 출력
                             return (
                                 <StyledApplicantWrapper key={index}>
                                     <Applicant>
@@ -279,19 +270,11 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
                                                     <Tag key={idx}>{tag}</Tag>
                                                 ))
                                             ) : (
-                                                <Tag>none</Tag> // tags가 없을 경우 "none" 표시
+                                                <Tag>none</Tag>
                                             )}
                                         </Tags2>
 
-                                    
-                                       
-                                         {/* <Tags>
-                                            <Tag>{applicant.part}</Tag>
-                                            {/* 태그가 있을 경우 추가 */}
-                                            {/* {applicant.tags && applicant.tags.map((tag, idx) => (
-                                                <Tag key={idx}>{tag}</Tag>
-                                            ))}</Tags> */}
-
+                                
                                         <ButtonContainer singleButton={currentApplicants.length === 1}>
                                             {applicant.status === "REJECTED" ? (
                                                 <StatusButton 
@@ -335,12 +318,6 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
                     )}
                 </ApplicationStatus>
                 <StyledPaginationContainer>
-                    {/* <Pagination 
-                        currentPage={currentPage}
-                        totalProjects={filteredApplicants.length}
-                        projectsPerPage={applicantsPerPage} 
-                        onPageChange={paginate} 
-                    /> */}
                      <Pagination 
                         currentPage={currentPage}
                         totalProjects={applicants.length}
@@ -350,7 +327,7 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
                 </StyledPaginationContainer>
             </RightSection>
 
-            {/* 팝업 모달 */}
+ 
             {isPopupVisible && (
                 <PopupOverlay>
                     <Popup>
@@ -368,13 +345,18 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
                 </PopupOverlay>
             )}
 
-<Modal isOpen={isConfirmModalOpen} onClose={() => setIsConfirmModalOpen(false)}>
+        <Modal isOpen={isConfirmModalOpen} onClose={() => setIsConfirmModalOpen(false)}>
                 <h3 style={{ textAlign: 'center' }}>정말로 모집완료 하시겠습니까?</h3>
                 <ButtonContainer>
                     <ModalButton onClick={handleConfirmClose}>확인</ModalButton>
                     <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton>
                 </ButtonContainer>
             </Modal>
+            <AlertModal 
+                isOpen={showAlert} 
+                message={alertMessage} 
+                onClose={() => setShowAlert(false)} 
+            />
         </DetailContainer>
     );
 };
@@ -415,12 +397,10 @@ const LeftSection = styled.div`
 
 const RightSection = styled.div`
     position: relative;
-    // min-width: 400px;
     max-width: 600px;
     min-height: 600px;
     border: 2px solid #A0DAFB;
     border-radius: 20px;
-    // padding: 30px;
     padding-bottom: 5px;
     background: white;
     display: flex;
@@ -431,7 +411,6 @@ const RightSection = styled.div`
 
 const DetailHeader = styled.div`
     display: flex;
-    // justify-content: space-between;
     align-items: center;
     justify-content: center;
 `;
@@ -440,7 +419,7 @@ const DetailInfo = styled.div`
     margin: 20px 0;
     display: grid;
     text-align: left;
-    grid-template-columns: repeat(2, 1fr); /* 2 열로 배치 */
+    grid-template-columns: repeat(2, 1fr);
     grid-gap: 5px;
     margin-bottom: 20px;
 `;
@@ -708,13 +687,11 @@ const PopupButton = styled.button`
 
 const ButtonContainer = styled.div`
   display: flex;
-//   justify-content: ${({ singleButton }) => (singleButton ? 'center' : 'space-between')}; // 버튼이 하나일 때 중앙 정렬
   gap: 20px;
   margin-top: 10px;
   margin-bottom: 10px;
   justify-content: center;
-//   margin-right: 10px;
-margin-left: 10px;
+  margin-left: 10px;
   min-width: 150px;
 `;
 

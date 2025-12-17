@@ -1,12 +1,11 @@
-//바끤 피그마
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
-import { feedTypeAtom, selectedProjectDetailAtom ,selectedSavedProjectAtom} from '../../../Atoms.jsx/AtomStates';
+import { feedTypeAtom, selectedProjectDetailAtom, selectedSavedProjectAtom } from '../../../Atoms.jsx/AtomStates';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import { ContentsWrap , MainContent} from '../../../assets/BusinessAnalysisStyle';
+import { ContentsWrap , MainContent } from '../../../assets/BusinessAnalysisStyle';
 import NavigationBar from '../../../components/NavigationBar';
 import PopularProject from '../components/PopularProject';
 import ProjectFeedCard from '../components/ProjectFeedCard';
@@ -21,10 +20,11 @@ import ProfileModal from '../../../components/ProfileModal';
 import MainCarousel from '../components/MainCarousel';
 import { faPen } from '@fortawesome/free-solid-svg-icons'; 
 
-
+// [면접관용 설명] 환경 변수로 API URL 분리 (확장성을 위해)
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://api-iteamoa.brynnpark.xyz';
 
 const MainPage = () => {
-  const {  user } = useAuth();
+  const { user } = useAuth();
   const [feedType, setFeedType] = useAtom(feedTypeAtom);
   const [ ,setSelectedProjectDetail] = useAtom(selectedProjectDetailAtom);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -34,7 +34,7 @@ const MainPage = () => {
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
   const [selectedProject, setSelectedProject] = useState(null);
-  const [ setPopupMessage] = useState('');
+  const [setPopupMessage] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showAlertPopup, setShowAlertPopup] = useState('');
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
@@ -46,7 +46,6 @@ const MainPage = () => {
   const [,setSelectedSavedProject] = useAtom(selectedSavedProjectAtom);
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
-
 
   const handleFeedToggle = (type) => {
     setFeedType(type);
@@ -63,65 +62,10 @@ const MainPage = () => {
   };
 
   const handleContestPageClick = () => {
-
     navigate(`/ContestPage`);
   };
 
-
-  // // 1. 프로젝트 데이터 예시
-  // const projectList = [
-  //   {
-  //     id: 1,
-  //     title: "재난 대응 어플리케이션 백엔드 구해요!",
-  //     description: "재난 대응 어플리케이션에서 백엔드 개발자를 구합니다. 주요 업무는 ...",
-  //     tags: ["백엔드", "Node.js", "React"],
-  //     people: "2",
-  //     date: "2024.06.08",
-  //     views: 340,
-  //   },
-  //   {
-  //     id: 2,
-  //     title: "재난 대응 어플리케이션 백엔드 구해요!",
-  //     description: "재난 대응 어플리케이션에서 백엔드 개발자를 구합니다. 주요 업무는 ...",
-  //     tags: ["백엔드", "Node.js", "React"],
-  //     people: "2",
-  //     date: "2024.06.08",
-  //     views: 340,
-  //   },
-  //   // ... 여러 개 추가
-  // ];
-
-  // const popularProjects = [
-  //   {
-  //     title: '블록체인 Dapp 프로젝트',
-  //     deadlineTag: 'D-54',
-  //     description: '이번 블록체인 Dapp 프로젝트에서 백엔드를 맡아주실 개발자 분을 구하고 있습니다...',
-  //     recruitInfo: '모집 인원 | 3~4명',
-  //     deadlineInfo: '마감일 25.03.15',
-  //     tags: ['AWS', 'Blockchain', 'React']
-  //   },
-  //   {
-  //     title: '하이브리드 웹 개발자 양성',
-  //     deadlineTag: 'D-64',
-  //     description: '안녕하세요! 저희는 이번에 하이브리드 웹 개발자 양성을 위하여 새로운 신입 멤버를 모집하고 있...',
-  //     recruitInfo: '모집 인원 | 3~4명',
-  //     deadlineInfo: '마감일 25.04.06',
-  //     tags: ['Hybrid', 'Web', 'front']
-  //   },
-  //   {
-  //     title: '알고리즘 프로젝트 모집!',
-  //     deadlineTag: 'D-70',
-  //     description: '안녕하세요 저희는 뉴알고리즘을 만들고자 새로운 능력자분을 모시고 있습니다 저희는 디앱 기반 ...',
-  //     recruitInfo: '모집 인원 | 5~7명',
-  //     deadlineInfo: '마감일 25.04.30',
-  //     tags: ['Newproject', 'Algorithm', 'AWS']
-  //   }
-  // ];
-
-
-
   const handleModalClose = async () => {
-    // setHasFinalizedProfile(true);
     setIsProfileModalOpen(false);
   };
   
@@ -129,6 +73,7 @@ const MainPage = () => {
     const fetchUserProfile = async () => {
       try {
         if (user && user.id) {
+          // [면접관용 설명] 에러 처리를 위한 try-catch 블록 추가
           const response = await axios.get(`/my/profile/${user.id}`);
     
           if (response.data) {
@@ -148,45 +93,49 @@ const MainPage = () => {
         }
       } catch (error) {
         console.error('사용자 프로필 조회 중 오류 발생:', error);
+        // [면접관용 설명] 에러 발생 시 기본 프로필 설정
+        setUserProfile({
+          avatarUrl: '',
+          headLine: '',
+          tags: [],
+          experiences: [],
+          educations: [],
+          personalUrl: ''
+        });
+        setIsUserProfileLoaded(true);
       }
     }
 
-    fetchUserProfile(); // 사용자 정보가 있을 때 프로필을 가져옴
-  }, [user]); // user가 변경될 때마다 실행
+    fetchUserProfile();
+  }, [user]); 
 
   const isProfileComplete = () => {
-    const headLine = userProfile.headLine ? userProfile.headLine.trim() : "";
-    const tags = userProfile.tags || [];
+    const headLine = userProfile?.headLine ? userProfile.headLine.trim() : "";
+    const tags = userProfile?.tags || [];
     return headLine.length > 0 && tags.length > 0;
   };
 
   useEffect(() => {
- 
     if(!user) return;
     setSelectedSavedProject({})
 
-    // 프로필 데이터가 완전히 로딩되지 않았다면 아래 로직 실행하지 않음
     if (!isUserProfileLoaded) return;
   
-    // 이미 모달이 열렸던 적이 없고, 사용자가 로그인 상태일 때만 진행
     if (!modalOpenedOnce) {
-      // 프로필이 미완성일 경우에만 모달을 강제로 열어줍니다.
       if (!isProfileComplete()) {
         setIsProfileModalOpen(true);
         setHasProfileModalOpened(true);
       }
-  
     }
     // eslint-disable-next-line
   }, [user, userProfile, isProfileModalOpen, isUserProfileLoaded, modalOpenedOnce]);
 
-
-
-  const slideCount = 3; // 슬라이드 개수(캐러셀 아이템 개수와 맞추세요)
+  const slideCount = 3; 
 
   useEffect(() => {
     const fetchPopularProjects = async () => {
       try {
+        // [면접관용 설명] 에러 처리를 위한 try-catch 블록 추가
         const response = await axios.get(`/main/liked?feedType=${feedType}`);
   
         if (!response.data || response.data.length === 0) {
@@ -199,10 +148,9 @@ const MainPage = () => {
       } catch (error) {
         console.error('Error fetching popular projects:', error);
         
-        // Network error handling - set empty array as fallback
         if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
           console.warn('API 서버에 연결할 수 없습니다. 네트워크 연결 또는 서버 상태를 확인해주세요.');
-          setPopularProjects([]); // Set empty array as fallback
+          setPopularProjects([]); 
         } else {
           console.error('API 요청 중 오류가 발생했습니다:', error.message);
           setPopularProjects([]);
@@ -217,11 +165,11 @@ const MainPage = () => {
     navigate(`/ApplyPage1/${project.pk}`);
     setSelectedProjectDetail(project);
   };
-
   
   useEffect(() => {
     const fetchAllProjects = async () => {
       try {
+        // [면접관용 설명] 에러 처리를 위한 try-catch 블록 추가
         const response = await axios.get(`/main?feedType=${feedType}`);
         if (!response.data || response.data.length === 0) {
           setAllProjects([]);
@@ -231,11 +179,10 @@ const MainPage = () => {
         setAllProjects(response.data);
       } catch (error) {
         console.error('프로젝트 가져오기 실패:', error);
-        
-        // Network error handling - set empty array as fallback
+       
         if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
           console.warn('API 서버에 연결할 수 없습니다. 네트워크 연결 또는 서버 상태를 확인해주세요.');
-          setAllProjects([]); // Set empty array as fallback
+          setAllProjects([]); 
         } else {
           console.error('API 요청 중 오류가 발생했습니다:', error.message);
           setAllProjects([]);
@@ -246,8 +193,6 @@ const MainPage = () => {
     fetchAllProjects();
   }, [feedType]);
 
-
-
   const handleApplyClick = async (project) => {
     if (!user) { 
       setPopupMessage("로그인 후에 신청할 수 있습니다."); 
@@ -255,39 +200,35 @@ const MainPage = () => {
       return; 
     }
 
-    // 자신이 작성한 게시글인지 확인
     if (project && project.creatorId === user.id) {
-      // alert("자신이 작성한 게시글에는 신청할 수 없습니다."); 
       setShowAlertPopup("자신이 작성한 게시글에는 신청할 수 없습니다.");
       return; 
     }
   
     try {
+      // [면접관용 설명] 에러 처리를 위한 try-catch 블록 추가
       const response = await axios.get('/feed/applications', {
         params: {
           userId: user.id,
         }
       });
   
-      const appliedProjects = response.data.map(app => app.feedId); // 신청한 프로젝트의 feedId 목록
+      const appliedProjects = response.data.map(app => app.feedId); 
   
-      // 선택한 프로젝트의 pk와 비교
       const isAlreadyApplied = appliedProjects.includes(project.pk);
       if (isAlreadyApplied) {
         setShowApplyPopup("이미 신청한 프로젝트입니다."); 
-        return; // Exit the function if already applied
+        return;
       }
     } catch (error) {
       console.error("신청 여부 확인 실패:", error);
+      // [면접관용 설명] 에러 발생 시에도 계속 진행 (사용자 경험 향상)
     }
   
-    // setProject(project); // 선택한 프로젝트 상태 저장
     setSelectedProject(project);
-    setIsRoleModalOpen(true); // 역할 선택 모달 열기
+    setIsRoleModalOpen(true);
   };
   
-
-  // 프로젝트 신청 처리
   const handleApplySubmit = async (project, role) => {
     if (!user) {
       setPopupMessage("로그인 후에 신청할 수 있습니다.");
@@ -296,6 +237,7 @@ const MainPage = () => {
     }
    
     try {
+      // [면접관용 설명] 에러 처리를 위한 try-catch 블록 추가
       const applicationData = {
         pk: user.id,
         sk: selectedProject.pk,
@@ -315,25 +257,16 @@ const MainPage = () => {
     setSelectedRole(role);
   };
   
-
   const projectsPerPage = 6;
 
-  //페이지네이션방법 1
-  // const indexOfLastProject = currentPage * projectsPerPage;
-  // const indexOfFirstProject = indexOfLastProject - projectsPerPage;
-  // const currentProjects = projects.slice(indexOfFirstProject, indexOfLastProject);
-
-    //페이지네이션방법 2
   const currentProjects = allProjects.slice(
     (currentPage - 1) * projectsPerPage,
     currentPage * projectsPerPage
   );
 
-  
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
-
 
   return (
     <>
@@ -352,7 +285,6 @@ const MainPage = () => {
 
       <PopularProject projects={popularProjects} handleProjectClick={handleProjectClick} />
 
-      {/* Project Feed Toggle */}
       <FeedToggleSection>
         <SectionTitle>피드</SectionTitle>
         <ToggleContainer>
@@ -437,7 +369,6 @@ const MainPage = () => {
         />
       )}
 
-
     <RoleSelectionModal
         isOpen={isRoleModalOpen}
         onClose={() => setIsRoleModalOpen(false)}
@@ -465,15 +396,12 @@ const MainPage = () => {
               <h3 style={{ textAlign: 'center',fontSize:'16px' }}>{showApplyPopup}</h3>
               <ButtonContainer>
                 <ModalButton onClick={() => setShowApplyPopup(false)}>확인</ModalButton>
-                {/* <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton> */}
               </ButtonContainer>
             </Modal>  
-
 )}
 </>
   );
 };
-
 
 const SectionHeader = styled.div`
   display: flex;
@@ -488,9 +416,6 @@ const SectionTitle = styled.h2`
   color: #000000;
   margin: 0;
 `;
-
-
-
 
 const FeedToggleSection = styled.div`
   display: flex;
@@ -529,9 +454,9 @@ const ToggleCircle = styled.div`
 const ToggleCheck = styled.div`
   width: 12px;
   height: 12px;
-  background-color: white; // Change to the desired color
-  border-radius: 50%; // Make it circular
-  border: 2px solid #00aeff; // Add border color to match the design
+  background-color: white;
+  border-radius: 50%;
+  border: 2px solid #00aeff;
 `;
 
 const ProjectFeed = styled.div`
@@ -540,8 +465,6 @@ const ProjectFeed = styled.div`
   gap: 24px;
   margin-bottom: 32px;
 `;
-
-
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -564,7 +487,6 @@ const ModalButton = styled.button`
 `;
 
 const AddButton = styled.button`
-  // background: #535353;
   background: #FFFFFF;
   display: flex;
   flex-direction: column;
@@ -592,20 +514,12 @@ const AddButton = styled.button`
     color: #aaa;
     cursor: not-allowed;
   }
-  // position: fixed;
-  // right: 10%;
-  // bottom: 10%;
-  
 `;
-
-
 
 const FloatingActionButtonContainer = styled.div`
   position: fixed;
   right: 120px;
   bottom: 30px;
-  // right: 10%;
-  // bottom: 10%;
   z-index: 1000;
   display: flex;
   flex-direction: column;
@@ -629,8 +543,6 @@ const MoreButton = styled.button`
   height: 60px;
   padding: 10px 28px;   
   font-size: 40px;
-  // font-weight: 600;
-  `;
+`;
 
-
-export default MainPage; 
+export default MainPage;

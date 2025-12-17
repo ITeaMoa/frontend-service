@@ -16,6 +16,8 @@ const CommentsSection2= ({ commentInput, setCommentInput, user, projectId }) => 
   const [editCommentInput, setEditCommentInput] = useState('');
   const [showAlertPopup,setShowAlertPopup] =useState(false)
   const [comments, setComments] = useState(selectedProjectDetail?.comments || []);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
 
 
 
@@ -25,7 +27,6 @@ const CommentsSection2= ({ commentInput, setCommentInput, user, projectId }) => 
         const response = await axios.get(`/main?feedType=${selectedProjectDetail.sk}`);
         const selectedProject = response.data.find(item => item.pk === projectId);
   
-        // 각 댓글에 대한 대댓글을 가져와서 구조화
         const commentsWithReplies = await Promise.all(
           selectedProject.comments.map(async (comment) => {
             const replyResponse = await axios.get(`/feed/${projectId}/comments/${comment.commentId}/replies`);
@@ -38,7 +39,6 @@ const CommentsSection2= ({ commentInput, setCommentInput, user, projectId }) => 
   
         setSelectedProjectDetail(selectedProject);
         setComments(commentsWithReplies);
-        // setReplies는 더 이상 필요하지 않음
       } else {
         setSelectedProjectDetail(null);
         setComments([]);
@@ -71,18 +71,14 @@ const CommentsSection2= ({ commentInput, setCommentInput, user, projectId }) => 
         });
 
             
-      // 댓글 입력 필드 초기화
       setCommentInput('');
       
-      // 프로젝트 상세 정보 새로고침
       await fetchProjectDetails();
       } catch (error) {
         console.error("댓글 제출 중 오류 발생:", error);
-        // alert("댓글 제출에 실패했습니다.");
         setShowAlertPopup("댓글 제출에 실패했습니다. 다시 시도해주세요.");
       }
     } else {
-      console.log("댓글 입력이 없거나, project 데이터가 존재하지 않음", { commentInput, selectedProjectDetail });
     }
   };
 
@@ -100,7 +96,6 @@ const CommentsSection2= ({ commentInput, setCommentInput, user, projectId }) => 
         replyData
       );
   
-      // 대댓글 목록 업데이트
       setReplies(prev => ({
         ...prev,
         [commentId]: [
@@ -115,7 +110,6 @@ const CommentsSection2= ({ commentInput, setCommentInput, user, projectId }) => 
 
      await axios.get(`/feed/${projectId}/comments/${commentId}/replies`);
   
-      // 입력 필드 초기화
       setReplyInput(prev => ({ ...prev, [commentId]: '' }));
       setShowReplyInput(prev => ({ ...prev, [commentId]: false }));
       await fetchProjectDetails();
@@ -123,9 +117,11 @@ const CommentsSection2= ({ commentInput, setCommentInput, user, projectId }) => 
     } catch (error) {
       console.error("대댓글 작성 중 오류 발생:", error);
       if (error.response?.data) {
-        alert(error.response.data);
+        setAlertMessage(error.response.data);
+        setShowAlert(true);
       } else {
-        alert("대댓글 작성에 실패했습니다.");
+        setAlertMessage("대댓글 작성에 실패했습니다.");
+        setShowAlert(true);
       }
     }
   };
@@ -142,7 +138,8 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
     await fetchProjectDetails();
   } catch (error) {
     console.error('대댓글 삭제 실패:', error);
-    alert('대댓글 삭제에 실패했습니다.');
+    setAlertMessage('대댓글 삭제에 실패했습니다.');
+    setShowAlert(true);
   }
 };
 
@@ -163,16 +160,17 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
       }
     } catch (error) {
       console.error("댓글 삭제 중 오류 발생:", error);
-      alert("댓글 삭제에 실패했습니다.");
+      setAlertMessage("댓글 삭제에 실패했습니다.");
+      setShowAlert(true);
     }     
   };     
   
   
 
-  // 수정 저장 핸들러
   const handleEditCommentSave = async (commentId) => {
     if (!editCommentInput.trim()) {
-      alert('댓글 내용을 입력해주세요');
+      setAlertMessage('댓글 내용을 입력해주세요');
+      setShowAlert(true);
       return;
     }
   
@@ -184,7 +182,6 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
         `/feed/${projectId}/comments/${commentId}?feedType=${selectedProjectDetail.sk}&userId=${user.id}`, 
         commentData
       );   
-      // 댓글 목록 업데이트
       setComments(prevComments => 
         prevComments.map(comment => 
           comment.commentId === commentId
@@ -193,16 +190,17 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
         )
       );
   
-      // 수정 모드 종료
       setEditingCommentId(null);
       setEditCommentInput('');
   
     } catch (error) {
       console.error("댓글 수정 중 오류 발생:", error);
       if (error.response?.data) {
-        alert(error.response.data);
+        setAlertMessage(error.response.data);
+        setShowAlert(true);
       } else {
-        alert("댓글 수정에 실패했습니다.");
+        setAlertMessage("댓글 수정에 실패했습니다.");
+        setShowAlert(true);
       }
     }
   };
@@ -242,13 +240,9 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
                       {formattedDate} {formattedTime}
                     </span>
                   </Timestamp>
-                  {/* <CommentDate>
-                  <span style={{ fontSize: 'small', color: '#aaa', marginLeft: '10px' }}>
-                      {formattedDate} {formattedTime}
-                    </span>
-                  </CommentDate> */}
+
                 </Users>
-                {/* <Comments>{comment.comment}</Comments> */}
+
                 <Comments>
                   {editingCommentId === comment.commentId ? (
                     <>
@@ -268,13 +262,11 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
                
               <Actions>
                 {editingCommentId === comment.commentId ? (
-                  // 수정 중일 때
                   <>
                     <ActionButton onClick={() => handleEditCommentSave(comment.commentId)}>등록</ActionButton>
                     <ActionButton onClick={() => setEditingCommentId(null)}>취소</ActionButton>
                   </>
                 ) : (
-                  // 평소
                   <>
                  {user && (
                   <>
@@ -335,7 +327,6 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
                   );
                 })}
 
-                {/* 대댓글 입력창 */}
                 {showReplyInput[comment.commentId] && (
                   <ReplyInputWrapper>
                     <CommentInput
@@ -359,6 +350,11 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
         message={showAlertPopup}
         onClose={() => setShowAlertPopup(false)}
       />
+      <AlertModal
+        isOpen={showAlert}
+        message={alertMessage}
+        onClose={() => setShowAlert(false)}
+      />
       </CommentsList>
       </CommentsContainer>
     </Container>
@@ -371,7 +367,7 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
 
 export default CommentsSection2;
 
-// Styled Components
+
 const Container = styled.div`
   position: relative;
   width: 100%;
@@ -412,7 +408,7 @@ const CommentsList = styled.div`
 
 const Comment = styled.div`
   margin: 5px 0;
-  padding: 14px 12px; // CommentInput과 동일하게!
+  padding: 14px 12px;
   border: none;
   border-top: #EDEDED;
   border-bottom: 2px solid #EDEDED;
@@ -452,22 +448,22 @@ const CommentInput = styled.textarea`
   width: 100%;
   height: 80px;
   resize: none;
-  padding: 14px 12px; // Comment와 동일하게!
+  padding: 14px 12px;
   font-size: 16px;
   box-sizing: border-box;
-  border: 1.5px solid #ededed;   // 테두리 색 고정
-  outline: none;                  // 기본 outline 제거
+  border: 1.5px solid #ededed;
+  outline: none;
   background-color: white;
 
   &::placeholder {
     text-align: left;
     vertical-align: top;
     transform: translateY(-2px);
-    color: #bdbdbd; // placeholder 색상은 필요시 조정
+    color: #bdbdbd;
   }
 
   &:focus {
-    border: 1.5px solid #ededed; // 포커스 시에도 테두리 색 고정
+    border: 1.5px solid #ededed;
     outline: none;
   }
 `;
@@ -482,14 +478,8 @@ const CommentButton = styled.button`
   color: white;
   font-weight: bold;
   cursor: pointer;
-  // width:80px;
 
-  align-self: flex-end;  /* 오른쪽 끝 정렬 */
-  // margin-right:15px;
-
-  // &:hover {
-  //   background-color: #a0dafb;
-  // }
+  align-self: flex-end;
 `;
 
 const Actions = styled.div`
@@ -507,10 +497,6 @@ const ActionButton = styled.button`
   font-weight: bold;
   cursor: pointer;
   margin-left: 5px;
-
-  // &:hover {
-  //   background-color: #a0dafb;
-  // }
 `; 
 
 const DeletedBox = styled.div`
@@ -524,12 +510,10 @@ const DeletedBox = styled.div`
 const ReplyBox = styled.div`
   margin-left: 32px;
   margin-top: 8px;
-  // background: #f8fafd;
   background: white;
   border-radius: 8px;
   padding: 10px 10px 10px 16px;
-  // border-left: 3px solid #a0dafb;
-   border-left: 3px solid #3D3D3F;
+  border-left: 3px solid #3D3D3F;
 `;
 
 const ReplyInputWrapper = styled(CommentInputWrapper)`
@@ -538,7 +522,6 @@ const ReplyInputWrapper = styled(CommentInputWrapper)`
 `
 const CommentEditInput = styled(CommentInput)`
   border: 2px solid #ededed;
-  // border-radius: 15px;
   margin-right: 10px;
   background-color: white;
   width: 88%;

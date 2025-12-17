@@ -1,13 +1,12 @@
-import React from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 
 const MessagePeople = ({ name, messageCount, isSelected, onClick }) => {
-  // 클릭 이벤트를 처리하는 새로운 함수
+
   const handleClick = () => {
-    onClick(); // 기존 onClick 함수 실행
+    onClick(); 
   };
 
   return (
@@ -17,7 +16,6 @@ const MessagePeople = ({ name, messageCount, isSelected, onClick }) => {
         <FontAwesomeIcon icon={regularUser} size="15px" />
         <Name>{name}</Name>
       </PersonInfo>
-      {/* <MessageCount>{isSelected ? "0" : messageCount}</MessageCount> */}
     
     </PersonContainer>
   );
@@ -57,21 +55,8 @@ const Name = styled.span`
   font-size: 14px;
 `;
 
-// const MessageCount = styled.div`
-//   background-color: #e8f5fe;
-//   color: #1da1f2;
-//   padding: 4px 8px;
-//   border-radius: 12px;
-//   font-size: 12px;
-// `;
-
 const MessageCount = styled.div`
-  /*
-    props.messageCount가 0보다 크고 (즉, 새 메시지가 있고)
-    선택되지 않았을 때 (props.isSelected가 false일 때)만 파란색 점 스타일을 적용합니다.
-    주의: PersonContainer에서 messageCount prop으로 isSelected ? 0 : messageCount 값을 보내고 있으므로,
-    여기서 props.messageCount가 0일 때는 선택되었거나 실제 메시지가 없는 경우를 의미합니다.
-  */
+
   ${props => props.messageCount > 0 && !props.isSelected ? `
     /* 파란색 점 스타일 */
     background-color: #00AEFF; /* 요청하신 파란색 */

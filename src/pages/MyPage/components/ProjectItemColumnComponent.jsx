@@ -1,13 +1,10 @@
-import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 import styled from 'styled-components';
 
 const ProjectItemColumnComponent = ({ project, user, handleCancelApplication, isProjectCanceled, isSaved, isDisabled }) => {
-    // const navigate = useNavigate();
   
-
   return (
     <ProjectItemColumn isSaved={isSaved} project = {project} >
       <ProjectHeaderColumn>
@@ -16,12 +13,9 @@ const ProjectItemColumnComponent = ({ project, user, handleCancelApplication, is
           <span>{project.nickname}</span>
         </HeaderItemColumn>
         <ButtonSection>
-            {/* <StyledFontAwesomeIconColumn icon={faHeart} /> */}
             <LikeCountContainer>
               <StyledFontAwesomeIconColumn icon={regularHeart} />{project.likesCount || 0}
               </LikeCountContainer>
-
-
             <ButtonColumn 
               onClick={() => {
                 if (user && user.id && project.feedId) {

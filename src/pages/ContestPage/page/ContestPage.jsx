@@ -1,4 +1,3 @@
-//바끤 피그마
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
@@ -263,7 +262,7 @@ const contests = [
 
 const ContestPage = () => {
   const {  user } = useAuth();
-  const [selectedTags, setSelectedTags] = useState([]); // 태그 상태 추가
+  const [selectedTags, setSelectedTags] = useState([]);
   const [selectedTagDetails, setSelectedTagDetails] = useState([]);
   const [tagsRowZIndex, setTagsRowZIndex] = useState(2000);
   const tagsRowRef = useRef(null);
@@ -272,7 +271,7 @@ const ContestPage = () => {
     const handleScroll = () => {
       if (tagsRowRef.current) {
         const tagsRowTop = tagsRowRef.current.getBoundingClientRect().top;
-        // NavigationBar의 고정된 부분의 높이를 80px로 가정합니다.
+       
         if (tagsRowTop <= 250) {
           setTagsRowZIndex(0);
         } else {
@@ -406,7 +405,6 @@ const ContestPage = () => {
         <ContestTitle>{contest.title}</ContestTitle>
         <ContestInfo>
           <ContestDetail>{contest.detail}</ContestDetail>
-          {/* <ContestDate>{contest.date}</ContestDate> */}
         </ContestInfo>
         <ContestButtons>
          
@@ -433,8 +431,7 @@ const ContestPage = () => {
   width: 100%;
   display: flex;
   flex-direction: ${(props) => (props.isMobile ? "column" : "row")};
-  // gap: ${(props) => (props.isMobile ? "20px" : "40px")};
-  // padding: ${(props) => (props.isMobile ? "20px" : "0 4px 0 0")};
+
   min-height: 100vh;
   overflow-x: hidden;
   padding-bottom: 100px;
@@ -457,7 +454,7 @@ const MainContent = styled.div`
   justify-content: flex-start;
   padding: 57px 0 40px;
   margin: 0 auto;
-  // padding: ${(props) => (props.isMobile ? "0" : "0 20px")};
+
 `;
 
 

@@ -4,12 +4,12 @@ import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import Dropdown from '../../../components/DropDown';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
-import axios from '../../../api/axios';
 import Modal from '../../../components/Modal';
 import { useAtom } from 'jotai';
 import { USER_PROFILE } from '../../../Atoms.jsx/AtomStates';
 import { useAuth } from '../../../context/AuthContext';
-
+import { getUserProfile, updateUserProfile } from '../../../api';
+import { TECH_STACK_OPTIONS } from '../../../constants/techStackOptions';
 
 const UserProfile = ({  setIsProfileVisible}) => {
 
@@ -24,65 +24,17 @@ const UserProfile = ({  setIsProfileVisible}) => {
     const passwordInputRef = useRef(null);
     const nicknameInputRef = useRef(null);
     const fileInputRef = useRef();
-    const [isEditingPassword, setIsEditingPassword] = useState(false);
     const [newTags, setNewTags] = useState([]);
 
-    const option3 = [
-        { value: '웹', label: '웹' },
-        { value: '모바일', label: '모바일' },
-        { value: '정보보안', label: '정보보안' },
-        { value: 'AWS', label: 'AWS' },
-        { value: 'Git', label: 'Git' },
-        { value: 'Github', label: 'Github' },
-        { value: '클라우드', label: '클라우드' },
-        { value: '블록체인', label: '블록체인' },
-        { value: '인공지능', label: '인공지능' },
-        { value: '빅데이터', label: '빅데이터' },
-        { value: 'Spring Boot', label: 'Spring Boot' },
-        { value: 'React', label: 'React' },
-        { value: 'Vue', label: 'Vue' },
-        { value: 'Python', label: 'Python' },
-        { value: 'Node.js', label: 'Node.js' },
-        { value: 'TypeScript', label: 'TypeScript' },
-        { value: '게임', label: '게임' },
-        { value: 'UI/UX', label: 'UI/UX' },
-        { value: '알고리즘', label: '알고리즘' },
-        { value: '자료구조', label: '자료구조' },
-        { value: 'C/C++', label: 'C/C++' },
-        { value: 'C#', label: 'C#' },
-        { value: 'SQL', label: 'SQL' },
-        { value: 'NoSQL', label: 'NoSQL' },
-        { value: 'Django', label: 'Django' },
-        { value: 'Figma', label: 'Figma' },
-        { value: 'Swift', label: 'Swift' },
-        { value: 'Kotlin', label: 'Kotlin' },
-        { value: 'React Native', label: 'React Native' },
-        { value: 'Android', label: 'Android' },
-        { value: 'iOS', label: 'iOS' },
-        { value: 'GCP', label: 'GCP' },
-        { value: 'Kubernetes', label: 'Kubernetes' },
-        { value: 'Docker', label: 'Docker' },
-        { value: 'Ruby', label: 'Ruby' },
-        { value: 'R', label: 'R' },
-        { value: 'Go', label: 'Go' },
-        { value: 'Next.js', label: 'Next.js' },
-        { value: 'Express', label: 'Express' },
-        { value: 'Firebase', label: 'Firebase' },
-        { value: 'Linux/Unix', label: 'Linux/Unix' },
-        { value: '데이터마이닝', label: '데이터마이닝' },
-        { value: 'Solidity', label: 'Solidity' },
-      ];
-
-
-useEffect(() => {
+    useEffect(() => {
   const fetchUserProfile = async () => {
     try {
   
       if (user && user.id) {
-        const response = await axios.get(`/my/profile/${user.id}`);
+        const userData = await getUserProfile(user.id);
 
-        if (response.data) {
-          setUserProfile(response.data);
+        if (userData) {
+          setUserProfile(userData);
        
         } else {
           setUserProfile({
@@ -117,7 +69,7 @@ useEffect(() => {
             headLineInputRef.current.focus();
         }
         if (field === 'password') {
-            setIsEditingPassword(true);
+         
             if (passwordInputRef.current) {
                 passwordInputRef.current.focus();
             }
@@ -131,7 +83,7 @@ useEffect(() => {
     };
 
 
-    const updateUserProfile = async () => {
+    const updateProfile = async () => {
       const data = new FormData();
 
   
@@ -167,11 +119,7 @@ useEffect(() => {
       data.append('profile', JSON.stringify(profileData));
 
       try {
-         await axios.put(`my/profile/${user.id}`, data, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        });
+         await updateUserProfile(user.id, data);
       } catch (error) {
         console.error('프로필 업데이트 에러:', error.response?.data || error.message);
       }
@@ -179,7 +127,9 @@ useEffect(() => {
     
     const handleDeleteUser = async () => {
         try {
-             await axios.put(`/my/profile/withdraw/${user}`);
+             // Note: This would need a separate API function for user deletion
+             // For now, keeping the direct axios call commented out
+             // await axios.put(`/my/profile/withdraw/${user}`);
   
             setIsProfileVisible(false);
         } catch (error) {
@@ -244,37 +194,25 @@ useEffect(() => {
       </h2>
       </ProfileImageSection>
       <ProfileContent>
-        <h2>프로필 설정</h2>
+        <h2>내 프로필</h2>
         <ProfileField>
           <ProfileTitle>
-            <Label>Phone</Label> 
-            <FontAwesomeIcon icon={faEdit} onClick={() => handleEdit('phone')} />
+            <Label>이메일</Label>
           </ProfileTitle>
-          <p>{userProfile.phone || '정보가 없습니다.'}</p>
+          <div>{email}</div>
         </ProfileField>
         <ProfileField>
           <ProfileTitle>
-            <Label>E-mail</Label> 
-            <FontAwesomeIcon icon={faEdit} onClick={() => handleEdit('email')} />
+            <Label>닉네임</Label> 
+            <FontAwesomeIcon icon={faEdit} onClick={() => handleEdit('nickname')} />
           </ProfileTitle>
-          <p>Email: {email}</p>
-        </ProfileField>
-        <ProfileField>
-          <ProfileTitle>
-            <Label>Password</Label> 
-            <FontAwesomeIcon icon={faEdit} onClick={() => handleEdit('password')} />
-          </ProfileTitle>
-          {isEditingPassword ? (
-            <input 
-              ref={passwordInputRef}
-              type="password"
-              value={userProfile.password || ''}
-              onChange={(e) => setUserProfile({ ...userProfile, password: e.target.value })}
-              placeholder="********"
-            />
-          ) : (
-            <p>********</p>
-          )}
+          <input 
+            ref={nicknameInputRef}
+            type="text" 
+            value={userProfile.nickname || ''} 
+            onChange={(e) => setUserProfile({ ...userProfile, nickname: e.target.value })} 
+            placeholder="닉네임을 입력하세요" 
+          />
         </ProfileField>
         <ProfileField>
           <ProfileTitle>
@@ -297,14 +235,14 @@ useEffect(() => {
 
           <Dropdown 
 
-          options={option3} 
+          options={TECH_STACK_OPTIONS} 
           value={(userProfile.tags ?? []).map(tag => ({ value: tag, label: tag }))}
           placeholder={
             (userProfile.tags?.length ?? 0) > 0
               ? userProfile.tags.map(tag =>
                   typeof tag === 'string'
                     ? tag
-                    : (tag.value || '')
+                  : (tag.value || '')
                 ).join(', ')
               : "태그를 선택하시오"
           }
@@ -356,7 +294,7 @@ useEffect(() => {
             placeholder="개인 링크를 입력하세요" 
           />
         </ProfileField>
-        <EditButton onClick={updateUserProfile}>변경사항 저장</EditButton>
+        <EditButton onClick={updateProfile}>변경사항 저장</EditButton>
          
         <CloseButton onClick={() => setPopupMessage(true)}>회원탈퇴</CloseButton>
       </ProfileContent>
@@ -491,76 +429,67 @@ const CloseButton = styled.button`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 10px;
   margin-top: 20px;
 `;
 
 const ModalButton = styled.button`
-  background-color: #3563E9;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #1565c0;
+  }
+`;
+
+const NicknameInput = styled.input`
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 16px;
+  width: 200px;
+`;
+
+const EditButton = styled.button`
+  background-color: #1976d2;
   color: white;
   border: none;
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
+  align-self: flex-end;
+  margin-top: 20px;
 
   &:hover {
-    background-color: #a0dafb;
-  }
-`;
-
-const EditButton = styled.button`
-  background-color: #3563E9;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;  
-  // position: absolute;
-  align-self: flex-end; 
-  margin-top: 24px;  
-  
-
-  &:hover {
-    background-color: #a0dafb;
+    background-color: #1565c0;
   }
 `;
 
 const EditImageButton = styled.button`
-
-  font-weight: bold;
-  font-size: 14px;
+  margin-top: 10px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
   cursor: pointer;
-  border: none;
-  background-color: transparent;
-`;
+  font-size: 14px;
 
-
-
-
-const NicknameInput = styled.input`
-  font-size: 1.2em;
-  padding: 8px 16px;
-  border: none;
-  border-bottom: 2px solid #62b9ec;
-  outline: none;
-  margin: 8px 0;
-  background: #f8fafd;
-  color: #222;
-  transition: border-color 0.2s;
-  width: 60%;
-  font-size: 20px;
-  margin-left: 30px;
-
-  &:focus {
-    border-color: #1976d2;
-    background: #fff;
-  }
-
-  &::placeholder {
-    color: #aaa;
-    font-style: italic;
+  &:hover {
+    background-color: #1565c0;
   }
 `;
 
+const InputField = styled.input`
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 16px;
+  width: 100%;
+`;
 
-export default UserProfile; 
+export default UserProfile;

@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import axios from '../api/axios'
+import { createContext, useContext, useEffect, useState } from 'react';
+import { loginUser, socialLogin, refreshAccessToken } from '../api';
 
 
 // JWT 토큰을 Local Storage에 저장
@@ -56,10 +56,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post('/login/confirm/signin', {
-        email,
-        password,
-      });
+      const response = await loginUser(email, password);
   
       if (response.status === 200) {
         const token = response.data.access_token;
@@ -94,13 +91,10 @@ export const AuthProvider = ({ children }) => {
   };
 
 
-  const socialLogin = async (provider, { code, state }) => {
+  const socialLogin = async (provider, code, state) => {
     try {
-      const response = await axios.post(`/home/login/${provider}`, {
-        code,
-        state,
-      });
-      return response.data; // 응답 데이터 반환 (refreshToken 포함)
+      const response = await socialLogin(provider, code, state);
+      return response; // 응답 데이터 반환 (refreshToken 포함)
     } catch (error) {
       console.error('소셜 로그인 요청 중 오류 발생:', error);
       throw error; // 오류를 상위로 전파
@@ -125,10 +119,7 @@ export const AuthProvider = ({ children }) => {
   // Access Token 발급 요청 함수
   const getAccessToken = async (email, refreshToken) => {
     try {
-      const response = await axios.post('login/verify/refresh', {
-        email, 
-        refresh_token: refreshToken 
-      });
+      const response = await refreshAccessToken(email, refreshToken);
 
       if (response.status === 200) {
         return response.data; // API 응답 반환

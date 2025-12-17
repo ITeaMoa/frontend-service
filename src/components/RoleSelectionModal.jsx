@@ -80,10 +80,6 @@ const SubmitButton = styled.button`
 `;
 
 
-const CloseButton = styled(SubmitButton)`
-  margin-top: 20px; 
-
-`;
 
 const RoleButtonContainerStyled = styled.div`
   display: flex;
@@ -99,26 +95,6 @@ const RoleButtonContainerStyled = styled.div`
 
 `;
 
-const AuthButtonContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-top: 80px;
-`;
-
-const AuthButton = styled.button`
-    border: none;
-  border-radius: 15px;
-  background-color: #62b9ec;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  padding: 10px 20px;
-  margin-left: 10px;
-
-  &:hover {
-    background-color: #a0dafb;
-  }
-`;
 
 const RoleButton = styled.button`
   padding: 24px 25px;

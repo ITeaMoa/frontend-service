@@ -5,13 +5,15 @@ import Modal from '../../components/Modal';
 import { useNavigate, } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperclip } from '@fortawesome/free-solid-svg-icons';
-import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 import { useAtom } from 'jotai';
 import { selectedSavedProjectAtom } from '../../Atoms.jsx/AtomStates'; 
 import AlertModal from '../../components/AlertModal';
 import { ContentsWrap , MainContent} from '../../assets/BusinessAnalysisStyle';
 import NavigationBar from '../../components/NavigationBar';
+import { TECH_STACK_OPTIONS } from '../../constants/techStackOptions';
+import { ROLE_OPTIONS } from '../../constants/roleOptions';
+import { createFeed, updateTempFeed, deleteFeed } from '../../api';
 
 const recruitTypes = ['프로젝트', '스터디'];
 const peopleOptions = ['1명', '2명', '3명', '4명', '5명 이상'];
@@ -48,76 +50,6 @@ const WritePage = () => {
   const [people, setPeople] = useState(null);
   const [popupMessage, setPopupMessage] = useState(''); 
   
-
-const option2 = [
-  { value: '백엔드', label: '백엔드' },
-  { value: '프론트엔드', label: '프론트엔드' },
-  { value: '디자이너', label: '디자이너' },
-  { value: 'PM', label: 'PM' },
-  { value: 'AI 엔지니어', label: 'AI 엔지니어' },
-  { value: '아키텍트', label: '아키텍트' },
-  { value: '시스템 엔지니어', label: '시스템 엔지니어' },
-  { value: '정보보안', label: '정보보안' },
-  { value: 'DBA', label: 'DBA' },
-  { value: '블록체인 엔지니어', label: '블록체인 엔지니어' },
-  { value: '데이터 엔지니어', label: '데이터 엔지니어' },
-  { value: '빅데이터', label: '빅데이터' },
-  { value: 'DevOps', label: 'DevOps' },
-  { value: '모바일', label: '모바일' },
-  { value: 'QA', label: 'QA' },
-  { value: 'SRE', label: 'SRE' },
-  { value: 'iOS', label: 'iOS' },
-  { value: '안드로이드', label: '안드로이드' },
-  { value: '기획자', label: '기획자' },
-  { value: '마케팅', label: '마케팅' },
-];
-
-const option3 = [
-  { value: '웹', label: '웹' },
-  { value: '모바일', label: '모바일' },
-  { value: '정보보안', label: '정보보안' },
-  { value: 'AWS', label: 'AWS' },
-  { value: 'Git', label: 'Git' },
-  { value: 'Github', label: 'Github' },
-  { value: '클라우드', label: '클라우드' },
-  { value: '블록체인', label: '블록체인' },
-  { value: '인공지능', label: '인공지능' },
-  { value: '빅데이터', label: '빅데이터' },
-  { value: 'Spring Boot', label: 'Spring Boot' },
-  { value: 'React', label: 'React' },
-  { value: 'Vue', label: 'Vue' },
-  { value: 'Python', label: 'Python' },
-  { value: 'Node.js', label: 'Node.js' },
-  { value: 'TypeScript', label: 'TypeScript' },
-  { value: '게임', label: '게임' },
-  { value: 'UI/UX', label: 'UI/UX' },
-  { value: '알고리즘', label: '알고리즘' },
-  { value: '자료구조', label: '자료구조' },
-  { value: 'C/C++', label: 'C/C++' },
-  { value: 'C#', label: 'C#' },
-  { value: 'SQL', label: 'SQL' },
-  { value: 'NoSQL', label: 'NoSQL' },
-  { value: 'Django', label: 'Django' },
-  { value: 'Figma', label: 'Figma' },
-  { value: 'Swift', label: 'Swift' },
-  { value: 'Kotlin', label: 'Kotlin' },
-  { value: 'React Native', label: 'React Native' },
-  { value: 'Android', label: 'Android' },
-  { value: 'iOS', label: 'iOS' },
-  { value: 'GCP', label: 'GCP' },
-  { value: 'Kubernetes', label: 'Kubernetes' },
-  { value: 'Docker', label: 'Docker' },
-  { value: 'Ruby', label: 'Ruby' },
-  { value: 'R', label: 'R' },
-  { value: 'Go', label: 'Go' },
-  { value: 'Next.js', label: 'Next.js' },
-  { value: 'Express', label: 'Express' },
-  { value: 'Firebase', label: 'Firebase' },
-  { value: 'Linux/Unix', label: 'Linux/Unix' },
-  { value: '데이터마이닝', label: '데이터마이닝' },
-  { value: 'Solidity', label: 'Solidity' },
-];
-
 
 const handleSubmit = async (e, isTemporary) => {
   e.preventDefault();
@@ -189,38 +121,14 @@ const handleSubmit = async (e, isTemporary) => {
  
   try {
     if (Object.keys(selectedSavedProject).length > 0) {
-        await axios.patch(
-          `/my/temp`,
-          finalDataToSend,
-          
-          {
-            params: {
-              creatorId : user.id,
-              feedType: selectedSavedProject.sk,
-            
-            },
-          
-          }
-        );
-      
+        await updateTempFeed(finalDataToSend, user.id, selectedSavedProject.sk);
     } else {
-      
-      await axios.post(
-        '/feed/create',
-        formData,
-        {
-          params: {
-            feedType: feedType,
-            userId: user.id
-          },
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        }
-      );
+      await createFeed(formData, feedType, user.id);
     }
     navigate('/');
   } catch (error) {
+    setShowAlertPopup('게시물 저장에 실패했습니다.');
+    console.error('Error saving feed:', error);
   }
 };
 
@@ -322,20 +230,13 @@ const handleImageRemove = () => {
 
 const handleDelete = async () => {
   try {
-    await axios.delete(
-      `/feed/${selectedSavedProject.pk}`,
-      {
-        params: {
-          feedType: selectedSavedProject.sk,
-          userId: user.id
-        }
-      }
-    );
+    await deleteFeed(selectedSavedProject.pk, selectedSavedProject.sk, user.id);
     setShowAlertPopup('게시물이 삭제되었습니다.');
     setPopupMessage(false);
     navigate('/');
   } catch (error) {
     setShowAlertPopup('게시물 삭제에 실패했습니다.');
+    console.error('Error deleting feed:', error);
   }
 };
 
@@ -428,7 +329,7 @@ const handleDelete = async () => {
               <Label>모집 역할</Label>
             
                   <Dropdown 
-                  options={option2} 
+                  options={ROLE_OPTIONS} 
                   placeholder={"프론트엔드,백엔드..."} 
                   showCountButtons={true}
                   value={selectedRoles}
@@ -505,7 +406,7 @@ const handleDelete = async () => {
 
         <Modal isOpen={isModalOpen} onClose={closeModal}>
                 <Dropdown 
-                  options={option3}
+                  options={TECH_STACK_OPTIONS}
                   placeholder="태그를 선택하시오"
                   dropdownType="tags"
                   onTagSelect={selectedTag => {

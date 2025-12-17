@@ -8,6 +8,7 @@ import messageImg from '../assets/Image/message.png';
 import bellImg from '../assets/Image/Bell.png';
 import Modal from './Modal';
 import TagSelector from './TagSelector';
+import { TECH_STACK_OPTIONS } from '../constants/techStackOptions';
 
 const tagOptions = [
   "AWS", "Blockchain", "NodeJS", "React", "Java", "Dapp", "Git", "Backend"
@@ -28,53 +29,6 @@ const NavigationBar = ({showSearch, showTag=true}) => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
-
-  
-const option3 = [
-  { value: '웹', label: '웹' },
-  { value: '모바일', label: '모바일' },
-  { value: '정보보안', label: '정보보안' },
-  { value: 'AWS', label: 'AWS' },
-  { value: 'Git', label: 'Git' },
-  { value: 'Github', label: 'Github' },
-  { value: '클라우드', label: '클라우드' },
-  { value: '블록체인', label: '블록체인' },
-  { value: '인공지능', label: '인공지능' },
-  { value: '빅데이터', label: '빅데이터' },
-  { value: 'Spring Boot', label: 'Spring Boot' },
-  { value: 'React', label: 'React' },
-  { value: 'Vue', label: 'Vue' },
-  { value: 'Python', label: 'Python' },
-  { value: 'Node.js', label: 'Node.js' },
-  { value: 'TypeScript', label: 'TypeScript' },
-  { value: '게임', label: '게임' },
-  { value: 'UI/UX', label: 'UI/UX' },
-  { value: '알고리즘', label: '알고리즘' },
-  { value: '자료구조', label: '자료구조' },
-  { value: 'C/C++', label: 'C/C++' },
-  { value: 'C#', label: 'C#' },
-  { value: 'SQL', label: 'SQL' },
-  { value: 'NoSQL', label: 'NoSQL' },
-  { value: 'Django', label: 'Django' },
-  { value: 'Figma', label: 'Figma' },
-  { value: 'Swift', label: 'Swift' },
-  { value: 'Kotlin', label: 'Kotlin' },
-  { value: 'React Native', label: 'React Native' },
-  { value: 'Android', label: 'Android' },
-  { value: 'iOS', label: 'iOS' },
-  { value: 'GCP', label: 'GCP' },
-  { value: 'Kubernetes', label: 'Kubernetes' },
-  { value: 'Docker', label: 'Docker' },
-  { value: 'Ruby', label: 'Ruby' },
-  { value: 'R', label: 'R' },
-  { value: 'Go', label: 'Go' },
-  { value: 'Next.js', label: 'Next.js' },
-  { value: 'Express', label: 'Express' },
-  { value: 'Firebase', label: 'Firebase' },
-  { value: 'Linux/Unix', label: 'Linux/Unix' },
-  { value: '데이터마이닝', label: '데이터마이닝' },
-  { value: 'Solidity', label: 'Solidity' },
-];
 
 
   const handleChange = (e) => {
@@ -186,7 +140,7 @@ const option3 = [
             </SearchButton>
             <Modal isOpen={isModalOpen} onClose={closeModal} modalType="nav">
               <TagSelector
-                options={option3}
+                options={TECH_STACK_OPTIONS}
                 placeholder={"태그를 선택하시오"}
                 onTagSelect={handleTagSelect}
                 selectedTags={selectedTags}

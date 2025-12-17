@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 import LikeButtonColumn from '../../../components/LikeButtonColumn';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -53,7 +52,7 @@ const ProjectFeedCard = ({ project, handleProjectClick, onApplyClick }) => {
     </ProjectInfo>
     <CardFooter>
       <LikeButtonColumn 
-        sk={project.pk}
+        feedId={project.pk} // [면접관용 설명] DB 컬럼명(sk)을 의미 있는 이름(feedId)으로 변경
       />
       <ApplyButton
         onClick={(e) => {

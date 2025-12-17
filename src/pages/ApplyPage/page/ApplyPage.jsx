@@ -13,7 +13,7 @@ import RoleSelectionModal from '../../../components/RoleSelectionModal';
 import AuthModal from '../../../components/AuthModal';
 import AlertModal from '../../../components/AlertModal';
 import NavigationBar from '../../../components/NavigationBar';
-import axios from '../../../api/axios';
+import { getUserApplications, submitApplication, deleteFeed } from '../../../api';
 import { useAuth } from '../../../context/AuthContext';
 import { selectedProjectDetailAtom, selectedSavedProjectAtom } from '../../../Atoms.jsx/AtomStates';
 
@@ -54,12 +54,8 @@ const ApplyPage = () => {
     }
 
     try {
-      const response = await axios.get('/feed/applications', {
-        params: { userId: user.id },
-      });
-
-      const appliedProjects = response.data.map(app => app.feedId);
-      const isAlreadyApplied = appliedProjects.includes(project.pk);
+      const appliedFeedIds = await getUserApplications(user.id);
+      const isAlreadyApplied = appliedFeedIds.includes(project.pk);
 
       if (isAlreadyApplied) {
         setShowAlertPopup("이미 신청한 프로젝트입니다.");
@@ -90,7 +86,7 @@ const ApplyPage = () => {
         feedType: project.sk,
       };
 
-      await axios.post('/main/application', applicationData);
+      await submitApplication(applicationData);
 
       setProject(prevProject => {
         const updatedRecruitmentRoles = {
@@ -131,12 +127,7 @@ const ApplyPage = () => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`/feed/${project.pk}`, {
-        params: {
-          feedType: project.sk,
-          userId: user.id,
-        },
-      });
+      await deleteFeed(project.pk, project.sk, user.id);
       setShowAlertPopup('게시물이 삭제되었습니다.');
       setPopupMessage(false);
       navigate('/');
@@ -226,7 +217,7 @@ const ApplyPage = () => {
               <ApplyLikeButton
                 initialLikesCount={project.likesCount}
                 buttonStyle="apply"
-                sk={project.pk}
+                feedId={project.pk}
                 feedType={project.sk}
               />
               <span style={{ color: '#888' }}>

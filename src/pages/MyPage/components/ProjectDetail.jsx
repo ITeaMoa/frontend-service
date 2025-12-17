@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment } from '@fortawesome/free-solid-svg-icons';
 import Pagination from '../../../components/Pagination'; 
-import axios from '../../../api/axios'
+import { getFeedApplications, closeFeed, acceptApplication, rejectApplication, getFeedApplicationsByPart } from '../../../api';
 import Modal from '../../../components/Modal';
 import { useAtom } from 'jotai';
 import { currentApplicantsAtom } from '../../../Atoms.jsx/AtomStates';
@@ -41,9 +41,7 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
         }
 
         try {
-            const response = await axios.get(`my/writing/application`, {
-                params: { feedId: feedId },
-            });
+            const response = await getFeedApplications(feedId);
 
             if (response.data) {
                 setApplicants(response.data);
@@ -105,7 +103,11 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
         const url = newStatus === "반려" ? 'my/writing/reject' : 'my/writing/accept';
 
         try {
-           await axios.patch(url, requestData);
+           if (url === 'my/writing/accept') {
+             await acceptApplication(requestData);
+           } else {
+             await rejectApplication(requestData);
+           }
 
     
             setVisibleButtons(prevState => ({ ...prevState, [selectedApplicant.nickname]: newStatus }));
@@ -132,12 +134,7 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
                 if (field === '전체') {
                     await fetchApplications(project.pk); 
                 } else {
-                    const response = await axios.get(`my/writing/part`, {
-                        params: {
-                            feedId: project.pk,
-                            part: field 
-                        }
-                    });
+                    const response = await getFeedApplicationsByPart(project.pk, field);
                     setApplicants(response.data);
                 }
             } catch (error) {

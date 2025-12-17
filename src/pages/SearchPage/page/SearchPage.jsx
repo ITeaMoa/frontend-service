@@ -7,13 +7,18 @@ import { feedTypeAtom, selectedProjectDetailAtom } from '../../../Atoms.jsx/Atom
 import { ContentsWrap , MainContent} from '../../../assets/BusinessAnalysisStyle';
 import NavigationBar from '../../../components/NavigationBar';
 import ProjectFeedCard from '../components/ProjectFeedCard';
-import axios from '../../../api/axios'
 import { useAuth } from '../../../context/AuthContext';
 import AlertModal from '../../../components/AlertModal';
 import Modal from '../../../components/Modal';
 import RoleSelectionModal from '../../../components/RoleSelectionModal';
 import Pagination from '../../../components/Pagination';
-
+import { 
+  getAllProjects, 
+  getUserApplications, 
+  submitApplication, 
+  searchProjectsByKeyword, 
+  searchProjectsByTags 
+} from '../../../api';
 
 const SearchPage = () => {
   const {  user } = useAuth();
@@ -47,12 +52,14 @@ const SearchPage = () => {
           return;
         }
         try {
-            const apiUrl = tags 
-                ? `/main/search-tags?feedType=${feedType}&tags=${encodeURIComponent(tags)}`
-                : `/main/search-keyword?feedType=${feedType}&keyword=${encodeURIComponent(searchTerm)}`;
+            let data;
+            if (tags) {
+                data = await searchProjectsByTags(feedType, tags);
+            } else {
+                data = await searchProjectsByKeyword(feedType, searchTerm);
+            }
             
-            const response = await axios.get(apiUrl);
-            const filteredResults = response.data.filter(item => {
+            const filteredResults = data.filter(item => {
                 return !tags || (item.tags && item.tags.some(tag => tags.split(',').includes(tag)));
             });
             setSearchResults(filteredResults); 
@@ -81,13 +88,13 @@ const SearchPage = () => {
   useEffect(() => {
     const fetchAllProjects = async () => {
       try {
-        const response = await axios.get(`/main?feedType=${feedType}`);
-        if (!response.data || response.data.length === 0) {
+        const data = await getAllProjects(feedType);
+        if (!data || data.length === 0) {
           setAllProjects([]);
           return;
         }
   
-        setAllProjects(response.data);
+        setAllProjects(data);
       } catch (error) {
         console.error('프로젝트 가져오기 실패:', error);
         
@@ -120,13 +127,9 @@ const SearchPage = () => {
     }
   
     try {
-      const response = await axios.get('/feed/applications', {
-        params: {
-          userId: user.id,
-        }
-      });
+      const appliedProjectsData = await getUserApplications(user.id);
   
-      const appliedProjects = response.data.map(app => app.feedId); 
+      const appliedProjects = appliedProjectsData.map(app => app.feedId); 
   
       const isAlreadyApplied = appliedProjects.includes(project.pk);
       if (isAlreadyApplied) {
@@ -140,7 +143,6 @@ const SearchPage = () => {
     setSelectedProject(project);
     setIsRoleModalOpen(true); 
   };
-  
 
   const handleApplySubmit = async () => {
     if (!user) {
@@ -156,7 +158,7 @@ const SearchPage = () => {
         part: selectedRole,
         feedType: feedType
       };
-      await axios.post('/main/application', applicationData);
+      await submitApplication(applicationData);
       setShowApplyPopup("신청이 완료되었습니다.");
       setIsRoleModalOpen(false);
     } catch (error) {

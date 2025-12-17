@@ -2,10 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-regular-svg-icons';
 import styled from 'styled-components';
-import axios from '../../../api/axios';
 import { selectedProjectDetailAtom } from '../../../Atoms.jsx/AtomStates';
 import { useAtom } from 'jotai';
 import AlertModal from '../../../components/AlertModal';
+import { 
+  getProjectComments, 
+  submitComment, 
+  submitReply, 
+  getReplies, 
+  deleteReply, 
+  deleteComment, 
+  editComment 
+} from '../../../api';
 
 const CommentsSection = ({ commentInput, setCommentInput, user, projectId }) => {
   const [replyInput, setReplyInput] = useState({});
@@ -23,28 +31,27 @@ const CommentsSection = ({ commentInput, setCommentInput, user, projectId }) => 
   const fetchProjectDetails = async () => {
     try {
       if (selectedProjectDetail) {
-        const response = await axios.get(`/main?feedType=${selectedProjectDetail.sk}`);
-        const selectedProject = response.data.find(item => item.pk === projectId);
-  
+        // Get comments directly for the specific project
+        const comments = await getProjectComments(projectId, selectedProjectDetail.sk);
+        
+        // Enrich comments with replies
         const commentsWithReplies = await Promise.all(
-          selectedProject.comments.map(async (comment) => {
-            const replyResponse = await axios.get(`/feed/${projectId}/comments/${comment.commentId}/replies`);
+          comments.map(async (comment) => {
+            const replies = await getReplies(projectId, comment.commentId);
             return {
               ...comment,
-              replies: replyResponse.data
+              replies: replies
             };
           })
         );
   
-        setSelectedProjectDetail(selectedProject);
+        // Set the comments
         setComments(commentsWithReplies);
       } else {
-        setSelectedProjectDetail(null);
         setComments([]);
       }
     } catch (error) {
-      console.error("Error fetching project details:", error);
-      setSelectedProjectDetail(null);
+      console.error("Error fetching project comments:", error);
       setComments([]);
     }
   };
@@ -65,12 +72,9 @@ const CommentsSection = ({ commentInput, setCommentInput, user, projectId }) => 
       };
 
       try {
-        await axios.post(`/feed/${projectId}/comments`, newComment, {
-          params: { feedType: selectedProjectDetail.sk }
-        });
-      setCommentInput('');
-      
-      await fetchProjectDetails();
+        await submitComment(projectId, newComment, selectedProjectDetail.sk);
+        setCommentInput('');
+        await fetchProjectDetails();
       } catch (error) {
         setShowAlertPopup("댓글 제출에 실패했습니다. 다시 시도해주세요.");
       }
@@ -85,11 +89,9 @@ const CommentsSection = ({ commentInput, setCommentInput, user, projectId }) => 
     try {
       const replyData = {
         content: replyText
-      }
-     await axios.post(
-        `/feed/${projectId}/comments/${commentId}/replies?userId=${user.id}`,
-        replyData
-      );
+      };
+      
+      await submitReply(projectId, commentId, user.id, replyData);
   
       setReplies(prev => ({
         ...prev,
@@ -103,7 +105,7 @@ const CommentsSection = ({ commentInput, setCommentInput, user, projectId }) => 
         ]
       }));
 
-    await axios.get(`/feed/${projectId}/comments/${commentId}/replies`);
+      await getReplies(projectId, commentId);
   
       setReplyInput(prev => ({ ...prev, [commentId]: '' }));
       setShowReplyInput(prev => ({ ...prev, [commentId]: false }));
@@ -122,14 +124,9 @@ const CommentsSection = ({ commentInput, setCommentInput, user, projectId }) => 
   };
 
 
-
 const handleDeleteReply = async (commentId, replyId, userId) => {
   try {
-    await axios.delete(
-      `/feed/${projectId}/comments/${commentId}/replies/${replyId}`,
-      { params: { userId } }
-    );
-  
+    await deleteReply(projectId, commentId, replyId, userId);
     await fetchProjectDetails();
   } catch (error) {
     console.error('대댓글 삭제 실패:', error);
@@ -141,16 +138,9 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
 
 
   const handleDeleteComment = async (commentId) => {
-
     try {
-      const response = await axios.delete(`/feed/${projectId}/comments/${commentId}`, {
-        params: { feedType: selectedProjectDetail.sk, userId: user.id }
-      });
-      
-      if (response.data) {
-        setComments(prevComments => prevComments.filter(comment => comment.id !== commentId));
+      await deleteComment(projectId, commentId, selectedProjectDetail.sk, user.id);
       await fetchProjectDetails();
-      }
     } catch (error) {
       console.error("댓글 삭제 중 오류 발생:", error);
       setAlertMessage("댓글 삭제에 실패했습니다.");
@@ -165,15 +155,14 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
       setShowAlert(true);
       return;
     }
+    
     try {
-
-     const commentData = {
-      newContent: editCommentInput
-     }
-       await axios.put(
-        `/feed/${projectId}/comments/${commentId}?feedType=${selectedProjectDetail.sk}&userId=${user.id}`, 
-        commentData
-      );
+      const commentData = {
+        newContent: editCommentInput
+      };
+      
+      await editComment(projectId, commentId, selectedProjectDetail.sk, user.id, commentData);
+      
       setComments(prevComments => 
         prevComments.map(comment => 
           comment.commentId === commentId

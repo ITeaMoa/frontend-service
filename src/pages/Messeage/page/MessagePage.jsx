@@ -3,12 +3,12 @@ import styled from 'styled-components';
 import NavigationBar from '../../../components/NavigationBar';
 import MessagePeople from '../components/MessagePeople';
 import MessageList from '../components/MessageList';
-import axios from '../../../api/axios'
 import { useAuth } from '../../../context/AuthContext'
 import { useAtom } from 'jotai';
 import { SELECTED_PERSON_ID, MESSAGE_LIST } from '../../../Atoms.jsx/AtomStates';
 import { useLocation } from 'react-router-dom';
 import { ContentsWrap , MainContent} from '../../../assets/BusinessAnalysisStyle';
+import { getMessages, getMessageCount, getMessageUsers, sendMessage } from '../../../api';
 
 const MessagePage = () => {
   const [selectedPerson, setSelectedPerson] = useState(null);
@@ -36,19 +36,11 @@ useEffect(() => {
       setSelectedPersonId(personId);
 
       // 메시지 목록 불러오기
-      const response = await axios.get('/message', {
-        params: {
-          recipientId: personId,
-          userId: user.id
-        }
-      });
-      setMessageList(response.data);
+      const messages = await getMessages(personId, user.id);
+      setMessageList(messages);
 
       // 선택한 사람의 메시지 count만 새로 불러오기
-      const countResponse = await axios.get('/message/count', {
-        params: { pk: user.id }
-      });
-      const countData = countResponse.data;
+      const countData = await getMessageCount(user.id);
 
       setPersonList(prevList =>
         prevList.map(person =>
@@ -64,10 +56,7 @@ useEffect(() => {
 
 const getMessage = async () => {
   try {
-    const response = await axios.get('/message/list', {
-      params: { pk: user.id }
-    });
-    const data = response.data || {};
+    const data = await getMessageUsers(user.id);
     
     const list = Object.entries(data).map(([userId, nickname]) => ({
       id: userId,
@@ -75,11 +64,8 @@ const getMessage = async () => {
     }));
     setPersonList(list);
 
-    const countResponse = await axios.get('/message/count', {
-      params: { pk: user.id }
-    });
+    const countData = await getMessageCount(user.id);
 
-    const countData = countResponse.data;
     const mergedPersonList = list.map(person => ({
       ...person,
       count: countData[person.id] !== undefined ? countData[person.id] : "0"
@@ -107,20 +93,15 @@ useEffect(() => {
         recipientId: selectedPersonId,
         messageContent: messageContent
       };
-      await axios.post('/message', data);
+      await sendMessage(data);
 
       const exists = personList.some(person => person.id === selectedPersonId);
       if (!exists) {
         await getMessage();
       }
       try {
-        const messageResponse = await axios.get('/message', {
-          params: {
-            recipientId: selectedPersonId,
-            userId: user.id
-          }
-        });
-        setMessageList(messageResponse.data);
+        const messages = await getMessages(selectedPersonId, user.id);
+        setMessageList(messages);
       } catch (error) {
         console.error('Error fetching messages:', error);
       }

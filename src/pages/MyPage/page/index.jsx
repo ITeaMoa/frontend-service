@@ -1,9 +1,8 @@
-import React, { useEffect, useState,  } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import NavigationBar from "../../../components/NavigationBar";
 import ProjectDetail from '../components/ProjectDetail';
 import { useAuth } from '../../../context/AuthContext'
-import axios from '../../../api/axios';
 import { useAtom } from 'jotai';
 import { feedTypeAtom } from '../../../Atoms.jsx/AtomStates';
 import Pagination from '../../../components/Pagination';
@@ -16,7 +15,22 @@ import ProjectLikeItem from '../components/ProjectLikeItem';
 import ProjectItemColumnComponent from '../components/ProjectItemColumnComponent';
 import RoleSelectionModal from '../../../components/RoleSelectionModal';
 import ProjectDeadline from '../components/ProjectDeadline';
-
+import { 
+  getUserApplications, 
+  submitApplication, 
+  getUserWriting, 
+  getUserTempFeeds, 
+  getUserLikedFeeds, 
+  getFeedApplications, 
+  closeFeed, 
+  cancelApplication 
+} from '../../../api';
+import { 
+  MOCK_SAVED_PROJECTS, 
+  MOCK_LIKED_PROJECTS, 
+  MOCK_APPLIED_PROJECTS, 
+  MOCK_WRITTEN_PROJECTS 
+} from '../../../data/mockData';
 
 const MyPage = () => {
   const [projects, setProjects] = useState([]);
@@ -44,410 +58,40 @@ useEffect(() => {
 }, []);
 
 
-const dummySavedProjects = [
-  {
-    "pk": "c0349497-05cb-43ef-99f2-8ac4cc73ba86",
-    "sk": "PROJECT",
-    "nickname": "brynn",
-    "entityType": "FEED",
-    "creatorId": "d4487dfc-f001-7052-0905-97df4f00380c",
-    "title": "AI 데이터분석 서비스 팀원 모집합니다 !",
-    "recruitmentNum": 3,
-    "deadline": "2025-03-14T00:00:00",
-    "place": "동탄역 근처",
-    "period": 0,
-    "tags": [
-      "웹",
-      "인공지능",
-      "빅데이터"
-    ],
-    "likesCount": 1,
-    "content": "유저 데이터를 모아서 분석하고, 대시보드화해서 AI로 마케팅 방법을 제안해주는 서비스를 만들어보려고 합니다. 제가 개발을 할 수 있으니 데이터분석 및 AI 활용해서 엔지니어링 할 수 있는 분 구합니다.\n\n궁금한 점은 쪽지 주세요!",
-    "comments": [],
-    "postStatus": false,
-    "timestamp": "2025-02-03T13:42:00.587250944",
-    "savedFeed": true,
-    "roles": {
-      "ai 엔지니어": 1,
-      "프론트엔드": 1,
-      "빅데이터": 1
-    },
-    "recruitmentRoles": {
-      "ai 엔지니어": 0,
-      "프론트엔드": 1,
-      "빅데이터": 0
-    }
-  },
- 
-  {
-    "pk": "c0349497-05cb-43ef-99f2-8ac4cc73ba86",
-    "sk": "PROJECT",
-    "nickname": "brynn",
-    "entityType": "FEED",
-    "creatorId": "d4487dfc-f001-7052-0905-97df4f00380c",
-    "title": "AI 데이터분석 서비스 팀원 모집합니다 !",
-    "recruitmentNum": 3,
-    "deadline": "2025-03-14T00:00:00",
-    "place": "동탄역 근처",
-    "period": 0,
-    "tags": [
-      "웹",
-      "인공지능",
-      "빅데이터"
-    ],
-    "likesCount": 1,
-    "content": "유저 데이터를 모아서 분석하고, 대시보드화해서 AI로 마케팅 방법을 제안해주는 서비스를 만들어보려고 합니다. 제가 개발을 할 수 있으니 데이터분석 및 AI 활용해서 엔지니어링 할 수 있는 분 구합니다.\n\n궁금한 점은 쪽지 주세요!",
-    "comments": [],
-    "postStatus": false,
-    "timestamp": "2025-02-03T13:42:00.587250944",
-    "savedFeed": true,
-    "roles": {
-      "ai 엔지니어": 1,
-      "프론트엔드": 1,
-      "빅데이터": 1
-    },
-    "recruitmentRoles": {
-      "ai 엔지니어": 0,
-      "프론트엔드": 1,
-      "빅데이터": 0
-    }
-  },
- 
-];
-
-const likeProjects = [ 
-  {
-    "pk": "4fccc2dd-58a7-4db1-a549-b44603b9fbbb",
-    "sk": "PROJECT",
-    "nickname": "바다상어",
-    "entityType": "FEED",
-    "creatorId": "f4f84d4c-90c1-7027-d639-96212513682e",
-    "title": "ITeaMoa 프로젝트 팀원 구합니다",
-    "recruitmentNum": 5,
-    "deadline": "2025-02-28T00:00:00",
-    "place": "강남역",
-    "period": 0,
-    "tags": [
-      "웹",
-      "모바일",
-      "AWS",
-      "Git",
-      "Github",
-      "Spring Boot",
-      "React"
-    ],
-    "likesCount": 5,
-    "content": "안녕하세요.\n\n\"IT관련 프로젝트 팀원 모집 플랫폼\" 프로젝트 진행하실 팀원 구합니다~\n\n많은 관심 바라요:)",
-    "comments": [
-      {
-        "userId": "84b8ddac-3081-70eb-e79d-e8f5deef4892",
-        "comment": "질문이 있습니다",
-        "timestamp": "2025-02-05T01:20:34.78452235",
-        "name": null
-      },
-      {
-        "userId": "84b8ddac-3081-70eb-e79d-e8f5deef4892",
-        "comment": "질문 받아주세요!!",
-        "timestamp": "2025-02-05T01:26:31.379855213",
-        "name": null
-      }
-    ],
-    "postStatus": true,
-    "timestamp": "2025-02-03T13:21:40.743217531",
-    "savedFeed": false,
-    "roles": {
-      "백엔드": 2,
-      "프론트엔드": 1,
-      "기획자": 1,
-      "pm": 1
-    },
-    "recruitmentRoles": {
-      "백엔드": 1,
-      "프론트엔드": 0,
-      "기획자": 1,
-      "pm": 0
-    }
-  },
-  {
-    "pk": "4fccc2dd-58a7-4db1-a549-b44603b9fbbb",
-    "sk": "PROJECT",
-    "nickname": "바다상어",
-    "entityType": "FEED",
-    "creatorId": "f4f84d4c-90c1-7027-d639-96212513682e",
-    "title": "ITeaMoa 프로젝트 팀원 구합니다",
-    "recruitmentNum": 5,
-    "deadline": "2025-02-28T00:00:00",
-    "place": "강남역",
-    "period": 0,
-    "tags": [
-      "웹",
-      "모바일",
-      "AWS",
-      "Git",
-      "Github",
-      "Spring Boot",
-      "React"
-    ],
-    "likesCount": 5,
-    "content": "안녕하세요.\n\n\"IT관련 프로젝트 팀원 모집 플랫폼\" 프로젝트 진행하실 팀원 구합니다~\n\n많은 관심 바라요:)",
-    "comments": [
-      {
-        "userId": "84b8ddac-3081-70eb-e79d-e8f5deef4892",
-        "comment": "질문이 있습니다",
-        "timestamp": "2025-02-05T01:20:34.78452235",
-        "name": null
-      },
-      {
-        "userId": "84b8ddac-3081-70eb-e79d-e8f5deef4892",
-        "comment": "질문 받아주세요!!",
-        "timestamp": "2025-02-05T01:26:31.379855213",
-        "name": null
-      }
-    ],
-    "postStatus": true,
-    "timestamp": "2025-02-03T13:21:40.743217531",
-    "savedFeed": false,
-    "roles": {
-      "백엔드": 2,
-      "프론트엔드": 1,
-      "기획자": 1,
-      "pm": 1
-    },
-    "recruitmentRoles": {
-      "백엔드": 1,
-      "프론트엔드": 0,
-      "기획자": 1,
-      "pm": 0
-    }
-  },
- 
-];
-
-const appliedproject = 
-[
-  {
-    "userId": "a4a8fd8c-d0b1-7054-7d1c-d0285599d299",
-    "feedId": "a3e74975-5bd9-4c57-a3b4-33aa5828e702",
-    "part": "프론트",
-    "status": "PENDING",
-    "applicationTimestamp": "2025-05-01T10:14:05.6506286",
-    "creatorId": "USER#a4a8fd8c-d0b1-7054-7d1c-d0285599d299",
-    "title": "테스트1",
-    "content": "테스트1",
-    "tags": [
-      "c",
-      "c++"
-    ],
-    "recruitmentNum": 5,
-    "deadline": "2024-12-31T23:59:59",
-    "period": 3,
-    "likesCount": 1,
-    "recruitmentRoles": {
-      "프론트엔드": 0,
-      "백엔드": 0,
-      "프론트": 2
-    },
-    "nickname": "brynn_"
-  },
-  {
-    "userId": "a4a8fd8c-d0b1-7054-7d1c-d0285599d299",
-    "feedId": "a3e74975-5bd9-4c57-a3b4-33aa5828e702",
-    "part": "프론트",
-    "status": "REJECTED",
-    "applicationTimestamp": "2025-05-01T10:14:05.6506286",
-    "creatorId": "USER#a4a8fd8c-d0b1-7054-7d1c-d0285599d299",
-    "title": "테스트1",
-    "content": "테스트1",
-    "tags": [
-      "c",
-      "c++"
-    ],
-    "recruitmentNum": 5,
-    "deadline": "2024-12-31T23:59:59",
-    "period": 3,
-    "likesCount": 1,
-    "recruitmentRoles": {
-      "프론트엔드": 0,
-      "백엔드": 0,
-      "프론트": 2
-    },
-    "nickname": "brynn_"
-  }
-]
-
-const writtenProjects = [
-  {
-    "pk": "bfcd417e-5f0b-456f-94ae-78628ba050ac",
-    "sk": "PROJECT",
-    "nickname": "청갈치",
-    "entityType": "FEED",
-    "creatorId": "34f8fd4c-a001-7051-2a4e-64beb057470f",
-    "title": "두번째테스트",
-    "recruitmentNum": 5,
-    "deadline": "2024-12-31T23:59:59",
-    "place": "강남",
-    "period": 3,
-    "tags": [
-      "c",
-      "c++"
-    ],
-    "likesCount": 0,
-    "content": "두번째테스트",
-    "comments": [],
-    "postStatus": true,
-    "timestamp": "2025-01-16T08:31:10.900805343",
-    "savedFeed": false,
-    "roles": {
-      "frontend": 1,
-      "backend": 2
-    },
-    "recruitmentRoles": {
-      "backend": 1,
-      "frontend": 0,
-      "무관": 1
-    }
-  },
-  {
-    "pk": "5bd04ed7-a3f6-4a4e-b909-6e1ad6724fa9",
-    "sk": "PROJECT",
-    "nickname": "청갈치",
-    "entityType": "FEED",
-    "creatorId": "34f8fd4c-a001-7051-2a4e-64beb057470f",
-    "title": "3",
-    "recruitmentNum": 5,
-    "deadline": "2024-12-31T23:59:59",
-    "place": "강남",
-    "period": 3,
-    "tags": [
-      "c",
-      "c++"
-    ],
-    "likesCount": 0,
-    "content": "3",
-    "comments": [],
-    "postStatus": true,
-    "timestamp": "2025-01-14T14:24:14.8894676",
-    "savedFeed": false,
-    "roles": {
-      "frontend": 1,
-      "backend": 2
-    },
-    "recruitmentRoles": {
-      "backend": 0,
-      "frontend": 0
-    }
-  },
-  {
-    "pk": "b213afa5-cb05-413d-b934-6e30c46e68be",
-    "sk": "PROJECT",
-    "nickname": "청갈치",
-    "entityType": "FEED",
-    "creatorId": "34f8fd4c-a001-7051-2a4e-64beb057470f",
-    "title": "USER#붙임",
-    "recruitmentNum": 5,
-    "deadline": "2024-12-31T23:59:59",
-    "place": "강남",
-    "period": 3,
-    "tags": [
-      "c",
-      "c++"
-    ],
-    "likesCount": 0,
-    "content": "USER#붙임",
-    "comments": [],
-    "postStatus": true,
-    "timestamp": "2025-01-16T19:09:34.184155",
-    "savedFeed": false,
-    "roles": {
-      "frontend": 1,
-      "backend": 2
-    },
-    "recruitmentRoles": {
-      "backend": 1,
-      "frontend": 0,
-      "무관": 2
-    }
-  },
-  {
-    "pk": "518d95b1-597f-4ecb-a214-9b1f9ed4f788",
-    "sk": "PROJECT",
-    "nickname": "청갈치",
-    "entityType": "FEED",
-    "creatorId": "34f8fd4c-a001-7051-2a4e-64beb057470f",
-    "title": "첫테스트",
-    "recruitmentNum": 5,
-    "deadline": "2024-12-31T23:59:59",
-    "place": "강남",
-    "period": 3,
-    "tags": [
-      "c",
-      "c++"
-    ],
-    "likesCount": 0,
-    "content": "첫테스트",
-    "comments": [],
-    "postStatus": true,
-    "timestamp": "2025-01-16T19:07:25.831017",
-    "savedFeed": false,
-    "roles": {
-      "frontend": 1,
-      "backend": 2
-    },
-    "recruitmentRoles": {
-      "backend": 1,
-      "frontend": 0
-    }
-  }
-]
- 
-
 const refreshProjects = async () => {
   try {
-    let response;
+    let data;
 
     if (selectedList === 'applied') {
-      response = await axios.get('/feed/applications', {
-        params: {
-          userId: user.id,
-        }
-      });
-      setProjects(appliedproject);
+      data = await getUserApplications(user.id);
     } else if (selectedList === 'written') {
-      response = await axios.get('/my/writing', {
-        params: {
-          creatorId: user.id,
-          sk: feedType
-        }
-      });
-      setProjects(writtenProjects)
-     
+      data = await getUserWriting(user.id, feedType);
     } else if (selectedList === 'saved') {
-      response = await axios.get('/my/temp', {
-        params: {
-          creatorId: user.id,
-          feedType: feedType
-        }
-      });
-      setProjects(dummySavedProjects);
+      data = await getUserTempFeeds(user.id, feedType);
     } else if (selectedList === 'interested') {
-      response = await axios.get('/my/like', { 
-        params: {
-          userId: user.id,
-          feedType: feedType
-        }
-      });
-      setProjects(likeProjects);
-    } else{
-      setProjects(appliedproject);
-    }
-    if (response && response.data) {
-      setProjects(response.data);
-    } else {
-  
-      setProjects([]); 
+      data = await getUserLikedFeeds(user.id, feedType);
     }
     
+    if (data) {
+      setProjects(data);
+    } else {
+      setProjects([]); 
+    }
   } catch (error) {
+    console.warn("Backend unavailable, loading mock data...", error);
+    
+    // Fallback to mock data based on selected list type
+    if (selectedList === 'applied') {
+      setProjects(MOCK_APPLIED_PROJECTS);
+    } else if (selectedList === 'written') {
+      setProjects(MOCK_WRITTEN_PROJECTS);
+    } else if (selectedList === 'saved') {
+      setProjects(MOCK_SAVED_PROJECTS);
+    } else if (selectedList === 'interested') {
+      setProjects(MOCK_LIKED_PROJECTS);
+    } else {
+      setProjects([]);
+    }
   }
 };
 
@@ -461,19 +105,14 @@ useEffect(() => {
   useEffect(() => {
     const fetchApplications = async (feedId) => {
       if (!feedId) {
-
         return; 
       }
 
       try {
-        const response = await axios.get(`my/writing/application`, {
-          params: {
-            feedId: feedId
-          }
-        });
+        const data = await getFeedApplications(feedId);
 
-        if (response.data) {
-          setApplications(response.data); 
+        if (data) {
+          setApplications(data); 
         } else {
           setApplications([]);
         }
@@ -548,13 +187,12 @@ useEffect(() => {
 
 const handleProjectClose = async (projectId, feedType) => {
     try {
-
         const requestData = {
             pk: projectId,
             sk: feedType  
         };
 
-        await axios.patch('my/writing/close', requestData);
+        await closeFeed(requestData);
             
         setProjects(prevProjects => 
             prevProjects.map(project => 
@@ -579,12 +217,8 @@ const handleCancelApplication = async (userId, feedId) => {
 const handleConfirmCancel = async () => {
     const { userId, feedId } = selectedProjectForCancel;
     try {
-      const response = await axios.delete(`feed/apply-cancel?userId=${userId}&feedId=${feedId}`, {
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-      if (response.status === 200 || response.status === 204) {
+      const response = await cancelApplication(userId, feedId);
+      if (response || response === null) { 
         setProjects(prevProjects => 
           prevProjects.filter(project => project.feedId !== feedId)
         );
@@ -597,11 +231,7 @@ const handleConfirmCancel = async () => {
       }
       setIsConfirmModalOpen(false);
     } catch (error) {
-      if (error.response) {
-        setShowAlertPopup(`신청 취소 중 오류가 발생했습니다. (${error.response.data})`);
-      } else {
-        setShowAlertPopup(`신청 취소 중 오류가 발생했습니다. (${error.message})`);
-      }
+      setShowAlertPopup(`신청 취소 중 오류가 발생했습니다. (${error.message})`);
     }
   };
 
@@ -621,13 +251,9 @@ const handleConfirmCancel = async () => {
     }
   
     try {
-      const response = await axios.get('/feed/applications', {
-        params: {
-          userId: user.id,
-        }
-      });
+      const appliedProjectsData = await getUserApplications(user.id);
   
-      const appliedProjects = response.data.map(app => app.feedId); 
+      const appliedProjects = appliedProjectsData.map(app => app.feedId); 
   
       const isAlreadyApplied = appliedProjects.includes(project.pk);
       if (isAlreadyApplied) {
@@ -635,14 +261,14 @@ const handleConfirmCancel = async () => {
         return; 
       }
     } catch (error) {
-
+      console.error('신청 여부 확인 실패:', error);
     }
   
     setApplySelectedProject(project);
     setIsRoleModalOpen(true); 
   };
   
-  const handleApplySubmit = async (project, role) => {
+  const handleApplySubmit = async () => {
     try {
       const applicationData = {
         pk: user.id,
@@ -651,7 +277,7 @@ const handleConfirmCancel = async () => {
         feedType: feedType
       };
 
-      await axios.post('/main/application', applicationData);
+      await submitApplication(applicationData);
       setShowApplyPopup("신청이 완료되었습니다.");
       setIsRoleModalOpen(false);
     } catch (error) {
@@ -920,31 +546,31 @@ const TabButtonType3 = styled.button`
   border: none;
   font-size: 18px;
   font-weight: bold;
-  color: #000; // Default text color
+  color: #000; 
   cursor: pointer;
-  padding: 10px 20px; // Adjust padding as needed
+  padding: 10px 20px; 
   position: relative;
   margin-right: 25px;
 
   &.active {
-    color: #00aeff; // Active tab color
-    font-weight: bold; // Make active tab bold
+    color: #00aeff; 
+    font-weight: bold; 
   }
 
   &:hover {
-    color: #00aeff; // Change color on hover
+    color: #00aeff; 
   }
 
-  // Add underline effect for active tab
+
   &.active::after {
     content: '';
     position: absolute;
     left: 50%;
-    bottom: -0px; // Adjust position as needed
+    bottom: -0px; 
     transform: translateX(-50%);
-    width: 80%; // Full width underline
-    height: 2px; // Underline thickness
-    background-color: #00aeff; // Underline color
+    width: 80%; 
+    height: 2px; 
+    background-color: #00aeff; 
   }
 `;
 
@@ -960,9 +586,6 @@ const ProjectList = styled.div`
   transition: transform 0.5s ease;
   transform: ${(props) => (props.isFading ? 'translateX(100%)' : 'translateX(0)')};
   min-height: 700px;
-  // display: grid;
-  // grid-template-columns: repeat(2, 1fr);
-  // gap: 20px;
 
   ${({ selectedList }) => (selectedList === 'applied' || selectedList === 'interested' ) && `
     display: grid;

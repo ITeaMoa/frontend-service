@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 
 const TagSelector = ({ options, onTagSelect, selectedTags  }) => {
@@ -116,21 +116,6 @@ const NoOptions = styled.div`
     padding: 10px;
     color: #aaa;
 `;
-
-// const PlusIcon = styled.div`
-//     font-size: 20px;
-//     font-weight: bold;
-//     color: grey;
-
-//     cursor: pointer;
-    
-// `;
-
-// const HeaderContainer = styled.div`
-//     display: flex;
-//     align-items: center;
-
-// `;
 
 
 export default TagSelector;

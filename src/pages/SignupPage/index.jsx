@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import axios from '../../api/axios';
+import { sendVerificationEmail, resendVerificationCode, confirmEmail, signupUser, checkNicknameAvailability } from '../../api';
 import AlertModal from '../../components/AlertModal';
 
 const SignUpPage = () => {
@@ -57,10 +57,7 @@ const handleSkillToggle = (skill) => {
   const handleAuthNumberSend = async () => {
     try {
 
-      await axios.post('/login/verify/email', 
-        { email: email }, 
-        { headers: { 'Content-Type': 'application/json' } }
-      );
+      await sendVerificationEmail(email);
       
   
       setShowAlertPopup('인증번호가 발송되었습니다. 이메일을 확인하세요.');
@@ -98,14 +95,7 @@ const handleSkillToggle = (skill) => {
   const handleResendCode = async () => {
     try {
        
-     await axios.post('login/verify/resend', 
-            { email: email }, 
-            { 
-                headers: { 
-                    'Content-Type': 'application/json'
-                }
-            }
-        );
+     await resendVerificationCode(email);
         setShowAlertPopup('인증번호가 재발송되었습니다. 이메일을 확인하세요.');
     } catch (error) {
         setShowAlertPopup('인증 번호 재발송에 실패했습니다. 다시 시도하세요.');
@@ -114,10 +104,7 @@ const handleSkillToggle = (skill) => {
 
   const handleConfirmEmail = async () => {
     try {
-     await axios.post('login/confirm/email', 
-            { email: email, verification_code: authNumber }, 
-            { headers: { 'Content-Type': 'application/json' } }
-        );;
+     await confirmEmail(email, authNumber);
         setShowAlertPopup('이메일 인증이 완료되었습니다.');
         setConfirmEmail(true);
         setIsResendDisabled(false);
@@ -154,11 +141,7 @@ const handleSignup = async () => {
   }
 
   try {
-      const response = await axios.post('login/confirm/signup', {
-          email,
-          nickname,
-          password,
-      });
+      const response = await signupUser(email, nickname, password);
 
       setShowAlertPopup(response.data.message);
       navigate('/', { state: { nickname } });
@@ -173,7 +156,7 @@ const handleSignup = async () => {
 
   const handleCheckNickname = async () => {
     try {
-      const response = await axios.post('login/verify/nickname', { nickname });
+      const response = await checkNicknameAvailability(nickname);
           if (response.data.message) {
             setShowAlertPopup('사용가능한 닉네임입니다');
             setIsNicknameAvailable(true);

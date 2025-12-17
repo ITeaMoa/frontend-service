@@ -1,0 +1,6 @@
+export const FEED_TYPES = {
+  STUDY: 'STUDY',
+  PROJECT: 'PROJECT'
+};
+
+export const DEFAULT_FEED_TYPE = FEED_TYPES.PROJECT;

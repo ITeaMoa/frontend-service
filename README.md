@@ -9,16 +9,6 @@
 ## 📝 Technical Retrospective (기술적 회고)
 이 프로젝트는 기획부터 배포까지의 **Full-Lifecycle**을 처음으로 경험한 팀 프로젝트입니다. 당시 기능을 구현하는 데 집중하면서 겪었던 **유지보수의 어려움(Pain Points)**은 이후 프로젝트에서 기술적 성장을 이루는 핵심 동력이 되었습니다.
 
-### 🚀 What I Learned & Improved (성장 포인트)
-이 프로젝트에서의 아쉬움을 바탕으로, 이후 진행한 **[Enterprise AI Digital Signage Solution]** 및 **[AI Persona Interview SaaS]** 실무 프로젝트에서 다음과 같이 개선했습니다.
-
-| 구분 | **AS-IS (ITeaMoa)** | **TO-BE (Current / Next Project)** |
-| :--- | :--- | :--- |
-| **Component** | 페이지 중심 개발로 인한 중복 코드 발생 | **Atomic Design Pattern** 도입으로 재사용성 극대화 |
-| **Error Handling** | 단순 `console.log` 및 `alert` 처리 | **Global Error Boundary** 및 **재시도(Retry)** 로직 설계 |
-| **State Mgmt** | Context API의 잦은 리렌더링 이슈 | **Jotai** 도입으로 Atom 단위 상태 분리 및 최적화 |
-
----
 
 ## 💡 Project Introduction
 **ITeaMoa**는 IT 프로젝트 팀원 모집의 비효율성을 해결하기 위한 **웹 팀 빌딩 플랫폼**입니다.
@@ -29,7 +19,7 @@
 
 ---
 
-## 🛠 Tech Stack
+
 
 ## 🛠 Tech Stack
 

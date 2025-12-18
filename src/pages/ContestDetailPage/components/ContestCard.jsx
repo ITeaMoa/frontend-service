@@ -58,7 +58,7 @@ const ContestCard = ({ project, handleProjectClick, onApplyClick }) => {
       </ProjectInfo>
       <CardFooter>
         <LikeButtonColumn
-          feedId={project.pk || project.id} // [면접관용 설명] DB 컬럼명(sk)을 의미 있는 이름(feedId)으로 변경
+          feedId={project.pk || project.id} 
           likes={100}
         />
         <ApplyButton

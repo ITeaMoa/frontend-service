@@ -1,5 +1,4 @@
-// TODO: 백엔드 API 개발 완료 시 연동 예정 (현재는 더미 데이터 사용)
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ContentsWrap , MainContent} from '../../../assets/BusinessAnalysisStyle';
@@ -7,25 +6,32 @@ import NavigationBar from '../../../components/NavigationBar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrophy, faUsers, faCalendarDays } from '@fortawesome/free-solid-svg-icons'
 import { faClock } from '@fortawesome/free-regular-svg-icons'
-import { CONTESTS_DETAIL, RELATED_PROJECTS } from '../../../data/contestDetailPageData';
+import { getContestDetail } from '../../../api'; 
 
 const ContestDetailPage = () => {
   const { contestId } = useParams();
   const [contest, setContest] = useState(null);
+  const [relatedProjects, setRelatedProjects] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const foundContest = CONTESTS_DETAIL.find(c => c.id === parseInt(contestId, 10));
-    if (foundContest) {
-      setContest(foundContest);
-    } else {
-      // Optional: Handle contest not found, e.g., navigate to a 404 page
-      // navigate('/not-found');
-    }
+    const fetchContestDetail = async () => {
+      try {
+        const { contest: contestData, relatedProjects: relatedProjectsData } = await getContestDetail(contestId);
+        setContest(contestData);
+        setRelatedProjects(relatedProjectsData);
+      } catch (error) {
+        console.error('Failed to fetch contest detail:', error);
+        alert('공모전 정보를 찾을 수 없습니다.');
+        navigate(-1);
+      } 
+    };
+
+    fetchContestDetail();
   }, [contestId, navigate]);
 
   if (!contest) {
-    return <div>공모전 정보를 불러오는 중...</div>;
+    return <div>공모전 정보를 찾을 수 없습니다.</div>;
   }
 
   const timelineItems = [
@@ -51,9 +57,7 @@ const ContestDetailPage = () => {
     <ContentsWrap>
       <NavigationBar showSearch={true}/>
       <MainContent Wide1030 style={{ paddingTop: '350px' }} >
-        
-
-        {/* Contest Detail Content */}
+      
         <ContestDetailContainer>
           <ContestHeader>
             <ContestImage src={contest.image} alt={contest.title} />
@@ -187,7 +191,7 @@ const ContestDetailPage = () => {
           <RelatedProjectsSection>
             <ContestCardTitle>해당 공모전 팀원 모집중이예요</ContestCardTitle>
             <RelatedProjectsGrid>
-              {RELATED_PROJECTS.map(project => (
+              {relatedProjects.map(project => (
                 <RelatedProjectCard key={project.id}>
                   <ProjectTitle>{project.title}</ProjectTitle>
                   <ProjectDescription>{project.description}</ProjectDescription>
@@ -213,7 +217,6 @@ const ContestDetailPage = () => {
 );
 };
 
-// Add these styled components at the top of the file
 const ContestDetailContainer = styled.div`
   max-width: 1030px;
   margin: 0 auto;
@@ -224,18 +227,17 @@ const ContestHeader = styled.div`
   display: flex;
   gap: 20px;
   margin-bottom: 30px;
-  align-items: stretch; /* 자식 요소들이 같은 높이를 갖도록 변경 */
+  align-items: stretch; 
 `;
 
 const ContestImage = styled.img`
   width: 400px;
-  /* height 속성을 제거하여 유진하게 높이가 조절되도록 함 */
   object-fit: contain;
   border-radius: 8px;
 `;
 
 const ContestInfoPanel = styled.div`
-  flex: 1; /* 남은 공간을 모두 차지 */
+  flex: 1; 
   display: flex;
   flex-direction: column;
 `;
@@ -243,7 +245,7 @@ const ContestInfoPanel = styled.div`
 const ContestTags = styled.div`
   display: flex;
   gap: 4px;
-  margin-bottom: 15px; /* 제목과의 간격 */
+  margin-bottom: 15px; 
 `;
 
 const ContestTag = styled.span`
@@ -253,21 +255,6 @@ const ContestTag = styled.span`
   border-radius: 20px;
   font-size: 13px;
   white-space: nowrap;
-`;
-
-const ApplyButton = styled.button`
-  width: 100%;
-  padding: 12px;
-  margin-top: 20px;
-  background-color: #00AEFF;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  &:hover { background-color: #008fcc; }
 `;
 
 const ContestTitle = styled.h2`
@@ -281,7 +268,7 @@ const ContestTitle = styled.h2`
 const ContestMeta = styled.div`
   display: flex;
   flex-direction: column;
-  background-color: rgba(194, 228, 248, 0.4); /* C2E4F8 with 40% opacity */
+  background-color: rgba(194, 228, 248, 0.4); 
   gap: 8px;
   padding: 20px;
   border-radius: 8px;
@@ -300,11 +287,11 @@ const MetaRow = styled.div`
 const MetaLabel = styled.span`
   display: flex;
   align-items: center;
-  width: 60px; /* 고정 너비로 정렬 맞춤 */
+  width: 60px; 
 
   svg {
     margin-right: 10px;
-    width: 16px; /* 아이콘 너비 고정 */
+    width: 16px; 
     text-align: center;
   }
 `;
@@ -315,8 +302,8 @@ const MetaValue = styled.span`
 
 const ProgressTimeline = styled.div`
   display: flex;
-  flex-direction: column; /* 줄들을 세로로 쌓음 */
-  gap: 40px; /* 줄 사이의 간격 */
+  flex-direction: column; 
+  gap: 40px;
   margin: 30px 0;
 `;
 
@@ -340,35 +327,31 @@ const TimelineRow = styled.div`
 
 const TimelineItem = styled.div`
   flex: 1;
-  text-align: center; /* 텍스트 중앙 정렬 */
-  position: relative; /* 점과 텍스트 위치 조정을 위한 기준점 */
-  z-index: 2; /* 가로 막대 위에 위치 */
+  text-align: center; 
+  position: relative; 
+  z-index: 2; 
   display: flex;
-  flex-direction: column; /* 내부 요소 세로 정렬 */
-  align-items: center; /* 내부 요소 중앙 정렬 */
-  justify-content: center; /* 내부 요소 세로 중앙 정렬 */
-  height: 80px; /* 아이템 높이 고정 */
+  flex-direction: column; 
+  align-items: center;
+  justify-content: center; 
+  height: 80px; 
 
-  ${props => props.active && `
-    /* 활성화된 아이템에 대한 추가 스타일 (예: 텍스트 색상 변경 등) */
-  `}
-  /* 각 아이템이 막대를 그리지 않도록 수정 */
 `;
 
 const TimelineLabel = styled.div`
   font-size: 14px;
   color: #333;
-  width: 100%; /* 부모 너비에 맞춤 */
-  position: absolute; /* 점 위에 위치 */
-  bottom: calc(50% + 8px); /* 점과 막대 위로 띄움 */
-  word-break: keep-all; /* 단어 단위로 줄바꿈 */
+  width: 100%; 
+  position: absolute; 
+  bottom: calc(50% + 8px); 
+  word-break: keep-all; 
 `;
 
 const TimelineDate = styled.div`
   font-size: 12px;
   color: #666;
-  position: absolute; /* 점 아래에 위치 */
-  top: calc(50% + 8px); /* 점과 막대 아래로 띄움 */
+  position: absolute; 
+  top: calc(50% + 8px); 
 `;
 
 const TimelineConnector = styled.div`
@@ -377,9 +360,9 @@ const TimelineConnector = styled.div`
   left: 50%;
   width: 100%;
   height: 2px;
-  background-color: #00AEFF; /* 활성화 색상 */
+  background-color: #00AEFF; 
   transform: translateY(-50%);
-  z-index: 2; /* 회색 막대 위, 점 아래 */
+  z-index: 2; 
 `;
 
 const TimelineDot = styled.div`
@@ -415,8 +398,8 @@ const Tab = styled.div`
   font-weight: ${props => props.active ? 'bold' : 'normal'};
   
   ${props => props.active && `
-    color: white; /* 활성 탭 텍스트 색상 변경 */
-    border-bottom-color: #00AEFF; /* 밑줄 색상 유지 */
+    color: white; 
+    border-bottom-color: #00AEFF; 
   `}
 `;
 

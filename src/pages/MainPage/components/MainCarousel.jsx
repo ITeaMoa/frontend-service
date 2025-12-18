@@ -103,8 +103,6 @@ const CarouselWrapper = styled.div`
   position: relative;
   width: 100%;
   overflow: hidden;
-  // max-width: 1200px;
-  // margin: 0 auto 32px auto;
   margin-bottom: 40px;
 `;
 

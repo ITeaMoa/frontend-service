@@ -21,7 +21,6 @@ const ProjectDeadline = ({ project,  isSaved }) => {
       </ProjectHeaderColumn>
 
       <ProjectTitleColumn>{project.title}</ProjectTitleColumn>
-
    
         <TagsColumn>
         {project.tags && project.tags.map((tag, index) => (
@@ -29,8 +28,6 @@ const ProjectDeadline = ({ project,  isSaved }) => {
         ))}
       </TagsColumn>
     
-       
-     
     </ProjectItemColumn>
   );
 };
@@ -86,8 +83,6 @@ const ButtonSection = styled.div`
 `;
 
 const StyledFontAwesomeIconColumn = styled(FontAwesomeIcon)`
-  // color: red;
-  // background-color: #BDBDBD;
   border-radius: 50%;
   padding: 4px;
   margin-right:5px;

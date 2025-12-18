@@ -1,25 +1,22 @@
-// TODO: 백엔드 API 개발 완료 시 연동 예정 (현재는 더미 데이터 사용)
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import styled from 'styled-components';
 import { ContentsWrap, MainContent } from '../../../assets/BusinessAnalysisStyle';
 import NavigationBar from '../../../components/NavigationBar';
-import { TAG_OPTIONS, TAG_DETAILS, RECOMMEND_CONTEST, CONTESTS } from '../../../data/contestPageData';
-
-const tagDetails = TAG_DETAILS;
-
-const recommendContest = RECOMMEND_CONTEST;
-
-const contests = CONTESTS;
-
+import { getContestList } from '../../../api'; 
+import { TAG_OPTIONS, TAG_DETAILS, RECOMMEND_CONTEST } from '../../../data/contestPageData'; 
 
 const ContestPage = () => {
-  const {  user } = useAuth();
+  const { user } = useAuth();
   const [selectedTags, setSelectedTags] = useState([]);
   const [selectedTagDetails, setSelectedTagDetails] = useState([]);
   const [tagsRowZIndex, setTagsRowZIndex] = useState(2000);
+  const [contests, setContests] = useState([]); 
+  const [recommendContest, setRecommendContest] = useState([]); 
+  const [loading, setLoading] = useState(true);
   const tagsRowRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -39,8 +36,25 @@ const ContestPage = () => {
   }, []);
 
 
-  const navigate = useNavigate();
-  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const contestData = await getContestList();
+        
+        setContests(contestData);
+        
+        setRecommendContest(RECOMMEND_CONTEST);
+      } catch (error) {
+        console.error('Failed to fetch contest data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const handleTagSelect = (e, tag) => {
     e.stopPropagation();
     setSelectedTags(prevTags => {
@@ -53,7 +67,7 @@ const ContestPage = () => {
   };
 
   useEffect(() => {
-    const selectedDetails = selectedTags.map(tag => tagDetails[tag]).filter(Boolean);
+    const selectedDetails = selectedTags.map(tag => TAG_DETAILS[tag]).filter(Boolean);
     setSelectedTagDetails(selectedDetails);
   }, [selectedTags]);
 
@@ -63,22 +77,22 @@ const ContestPage = () => {
     setSelectedTagDetails([]);
   };
 
-  
-
   const filteredContests = selectedTags.length > 0
     ? contests.filter(contest => 
         contest.tags.some(tag => selectedTags.includes(tag))
       )
     : contests;
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
     <ContentsWrap>
       <NavigationBar showSearch={true} showTag={false} />
       <MainContent Wide1030 style={{ paddingTop: '300px' }}>
-        
-        {/* Tag Section */}
+      
         <TagTitle>공모분야</TagTitle>
         <TagsRow ref={tagsRowRef} style={{ zIndex: tagsRowZIndex }}>
           {TAG_OPTIONS.map(tag => (
@@ -94,8 +108,6 @@ const ContestPage = () => {
             <ResetButton onClick={handleResetTags}>초기화</ResetButton>
           )}
         </TagsRow>
-
-        {/* Tag Detail Content */}
      
         {selectedTags.length > 0 ? (
           <RecommendSection>
@@ -188,13 +200,11 @@ const TagTitle = styled.h2`
   margin-bottom: 16px;
 `;
 
-
 const TagsRow = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-//   margin-top: 8px;
   width: 100%;
   max-width: 1030px;
   margin-left: auto;
@@ -238,14 +248,12 @@ const ResetButton = styled.button`
   }
 `;
 
-
 const TagDetailContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
   // justify-content: space-between;
 `;
-
 
 const TagDetailHeader = styled.div`
   background-color: ${props => props.color || '#535353'};
@@ -263,7 +271,6 @@ const TagDetailHeader = styled.div`
   }
   
 `;
-
 
 const TagDetailContent = styled.div`
   padding: 20px;
@@ -345,12 +352,10 @@ const ContestDetail = styled.p`
   margin: 0 0 4px 0;
 `;
 
-
 const ContestButtons = styled.div`
   display: flex;
   gap: 8px;
 `;
-
 
 const ContestTags = styled.div`
   display: flex;
@@ -373,24 +378,21 @@ const FullWidthBlueSection = styled.div`
   position: relative;
   left: 50%;
   right: 50%;
-  margin-left: -50vw; /* This is already correct for full width */
-  margin-right: -50vw; /* This is already correct for full width */
+  margin-left: -50vw; 
+  margin-right: -50vw; 
   background: linear-gradient(180deg, #00AEFF 20%, #FBFBFB 100%);
-  // padding: 20px 0;
   padding-bottom: 40px;
 `;
-
 
 const RecommendSection = styled.div`
   width: 100vw;
   position: relative;
   left: 50%;
   right: 50%;
-  margin-left: -50vw; /* This is already correct for full width */
-  margin-right: -50vw; /* This is already correct for full width */
+  margin-left: -50vw; 
+  margin-right: -50vw; 
   background: #F9F9F9;
-  // padding: 20px 0;
   padding-bottom: 40px;
 `;
 
-export default ContestPage; 
+export default ContestPage;

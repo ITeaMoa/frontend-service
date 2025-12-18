@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperclip } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../../context/AuthContext'
 import { useAtom } from 'jotai';
-import { selectedSavedProjectAtom } from '../../Atoms.jsx/AtomStates'; 
+import { selectedSavedProjectAtom } from '../../atoms/AtomStates'; 
 import AlertModal from '../../components/AlertModal';
 import { ContentsWrap , MainContent} from '../../assets/BusinessAnalysisStyle';
 import NavigationBar from '../../components/NavigationBar';
@@ -382,10 +382,8 @@ const handleDelete = async () => {
       {imagePreview && (
         <ImagePreviewWrapper>
           {imagePreview.type?.includes('image/') ? (
-            // 이미지 파일인 경우
             <PreviewImage src={URL.createObjectURL(imagePreview)} alt="미리보기" />
           ) : (
-            // PDF 등 다른 파일인 경우
             <FilePreview>
               <FontAwesomeIcon icon={faPaperclip} style={{ marginRight: '8px' }} />
               <FileName>{imagePreview.name}</FileName>

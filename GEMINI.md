@@ -19,14 +19,14 @@
 ├── src/              # 애플리케이션 소스 코드
 │   ├── api/          # API 통신 (axios)
 │   ├── assets/       # 이미지, 폰트, 스타일과 같은 정적 자산
-│   ├── Atoms.jsx/    # 상태 관리를 위한 Jotai atoms
+│   ├── atoms/        # 상태 관리를 위한 Jotai atoms
 │   ├── components/   # 재사용 가능한 React 컴포넌트
 │   ├── context/      # React Context 프로바이더
 │   ├── pages/        # 최상위 페이지 컴포넌트
 │   │   ├── ApplyPage/
 │   │   ├── LoginPage/
 │   │   ├── MainPage/
-│   │   ├── Messeage/
+│   │   ├── Message/
 │   │   ├── MyPage/
 │   │   ├── SearchPage/
 │   │   ├── SignupPage/
@@ -46,7 +46,7 @@
 *   **`src/pages`**: 각 하위 디렉토리는 애플리케이션의 주요 페이지 또는 기능에 해당합니다.
 *   **`src/components`**: 여러 페이지에서 사용되는 작고 재사용 가능한 컴포넌트를 포함합니다.
 *   **`src/api`**: `axios`를 사용하여 백엔드 API와의 연결을 관리합니다.
-*   **`src/Atoms.jsx`**: `Jotai` 라이브러리를 사용하여 전역 상태를 정의합니다.
+*   **`src/atoms`**: `Jotai` 라이브러리를 사용하여 전역 상태를 정의합니다.
 *   **`src/context`**: 사용자 인증 상태를 관리하는 `AuthContext.js`와 같은 React Context 파일을 보관합니다.
  
 ## 사용 가능한 스크립트

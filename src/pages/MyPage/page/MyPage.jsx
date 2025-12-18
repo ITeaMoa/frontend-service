@@ -4,7 +4,7 @@ import NavigationBar from "../../../components/NavigationBar";
 import ProjectDetail from '../components/ProjectDetail';
 import { useAuth } from '../../../context/AuthContext'
 import { useAtom } from 'jotai';
-import { feedTypeAtom } from '../../../Atoms.jsx/AtomStates';
+import { feedTypeAtom } from '../../../atoms/AtomStates';
 import Pagination from '../../../components/Pagination';
 import Modal from '../../../components/Modal';
 import ProjectItemComponent from '../components/ProjectItemComponent';
@@ -32,10 +32,12 @@ import {
   MOCK_WRITTEN_PROJECTS 
 } from '../../../data/mockData';
 
+const PROJECTS_PER_PAGE = 5;
+
 const MyPage = () => {
   const [projects, setProjects] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [projectsPerPage] = useState(5); 
+  const [projectsPerPage] = useState(PROJECTS_PER_PAGE); 
   const [selectedList, setSelectedList] = useState('applied');
   const [selectedProject, setSelectedProject] = useState(null);
   const [applySelectedProject, setApplySelectedProject] = useState(null);
@@ -79,8 +81,6 @@ const refreshProjects = async () => {
     }
   } catch (error) {
     console.warn("Backend unavailable, loading mock data...", error);
-    
-    // Fallback to mock data based on selected list type
     if (selectedList === 'applied') {
       setProjects(MOCK_APPLIED_PROJECTS);
     } else if (selectedList === 'written') {
@@ -487,7 +487,6 @@ const handleConfirmCancel = async () => {
             <h3 style={{ textAlign: 'center',fontSize:'16px' }}>{showApplyPopup}</h3>
             <ButtonContainer>
               <ModalButton onClick={() => setShowApplyPopup(false)}>확인</ModalButton>
-              {/* <ModalButton onClick={() => setIsConfirmModalOpen(false)}>취소</ModalButton> */}
             </ButtonContainer>
           </Modal>  
 
@@ -580,8 +579,6 @@ const ProjectList = styled.div`
   padding-bottom: 0px;
   // border: 2px solid #A0DAFB;
   border-radius: 20px;
-  // width:50vw;
-  // max-width: 800px; 
   overflow-x: auto;
   transition: transform 0.5s ease;
   transform: ${(props) => (props.isFading ? 'translateX(100%)' : 'translateX(0)')};
@@ -609,7 +606,6 @@ const ProjectList = styled.div`
     grid-template-columns: 1fr;
   }
 `;
-
 
 
 const ButtonContainer = styled.div`

@@ -1,5 +1,18 @@
 import styled from 'styled-components';
 
+const getDDay = (deadline) => {
+  const end = new Date(deadline);
+  const today = new Date();
+  const diff = Math.ceil((end - today) / (1000 * 60 * 60 * 24));
+  return diff > 0 ? diff : 0;
+};
+
+const formatDate = (dateStr) => {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+};
+
 const PopularProject = ({ projects, handleProjectClick }) => {
     return (
     
@@ -82,7 +95,6 @@ const PopularProjectCard = styled.div`
   position: relative;
   box-sizing: border-box;
   margin: 0;
-  /* 카드가 3개일 때와 동일한 크기 보장 */
   flex-basis: calc((100% - 48px) / 3);
   max-width: calc((100% - 48px) / 3);
 
@@ -162,32 +174,13 @@ const ArrowCircle = styled.span`
   display: flex;
   align-items: center;
   justify-content: center;
-//   background: #fff;
-//   border-radius: 50%;
   width: 32px;
   height: 32px;
   margin-left: 12px;
   cursor: pointer;
-//   box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-//   border: 1.5px solid #00aeff;
   transition: background 0.2s;
-//   &:hover {
-//     background: #eaf6ff;
-//   }
+
   svg {
     display: block;
   }
 `;
-
-function getDDay(deadline) {
-  const end = new Date(deadline);
-  const today = new Date();
-  const diff = Math.ceil((end - today) / (1000 * 60 * 60 * 24));
-  return diff > 0 ? diff : 0;
-}
-
-function formatDate(dateStr) {
-  if (!dateStr) return '';
-  const d = new Date(dateStr);
-  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
-}

@@ -2,7 +2,7 @@ import  { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
-import { feedTypeAtom, selectedProjectDetailAtom, selectedSavedProjectAtom } from '../../../Atoms.jsx/AtomStates';
+import { feedTypeAtom, selectedProjectDetailAtom, selectedSavedProjectAtom } from '../../../atoms/AtomStates';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { ContentsWrap , MainContent } from '../../../assets/BusinessAnalysisStyle';
@@ -26,6 +26,7 @@ import {
   getUserApplications, 
   submitApplication 
 } from '../../../api';
+
 
 const MainPage = () => {
   const { user } = useAuth();

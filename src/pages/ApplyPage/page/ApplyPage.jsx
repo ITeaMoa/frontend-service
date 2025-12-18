@@ -8,14 +8,14 @@ import { useAtom } from 'jotai';
 
 import ApplyLikeButton from '../../../components/ApplyLikeButton';
 import Modal from '../../../components/Modal';
-import CommentsSection2 from '../components/CommentsSection2';
+import ReplySection from '../components/ReplySection';
 import RoleSelectionModal from '../../../components/RoleSelectionModal';
 import AuthModal from '../../../components/AuthModal';
 import AlertModal from '../../../components/AlertModal';
 import NavigationBar from '../../../components/NavigationBar';
 import { getUserApplications, submitApplication, deleteFeed } from '../../../api';
 import { useAuth } from '../../../context/AuthContext';
-import { selectedProjectDetailAtom, selectedSavedProjectAtom } from '../../../Atoms.jsx/AtomStates';
+import { selectedProjectDetailAtom, selectedSavedProjectAtom } from '../../../atoms/AtomStates';
 
 const ApplyPage = () => {
   const navigate = useNavigate();
@@ -238,7 +238,7 @@ const ApplyPage = () => {
         </MainContent>
       </ContentsWrap>
 
-      <CommentsSection2
+      <ReplySection
         comments={project.comments}
         commentInput={commentInput}
         setCommentInput={setCommentInput}

@@ -5,7 +5,7 @@ import MessagePeople from '../components/MessagePeople';
 import MessageList from '../components/MessageList';
 import { useAuth } from '../../../context/AuthContext'
 import { useAtom } from 'jotai';
-import { SELECTED_PERSON_ID, MESSAGE_LIST } from '../../../Atoms.jsx/AtomStates';
+import { SELECTED_PERSON_ID, MESSAGE_LIST } from '../../../atoms/AtomStates';
 import { useLocation } from 'react-router-dom';
 import { ContentsWrap , MainContent} from '../../../assets/BusinessAnalysisStyle';
 import { getMessages, getMessageCount, getMessageUsers, sendMessage } from '../../../api';
@@ -39,7 +39,6 @@ useEffect(() => {
       const messages = await getMessages(personId, user.id);
       setMessageList(messages);
 
-      // 선택한 사람의 메시지 count만 새로 불러오기
       const countData = await getMessageCount(user.id);
 
       setPersonList(prevList =>
@@ -161,7 +160,6 @@ const Container = styled.div`
   position: relative;
   display: flex;
   height: 100%;
-  // height: calc(100vh - 300px);
   margin-top: 50px;
 `;
 
@@ -186,14 +184,11 @@ const LeftPanel = styled.div`
 const RightPanel = styled.div`
   flex: 1;
   border: 1px solid #BDBDBD;
-  // border-radius: 10px;
   border-top-left-radius: 0px;  
   border-bottom-left-radius: 0px; 
   border-top-right-radius: 10px;      
   border-bottom-right-radius: 10px;   
-  // padding: 20px;
   padding-left:20px;
-  // overflow-y: auto;
   overflow: hidden;    
   position: relative;
 `;
@@ -235,7 +230,7 @@ const EmptyRightPanel = styled.div`
   align-items: center;
   height: 100%;
   color: #666;
-  position: relative;  // 추가: 상대 위치 설정ㄴㄴ
+  position: relative;  
 `;
 
 

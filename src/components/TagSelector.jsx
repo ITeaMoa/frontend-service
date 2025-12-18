@@ -93,7 +93,7 @@ const TagContainer = styled.div`
     background: white;
     z-index: 1000;
     margin-top: 3px;
-    padding: 10px; /* 패딩 추가 */
+    padding: 10px; /
 `;
 
 const Tag = styled.div`

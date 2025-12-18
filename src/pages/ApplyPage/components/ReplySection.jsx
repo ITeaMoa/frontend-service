@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-regular-svg-icons';
 import styled from 'styled-components';
-import { selectedProjectDetailAtom } from '../../../Atoms.jsx/AtomStates';
+import { selectedProjectDetailAtom } from '../../../atoms/AtomStates';
 import { useAtom } from 'jotai';
 import AlertModal from '../../../components/AlertModal';
 import { 
@@ -15,7 +15,7 @@ import {
   editComment 
 } from '../../../api';
 
-const CommentsSection2= ({ commentInput, setCommentInput, user, projectId }) => {
+const ReplySection = ({ commentInput, setCommentInput, user, projectId }) => {
   const [replyInput, setReplyInput] = useState({});
   const [showReplyInput, setShowReplyInput] = useState({});   
   const [selectedProjectDetail, setSelectedProjectDetail] = useAtom(selectedProjectDetailAtom);
@@ -357,28 +357,23 @@ const handleDeleteReply = async (commentId, replyId, userId) => {
 };
 
 
-export default CommentsSection2;
+export default ReplySection;
 
 
 const Container = styled.div`
   position: relative;
   width: 100%;
-  // width: calc(100% / 2 + 80px);
-  // border-top: 1px solid #ddd;
   padding-bottom: 20px;
-  // margin-bottom: 20px;
   background: rgba(237, 237, 237, 0.5);
   display: flex;
   justify-content: center;
-  align-items: center; /* 필요에 따라 제거 가능 */
+  align-items: center; 
 `;
 
 const CommentsContainer = styled.div`
   position: relative;
-  // width: calc(100% / 2 + 350px);
   align-items: center;
   padding-top: 20px;
-  // margin-bottom: 20px;
   background:rgba(237, 237, 237, 0);
   width: 100%;
    max-width: 1030px;

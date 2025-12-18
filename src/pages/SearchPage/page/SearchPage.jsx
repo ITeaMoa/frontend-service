@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { useAtom } from 'jotai';
-import { feedTypeAtom, selectedProjectDetailAtom } from '../../../Atoms.jsx/AtomStates';
+import { feedTypeAtom, selectedProjectDetailAtom } from '../../../atoms/AtomStates';
 import { ContentsWrap , MainContent} from '../../../assets/BusinessAnalysisStyle';
 import NavigationBar from '../../../components/NavigationBar';
 import ProjectFeedCard from '../components/ProjectFeedCard';
@@ -219,7 +219,6 @@ const SearchPage = () => {
         </ToggleContainer>
       </FeedToggleSection>
 
-      {/* Project Feed */}
       <ProjectFeed style={{
         display: "grid",
         gridTemplateColumns: "repeat(2, 1fr)",

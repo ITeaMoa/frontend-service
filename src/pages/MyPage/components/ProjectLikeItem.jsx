@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 import LikeButtonColumn from '../../../components/LikeButtonColumn';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -63,7 +62,7 @@ const ProjectLikeItem = ({ project, handleProjectClick, onApplyClick }) => {
     </ProjectInfo>
     <CardFooter>
       <LikeButtonColumn 
-        feedId={project.pk} // [면접관용 설명] DB 컬럼명(sk)을 의미 있는 이름(feedId)으로 변경
+        feedId={project.pk} 
       />
       <ApplyButton
         onClick={(e) => {
@@ -84,14 +83,10 @@ export default ProjectLikeItem;
 const ProjectCard = styled.div`
 background: #fff;
 border-radius: 8px;
-// box-shadow: 0 2px 12px 0 rgba(0,0,0,0.07);
 padding: 28px 24px 20px 24px;
 display: flex;
 flex-direction: column;
-// min-height: 350px;
 min-height: 350px;
-// width: 100%;
-// max-hight: 350px;
 height: 350px;
 justify-content: space-between;
 border: 1px solid #E3F5FF;
@@ -167,16 +162,6 @@ const ProjectTag = styled.span`
   white-space: nowrap;
 `;
 
-const ProjectDescription = styled.p`
-  font-size: 14px;
-  color: #888;
-  margin-bottom: 16px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-`;
 
 const ProjectInfo = styled.div`
   display: flex;
@@ -197,22 +182,6 @@ const CardFooter = styled.div`
   gap: 16px;
   margin-top: 16px;
 `;
-
-// const LikeButton = styled.button`
-//   width: 44px;
-//   height: 44px;
-//   background: #f5f5f5;
-//   border-radius: 8px;
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   justify-content: center;
-//   font-size: 18px;
-//   color: #222;
-//   box-shadow: none;
-//   padding: 0;
-//   user-select: none;
-// `;
 
 const ApplyButton = styled.button`
   flex: 1;

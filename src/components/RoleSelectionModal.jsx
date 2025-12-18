@@ -41,25 +41,22 @@ export default RoleSelectionModal;
 
 
 const RoleButtonContainer = styled.div`
-  // margin-top: -20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
   justify-content: space-between;
-  max-height: 400px; // 최대 높이 설정
-  overflow-y: auto; // 세로 스크롤 가능
-
-  position: relative; // 위치 고정을 위한 설정
+  max-height: 400px; 
+  overflow-y: auto;
+  position: relative; 
 
   h3 {
     font-size: 24px;
     margin-bottom: 40px;
-    position: sticky; // 스크롤 시 고정
-    top: 0; // 상단에 고정
-    background-color: white; // 배경색 설정 (필요시)
-    z-index: 1; // 다른 요소 위에 표시되도록 설정
-    //  padding: 20px;
+    position: sticky; 
+    top: 0; 
+    background-color: white;
+    z-index: 1; 
   }
 `;
 
@@ -87,11 +84,10 @@ const RoleButtonContainerStyled = styled.div`
   align-items: center;
   width: 100%;
   justify-content: space-between;
-  max-height: 400px; // 최대 높이 설정
-  overflow-y: auto; // 세로 스크롤 가능
-  // height: 800px;
+  max-height: 400px; 
+  overflow-y: auto; 
 
-  position: relative; // 위치 고정을 위한 설정
+  position: relative;
 
 `;
 

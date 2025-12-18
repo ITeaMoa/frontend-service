@@ -36,8 +36,6 @@ const LoginPage = () => {
         navigate('/');
 
         if (rememberMe) {
-          // localStorage.setItem('savedEmail', email);
-          // localStorage.setItem('savedPassword', password);
           sessionStorage.setItem('savedEmail', email);
           sessionStorage.setItem('savedPassword', password);
         }
@@ -65,7 +63,7 @@ const LoginPage = () => {
     
        <Form onSubmit={handleSubmit}>
           <Label>로그인</Label>
-         <Con1>
+         <FormContainer>
            <Input 
              type="email" 
              value={email} 
@@ -104,7 +102,7 @@ const LoginPage = () => {
              <Button type="submit">로그인</Button>
              <Button type="button" onClick={handleAddButtonClick} secondary>회원가입</Button>
            </ButtonGroup>
-         </Con1>
+         </FormContainer>
        </Form>
  
        {/* <Signup>
@@ -150,32 +148,26 @@ const Logo = styled.div`
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* Changed to flex-start to align children to the left */
+  align-items: flex-start; 
   justify-content: center;
   width: 30%;
 
 `;
 
-const Con1 = styled.div`
+const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
   border: 2px solid;
   border: none;
-  /* border-color: #A0DAFB;
-  border-radius: 30px 30px 1px 30px; */
   width: 100%;
   padding: 15px;
-  /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
 
 `;
 
 const Label = styled.label`
-  // margin: 10px 0 5px;
   font-size: 20px;
   font-weight: bold;
-  // margin-bottom:10px;
   color: #333;
-  // text-align: left;
   margin-left: 14px;
 `;
 
@@ -201,10 +193,6 @@ const Input = styled.input`
   box-sizing: border-box;
   outline: none;
 
-  // &:focus {
-  //   border-color: #007bff;
-  //   box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-  // }
 `;
 
 const HelperText = styled.span`
@@ -248,7 +236,6 @@ const Button = styled.button`
 
 const ButtonGroup = styled.div`
   display: flex;
-  // gap: 4px;
   width: 100%;
   flex-direction: column;
 `;

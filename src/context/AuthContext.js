@@ -1,8 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { loginUser, socialLogin, refreshAccessToken } from '../api';
+import { loginUser, refreshAccessToken } from '../api';
 
 
-// JWT 토큰을 Local Storage에 저장
 const saveToken = (token) => {
   sessionStorage.setItem('jwtToken', token);
 };
@@ -26,10 +25,9 @@ const parseJwt = (token) => {
 };
 
 
-// Context 생성
+
 export const AuthContext = createContext();
 
-// Project Context 추가
 export const ProjectContext = createContext();
 
 // AuthProvider를 수정하여 Project 상태도 함께 관리
@@ -69,8 +67,7 @@ export const AuthProvider = ({ children }) => {
         const decodedToken = parseJwt(idToken);
         const userId = decodedToken.sub; 
         const nickname = decodedToken.nickname; 
-  
-        // 사용자 정보를 상태에 저장 (닉네임 포함)
+
         const userInfo = { 
           id: userId, 
           email,
@@ -78,8 +75,7 @@ export const AuthProvider = ({ children }) => {
         };
         
         setUser(userInfo);
-  
-        // 사용자 정보를 로컬 스토리지에 저장
+
         sessionStorage.setItem('user', JSON.stringify(userInfo)); 
   
         return response;
@@ -94,10 +90,10 @@ export const AuthProvider = ({ children }) => {
   const socialLogin = async (provider, code, state) => {
     try {
       const response = await socialLogin(provider, code, state);
-      return response; // 응답 데이터 반환 (refreshToken 포함)
+      return response; 
     } catch (error) {
       console.error('소셜 로그인 요청 중 오류 발생:', error);
-      throw error; // 오류를 상위로 전파
+      throw error; 
     }
   };
 
@@ -109,10 +105,10 @@ export const AuthProvider = ({ children }) => {
     }
     
     setUser(null);
-    removeToken(); // 로컬 스토리지에서 JWT 제거
-    sessionStorage.removeItem('user'); // 사용자 정보 제거
-    setIsLoggedIn(false); // 로그인 상태 업데이트
-    navigate("/"); // 홈으로 리디렉션
+    removeToken(); 
+    sessionStorage.removeItem('user'); 
+    setIsLoggedIn(false); 
+    navigate("/"); 
 
   };
 

@@ -51,7 +51,7 @@ const ProjectFeedCard = ({ project, handleProjectClick, onApplyClick }) => {
     </ProjectInfo>
     <CardFooter>
       <LikeButtonColumn 
-        feedId={project.pk} // [면접관용 설명] DB 컬럼명(sk)을 의미 있는 이름(feedId)으로 변경
+        feedId={project.pk} 
       />
       <ApplyButton
         onClick={(e) => {
@@ -73,7 +73,6 @@ export default ProjectFeedCard;
 const ProjectCard = styled.div`
 background: #fff;
 border-radius: 8px;
-// box-shadow: 0 2px 12px 0 rgba(0,0,0,0.07);
 padding: 28px 24px 20px 24px;
 display: flex;
 flex-direction: column;
@@ -181,21 +180,6 @@ const CardFooter = styled.div`
   margin-top: 16px;
 `;
 
-// const LikeButton = styled.button`
-//   width: 44px;
-//   height: 44px;
-//   background: #f5f5f5;
-//   border-radius: 8px;
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   justify-content: center;
-//   font-size: 18px;
-//   color: #222;
-//   box-shadow: none;
-//   padding: 0;
-//   user-select: none;
-// `;
 
 const ApplyButton = styled.button`
   flex: 1;

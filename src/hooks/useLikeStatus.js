@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useAtom } from 'jotai';
-import { feedTypeAtom } from '../Atoms.jsx/AtomStates';
+import { feedTypeAtom } from '../atoms/AtomStates';
 import { getFeedLikes, getUserLikeStatus, addLike, removeLike } from '../api';
 
 const useLikeStatus = (feedId) => {

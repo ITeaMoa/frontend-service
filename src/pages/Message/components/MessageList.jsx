@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useAtom } from 'jotai';
-import { MESSAGE_LIST } from '../../../Atoms.jsx/AtomStates';
+import { MESSAGE_LIST } from '../../../atoms/AtomStates';
 import { useAuth } from '../../../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
@@ -117,7 +117,7 @@ const MessageList = ({ onSendMessage }) => {
             </SendButton>
           </InputWrapper>
         </ChatInputBar>
-          </MessageContainer>
+    </MessageContainer>
 </ChatWrapper>
 
 
@@ -141,21 +141,18 @@ const MessageList = ({ onSendMessage }) => {
 
 const ChatWrapper = styled.div`
   position: relative;
-  // height: 100vh;
   display: flex;
   flex-direction: column;
   background: #fff;
-  overflow: hidden; /* 전체 스크롤 막기 */
-    height: 100%;   
+  overflow: hidden; 
+  height: 100%;   
 `;
 
 const MessageContainer = styled.div`
   flex: 1 1 auto;
   overflow-y: auto;
-
-  padding-right: 12px;        /* 스크롤바와 내용 사이 여백 */
-  /* 필요시 min-height: 0; 추가 */
-   padding-bottom: 60px; 
+  padding-right: 12px;      
+  padding-bottom: 60px; 
 `;
 
 const MessageCard = styled.div`
@@ -265,7 +262,7 @@ const ChatInputBar = styled.div`
   align-items: center;
   padding-top: 5px;
   z-index: 10;
-  height: 50px; /* 입력창 높이와 MessageContainer의 height 계산이 일치해야 함 */
+  height: 50px; 
 `;
 
 

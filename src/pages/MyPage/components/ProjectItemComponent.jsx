@@ -1,11 +1,10 @@
-import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
-import { selectedSavedProjectAtom } from '../../../Atoms.jsx/AtomStates';
+import { selectedSavedProjectAtom } from '../../../atoms/AtomStates';
 import { faPen } from '@fortawesome/free-solid-svg-icons'; 
 
     

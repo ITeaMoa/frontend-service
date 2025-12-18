@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-regular-svg-icons';
 import styled from 'styled-components';
-import { selectedProjectDetailAtom } from '../../../Atoms.jsx/AtomStates';
+import { selectedProjectDetailAtom } from '../../../atoms/AtomStates';
 import { useAtom } from 'jotai';
 import AlertModal from '../../../components/AlertModal';
 import { 
-  getProjectComments, 
+  getProjectDetails, 
   submitComment, 
   submitReply, 
   getReplies, 
@@ -31,27 +31,33 @@ const CommentsSection = ({ commentInput, setCommentInput, user, projectId }) => 
   const fetchProjectDetails = async () => {
     try {
       if (selectedProjectDetail) {
-        // Get comments directly for the specific project
-        const comments = await getProjectComments(projectId, selectedProjectDetail.sk);
-        
-        // Enrich comments with replies
-        const commentsWithReplies = await Promise.all(
-          comments.map(async (comment) => {
-            const replies = await getReplies(projectId, comment.commentId);
-            return {
-              ...comment,
-              replies: replies
-            };
-          })
-        );
+        const projects = await getProjectDetails(selectedProjectDetail.sk);
+        const selectedProject = projects.find(item => item.pk === projectId);
   
-        // Set the comments
-        setComments(commentsWithReplies);
+        if (selectedProject) {
+          const commentsWithReplies = await Promise.all(
+            selectedProject.comments.map(async (comment) => {
+              const replies = await getReplies(projectId, comment.commentId);
+              return {
+                ...comment,
+                replies: replies
+              };
+            })
+          );
+  
+          setSelectedProjectDetail(selectedProject);
+          setComments(commentsWithReplies);
+        } else {
+          setSelectedProjectDetail(null);
+          setComments([]);
+        }
       } else {
+        setSelectedProjectDetail(null);
         setComments([]);
       }
     } catch (error) {
-      console.error("Error fetching project comments:", error);
+      console.error("Error fetching project details:", error);
+      setSelectedProjectDetail(null);
       setComments([]);
     }
   };

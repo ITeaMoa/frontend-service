@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import{ useRef, useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
@@ -6,9 +6,9 @@ import Dropdown from '../../../components/DropDown';
 import { faUser as regularUser } from '@fortawesome/free-regular-svg-icons';
 import Modal from '../../../components/Modal';
 import { useAtom } from 'jotai';
-import { USER_PROFILE } from '../../../Atoms.jsx/AtomStates';
+import { USER_PROFILE } from '../../../atoms/AtomStates';
 import { useAuth } from '../../../context/AuthContext';
-import { getUserProfile, updateUserProfile } from '../../../api';
+import { getUserProfile, updateUserProfile, deleteUserAccount } from '../../../api';
 import { TECH_STACK_OPTIONS } from '../../../constants/techStackOptions';
 
 const UserProfile = ({  setIsProfileVisible}) => {
@@ -127,11 +127,9 @@ const UserProfile = ({  setIsProfileVisible}) => {
     
     const handleDeleteUser = async () => {
         try {
-             // Note: This would need a separate API function for user deletion
-             // For now, keeping the direct axios call commented out
-             // await axios.put(`/my/profile/withdraw/${user}`);
-  
+            await deleteUserAccount(user.id);
             setIsProfileVisible(false);
+            window.location.href = '/login';
         } catch (error) {
             console.error('회원탈퇴 오류:', error);
         }
@@ -414,11 +412,7 @@ const CloseButton = styled.button`
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
-
-  // position: absolute;
-  // right: 400px;  
-  // top: 720px;
-    align-self: flex-start;  
+ align-self: flex-start;  
 
 
   &:hover {
@@ -484,12 +478,6 @@ const EditImageButton = styled.button`
   }
 `;
 
-const InputField = styled.input`
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 8px;
-  font-size: 16px;
-  width: 100%;
-`;
+
 
 export default UserProfile;

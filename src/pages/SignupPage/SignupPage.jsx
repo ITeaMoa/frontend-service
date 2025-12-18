@@ -22,7 +22,6 @@ const SignUpPage = () => {
   const [selectedSkills, setSelectedSkills] = useState([]);
 
 
-// Interest options
 const interestOptions = [
   '전략/기획', '상품/서비스 기획(PO)', '마케팅/브랜드', '세일즈/BD', 
   'PR/커뮤니케이션', '구매/소싱', 'UX/UI-리서치', 'PM(프로그래밍/프로젝트)', 
@@ -30,10 +29,8 @@ const interestOptions = [
   '법무/컴플라이언스', 'ESG/지속가능경영', '소프트웨어/플랫폼(백엔드·클라우드)'
 ];
 
-// Skills options
 const skillsOptions = ['AWS', 'Blockchain', 'NodeJS', 'React', 'Java', 'Dapp', 'DID', 'Backend'];
 
-// Handlers
 const handleInterestToggle = (interest) => {
   setSelectedInterests(prev => 
     prev.includes(interest)
@@ -311,20 +308,6 @@ const handleSignup = async () => {
         
         <Form>
 
-{/*        
-        <SocialLoginContainer>
-        <SocialLogin>
-        <DividerLine />
-        <SocialLoginTitle>소셜 로그인</SocialLoginTitle>
-        <DividerLine />
-        </SocialLogin>  
-        <SocialButton1 yellow>
-            <Icon src="/images/pngwing.com.png" alt="카카오톡 아이콘" /> 카카오로 시작하기
-          </SocialButton1>
-          <SocialButton2 >
-            <Icon src="/images/네이버 로고 아이콘.png" alt="네이버 아이콘" /> 네이버로 시작하기
-          </SocialButton2>
-        </SocialLoginContainer> */}
       </Form>
     </Container>
 
@@ -411,10 +394,9 @@ const InputContainer = styled.div`
 const Input = styled.input`
   flex: 1;
   padding: 18px;
-  padding-right: 140px; /* 버튼을 위한 공간 확보 */
+  padding-right: 140px; 
   width: 100%;
-  box-sizing: border-box; /* 패딩과 보더를 너비에 포함 */
-  // border: 1px solid #ddd;
+  box-sizing: border-box; 
   border: none;
   border-radius: 5px;
   background-color: #EDEDED;
@@ -480,7 +462,7 @@ const PasswordHelperText = styled.span`
   font-size: 12px;
   color: #666;
   text-align: left;
-  margin-top: -10px; /* Adjust spacing */
+  margin-top: -10px;
 `;
 
 const PasswordErrorMessage = styled.span`
@@ -488,113 +470,14 @@ const PasswordErrorMessage = styled.span`
   font-size: 12px;
   text-align: left;
   display: block;
-  margin-top: -10px; /* Adjust spacing */
+  margin-top: -10px;
 `;
 
 const RemainTime= styled.div`
 font-size: 14px;
 color: red;
 `;
-
-// const SocialLogin = styled.h2`
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   width: 600px;
-
-// `;
-
-// const DividerLine = styled.hr`
-//     border: 0; 
-//     height: 1px;
-//     background: #ccc;
-
-//     margin: 0px 10px; 
-
-// `;
-
-// const SocialLoginTitle = styled.h2`
-//   font-size: 20px;
-// `;
-
-
-// const SocialLoginContainer = styled.div`
-//    display: flex;
-//   flex-direction: column;
-
-//   margin-top: 30px;
-// `;
-
-// const SocialButton1 = styled.button`
-//   padding: 10px;
-//   background-color: ${props => (props.yellow ? '#f7e02e' : '#3dbd4e')};
-//   color: white;
-//   border: none;
-//   border-radius: 5px;
-//   cursor: pointer;
-//   font-size:14px;
-//   color: black;
-//   font-weight: bold;
-//   width: 30%;
-//   border-radius: 10px;
-//   border-radius: 30px 30px 1px 30px;
-
-
-//   &:hover {
-//     color: #aaa;
-// `;
-
-
-// const SocialButton2 = styled.button`
-//   padding: 10px;
-
-//   color: white;
-//   border: none;
-//   border-radius: 5px;
-//   cursor: pointer;
-//   margin-top: 5px;
-//   font-size:14px;
-//   color: white;
-//   font-weight: bold;
-//   width: 30%;
-//   border-radius: 10px;
-//   margin-bottom: 50px;
-//   border-radius: 30px 30px 1px 30px;
-
-
-
-//   &:hover {
-//     color: #aaa;
-// `;
-
-// const Icon = styled.img`
-
-//   height: 25px;
-//   margin-right: 5px;
-//   vertical-align: middle;
-
-// `;
-
-
-// const ButtonContainer = styled.div`
-//   display: flex;
-//   justify-content: center;
-//   gap: 20px;
-//   margin-top: 20px;
-// `;
-
-// const ModalButton = styled.button`
-//   background-color: #3563E9;
-//   color: white;
-//   border: none;
-//   padding: 10px 20px;
-//   border-radius: 5px;
-//   cursor: pointer;
-
-//   &:hover {
-//     background-color: #a0dafb;
-//   }
-// `;
+;
 
 
 const AdditionalInfoContainer = styled.div`

@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useCallback} from 'react';
+import { useState, useEffect, useCallback} from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment } from '@fortawesome/free-solid-svg-icons';
 import Pagination from '../../../components/Pagination'; 
-import { getFeedApplications, closeFeed, acceptApplication, rejectApplication, getFeedApplicationsByPart } from '../../../api';
+import { getFeedApplications,acceptApplication, rejectApplication, getFeedApplicationsByPart } from '../../../api';
 import Modal from '../../../components/Modal';
 import { useAtom } from 'jotai';
-import { currentApplicantsAtom } from '../../../Atoms.jsx/AtomStates';
+import { currentApplicantsAtom } from '../../../atoms/AtomStates';
 import { useNavigate } from 'react-router-dom';
 import AlertModal from '../../../components/AlertModal';
 
@@ -86,7 +86,7 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
 
 
     const handleStatusChange = (applicant, status) => {
-        if (disabledButtons[applicant.name]) return; // 비활성화된 버튼이면 함수 종료
+        if (disabledButtons[applicant.name]) return; 
 
         setSelectedApplicant(applicant);
         setNewStatus(status);
@@ -96,8 +96,8 @@ const ProjectDetail = ({ project, onBack, onClose}) => {
 
     const confirmStatusChange = async () => {
         const requestData = {
-            pk: selectedApplicant.pk, // 선택한 지원자의 pk
-            sk: project.pk // feedId
+            pk: selectedApplicant.pk, 
+            sk: project.pk 
         };
 
         const url = newStatus === "반려" ? 'my/writing/reject' : 'my/writing/accept';
@@ -439,8 +439,6 @@ const Tags2 = styled.div`
     margin-top:1px;
     display: flex;
     flex-wrap: wrap;
-    // margin-left: 36px;
-    // min-height: 20px;
     margin-left:-120px;
     
     
@@ -451,7 +449,7 @@ const Tag = styled.span`
     margin: 5px;
     font-size: 14px;
     border: 1px solid ;
-    border-radius: 14px 14px 1px 14px; //반시계 ㅔ방향
+    border-radius: 14px 14px 1px 14px; 
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-color: rgba(160, 218, 251);
     background-color: white;
@@ -491,15 +489,9 @@ const Applicant = styled.div`
     text-align: left;
 `;
 
-// const ButtonContainer = styled.div`
-//     margin-left: auto; 
-//     display: flex;
-//     gap: 5px; 
-// `;
 
 const ApplicantName = styled.span`
     font-weight: bold;
-    // margin-left: px;
     font-size: 18px;
     margin-left: -80px;
     min-width: 120px;
@@ -528,21 +520,11 @@ const StatusButton = styled.button`
         isClicked ? 
         (children === "승인" ? '0px 0px 0px 30px' : 
         children === "반려" ? '0px 0px 0px 30px' : '0') : 
-        '0'}; // 클릭 상태일 때만 다르게 설정
+        '0'}; 
     border-radius: 5px;
     cursor: pointer;
     opacity: 1;
 `;
-
-// const Button = styled.button`
-//     background-color: #3563E9;
-//     color: white;
-//     border: none;
-//     padding: 10px 25px;
-//     border-radius: 5px;
-//     cursor: pointer;
-
-// `;
 
 
 const Button = styled.button`
@@ -608,17 +590,18 @@ const FieldButton = styled.span`
     cursor: pointer;
     border: 2px solid;
     background-color: ${(props) => (props.$isSelected ? '#a0dafb' : 'white')};
-    border-radius: 30px 30px 1px 30px; // 반시계 방향
+    border-radius: 30px 30px 1px 30px; /
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-color: rgba(160, 218, 251);
     color: ${(props) => (props.$isSelected ? 'white' : '#0A8ED9')};
     font-weight: ${(props) => (props.$isSelected ? 'bold' : 'normal')};
     font-size: 16px;
     padding: 5px 20px; 
-    white-space: nowrap; /* 텍스트가 줄 바꿈되지 않도록 설정 */
+    white-space: nowrap; 
 `;
 
-const StyledPaginationContainer = styled.div`    position: absolute;
+const StyledPaginationContainer = styled.div`
+    position: absolute;
     margin-top: 500px;
     display: flex;
     justify-content: center;
@@ -626,7 +609,6 @@ const StyledPaginationContainer = styled.div`    position: absolute;
 `;
 
 
-// 팝업 스타일
 const PopupOverlay = styled.div`
     position: fixed;
     top: 0;
@@ -637,7 +619,7 @@ const PopupOverlay = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* 다른 요소 위에 나타나도록 설정 */
+    z-index: 1000; 
 `;
 
 const Popup = styled.div`
@@ -661,8 +643,6 @@ const PopupMessage = styled.p`
 
 const PopupButtonContainer = styled.div`
     display: flex;
-    // justify-content: space-around;
-    // margin-top: 50px;
     margin-top: -20px;
     justify-content: center;
 `;
